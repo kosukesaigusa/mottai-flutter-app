@@ -1,0 +1,47 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug (local)",
+      "program": "packages/mobile/lib/main.dart",
+      "request": "launch",
+      "type": "dart",
+      "args": [
+        "--debug",
+        "--dart-define=FLAVOR=local",
+        "--dart-define=USE_LOCAL_EMULATOR=true"
+      ]
+    },
+    {
+      "name": "Debug (dev)",
+      "program": "packages/mobile/lib/main.dart",
+      "request": "launch",
+      "type": "dart",
+      "args": ["--debug", "--dart-define=FLAVOR=dev"]
+    },
+    {
+      "name": "Release (dev)",
+      "program": "packages/mobile/lib/main.dart",
+      "request": "launch",
+      "type": "dart",
+      "args": ["--release", "--dart-define=FLAVOR=dev"]
+    },
+    {
+      "name": "Debug (prod)",
+      "program": "packages/mobile/lib/main.dart",
+      "request": "launch",
+      "type": "dart",
+      "args": ["--debug", "--dart-define=FLAVOR=prod"]
+    },
+    {
+      "name": "Release (prod)",
+      "program": "packages/mobile/lib/main.dart",
+      "request": "launch",
+      "type": "dart",
+      "args": ["--release", "--dart-define=FLAVOR=prod"]
+    }
+  ]
+}

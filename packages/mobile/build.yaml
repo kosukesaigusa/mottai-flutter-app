@@ -1,0 +1,11 @@
+# 参考：
+# https://twitter.com/_mono/status/1284301575461023744
+# https://gist.github.com/mono0926/d748d319f70dcdb4c0227c735bc63db5
+targets:
+  $default:
+    builders:
+      freezed:
+        generate_for:
+          include:
+            - lib/controllers/**/*state.dart
+            - lib/controllers/**/firebase_task_result.dart

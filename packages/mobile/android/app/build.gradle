@@ -21,6 +21,27 @@ if (flutterVersionName == null) {
     flutterVersionName = '1.0'
 }
 
+// ビルド時に指定した dart-define の値をデコードして受け取る
+def dartEnvironmentVariables = [:];
+if (project.hasProperty('dart-defines')) {
+    // カンマ区切りかつ Base64 でエンコードされている dart-defines をデコードして変数に格納する
+    dartEnvironmentVariables = dartEnvironmentVariables + project.property('dart-defines')
+        .split(',')
+        .collectEntries { entry ->
+            def pair = new String(entry.decodeBase64(), 'UTF-8').split('=')
+            [(pair.first()): pair.last()]
+        }
+}
+
+// FLAVOR に応じて /src/{FLAVOR}/res ディレクトリのアプリアイコンをコピーする
+task copySources(type: Copy) {
+    from "src/${dartEnvironmentVariables.FLAVOR}/res"
+    into 'src/main/res'
+}
+tasks.whenTaskAdded { task ->
+    task.dependsOn copySources
+}
+
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
@@ -44,10 +65,17 @@ android {
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId "com.kosukesaigusa.mottai_flutter_app"
-        minSdkVersion flutter.minSdkVersion
-        targetSdkVersion flutter.targetSdkVersion
+        minSdkVersion 19
+        targetSdkVersion 31
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+        // dart-define で指定した値を applicationId と app_name に反映させる
+        if (dartEnvironmentVariables.FLAVOR != 'prod') {
+            applicationIdSuffix ".${dartEnvironmentVariables.FLAVOR}"
+        }
+        resValue "string", "app_name", "ZEN messenger" + 
+            (dartEnvironmentVariables.FLAVOR == 'prod' ? '' : ".${dartEnvironmentVariables.FLAVOR}")
+        multiDexEnabled true
     }
 
     buildTypes {

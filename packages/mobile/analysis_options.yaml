@@ -3,9 +3,9 @@ include: ./flutter_samples_analysis_options.yaml
 analyzer:
   exclude:
     - lib/models/models.g.dart
-    - "lib/**/**.freezed.dart"
-    - "lib/**/**.g.dart"
-    - "docs/**.dart"
+    - 'lib/**/**.freezed.dart'
+    - 'lib/**/**.g.dart'
+    - 'docs/**.dart'
   errors:
     missing_required_param: warning
     missing_return: warning

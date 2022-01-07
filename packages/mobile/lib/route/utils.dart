@@ -1,11 +1,11 @@
 import 'package:mottai_flutter_app/utils/types.dart';
 
 class RouteArgs {
-  RouteArgs(this.args);
+  RouteArgs(this.data);
 
-  final Object? args;
+  final Map<String, dynamic> data;
 
-  // dynamic operator [](String key) => args[key]!;
+  dynamic operator [](String key) => data[key]!;
 }
 
 /// パス文字列と対応するウィジェットを返すビルダーからなる

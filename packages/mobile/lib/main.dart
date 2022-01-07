@@ -5,6 +5,7 @@ import 'package:mottai_flutter_app/app.dart';
 import 'package:mottai_flutter_app/app_multi_providers.dart';
 import 'package:mottai_flutter_app/gen/firebase_options_dev.dart' as dev;
 import 'package:mottai_flutter_app/gen/firebase_options_prod.dart' as prod;
+import 'package:mottai_flutter_app/services/firebase_messaging_service.dart';
 import 'package:mottai_flutter_app/services/shared_preferences_service.dart';
 
 Future<void> main() async {
@@ -42,5 +43,6 @@ FirebaseOptions getFirebaseOptions(String flavor) {
 Future<void> initialize() async {
   await Future.wait([
     SharedPreferencesService.init(),
+    FirebaseMessagingService.initialize(),
   ]);
 }

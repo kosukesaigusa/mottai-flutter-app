@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ks_flutter_commons/ks_flutter_commons.dart';
-import 'package:mottai_flutter_app/app.dart';
+import 'package:mottai_flutter_app/pages/home/home_page.dart';
 import 'package:mottai_flutter_app/route/utils.dart';
 import 'package:mottai_flutter_app/utils/types.dart';
 
@@ -20,9 +20,9 @@ class _AppRouterImpl implements AppRouter {
   @override
   Route<dynamic> generateRoute(RouteSettings settings) {
     var path = settings.name!;
-    print('***');
+    print('*****************************');
     print('path: $path');
-    print('***');
+    print('*****************************');
 
     // path に ? がついている場合は、それ以降をクエリストリングとみなし、
     // 分割して `queryParams` というマップに追加する。
@@ -34,6 +34,9 @@ class _AppRouterImpl implements AppRouter {
       path = path.split('?').first;
     }
 
+    // ページに渡す引数の Map<String, dyamic>
+    final data = (settings.arguments as RouteArgs?)?.data ?? <String, dynamic>{};
+
     try {
       // appRoutes の各要素のパスに一致する AppRoute を見つけて
       // 遷移先の Widget の MaterialPageRoute を返す
@@ -43,16 +46,17 @@ class _AppRouterImpl implements AppRouter {
       );
       final route = MaterialPageRoute<dynamic>(
         settings: settings,
-        builder: (context) => appRoute.pageBuilder(context, RouteArgs(settings.arguments)),
+        builder: (context) => appRoute.pageBuilder(context, RouteArgs(data)),
         fullscreenDialog: toBool(queryParams['fullScreenDialog'] ?? false),
       );
       return route;
     } on RouteNotFoundException {
-      return MaterialPageRoute<void>(
-        // TODO: 後で書き換える
-        // builder: (context) => const NotFoundPage(),
-        builder: (context) => const App(),
+      final route = MaterialPageRoute<void>(
+        settings: settings,
+        builder: (context) => const HomePage(),
+        fullscreenDialog: toBool(queryParams['fullScreenDialog'] ?? false),
       );
+      return route;
     }
   }
 }

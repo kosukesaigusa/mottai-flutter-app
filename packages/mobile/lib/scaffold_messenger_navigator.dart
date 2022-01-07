@@ -23,11 +23,11 @@ class ScaffoldMessengerNavigator extends StatelessWidget {
           initialRoute: AppRouter.initialRoute,
           onGenerateRoute: appRouter.generateRoute,
           onUnknownRoute: (settings) {
-            return MaterialPageRoute<void>(
-              // TODO: 後で修正する
-              // builder: (_) => const NotFoundPage(),
-              builder: (_) => const HomePage.withArgs(args: 'タイトル'),
+            final route = MaterialPageRoute<void>(
+              settings: settings,
+              builder: (context) => const HomePage(),
             );
+            return route;
           },
         ),
       ),

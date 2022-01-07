@@ -11,10 +11,10 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       key: UniqueKey(),
+      debugShowCheckedModeBanner: false,
       locale: locale,
       localizationsDelegates: localizationsDelegates,
       supportedLocales: const [locale],
-      debugShowCheckedModeBanner: false,
       title: 'NPO MOTTAI:',
       theme: ThemeData(primarySwatch: Colors.blue),
       home: const ScaffoldMessengerNavigator(),

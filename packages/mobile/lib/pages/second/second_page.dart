@@ -1,18 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:mottai_flutter_app/pages/second/second_page.dart';
 import 'package:mottai_flutter_app/route/utils.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+class SecondPage extends StatefulWidget {
+  const SecondPage._({
+    Key? key,
+    required this.title,
+  }) : super(key: key);
 
-  static const path = '/';
-  static const name = 'HomePage';
+  SecondPage.withArgs({
+    Key? key,
+    required RouteArgs args,
+  }) : this._(key: key, title: args['title'] as String);
+
+  static const path = '/second/';
+  static const name = 'SecondPage';
+  final String title;
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<SecondPage> createState() => _SecondPageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _SecondPageState extends State<SecondPage> {
   int _counter = 0;
 
   void _incrementCounter() {
@@ -25,7 +33,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('ホーム'),
+        title: Text(widget.title),
       ),
       body: Center(
         child: Column(
@@ -37,20 +45,6 @@ class _HomePageState extends State<HomePage> {
             Text(
               '$_counter',
               style: Theme.of(context).textTheme.headline4,
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                await Navigator.pushNamed<void>(
-                  context,
-                  SecondPage.path,
-                  arguments: RouteArgs(
-                    <String, dynamic>{
-                      'title': '2 番目のページ',
-                    },
-                  ),
-                );
-              },
-              child: const Text('Go to SecondPage'),
             ),
           ],
         ),

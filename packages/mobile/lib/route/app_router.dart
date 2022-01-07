@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ks_flutter_commons/ks_flutter_commons.dart';
 import 'package:mottai_flutter_app/pages/home/home_page.dart';
+import 'package:mottai_flutter_app/pages/not_found/not_found_page.dart';
 import 'package:mottai_flutter_app/route/utils.dart';
 import 'package:mottai_flutter_app/utils/types.dart';
 
@@ -53,8 +54,7 @@ class _AppRouterImpl implements AppRouter {
     } on RouteNotFoundException {
       final route = MaterialPageRoute<void>(
         settings: settings,
-        builder: (context) => const HomePage(),
-        fullscreenDialog: toBool(queryParams['fullScreenDialog'] ?? false),
+        builder: (context) => const NotFoundPage(),
       );
       return route;
     }

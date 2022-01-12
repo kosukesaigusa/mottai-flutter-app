@@ -1,3 +1,6 @@
 [submodule "packages/ks_flutter_commons"]
 	path = packages/ks_flutter_commons
 	url = https://github.com/KosukeSaigusa/ks_flutter_commons
+[submodule "packages/models"]
+	path = packages/models
+	url = https://github.com/KosukeSaigusa/npo-mottai-matching-app-models

@@ -11,19 +11,11 @@ class ScaffoldMessengerController {
   final navigatorKey = GlobalKey<NavigatorState>();
 
   /// アラートダイアログを表示する
-  Future<void> showAlertDialog({
-    Widget? title,
-    Widget? content,
-    List<Widget>? actions,
-  }) {
-    return showDialog<void>(
+  Future<void> showAlertDialog<T>({required AlertDialog alertDialog}) {
+    return showDialog<T>(
       context: scaffoldMessengerKey.currentContext!,
       builder: (context) {
-        return AlertDialog(
-          title: title,
-          content: content,
-          actions: actions,
-        );
+        return alertDialog;
       },
     );
   }

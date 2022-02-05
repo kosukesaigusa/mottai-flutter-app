@@ -1,10 +1,14 @@
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// SharedPreferencesKey で管理するデータの列挙
 enum SharedPreferencesKey {
   isAdmin,
   isHost,
+  profileImageURL,
 }
+
+final sharedPreferencesService = Provider.autoDispose((ref) => SharedPreferencesService());
 
 class SharedPreferencesService {
   factory SharedPreferencesService() => _instance;
@@ -12,12 +16,12 @@ class SharedPreferencesService {
   static final SharedPreferencesService _instance = SharedPreferencesService._internal();
 
   static Future<SharedPreferences> get _spInstance => SharedPreferences.getInstance();
-  static SharedPreferences? prefs;
+  static late SharedPreferences sp;
 
   /// SharedPreferences のインスタンスをシングルトンサービスクラスの
   /// メンバ変数に格納する
-  static Future<void> init() async {
-    prefs = await SharedPreferences.getInstance();
+  static Future<void> initialize() async {
+    sp = await SharedPreferences.getInstance();
   }
 
   /// int 型のキー・バリューを保存する
@@ -50,7 +54,7 @@ class SharedPreferencesService {
     return _spInstance.then((i) => i.setBool(key.name, value));
   }
 
-  /// SharedPrefereces に保存している値をすべて消す
+  /// SharedPreferences に保存している値をすべて消す
   static Future<bool> deleteAll() async {
     return _spInstance.then((i) => i.clear());
   }
@@ -59,8 +63,11 @@ class SharedPreferencesService {
   // 保存（bool については true を保存したいときだけ使用する）
   static Future<bool> setIsAdmin() => _setBool(SharedPreferencesKey.isAdmin, true);
   static Future<bool> setIsHost() => _setBool(SharedPreferencesKey.isHost, true);
+  static Future<bool> setProfileImageURL(String url) =>
+      _setString(SharedPreferencesKey.profileImageURL, url);
 
   // 取得
   static Future<bool> getIsAdmin() => _getBool(SharedPreferencesKey.isAdmin);
   static Future<bool> getIsHost() => _getBool(SharedPreferencesKey.isHost);
+  static Future<String?> getProfileImageURL() => _getString(SharedPreferencesKey.profileImageURL);
 }

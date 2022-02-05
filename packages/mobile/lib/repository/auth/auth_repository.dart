@@ -1,4 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/services.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mottai_flutter_app/constants/string.dart';
 import 'package:mottai_flutter_app/controllers/firebase/firebase_task_result.dart';
@@ -9,6 +11,7 @@ class AuthRepository {
   AuthRepository();
 
   final auth = FirebaseAuth.instance;
+  final _googleSignIn = GoogleSignIn(scopes: ['email', 'profile']);
 
   /// ログイン済みかつCustomClaims のアドミンユーザーかどうか
   Future<bool> get isAdminUser async {
@@ -62,6 +65,15 @@ class AuthRepository {
           code: e.code,
         );
       }
+    }
+  }
+
+  /// Google サインイン
+  Future<GoogleSignInAccount?> signInWithGoogle() async {
+    try {
+      return _googleSignIn.signIn();
+    } on PlatformException {
+      rethrow;
     }
   }
 

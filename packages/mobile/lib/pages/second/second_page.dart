@@ -7,7 +7,7 @@ class SecondPage extends StatefulWidget {
     required this.title,
   }) : super(key: key);
 
-  SecondPage.withArgs({
+  SecondPage.withArguments({
     Key? key,
     required RouteArguments args,
   }) : this._(key: key, title: args['title'] as String);

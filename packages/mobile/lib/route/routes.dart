@@ -9,5 +9,5 @@ final routes = <String, PageBuilder>{
   HomePage.path: (_, args) => const HomePage(key: ValueKey(HomePage.name)),
   NotFoundPage.path: (_, args) => const NotFoundPage(key: ValueKey(NotFoundPage.name)),
   SecondPage.path: (_, args) =>
-      SecondPage.withArgs(args: args, key: const ValueKey(SecondPage.name)),
+      SecondPage.withArguments(args: args, key: const ValueKey(SecondPage.name)),
 };

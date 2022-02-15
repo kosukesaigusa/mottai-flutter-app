@@ -17,7 +17,7 @@ class AppMultiProvider extends StatelessWidget {
     return MultiProvider(
       providers: [
         Provider(create: (_) => GlobalKey<NavigatorState>()),
-        Provider(create: (_) => SnackBarController()),
+        Provider(create: (_) => ScaffoldMessengerController()),
       ],
       child: MultiProvider(
         providers: [

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:ks_flutter_commons/ks_flutter_commons.dart';
-import 'package:mottai_flutter_app/pages/home/home_page.dart';
 import 'package:mottai_flutter_app/pages/not_found/not_found_page.dart';
 import 'package:mottai_flutter_app/route/utils.dart';
 import 'package:mottai_flutter_app/utils/types.dart';

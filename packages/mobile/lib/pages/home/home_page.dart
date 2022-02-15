@@ -72,11 +72,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                 await Navigator.pushNamed<void>(
                   context,
                   SecondPage.path,
-                  arguments: RouteArgs(
-                    <String, dynamic>{
-                      'title': '2 番目のページ',
-                    },
-                  ),
+                  arguments: RouteArguments(<String, dynamic>{'title': '2 番目のページ'}),
                 );
               },
               child: const Text('Go to SecondPage'),
@@ -122,6 +118,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     required String path,
     required Map<String, dynamic> data,
   }) async {
-    await Navigator.pushNamed(context, path, arguments: RouteArgs(data));
+    await Navigator.pushNamed(context, path, arguments: RouteArguments(data));
   }
 }

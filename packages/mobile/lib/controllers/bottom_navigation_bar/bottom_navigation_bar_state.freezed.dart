@@ -18,13 +18,9 @@ final _privateConstructorUsedError = UnsupportedError(
 class _$BottomNavigationBarStateTearOff {
   const _$BottomNavigationBarStateTearOff();
 
-  _TabState call(
-      {int currentIndex = 1,
-      BottomNavigationBarItemName itemName =
-          BottomNavigationBarItemName.home}) {
+  _TabState call({int currentIndex = 0}) {
     return _TabState(
       currentIndex: currentIndex,
-      itemName: itemName,
     );
   }
 }
@@ -35,8 +31,6 @@ const $BottomNavigationBarState = _$BottomNavigationBarStateTearOff();
 /// @nodoc
 mixin _$BottomNavigationBarState {
   int get currentIndex => throw _privateConstructorUsedError;
-  BottomNavigationBarItemName get itemName =>
-      throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $BottomNavigationBarStateCopyWith<BottomNavigationBarState> get copyWith =>
@@ -48,7 +42,7 @@ abstract class $BottomNavigationBarStateCopyWith<$Res> {
   factory $BottomNavigationBarStateCopyWith(BottomNavigationBarState value,
           $Res Function(BottomNavigationBarState) then) =
       _$BottomNavigationBarStateCopyWithImpl<$Res>;
-  $Res call({int currentIndex, BottomNavigationBarItemName itemName});
+  $Res call({int currentIndex});
 }
 
 /// @nodoc
@@ -63,17 +57,12 @@ class _$BottomNavigationBarStateCopyWithImpl<$Res>
   @override
   $Res call({
     Object? currentIndex = freezed,
-    Object? itemName = freezed,
   }) {
     return _then(_value.copyWith(
       currentIndex: currentIndex == freezed
           ? _value.currentIndex
           : currentIndex // ignore: cast_nullable_to_non_nullable
               as int,
-      itemName: itemName == freezed
-          ? _value.itemName
-          : itemName // ignore: cast_nullable_to_non_nullable
-              as BottomNavigationBarItemName,
     ));
   }
 }
@@ -84,7 +73,7 @@ abstract class _$TabStateCopyWith<$Res>
   factory _$TabStateCopyWith(_TabState value, $Res Function(_TabState) then) =
       __$TabStateCopyWithImpl<$Res>;
   @override
-  $Res call({int currentIndex, BottomNavigationBarItemName itemName});
+  $Res call({int currentIndex});
 }
 
 /// @nodoc
@@ -100,17 +89,12 @@ class __$TabStateCopyWithImpl<$Res>
   @override
   $Res call({
     Object? currentIndex = freezed,
-    Object? itemName = freezed,
   }) {
     return _then(_TabState(
       currentIndex: currentIndex == freezed
           ? _value.currentIndex
           : currentIndex // ignore: cast_nullable_to_non_nullable
               as int,
-      itemName: itemName == freezed
-          ? _value.itemName
-          : itemName // ignore: cast_nullable_to_non_nullable
-              as BottomNavigationBarItemName,
     ));
   }
 }
@@ -118,20 +102,15 @@ class __$TabStateCopyWithImpl<$Res>
 /// @nodoc
 
 class _$_TabState implements _TabState {
-  _$_TabState(
-      {this.currentIndex = 1,
-      this.itemName = BottomNavigationBarItemName.home});
+  _$_TabState({this.currentIndex = 0});
 
   @JsonKey()
   @override
   final int currentIndex;
-  @JsonKey()
-  @override
-  final BottomNavigationBarItemName itemName;
 
   @override
   String toString() {
-    return 'BottomNavigationBarState(currentIndex: $currentIndex, itemName: $itemName)';
+    return 'BottomNavigationBarState(currentIndex: $currentIndex)';
   }
 
   @override
@@ -140,15 +119,12 @@ class _$_TabState implements _TabState {
         (other.runtimeType == runtimeType &&
             other is _TabState &&
             const DeepCollectionEquality()
-                .equals(other.currentIndex, currentIndex) &&
-            const DeepCollectionEquality().equals(other.itemName, itemName));
+                .equals(other.currentIndex, currentIndex));
   }
 
   @override
   int get hashCode => Object.hash(
-      runtimeType,
-      const DeepCollectionEquality().hash(currentIndex),
-      const DeepCollectionEquality().hash(itemName));
+      runtimeType, const DeepCollectionEquality().hash(currentIndex));
 
   @JsonKey(ignore: true)
   @override
@@ -157,13 +133,10 @@ class _$_TabState implements _TabState {
 }
 
 abstract class _TabState implements BottomNavigationBarState {
-  factory _TabState({int currentIndex, BottomNavigationBarItemName itemName}) =
-      _$_TabState;
+  factory _TabState({int currentIndex}) = _$_TabState;
 
   @override
   int get currentIndex;
-  @override
-  BottomNavigationBarItemName get itemName;
   @override
   @JsonKey(ignore: true)
   _$TabStateCopyWith<_TabState> get copyWith =>

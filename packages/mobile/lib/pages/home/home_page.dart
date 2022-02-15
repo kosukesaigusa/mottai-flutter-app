@@ -1,9 +1,12 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:mottai_flutter_app/controllers/bottom_navigation_bar/bottom_navigation_bar_controller.dart';
+import 'package:mottai_flutter_app/controllers/bottom_navigation_bar/bottom_navigation_bar_state.dart';
 import 'package:mottai_flutter_app/pages/second/second_page.dart';
 import 'package:mottai_flutter_app/route/utils.dart';
 import 'package:mottai_flutter_app/services/firebase_messaging_service.dart';
+import 'package:provider/provider.dart';
 
 /// バックグラウンドから起動した際にFirebaseを有効化する。
 /// グローバルに記述する必要がある
@@ -79,6 +82,25 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             ),
           ],
         ),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        selectedItemColor: Theme.of(context).colorScheme.primary,
+        onTap: context.read<BottomNavigationBarController>().onTap,
+        currentIndex: context.watch<BottomNavigationBarState>().currentIndex,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'ホーム',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.map),
+            label: 'マップ',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'マイページ',
+          ),
+        ],
       ),
     );
   }

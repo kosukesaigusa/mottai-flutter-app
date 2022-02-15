@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_state_notifier/flutter_state_notifier.dart';
+import 'package:mottai_flutter_app/controllers/bottom_navigation_bar/bottom_navigation_bar_controller.dart';
+import 'package:mottai_flutter_app/controllers/bottom_navigation_bar/bottom_navigation_bar_state.dart';
 import 'package:mottai_flutter_app/controllers/snack_bar/snack_bar_controller.dart';
 import 'package:mottai_flutter_app/repository/auth/auth_repository.dart';
 import 'package:provider/provider.dart';
@@ -28,24 +31,26 @@ class AppMultiProvider extends StatelessWidget {
           // Provider(create: (_) => PaymentRepository()),
           // Provider(create: (_) => SupportingGroupRepository()),
         ],
-        // child: MultiProvider(
-        //   providers: const [
-        //     // StateNotifierProvider<HomePageController, HomePageState>(
-        //     //   create: (_) => HomePageController(),
-        //     // ),
-        //     // StateNotifierProvider<PaymentManagementPageController, PaymentManagementPageState>(
-        //     //   create: (_) => PaymentManagementPageController(),
-        //     // ),
-        //     // StateNotifierProvider<SignInPageController, SignInPageState>(
-        //     //   create: (_) => SignInPageController(),
-        //     // ),
-        //     // StateNotifierProvider<PaymentLogsPageController, PaymentLogsPageState>(
-        //     //   create: (_) => PaymentLogsPageController(),
-        //     // ),
-        //   ],
-        //   child: child,
-        // ),
-        child: child,
+        child: MultiProvider(
+          providers: [
+            StateNotifierProvider<BottomNavigationBarController, BottomNavigationBarState>(
+              create: (_) => BottomNavigationBarController(),
+            ),
+            // StateNotifierProvider<HomePageController, HomePageState>(
+            //   create: (_) => HomePageController(),
+            // ),
+            // StateNotifierProvider<PaymentManagementPageController, PaymentManagementPageState>(
+            //   create: (_) => PaymentManagementPageController(),
+            // ),
+            // StateNotifierProvider<SignInPageController, SignInPageState>(
+            //   create: (_) => SignInPageController(),
+            // ),
+            // StateNotifierProvider<PaymentLogsPageController, PaymentLogsPageState>(
+            //   create: (_) => PaymentLogsPageController(),
+            // ),
+          ],
+          child: child,
+        ),
       ),
     );
   }

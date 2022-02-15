@@ -15,7 +15,7 @@ class App extends StatelessWidget {
       locale: locale,
       localizationsDelegates: localizationsDelegates,
       supportedLocales: const [locale],
-      title: 'NPO MOTTAI:',
+      title: 'NPO MOTTAI',
       theme: ThemeData(primarySwatch: Colors.blue),
       home: const ScaffoldMessengerNavigator(),
     );

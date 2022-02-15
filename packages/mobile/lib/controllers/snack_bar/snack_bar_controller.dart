@@ -4,9 +4,11 @@ import 'package:flutter/material.dart';
 const devaultSnackBarBehavior = SnackBarBehavior.floating;
 const defaultSnackBarDuration = Duration(seconds: 3);
 
-class SnackBarController {
+///
+class ScaffoldMessengerController {
   final scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
 
+  /// スナックバーを表示する
   ScaffoldFeatureController<SnackBar, SnackBarClosedReason> show(
     String message, {
     bool removeCurrentSnackabar = true,

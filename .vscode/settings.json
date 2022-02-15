@@ -1,8 +1,8 @@
 {
   // TypeScript プロジェクト (Cloud Functions) のディレクトリを指定
   // "eslint.workingDirectories": ["./firebase/functions"],
-  "dart.flutterSdkPath": "/Users/kosukesaigusa/.asdf/installs/flutter/2.8.1-stable",
-  "dart.sdkPath": "/Users/kosukesaigusa/.asdf/installs/flutter/2.8.1-stable/bin/cache/dart-sdk",
+  "dart.flutterSdkPath": "/Users/kosukesaigusa/.asdf/installs/flutter/2.10.1-stable",
+  "dart.sdkPath": "/Users/kosukesaigusa/.asdf/installs/flutter/2.10.1-stable/bin/cache/dart-sdk",
   "cSpell.words": [
     "buildaab",
     "buildapk",

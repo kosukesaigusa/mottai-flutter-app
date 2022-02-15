@@ -35,7 +35,7 @@ class _AppRouterImpl implements AppRouter {
     }
 
     // ページに渡す引数の Map<String, dyamic>
-    final data = (settings.arguments as RouteArgs?)?.data ?? <String, dynamic>{};
+    final data = (settings.arguments as RouteArguments?)?.data ?? <String, dynamic>{};
 
     try {
       // appRoutes の各要素のパスに一致する AppRoute を見つけて
@@ -46,7 +46,7 @@ class _AppRouterImpl implements AppRouter {
       );
       final route = MaterialPageRoute<dynamic>(
         settings: settings,
-        builder: (context) => appRoute.pageBuilder(context, RouteArgs(data)),
+        builder: (context) => appRoute.pageBuilder(context, RouteArguments(data)),
         fullscreenDialog: toBool(queryParams['fullScreenDialog'] ?? false),
       );
       return route;

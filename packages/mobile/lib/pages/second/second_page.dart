@@ -9,7 +9,7 @@ class SecondPage extends StatefulWidget {
 
   SecondPage.withArgs({
     Key? key,
-    required RouteArgs args,
+    required RouteArguments args,
   }) : this._(key: key, title: args['title'] as String);
 
   static const path = '/second/';
@@ -53,7 +53,7 @@ class _SecondPageState extends State<SecondPage> {
         onPressed: _incrementCounter,
         tooltip: 'Increment',
         child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      ),
     );
   }
 }

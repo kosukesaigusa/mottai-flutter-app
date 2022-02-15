@@ -1,7 +1,7 @@
 import 'package:mottai_flutter_app/utils/types.dart';
 
-class RouteArgs {
-  RouteArgs(this.data);
+class RouteArguments {
+  RouteArguments(this.data);
 
   final Map<String, dynamic> data;
 

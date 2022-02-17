@@ -6,7 +6,7 @@ class BottomNavigationBarController extends StateNotifier<BottomNavigationBarSta
   BottomNavigationBarController() : super(BottomNavigationBarState(currentIndex: 0));
 
   /// 表示中の BottomNavigationBar を更新する。
-  void onTap(int index) {
+  void changeTab(int index) {
     state = state.copyWith(currentIndex: index);
   }
 }

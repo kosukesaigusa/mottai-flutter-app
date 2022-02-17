@@ -5,9 +5,9 @@ import 'package:mottai_flutter_app/route/app_router.dart';
 import 'package:mottai_flutter_app/route/routes.dart';
 import 'package:provider/provider.dart';
 
-final appRouter = AppRouter.create(routes);
+final appRouter = AppRouter.create(routeBuilder);
 
-/// Widget Tree の最上部で ScaffoldMessanger を含めるための Navigator ウィジェット。
+/// Widget Tree の最上部で ScaffoldMessenger を含めるための Navigator ウィジェット。
 /// 目には見えないが、アプリケーション上の全てのページがこの Scaffold の上に載るので
 /// ScaffoldMessengerController でどこからでもスナックバーが表示できるようになっている。
 class ScaffoldMessengerNavigator extends StatelessWidget {

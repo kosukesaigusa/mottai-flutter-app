@@ -16,12 +16,24 @@ scripts:
   clean:pub:get:
     run: melos exec -- "flutter clean && flutter pub get"
 
-  generate:
+  build:
     run: melos exec --scope="mottai_matching_app" \
       "flutter pub run build_runner build --delete-conflicting-outputs && exit"
 
-  generate:watch:
+  build:mobile:
     run: melos exec --scope="mottai_matching_app" \
+      "flutter pub run build_runner build --delete-conflicting-outputs && exit"
+
+  watch:mobile:
+    run: melos exec --scope="mottai_matching_app" \
+      "flutter pub run build_runner watch --delete-conflicting-outputs && exit"
+
+  build:models:
+    run: melos exec --scope="npo_mottai_matching_app_models" \
+      "flutter pub run build_runner build --delete-conflicting-outputs && exit"
+
+  watch:models:
+    run: melos exec --scope="npo_mottai_matching_app_models" \
       "flutter pub run build_runner watch --delete-conflicting-outputs && exit"
 
   build:devios:

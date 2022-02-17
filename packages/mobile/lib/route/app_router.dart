@@ -8,7 +8,7 @@ abstract class AppRouter {
   factory AppRouter.create(Map<String, PageBuilder> routeMap) => _AppRouterImpl(routeMap);
 
   static const initialRoute = '/';
-  Route<dynamic> generateRoute(RouteSettings settings);
+  Route<dynamic> generateRoute(RouteSettings settings, {String bottomNavigationPath});
 }
 
 class _AppRouterImpl implements AppRouter {
@@ -18,8 +18,13 @@ class _AppRouterImpl implements AppRouter {
   final List<AppRoute> appRoutes;
 
   @override
-  Route<dynamic> generateRoute(RouteSettings settings) {
+  Route<dynamic> generateRoute(RouteSettings settings, {String? bottomNavigationPath}) {
     var path = settings.name!;
+    if (bottomNavigationPath?.isEmpty ?? true) {
+      path = settings.name!;
+    } else {
+      path = (settings.name == AppRouter.initialRoute ? bottomNavigationPath : settings.name)!;
+    }
     print('*****************************');
     print('path: $path');
     print('*****************************');
@@ -34,7 +39,7 @@ class _AppRouterImpl implements AppRouter {
       path = path.split('?').first;
     }
 
-    // ページに渡す引数の Map<String, dyamic>
+    // ページに渡す引数の Map<String, dynamic>
     final data = (settings.arguments as RouteArguments?)?.data ?? <String, dynamic>{};
 
     try {

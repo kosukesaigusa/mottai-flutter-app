@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_state_notifier/flutter_state_notifier.dart';
+import 'package:mottai_flutter_app/controllers/application/application_controller.dart';
+import 'package:mottai_flutter_app/controllers/application/application_state.dart';
 import 'package:mottai_flutter_app/controllers/bottom_navigation_bar/bottom_navigation_bar_controller.dart';
 import 'package:mottai_flutter_app/controllers/bottom_navigation_bar/bottom_navigation_bar_state.dart';
 import 'package:mottai_flutter_app/controllers/snack_bar/snack_bar_controller.dart';
@@ -33,11 +35,14 @@ class AppMultiProvider extends StatelessWidget {
         ],
         child: MultiProvider(
           providers: [
+            StateNotifierProvider<ApplicationController, ApplicationState>(
+              create: (_) => ApplicationController(),
+            ),
             StateNotifierProvider<BottomNavigationBarController, BottomNavigationBarState>(
               create: (_) => BottomNavigationBarController(),
             ),
-            // StateNotifierProvider<HomePageController, HomePageState>(
-            //   create: (_) => HomePageController(),
+            // StateNotifierProvider<MainPageController, MainPageState>(
+            //   create: (_) => MainPageController(),
             // ),
             // StateNotifierProvider<PaymentManagementPageController, PaymentManagementPageState>(
             //   create: (_) => PaymentManagementPageController(),

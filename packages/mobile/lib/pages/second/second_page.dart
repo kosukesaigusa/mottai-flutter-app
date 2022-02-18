@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mottai_flutter_app/pages/map/map_page.dart';
 import 'package:mottai_flutter_app/route/utils.dart';
 
 class SecondPage extends StatefulWidget {
@@ -45,6 +46,12 @@ class _SecondPageState extends State<SecondPage> {
             Text(
               '$_counter',
               style: Theme.of(context).textTheme.headline4,
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                await Navigator.pushNamed<void>(context, MapPage.path);
+              },
+              child: const Text('Go to Map Page'),
             ),
           ],
         ),

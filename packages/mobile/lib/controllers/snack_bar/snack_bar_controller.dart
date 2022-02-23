@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-const devaultSnackBarBehavior = SnackBarBehavior.floating;
+const defaultSnackBarBehavior = SnackBarBehavior.floating;
 const defaultSnackBarDuration = Duration(seconds: 3);
 
 ///
@@ -11,15 +11,15 @@ class ScaffoldMessengerController {
   /// スナックバーを表示する
   ScaffoldFeatureController<SnackBar, SnackBarClosedReason> show(
     String message, {
-    bool removeCurrentSnackabar = true,
+    bool removeCurrentSnackBar = true,
     Duration duration = defaultSnackBarDuration,
   }) {
-    if (removeCurrentSnackabar) {
+    if (removeCurrentSnackBar) {
       scaffoldMessengerKey.currentState!.removeCurrentSnackBar();
     }
     return scaffoldMessengerKey.currentState!.showSnackBar(SnackBar(
       content: Text(message),
-      behavior: devaultSnackBarBehavior,
+      behavior: defaultSnackBarBehavior,
       duration: duration,
     ));
   }

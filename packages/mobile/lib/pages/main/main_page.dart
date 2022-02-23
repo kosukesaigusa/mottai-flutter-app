@@ -1,13 +1,12 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mottai_flutter_app/controllers/bottom_navigation_bar/bottom_navigation_bar_controller.dart';
-import 'package:mottai_flutter_app/controllers/bottom_navigation_bar/bottom_navigation_bar_state.dart';
 import 'package:mottai_flutter_app/route/main_tabs.dart';
 import 'package:mottai_flutter_app/route/utils.dart';
 import 'package:mottai_flutter_app/services/firebase_messaging_service.dart';
 import 'package:mottai_flutter_app/widgets/main/stacked_pages_navigator.dart';
-import 'package:provider/provider.dart';
 
 /// バックグラウンドから起動した際にFirebaseを有効化する。
 /// グローバルに記述する必要がある
@@ -62,47 +61,7 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: [
-          Scaffold(
-            body: Stack(
-              children: [
-                for (final item in bottomNavigationBarItems) _buildStackedPages(context, item),
-              ],
-            ),
-            bottomNavigationBar: BottomNavigationBar(
-              selectedItemColor: Theme.of(context).colorScheme.primary,
-              onTap: (index) {
-                FocusScope.of(context).unfocus();
-                context.read<BottomNavigationBarController>().changeTab(index);
-              },
-              currentIndex: context.watch<BottomNavigationBarState>().currentIndex,
-              items: [
-                for (final item in bottomNavigationBarItems)
-                  BottomNavigationBarItem(
-                    icon: Icon(item.iconData),
-                    label: item.label,
-                  ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  ///
-  Widget _buildStackedPages(BuildContext context, BottomNavigationBarItemData item) {
-    final currentIndex = context.select<BottomNavigationBarState, int>((s) => s.currentIndex);
-    final currentItem = bottomNavigationBarItems[currentIndex];
-    return Offstage(
-      offstage: item != currentItem,
-      child: TickerMode(
-        enabled: item == currentItem,
-        child: MainStackedPagesNavigator(item: item),
-      ),
-    );
+    return MainPageBody(key: widget.key);
   }
 
   /// プッシュ通知関係の初期化処理を行う
@@ -141,5 +100,57 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
     required Map<String, dynamic> data,
   }) async {
     await Navigator.pushNamed(context, path, arguments: RouteArguments(data));
+  }
+}
+
+/// MainPage の内容
+class MainPageBody extends HookConsumerWidget {
+  const MainPageBody({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final controller = ref.read(bottomNavigationBarController.notifier);
+    final state = ref.watch(bottomNavigationBarController);
+    return Scaffold(
+      body: Stack(
+        children: [
+          Scaffold(
+            body: Stack(
+              children: [
+                for (final item in bottomNavigationBarItems) _buildStackedPages(ref, item),
+              ],
+            ),
+            bottomNavigationBar: BottomNavigationBar(
+              selectedItemColor: Theme.of(context).colorScheme.primary,
+              onTap: (index) {
+                FocusScope.of(context).unfocus();
+                controller.changeTab(index);
+              },
+              currentIndex: state.currentIndex,
+              items: [
+                for (final item in bottomNavigationBarItems)
+                  BottomNavigationBarItem(
+                    icon: Icon(item.iconData),
+                    label: item.label,
+                  ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  ///
+  Widget _buildStackedPages(WidgetRef ref, BottomNavigationBarItemData item) {
+    final currentIndex = ref.watch(bottomNavigationBarController).currentIndex;
+    final currentItem = bottomNavigationBarItems[currentIndex];
+    return Offstage(
+      offstage: item != currentItem,
+      child: TickerMode(
+        enabled: item == currentItem,
+        child: MainStackedPagesNavigator(item: item),
+      ),
+    );
   }
 }

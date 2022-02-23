@@ -11,11 +11,11 @@ final applicationController = StateNotifierProvider<ApplicationController, Appli
 class ApplicationController extends StateNotifier<ApplicationState> with LocatorMixin {
   ApplicationController() : super(const ApplicationState());
 
-  // Map<BottomNavigationBarItemEnum, GlobalKey<NavigatorState>> navigatorKeys = {};
+  // Map<BottomTabEnum, GlobalKey<NavigatorState>> navigatorKeys = {};
   final navigatorKeys = {
-    BottomNavigationBarItemEnum.home: GlobalKey<NavigatorState>(),
-    BottomNavigationBarItemEnum.map: GlobalKey<NavigatorState>(),
-    BottomNavigationBarItemEnum.account: GlobalKey<NavigatorState>(),
+    BottomTabEnum.home: GlobalKey<NavigatorState>(),
+    BottomTabEnum.map: GlobalKey<NavigatorState>(),
+    BottomTabEnum.account: GlobalKey<NavigatorState>(),
   };
 
   /// ローディングを開始する。

@@ -117,7 +117,7 @@ class MainPageBody extends HookConsumerWidget {
           Scaffold(
             body: Stack(
               children: [
-                for (final item in bottomNavigationBarItems) _buildStackedPages(ref, item),
+                for (final item in bottomTabs) _buildStackedPages(ref, item),
               ],
             ),
             bottomNavigationBar: BottomNavigationBar(
@@ -128,7 +128,7 @@ class MainPageBody extends HookConsumerWidget {
               },
               currentIndex: state.currentIndex,
               items: [
-                for (final item in bottomNavigationBarItems)
+                for (final item in bottomTabs)
                   BottomNavigationBarItem(
                     icon: Icon(item.iconData),
                     label: item.label,
@@ -142,14 +142,14 @@ class MainPageBody extends HookConsumerWidget {
   }
 
   ///
-  Widget _buildStackedPages(WidgetRef ref, BottomNavigationBarItemData item) {
+  Widget _buildStackedPages(WidgetRef ref, BottomTab tab) {
     final currentIndex = ref.watch(bottomNavigationBarController).currentIndex;
-    final currentItem = bottomNavigationBarItems[currentIndex];
+    final currentTab = bottomTabs[currentIndex];
     return Offstage(
-      offstage: item != currentItem,
+      offstage: tab != currentTab,
       child: TickerMode(
-        enabled: item == currentItem,
-        child: MainStackedPagesNavigator(item: item),
+        enabled: tab == currentTab,
+        child: MainStackedPagesNavigator(tab: tab),
       ),
     );
   }

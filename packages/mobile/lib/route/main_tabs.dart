@@ -3,47 +3,49 @@ import 'package:mottai_flutter_app/pages/account/account_page.dart';
 import 'package:mottai_flutter_app/pages/home/home_page.dart';
 import 'package:mottai_flutter_app/pages/map/map_page.dart';
 
-class BottomNavigationBarItemData {
-  const BottomNavigationBarItemData({
+/// MainPage の BottomNavigationBar の enum
+enum BottomTabEnum {
+  home,
+  map,
+  account,
+}
+
+/// MainPage の BottomNavigationBar の内容
+class BottomTab {
+  const BottomTab({
     required this.index,
-    required this.item,
+    required this.tab,
     required this.label,
     required this.path,
     required this.iconData,
   });
 
   final int index;
-  final BottomNavigationBarItemEnum item;
+  final BottomTabEnum tab;
   final String label;
   final String path;
   final IconData iconData;
 }
 
-enum BottomNavigationBarItemEnum {
-  home,
-  map,
-  account,
-}
-
 /// MainPage の BottomNavigationBarItem 一覧
-const bottomNavigationBarItems = [
-  BottomNavigationBarItemData(
+const bottomTabs = [
+  BottomTab(
     index: 0,
-    item: BottomNavigationBarItemEnum.home,
+    tab: BottomTabEnum.home,
     label: 'ホーム',
     path: HomePage.path,
     iconData: Icons.home,
   ),
-  BottomNavigationBarItemData(
+  BottomTab(
     index: 1,
-    item: BottomNavigationBarItemEnum.map,
+    tab: BottomTabEnum.map,
     label: 'マップ',
     path: MapPage.path,
     iconData: Icons.map,
   ),
-  BottomNavigationBarItemData(
+  BottomTab(
     index: 2,
-    item: BottomNavigationBarItemEnum.account,
+    tab: BottomTabEnum.account,
     label: 'アカウント',
     path: AccountPage.path,
     iconData: Icons.person,

@@ -24,13 +24,13 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-	<key>UIBackgroundModes</key>
 	<key>NSCameraUsageDescription</key>
 	<string>ユーザーがカメラを起動して、画像をメッセージやプロフィール画像に使用するために、端末内のカメラを使用します。</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>ユーザーがメッセージに画像を添付したり、自身のプロフィール画像を選択したりするために端末内の画像を使用します。</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
   <string>マップ上で現在地に応じたイベントや情報を表示するために現在地を使用します。</string>
+	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>
 		<string>remote-notification</string>

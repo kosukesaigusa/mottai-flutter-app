@@ -49,3 +49,6 @@ app.*.map.json
 
 # Others
 **/lib/gen/
+
+# fabfile
+fabfile/

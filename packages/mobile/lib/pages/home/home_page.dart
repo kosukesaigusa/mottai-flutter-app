@@ -14,6 +14,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(),
       drawer: _buildDrawer(context),
       body: Center(
         child: Column(
@@ -39,9 +40,9 @@ class HomePage extends StatelessWidget {
   Drawer _buildDrawer(BuildContext context) {
     return Drawer(
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildDrawerHeader(context),
-          const Divider(),
           _buildFcmTokenDrawerItem(context),
         ],
       ),
@@ -51,7 +52,10 @@ class HomePage extends StatelessWidget {
   Widget _buildDrawerHeader(BuildContext context) {
     return DrawerHeader(
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Text('いちさんマップ（仮称）開発版', style: grey12),
+          const Gap(8),
           Container(
             decoration: BoxDecoration(
               color: Colors.grey[200],
@@ -62,8 +66,6 @@ class HomePage extends StatelessWidget {
               size: 36,
             ),
           ),
-          const Gap(4),
-          Text('いちさんマップ（仮称）開発版', style: grey12),
         ],
       ),
     );
@@ -74,7 +76,9 @@ class HomePage extends StatelessWidget {
       title: const Text('FCM トークンの確認'),
       onTap: () async {
         final token = await FirebaseMessaging.instance.getToken();
-        print('token: $token');
+        print('*** FCM token ***************');
+        print(token);
+        print('*****************************');
         await showDialog<void>(
           context: context,
           builder: (_) {

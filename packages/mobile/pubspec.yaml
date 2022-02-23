@@ -32,6 +32,7 @@ dependencies:
   gap: ^2.0.0
   geoflutterfire: ^3.0.2
   google_fonts: ^2.1.0
+  google_maps_flutter: ^2.1.1
   image_cropper: ^1.4.1
   image_picker: ^0.8.4+4
   intl: ^0.17.0
@@ -42,6 +43,7 @@ dependencies:
   package_info_plus: ^1.3.0
   photo_view: ^0.13.0
   provider: ^6.0.1
+  rxdart: ^0.27.3
   shared_preferences: ^2.0.9
   state_notifier: ^0.7.1
   url_launcher: ^6.0.15

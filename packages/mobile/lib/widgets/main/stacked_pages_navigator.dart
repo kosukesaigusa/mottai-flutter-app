@@ -12,21 +12,21 @@ final appRouter = AppRouter.create(routeBuilder);
 class MainStackedPagesNavigator extends HookConsumerWidget {
   const MainStackedPagesNavigator({
     Key? key,
-    required this.item,
+    required this.tab,
   }) : super(key: key);
 
-  final BottomNavigationBarItemData item;
+  final BottomTab tab;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Navigator(
-      key: ref.watch(applicationController.notifier).navigatorKeys[item.item],
+      key: ref.watch(applicationController.notifier).navigatorKeys[tab.tab],
       initialRoute: MainPage.path,
       // MainPage の StackedPages 上での Navigation なので
-      // item.path を渡す
+      // tab.path を渡す
       onGenerateRoute: (routeSettings) => appRouter.generateRoute(
         routeSettings,
-        bottomNavigationPath: item.path,
+        bottomNavigationPath: tab.path,
       ),
       onUnknownRoute: (settings) {
         final route = MaterialPageRoute<void>(

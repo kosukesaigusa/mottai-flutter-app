@@ -1,6 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mottai_flutter_app/constants/string.dart';
 import 'package:mottai_flutter_app/controllers/firebase/firebase_task_result.dart';
+
+final authRepository = Provider.autoDispose((ref) => AuthRepository());
 
 class AuthRepository {
   AuthRepository();

@@ -1,8 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:ks_flutter_commons/ks_flutter_commons.dart';
 import 'package:mottai_flutter_app/app.dart';
-import 'package:mottai_flutter_app/app_multi_providers.dart';
 import 'package:mottai_flutter_app/gen/firebase_options_dev.dart' as dev;
 import 'package:mottai_flutter_app/gen/firebase_options_prod.dart' as prod;
 import 'package:mottai_flutter_app/services/firebase_messaging_service.dart';
@@ -18,7 +18,7 @@ Future<void> main() async {
   await initialize();
   runApp(
     const RootWidget(
-      child: AppMultiProvider(
+      child: ProviderScope(
         child: App(),
       ),
     ),

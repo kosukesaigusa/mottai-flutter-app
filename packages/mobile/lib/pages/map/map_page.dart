@@ -212,10 +212,40 @@ class _MapPageState extends ConsumerState<MapPage> {
     );
   }
 
+  /// Map の初回描画時に実行する
   void _onMapCreated(GoogleMapController controller) {
     setState(() {
       _mapController = controller;
       stream.listen(_updateMarkers);
+    });
+  }
+
+  /// locations コレクションの位置情報リストを取得し、そのそれぞれに対して
+  /// _addMarker() メソッドをコールして状態変数に格納する
+  void _updateMarkers(List<DocumentSnapshot> documentList) {
+    for (final document in documentList) {
+      final data = document.data() as Map<String, dynamic>?;
+      if (data == null) {
+        continue;
+      }
+      final point = data['position']['geopoint'] as GeoPoint;
+      _addMarker(point.latitude, point.longitude);
+    }
+  }
+
+  /// 受け取った緯度・経度の Marker オブジェクトインスタンスを生成して
+  /// その位置情報を状態変数の Map に格納する。
+  /// 緯度・経度の組をもとにした ID をキーにMap 型で取り扱っているので
+  /// Marker が重複することはない。
+  void _addMarker(double lat, double lng) {
+    final id = MarkerId(lat.toString() + lng.toString());
+    final _marker = Marker(
+      markerId: id,
+      position: LatLng(lat, lng),
+      icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+    );
+    setState(() {
+      markers[id] = _marker;
     });
   }
 
@@ -226,30 +256,6 @@ class _MapPageState extends ConsumerState<MapPage> {
         zoom: 15,
       ),
     ));
-  }
-
-  void _addMarker(double lat, double lng) {
-    final id = MarkerId(lat.toString() + lng.toString());
-    final _marker = Marker(
-      markerId: id,
-      position: LatLng(lat, lng),
-      icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueViolet),
-      infoWindow: InfoWindow(title: 'latLng', snippet: '$lat,$lng'),
-    );
-    setState(() {
-      markers[id] = _marker;
-    });
-  }
-
-  void _updateMarkers(List<DocumentSnapshot> documentList) {
-    for (final document in documentList) {
-      final data = document.data() as Map<String, dynamic>?;
-      if (data == null) {
-        continue;
-      }
-      final point = data['position']['geopoint'] as GeoPoint;
-      _addMarker(point.latitude, point.longitude);
-    }
   }
 
   void changed(double value) {

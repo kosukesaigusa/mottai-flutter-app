@@ -75,73 +75,75 @@ class _MapPageState extends ConsumerState<MapPage> {
             ),
             markers: Set<Marker>.of(markers.values),
           ),
-          Positioned(
-            child: Align(
-              alignment: Alignment.bottomCenter,
-              child: Container(
-                height: stackedGreyBackgroundHeight,
-                width: double.infinity,
-                decoration: const BoxDecoration(
-                  color: Colors.black26,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(stackedGreyBackgroundBorderRadius),
-                    topRight: Radius.circular(stackedGreyBackgroundBorderRadius),
+          _buildStackedGreyBackGround,
+          _buildStackedPageViewWidget,
+        ],
+      ),
+    );
+  }
+
+  /// Stack で重ねている画面下部のグレー背景部分
+  Widget get _buildStackedGreyBackGround => Positioned(
+        child: Align(
+          alignment: Alignment.bottomCenter,
+          child: Container(
+            height: stackedGreyBackgroundHeight,
+            width: double.infinity,
+            decoration: const BoxDecoration(
+              color: Colors.black26,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(stackedGreyBackgroundBorderRadius),
+                topRight: Radius.circular(stackedGreyBackgroundBorderRadius),
+              ),
+            ),
+          ),
+        ),
+      );
+
+  /// Stack で重ねている PageView と near_me アイコン部分
+  Widget get _buildStackedPageViewWidget => Positioned(
+        child: Align(
+          alignment: Alignment.bottomCenter,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Container(
+                margin: const EdgeInsets.only(right: 32),
+                width: nearMeCircleSize,
+                height: nearMeCircleSize,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                child: GestureDetector(
+                  onTap: _showHome,
+                  child: const Icon(
+                    Icons.near_me,
+                    size: nearMeIconSize,
+                    color: Colors.white,
                   ),
                 ),
               ),
-            ),
-          ),
-          Positioned(
-            child: Align(
-              alignment: Alignment.bottomCenter,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Container(
-                    margin: const EdgeInsets.only(right: 32),
-                    width: nearMeCircleSize,
-                    height: nearMeCircleSize,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                    child: GestureDetector(
-                      onTap: _showHome,
-                      child: const Icon(
-                        Icons.near_me,
-                        size: nearMeIconSize,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                  const Gap(pageViewVerticalMargin),
-                  SizedBox(
-                    height: stackedGreyBackgroundHeight -
-                        pageViewVerticalMargin * 2 -
-                        nearMeCircleSize -
-                        stackedGreyBackgroundPaddingTop,
-                    child: PageView(
-                      controller: pageController,
-                      physics: const ClampingScrollPhysics(),
-                      children: [
-                        for (final index in List<int>.generate(10, (i) => i)) _buildPageItem(index),
-                      ],
-                    ),
-                  ),
-                  const Gap(pageViewVerticalMargin),
-                ],
+              const Gap(pageViewVerticalMargin),
+              SizedBox(
+                height: stackedGreyBackgroundHeight -
+                    pageViewVerticalMargin * 2 -
+                    nearMeCircleSize -
+                    stackedGreyBackgroundPaddingTop,
+                child: PageView(
+                  controller: pageController,
+                  physics: const ClampingScrollPhysics(),
+                  children: [
+                    for (final index in List<int>.generate(10, (i) => i)) _buildPageItem(index),
+                  ],
+                ),
               ),
-            ),
+              const Gap(pageViewVerticalMargin),
+            ],
           ),
-        ],
-      ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: _mapController == null ? null : _showHome,
-      //   child: const Icon(Icons.home),
-      // ),
-    );
-  }
+        ),
+      );
 
   /// PageView のアイテム
   Widget _buildPageItem(int index) {
@@ -193,7 +195,7 @@ class _MapPageState extends ConsumerState<MapPage> {
                       color: Theme.of(context).colorScheme.primary,
                     ),
                     Text(
-                      '神奈川県小田原市 247 番 3',
+                      '神奈川県小田原市247番3',
                       style: grey12,
                       overflow: TextOverflow.ellipsis,
                       maxLines: 1,

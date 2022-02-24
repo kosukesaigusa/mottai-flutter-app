@@ -82,7 +82,7 @@ class _MapPageState extends ConsumerState<MapPage> {
             child: Align(
               alignment: Alignment.bottomCenter,
               child: SizedBox(
-                height: 120,
+                height: 148,
                 child: PageView(
                   controller: pageController,
                   physics: const ClampingScrollPhysics(),
@@ -114,17 +114,51 @@ class _MapPageState extends ConsumerState<MapPage> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(
-            width: MediaQuery.of(context).size.width / 4,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(16),
-              child: Image.network(
-                'https://www.npo-mottai.org/image/news/2021-10-05-activity-report/image-6.jpg',
+          Center(
+            child: SizedBox(
+              width: MediaQuery.of(context).size.width / 4,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: Image.network(
+                  'https://www.npo-mottai.org/image/news/2021-10-05-activity-report/image-6.jpg',
+                ),
               ),
             ),
           ),
           const Gap(8),
-          Text('$index 番目の農家', style: bold14),
+          Flexible(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('${index + 1} 番目のホスト', style: bold14),
+                const Gap(4),
+                Text(
+                  '神奈川県小田原市でみかんを育てています！'
+                  'みかん収穫のお手伝いをしてくださる方募集中です🍊'
+                  'ぜひお気軽にマッチングリクエストお願いします！',
+                  style: grey12,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 3,
+                ),
+                const Spacer(),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.location_on,
+                      size: 18,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                    Text(
+                      '神奈川県小田原市 247 番 3',
+                      style: grey12,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );

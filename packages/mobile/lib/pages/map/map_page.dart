@@ -8,6 +8,19 @@ import 'package:mottai_flutter_app/theme/theme.dart';
 import 'package:mottai_flutter_app/utils/utils.dart';
 import 'package:rxdart/rxdart.dart';
 
+const double stackedGreyBackgroundHeight = 200;
+const double stackedGreyBackgroundBorderRadius = 36;
+const double stackedGreyBackgroundPaddingTop = 8;
+const double pageViewHeight = 148;
+const double pageViewHorizontalMargin = 4;
+const double pageViewVerticalMargin = 8;
+const double pageViewHorizontalPadding = 8;
+const double pageViewVerticalPadding = 16;
+const double pageViewBorderRadius = 16;
+const double pageViewImageBorderRadius = 16;
+const double nearMeCircleSize = 32;
+const double nearMeIconSize = 20;
+
 class MapPage extends StatefulHookConsumerWidget {
   const MapPage({Key? key}) : super(key: key);
 
@@ -66,13 +79,13 @@ class _MapPageState extends ConsumerState<MapPage> {
             child: Align(
               alignment: Alignment.bottomCenter,
               child: Container(
-                height: 160,
+                height: stackedGreyBackgroundHeight,
                 width: double.infinity,
                 decoration: const BoxDecoration(
                   color: Colors.black26,
                   borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(36),
-                    topRight: Radius.circular(36),
+                    topLeft: Radius.circular(stackedGreyBackgroundBorderRadius),
+                    topRight: Radius.circular(stackedGreyBackgroundBorderRadius),
                   ),
                 ),
               ),
@@ -81,15 +94,40 @@ class _MapPageState extends ConsumerState<MapPage> {
           Positioned(
             child: Align(
               alignment: Alignment.bottomCenter,
-              child: SizedBox(
-                height: 148,
-                child: PageView(
-                  controller: pageController,
-                  physics: const ClampingScrollPhysics(),
-                  children: [
-                    for (final index in List<int>.generate(10, (i) => i)) _buildPageItem(index),
-                  ],
-                ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Container(
+                    margin: const EdgeInsets.only(right: 32),
+                    width: nearMeCircleSize,
+                    height: nearMeCircleSize,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                    child: const Icon(
+                      Icons.near_me,
+                      size: nearMeIconSize,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const Gap(pageViewVerticalMargin),
+                  SizedBox(
+                    height: stackedGreyBackgroundHeight -
+                        pageViewVerticalMargin * 2 -
+                        nearMeCircleSize -
+                        stackedGreyBackgroundPaddingTop,
+                    child: PageView(
+                      controller: pageController,
+                      physics: const ClampingScrollPhysics(),
+                      children: [
+                        for (final index in List<int>.generate(10, (i) => i)) _buildPageItem(index),
+                      ],
+                    ),
+                  ),
+                  const Gap(pageViewVerticalMargin),
+                ],
               ),
             ),
           ),
@@ -105,11 +143,14 @@ class _MapPageState extends ConsumerState<MapPage> {
   /// PageView のアイテム
   Widget _buildPageItem(int index) {
     return Container(
-      margin: const EdgeInsets.only(left: 4, right: 4, bottom: 8),
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+      margin: const EdgeInsets.symmetric(horizontal: pageViewHorizontalMargin),
+      padding: const EdgeInsets.symmetric(
+        horizontal: pageViewHorizontalPadding,
+        vertical: pageViewVerticalPadding,
+      ),
       decoration: const BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.all(Radius.circular(16)),
+        borderRadius: BorderRadius.all(Radius.circular(pageViewBorderRadius)),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -118,7 +159,7 @@ class _MapPageState extends ConsumerState<MapPage> {
             child: SizedBox(
               width: MediaQuery.of(context).size.width / 4,
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(pageViewImageBorderRadius),
                 child: Image.network(
                   'https://www.npo-mottai.org/image/news/2021-10-05-activity-report/image-6.jpg',
                 ),

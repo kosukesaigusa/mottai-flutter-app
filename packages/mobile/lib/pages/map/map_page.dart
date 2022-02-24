@@ -68,6 +68,8 @@ class _MapPageState extends ConsumerState<MapPage> {
       body: Stack(
         children: [
           GoogleMap(
+            myLocationEnabled: true,
+            myLocationButtonEnabled: false,
             onMapCreated: _onMapCreated,
             initialCameraPosition: CameraPosition(
               target: kagurazakaLatLng,

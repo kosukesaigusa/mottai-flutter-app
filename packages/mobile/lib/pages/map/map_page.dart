@@ -106,10 +106,13 @@ class _MapPageState extends ConsumerState<MapPage> {
                       shape: BoxShape.circle,
                       color: Theme.of(context).colorScheme.primary,
                     ),
-                    child: const Icon(
-                      Icons.near_me,
-                      size: nearMeIconSize,
-                      color: Colors.white,
+                    child: GestureDetector(
+                      onTap: _showHome,
+                      child: const Icon(
+                        Icons.near_me,
+                        size: nearMeIconSize,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                   const Gap(pageViewVerticalMargin),

@@ -18,6 +18,13 @@ class App extends StatelessWidget {
       title: 'NPO MOTTAI',
       theme: ThemeData(primarySwatch: Colors.blue),
       home: const ScaffoldMessengerNavigator(),
+      builder: (context, child) {
+        return MediaQuery(
+          // 端末依存のフォントスケールを 1 に固定
+          data: MediaQuery.of(context).copyWith(textScaleFactor: 1),
+          child: child!,
+        );
+      },
     );
   }
 }

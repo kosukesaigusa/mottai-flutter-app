@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:ks_flutter_commons/ks_flutter_commons.dart';
 import 'package:mottai_flutter_app/app.dart';
@@ -15,6 +16,8 @@ Future<void> main() async {
   if (flavor == 'local') {
     await setUpLocalEmulator();
   }
+  // 画面の向きを固定
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   await initialize();
   runApp(
     const RootWidget(

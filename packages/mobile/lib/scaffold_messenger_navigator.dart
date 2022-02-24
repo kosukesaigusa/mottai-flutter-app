@@ -16,10 +16,10 @@ class ScaffoldMessengerNavigator extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return ScaffoldMessenger(
-      key: ref.watch(scaffoldMessengerController).scaffoldMessengerKey,
+      key: ref.watch(scaffoldMessengerController.select((c) => c.scaffoldMessengerKey)),
       child: Scaffold(
         body: Navigator(
-          key: ref.watch(scaffoldMessengerController).navigatorKey,
+          key: ref.watch(scaffoldMessengerController.select((c) => c.navigatorKey)),
           initialRoute: AppRouter.initialRoute,
           onGenerateRoute: appRouter.generateRoute,
           onUnknownRoute: (settings) {

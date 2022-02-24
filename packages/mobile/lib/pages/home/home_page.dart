@@ -81,7 +81,8 @@ class HomePage extends StatelessWidget {
         print('*****************************');
         await showDialog<void>(
           context: context,
-          builder: (_) {
+          barrierDismissible: false,
+          builder: (context) {
             return AlertDialog(
               title: const Text('FCM トークン'),
               content: Column(
@@ -99,7 +100,7 @@ class HomePage extends StatelessWidget {
                     'OK',
                     style: TextStyle(color: Theme.of(context).disabledColor),
                   ),
-                  onPressed: () => Navigator.pop(context),
+                  onPressed: () => Navigator.pop<void>(context),
                 ),
               ],
             );

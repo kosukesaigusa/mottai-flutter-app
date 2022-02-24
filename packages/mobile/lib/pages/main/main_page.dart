@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:mottai_flutter_app/controllers/application/application_controller.dart';
 import 'package:mottai_flutter_app/controllers/bottom_navigation_bar/bottom_navigation_bar_controller.dart';
 import 'package:mottai_flutter_app/route/main_tabs.dart';
 import 'package:mottai_flutter_app/route/utils.dart';
@@ -15,17 +16,17 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
 }
 
-class MainPage extends StatefulWidget {
+class MainPage extends StatefulHookConsumerWidget {
   const MainPage({Key? key}) : super(key: key);
 
   static const path = '/';
   static const name = 'MainPage';
 
   @override
-  State<MainPage> createState() => _MainPageState();
+  ConsumerState<MainPage> createState() => _MainPageState();
 }
 
-class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
+class _MainPageState extends ConsumerState<MainPage> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
@@ -61,7 +62,58 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    return MainPageBody(key: widget.key);
+    return Scaffold(
+      body: Stack(
+        children: [
+          Scaffold(
+            body: Stack(
+              children: [for (final tab in bottomTabs) _buildStackedPages(tab)],
+            ),
+            bottomNavigationBar: BottomNavigationBar(
+              selectedItemColor: Theme.of(context).colorScheme.primary,
+              // BottomTab の画面を切り替える。
+              // 現在表示している状態のタブをタップした場合は画面をすべて pop する。
+              onTap: (index) {
+                FocusScope.of(context).unfocus();
+                final tab = bottomTabs[index].tab;
+                final state = ref.watch(bottomNavigationBarController);
+                final tabNavigatorKey =
+                    ref.watch(applicationController.notifier).navigatorKeys[state.currentTab];
+                if (tabNavigatorKey == null) {
+                  return;
+                }
+                if (tab == state.currentTab) {
+                  tabNavigatorKey.currentState!.popUntil((route) => route.isFirst);
+                  return;
+                }
+                ref.read(bottomNavigationBarController.notifier).changeTab(index: index, tab: tab);
+              },
+              currentIndex: ref.watch(bottomNavigationBarController.select((c) => c.currentIndex)),
+              items: [
+                for (final item in bottomTabs)
+                  BottomNavigationBarItem(
+                    icon: Icon(item.iconData),
+                    label: item.label,
+                  ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// MainPage の BottomNavigationBar で切り替える 3 つの画面
+  Widget _buildStackedPages(BottomTab tab) {
+    final currentIndex = ref.watch(bottomNavigationBarController).currentIndex;
+    final currentTab = bottomTabs[currentIndex];
+    return Offstage(
+      offstage: tab != currentTab,
+      child: TickerMode(
+        enabled: tab == currentTab,
+        child: MainStackedPagesNavigator(tab: tab),
+      ),
+    );
   }
 
   /// プッシュ通知関係の初期化処理を行う
@@ -100,57 +152,5 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
     required Map<String, dynamic> data,
   }) async {
     await Navigator.pushNamed(context, path, arguments: RouteArguments(data));
-  }
-}
-
-/// MainPage の内容
-class MainPageBody extends HookConsumerWidget {
-  const MainPageBody({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final controller = ref.read(bottomNavigationBarController.notifier);
-    final state = ref.watch(bottomNavigationBarController);
-    return Scaffold(
-      body: Stack(
-        children: [
-          Scaffold(
-            body: Stack(
-              children: [
-                for (final item in bottomTabs) _buildStackedPages(ref, item),
-              ],
-            ),
-            bottomNavigationBar: BottomNavigationBar(
-              selectedItemColor: Theme.of(context).colorScheme.primary,
-              onTap: (index) {
-                FocusScope.of(context).unfocus();
-                controller.changeTab(index);
-              },
-              currentIndex: state.currentIndex,
-              items: [
-                for (final item in bottomTabs)
-                  BottomNavigationBarItem(
-                    icon: Icon(item.iconData),
-                    label: item.label,
-                  ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  ///
-  Widget _buildStackedPages(WidgetRef ref, BottomTab tab) {
-    final currentIndex = ref.watch(bottomNavigationBarController).currentIndex;
-    final currentTab = bottomTabs[currentIndex];
-    return Offstage(
-      offstage: tab != currentTab,
-      child: TickerMode(
-        enabled: tab == currentTab,
-        child: MainStackedPagesNavigator(tab: tab),
-      ),
-    );
   }
 }

@@ -288,6 +288,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.4"
+  dart_geohash:
+    dependency: "direct main"
+    description:
+      name: dart_geohash
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.2"
   dart_style:
     dependency: transitive
     description:
@@ -608,7 +615,7 @@ packages:
       name: geoflutterfire
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.0.2"
+    version: "3.0.3"
   glob:
     dependency: transitive
     description:
@@ -805,6 +812,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.1"
+  mottai_flutter_app_models:
+    dependency: "direct main"
+    description:
+      path: "../models"
+      relative: true
+    source: path
+    version: "0.0.1"
   nested:
     dependency: transitive
     description:

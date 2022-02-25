@@ -2,13 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mottai_flutter_app/controllers/application/application_state.dart';
 import 'package:mottai_flutter_app/route/main_tabs.dart';
-import 'package:state_notifier/state_notifier.dart';
 
 final applicationController = StateNotifierProvider<ApplicationController, ApplicationState>(
   (ref) => ApplicationController(),
 );
 
-class ApplicationController extends StateNotifier<ApplicationState> with LocatorMixin {
+class ApplicationController extends StateNotifier<ApplicationState> {
   ApplicationController() : super(const ApplicationState());
 
   // Map<BottomTabEnum, GlobalKey<NavigatorState>> navigatorKeys = {};

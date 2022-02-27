@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
+		3441D72C27CB2DBE0016047C /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3441D72B27CB2DBE0016047C /* GoogleService-Info.plist */; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
 		74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74858FAE1ED2DC5600515810 /* AppDelegate.swift */; };
 		96DE87CD6B57A91435DA0375 /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 27D26EA26E0BDFC36B19A796 /* Pods_Runner.framework */; };
@@ -35,6 +36,7 @@
 		27D26EA26E0BDFC36B19A796 /* Pods_Runner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Runner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		30F0FFD675E30C069B58932B /* Pods-Runner.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig"; sourceTree = "<group>"; };
 		3430C68827C63DD3000A6575 /* Runner.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Runner.entitlements; sourceTree = "<group>"; };
+		3441D72B27CB2DBE0016047C /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		34A613C02787184F00A1C596 /* prod.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = prod.xcconfig; path = Flutter/prod.xcconfig; sourceTree = "<group>"; };
 		34A613C12787187200A1C596 /* dev.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = dev.xcconfig; path = Flutter/dev.xcconfig; sourceTree = "<group>"; };
 		34A613C22787188300A1C596 /* local.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = local.xcconfig; path = Flutter/local.xcconfig; sourceTree = "<group>"; };
@@ -103,6 +105,7 @@
 		97C146F01CF9000F007C117D /* Runner */ = {
 			isa = PBXGroup;
 			children = (
+				3441D72B27CB2DBE0016047C /* GoogleService-Info.plist */,
 				3430C68827C63DD3000A6575 /* Runner.entitlements */,
 				97C146FA1CF9000F007C117D /* Main.storyboard */,
 				97C146FD1CF9000F007C117D /* Assets.xcassets */,
@@ -142,6 +145,7 @@
 			buildConfigurationList = 97C147051CF9000F007C117D /* Build configuration list for PBXNativeTarget "Runner" */;
 			buildPhases = (
 				38953195D5A65316084CA37C /* [CP] Check Pods Manifest.lock */,
+				34A4079E27CB27B100EC9A18 /* Run Script(Select GoogleService-Info.plist) */,
 				9740EEB61CF901F6004384FC /* Run Script */,
 				97C146EA1CF9000F007C117D /* Sources */,
 				97C146EB1CF9000F007C117D /* Frameworks */,
@@ -200,6 +204,7 @@
 			files = (
 				97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */,
 				3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */,
+				3441D72C27CB2DBE0016047C /* GoogleService-Info.plist in Resources */,
 				97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */,
 				97C146FC1CF9000F007C117D /* Main.storyboard in Resources */,
 			);
@@ -208,6 +213,25 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		34A4079E27CB27B100EC9A18 /* Run Script(Select GoogleService-Info.plist) */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Run Script(Select GoogleService-Info.plist)";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(SRCROOT)/GoogleService-Info.plist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\\cp -f ${SRCROOT}/${FLAVOR}/GoogleService-Info.plist ${SRCROOT}/Runner/GoogleService-Info.plist\n";
+		};
 		38953195D5A65316084CA37C /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;

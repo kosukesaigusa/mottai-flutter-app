@@ -12,7 +12,8 @@ import 'package:mottai_flutter_app/services/shared_preferences_service.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   const flavor = String.fromEnvironment('FLAVOR');
-  await Firebase.initializeApp(options: getFirebaseOptions(flavor));
+  // await Firebase.initializeApp(options: getFirebaseOptions(flavor));
+  await Firebase.initializeApp();
   if (flavor == 'local') {
     await setUpLocalEmulator();
   }

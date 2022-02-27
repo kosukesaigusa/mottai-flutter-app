@@ -37,6 +37,7 @@ class MapPage extends StatefulHookConsumerWidget {
 class _MapPageState extends ConsumerState<MapPage> {
   GoogleMapController? _mapController;
   final pageController = PageController(viewportFraction: 0.85);
+  late CameraPosition cameraPosition;
 
   final radiusBehaviorSubject = BehaviorSubject<double>.seeded(1);
   final markers = <MarkerId, Marker>{};
@@ -47,7 +48,7 @@ class _MapPageState extends ConsumerState<MapPage> {
     longitude: 139.7403,
   );
 
-  late Stream<List<DocumentSnapshot>> stream;
+  // late Stream<List<DocumentSnapshot>> stream;
   late Stream<List<DocumentSnapshot<HostLocation>>> typedStream;
   late Geoflutterfire geo;
 
@@ -55,12 +56,7 @@ class _MapPageState extends ConsumerState<MapPage> {
   void initState() {
     super.initState();
     geo = Geoflutterfire();
-    // stream = radius.switchMap((radius) {
-    //   final collectionReference = db.collection('locations');
-    //   return geo
-    //       .collection(collectionRef: collectionReference)
-    //       .within(center: center, radius: radius, field: 'position', strictMode: true);
-    // });
+    cameraPosition = CameraPosition(target: kagurazakaLatLng, zoom: 15);
     typedStream = radiusBehaviorSubject.switchMap((radius) {
       final collectionReference = HostLocationRepository.hostLocationsRef;
       return geo.collectionWithConverter(collectionRef: collectionReference).within(
@@ -100,7 +96,7 @@ class _MapPageState extends ConsumerState<MapPage> {
               zoom: 15,
             ),
             markers: Set<Marker>.of(markers.values),
-            onCameraMove: (cameraPosition) {
+            onCameraIdle: () {
               final latLng = cameraPosition.target;
               // min: 2, max: 21？
               final zoom = cameraPosition.zoom;
@@ -109,6 +105,7 @@ class _MapPageState extends ConsumerState<MapPage> {
               print('(zoom, radius): ($zoom, $radius km)');
               print('----------------------------------------');
               setState(() {
+                markers.clear(); // 悪くない、最適化必要
                 center = Geoflutterfire().point(
                   latitude: latLng.latitude,
                   longitude: latLng.longitude,
@@ -116,6 +113,11 @@ class _MapPageState extends ConsumerState<MapPage> {
                 radiusBehaviorSubject.add(radius);
               });
               typedStream.listen(_updateTypedMarkers);
+            },
+            onCameraMove: (newCameraPosition) {
+              setState(() {
+                cameraPosition = newCameraPosition;
+              });
             },
           ),
           _buildStackedGreyBackGround,
@@ -127,19 +129,16 @@ class _MapPageState extends ConsumerState<MapPage> {
 
   /// GoogleMap の CameraPosition.zoom の値から半径を決定する
   double _radiusFromZoom(double zoom) {
-    if (zoom < 2) {
+    if (zoom < 5) {
       return 500;
     }
-    if (zoom < 5) {
-      return 100;
-    }
     if (zoom < 10) {
-      return 5;
+      return 300;
     }
     if (zoom < 15) {
-      return 1;
+      return 100;
     }
-    return 0.5;
+    return 10;
   }
 
   /// Stack で重ねている画面下部のグレー背景部分
@@ -274,32 +273,20 @@ class _MapPageState extends ConsumerState<MapPage> {
   void _onMapCreated(GoogleMapController controller) {
     setState(() {
       _mapController = controller;
-      // stream.listen(_updateMarkers);
       typedStream.listen(_updateTypedMarkers);
     });
   }
 
   /// locations コレクションの位置情報リストを取得し、そのそれぞれに対して
   /// _addMarker() メソッドをコールして状態変数に格納する
-  void _updateMarkers(List<DocumentSnapshot> documentList) {
-    for (final document in documentList) {
-      final data = document.data() as Map<String, dynamic>?;
-      if (data == null) {
-        continue;
-      }
-      final point = data['position']['geopoint'] as GeoPoint;
-      _addMarker(point.latitude, point.longitude);
-    }
-  }
-
   void _updateTypedMarkers(List<DocumentSnapshot<HostLocation>> hostLocations) {
     for (final location in hostLocations) {
       final data = location.data();
       if (data == null) {
         continue;
       }
-      final point = data.position.geopoint;
-      _addMarker(point.latitude, point.longitude);
+      final geopoint = data.position.geopoint;
+      _addMarker(geopoint.latitude, geopoint.longitude);
     }
   }
 
@@ -370,241 +357,5 @@ class _MapPageState extends ConsumerState<MapPage> {
       //   }
       // });
     }
-  }
-}
-
-class MyApp extends StatefulWidget {
-  @override
-  _MyAppState createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
-  GoogleMapController? _mapController;
-  TextEditingController? _latitudeController, _longitudeController;
-
-  // firestore init
-  final radius = BehaviorSubject<double>.seeded(1);
-  final _firestore = FirebaseFirestore.instance;
-  final markers = <MarkerId, Marker>{};
-
-  late Stream<List<DocumentSnapshot>> stream;
-  late Geoflutterfire geo;
-
-  @override
-  void initState() {
-    super.initState();
-    _latitudeController = TextEditingController();
-    _longitudeController = TextEditingController();
-
-    geo = Geoflutterfire();
-    final center = geo.point(latitude: 12.960632, longitude: 77.641603);
-    stream = radius.switchMap((rad) {
-      final collectionReference = _firestore.collection('locations');
-
-      return geo
-          .collection(collectionRef: collectionReference)
-          .within(center: center, radius: rad, field: 'position', strictMode: true);
-
-      /*
-      ****Example to specify nested object****
-
-      var collectionReference = _firestore.collection('nestedLocations');
-//          .where('name', isEqualTo: 'darshan');
-      return geo.collection(collectionRef: collectionReference).within(
-          center: center, radius: rad, field: 'address.location.position');
-
-      */
-    });
-  }
-
-  @override
-  void dispose() {
-    _latitudeController?.dispose();
-    _longitudeController?.dispose();
-    radius.close();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final mediaQuery = MediaQuery.of(context);
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('GeoFlutterFire'),
-          actions: <Widget>[
-            IconButton(
-              onPressed: _mapController == null ? null : _showHome,
-              icon: const Icon(Icons.home),
-            )
-          ],
-        ),
-        body: Container(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Center(
-                child: Card(
-                  elevation: 4,
-                  margin: const EdgeInsets.symmetric(vertical: 8),
-                  child: SizedBox(
-                    width: mediaQuery.size.width - 30,
-                    height: mediaQuery.size.height * (1 / 3),
-                    child: GoogleMap(
-                      onMapCreated: _onMapCreated,
-                      initialCameraPosition: const CameraPosition(
-                        target: LatLng(12.960632, 77.641603),
-                        zoom: 15,
-                      ),
-                      markers: Set<Marker>.of(markers.values),
-                    ),
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 8),
-                child: Slider(
-                  min: 1,
-                  max: 200,
-                  divisions: 4,
-                  value: _value,
-                  label: _label,
-                  activeColor: Colors.blue,
-                  inactiveColor: Colors.blue.withOpacity(0.2),
-                  onChanged: changed,
-                ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  SizedBox(
-                    width: 100,
-                    child: TextField(
-                      controller: _latitudeController,
-                      keyboardType: TextInputType.number,
-                      textInputAction: TextInputAction.next,
-                      decoration: InputDecoration(
-                          labelText: 'lat',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          )),
-                    ),
-                  ),
-                  SizedBox(
-                    width: 100,
-                    child: TextField(
-                      controller: _longitudeController,
-                      keyboardType: TextInputType.number,
-                      decoration: InputDecoration(
-                          labelText: 'lng',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          )),
-                    ),
-                  ),
-                  MaterialButton(
-                    color: Colors.blue,
-                    onPressed: () {
-                      final lat = double.parse(_latitudeController?.text ?? '0.0');
-                      final lng = double.parse(_longitudeController?.text ?? '0.0');
-                      _addPoint(lat, lng);
-                    },
-                    child: const Text(
-                      'ADD',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  )
-                ],
-              ),
-              MaterialButton(
-                color: Colors.amber,
-                child: const Text(
-                  'Add nested ',
-                  style: TextStyle(color: Colors.white),
-                ),
-                onPressed: () {
-                  final lat = double.parse(_latitudeController?.text ?? '0.0');
-                  final lng = double.parse(_longitudeController?.text ?? '0.0');
-                  _addNestedPoint(lat, lng);
-                },
-              )
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  void _onMapCreated(GoogleMapController controller) {
-    setState(() {
-      _mapController = controller;
-//      _showHome();
-      //start listening after map is created
-      stream.listen(_updateMarkers);
-    });
-  }
-
-  void _showHome() {
-    _mapController?.animateCamera(CameraUpdate.newCameraPosition(
-      const CameraPosition(
-        target: LatLng(12.960632, 77.641603),
-        zoom: 15,
-      ),
-    ));
-  }
-
-  void _addPoint(double lat, double lng) {
-    final geoFirePoint = geo.point(latitude: lat, longitude: lng);
-    _firestore
-        .collection('locations')
-        .add(<String, dynamic>{'name': 'random name', 'position': geoFirePoint.data}).then((_) {
-      print('added ${geoFirePoint.hash} successfully');
-    });
-  }
-
-  //example to add geoFirePoint inside nested object
-  void _addNestedPoint(double lat, double lng) {
-    final geoFirePoint = geo.point(latitude: lat, longitude: lng);
-    _firestore.collection('nestedLocations').add(<String, dynamic>{
-      'name': 'random name',
-      'address': {
-        'location': <String, dynamic>{'position': geoFirePoint.data}
-      }
-    }).then((_) {
-      print('added ${geoFirePoint.hash} successfully');
-    });
-  }
-
-  void _addMarker(double lat, double lng) {
-    final id = MarkerId(lat.toString() + lng.toString());
-    final _marker = Marker(
-      markerId: id,
-      position: LatLng(lat, lng),
-      icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueViolet),
-      infoWindow: InfoWindow(title: 'latLng', snippet: '$lat,$lng'),
-    );
-    setState(() {
-      markers[id] = _marker;
-    });
-  }
-
-  void _updateMarkers(List<DocumentSnapshot> documentList) {
-    for (final document in documentList) {
-      final data = document.data()! as Map<String, dynamic>;
-      final point = data['position']['geopoint'] as GeoPoint;
-      _addMarker(point.latitude, point.longitude);
-    }
-  }
-
-  double _value = 20;
-  String _label = '';
-
-  void changed(double value) {
-    setState(() {
-      _value = value;
-      _label = '${_value.toInt().toString()} kms';
-      markers.clear();
-    });
-    radius.add(value);
   }
 }

@@ -32,7 +32,9 @@ dependencies:
   freezed: ^1.1.0
   freezed_annotation: ^1.1.0
   gap: ^2.0.0
-  geoflutterfire: ^3.0.3
+  # geoflutterfire: ^3.0.3
+  geoflutterfire:
+    path: ../geoflutterfire
   google_fonts: ^2.1.0
   google_maps_flutter: ^2.1.1
   hooks_riverpod: ^1.0.3

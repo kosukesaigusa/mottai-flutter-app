@@ -612,9 +612,9 @@ packages:
   geoflutterfire:
     dependency: "direct main"
     description:
-      name: geoflutterfire
-      url: "https://pub.dartlang.org"
-    source: hosted
+      path: "../geoflutterfire"
+      relative: true
+    source: path
     version: "3.0.3"
   glob:
     dependency: transitive

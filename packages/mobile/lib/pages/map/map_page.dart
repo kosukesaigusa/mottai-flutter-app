@@ -60,7 +60,6 @@ class _MapPageState extends ConsumerState<MapPage> {
     longitude: initialLocation.longitude,
   );
 
-  // late Stream<List<DocumentSnapshot>> stream;
   late Stream<List<DocumentSnapshot<HostLocation>>> typedStream;
   late Geoflutterfire geo;
 
@@ -69,31 +68,13 @@ class _MapPageState extends ConsumerState<MapPage> {
     super.initState();
     Future<void>(() async {
       geo = Geoflutterfire();
-      final serviceEnabled = await Geolocator.isLocationServiceEnabled();
-      if (!serviceEnabled) {
-        return;
-      }
-
-      final permission = await Geolocator.checkPermission();
-      if (permission == LocationPermission.denied) {
-        final permission = await Geolocator.requestPermission();
-        if (permission == LocationPermission.denied) {
-          return;
-        }
-      }
-
-      if (permission == LocationPermission.deniedForever) {
-        return;
-      }
-      // When we reach here, permissions are granted and we can
-      // continue accessing the position of the device.
-      final currentPosition = await Geolocator.getCurrentPosition();
-      center = GeoFirePoint(currentPosition.latitude, currentPosition.longitude);
+      final p = await currentPosition;
+      center = GeoFirePoint(
+        p?.latitude ?? initialLocation.latitude,
+        p?.longitude ?? initialLocation.longitude,
+      );
       cameraPosition = CameraPosition(
-        target: LatLng(
-          currentPosition.latitude,
-          currentPosition.longitude,
-        ),
+        target: LatLng(center.latitude, center.longitude),
         zoom: debugZoomLevel,
       );
       typedStream = radiusBehaviorSubject.switchMap((radius) {
@@ -234,12 +215,7 @@ class _MapPageState extends ConsumerState<MapPage> {
                       final latLng = cameraPosition.target;
                       final zoom = value;
                       final radius = getRadiusFromZoom(zoom);
-                      _mapController?.animateCamera(CameraUpdate.newCameraPosition(
-                        CameraPosition(
-                          target: latLng,
-                          zoom: zoom,
-                        ),
-                      ));
+                      _updateCameraPosition(latLng: latLng, zoom: zoom);
                       setState(() {
                         markers.clear();
                         debugRadius = radius.toInt();
@@ -295,7 +271,7 @@ class _MapPageState extends ConsumerState<MapPage> {
                   color: Theme.of(context).colorScheme.primary,
                 ),
                 child: GestureDetector(
-                  onTap: _showHome,
+                  onTap: _backToOriginalPosition,
                   child: const Icon(
                     Icons.near_me,
                     size: nearMeIconSize,
@@ -425,39 +401,48 @@ class _MapPageState extends ConsumerState<MapPage> {
     });
   }
 
-  Future<void> _showHome() async {
+  /// Zoom と CameraPosition を元に戻す
+  Future<void> _backToOriginalPosition() async {
+    final p = await currentPosition;
+    await _updateCameraPosition(
+      latLng: LatLng(
+        p?.latitude ?? initialLocation.latitude,
+        p?.longitude ?? initialLocation.longitude,
+      ),
+      zoom: initialZoomLevel,
+    );
+  }
+
+  /// カメラポジションとズームを移動する
+  Future<void> _updateCameraPosition({
+    required LatLng latLng,
+    required double zoom,
+  }) async {
+    await _mapController!.animateCamera(CameraUpdate.newCameraPosition(
+      CameraPosition(target: latLng, zoom: zoom),
+    ));
+  }
+
+  /// 位置情報の許可を確認して、許可されている場合は現在の位置を返す
+  Future<Position?> get currentPosition async {
     final serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
-      return;
+      return null;
     }
-
     final permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       final permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
-        return;
+        return null;
       }
     }
-
     if (permission == LocationPermission.deniedForever) {
-      return;
+      return null;
     }
-    // When we reach here, permissions are granted and we can
-    // continue accessing the position of the device.
-    final currentPosition = await Geolocator.getCurrentPosition();
-    await _mapController!.animateCamera(CameraUpdate.newCameraPosition(
-      CameraPosition(
-        target: LatLng(currentPosition.latitude, currentPosition.longitude),
-        zoom: initialZoomLevel,
-      ),
-    ));
+    return Geolocator.getCurrentPosition();
   }
 
-  void changed(double value) {
-    // setState(markers.clear);
-    radiusBehaviorSubject.add(value);
-  }
-
+  /// シードデータを作成する
   Future<void> _setSeedLocationData() async {
     final batch = db.batch();
     for (var i = 0; i < 500; i++) {
@@ -509,6 +494,5 @@ class _MapPageState extends ConsumerState<MapPage> {
     }
     await batch.commit();
     print('バッチコミットしました');
-    showFloatingSnackBar(context, '完了しました');
   }
 }

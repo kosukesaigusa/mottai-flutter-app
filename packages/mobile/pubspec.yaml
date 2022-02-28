@@ -35,6 +35,7 @@ dependencies:
   # geoflutterfire: ^3.0.3
   geoflutterfire:
     path: ../geoflutterfire
+  geolocator: ^8.2.0
   google_fonts: ^2.1.0
   google_maps_flutter: ^2.1.1
   hooks_riverpod: ^1.0.3

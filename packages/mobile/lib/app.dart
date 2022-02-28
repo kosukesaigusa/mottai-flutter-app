@@ -16,7 +16,9 @@ class App extends StatelessWidget {
       localizationsDelegates: localizationsDelegates,
       supportedLocales: const [locale],
       title: 'NPO MOTTAI',
-      theme: ThemeData(primarySwatch: Colors.blue),
+      theme: ThemeData(primarySwatch: Colors.blue).copyWith(
+        sliderTheme: SliderThemeData(overlayShape: SliderComponentShape.noOverlay),
+      ),
       home: const ScaffoldMessengerNavigator(),
       builder: (context, child) {
         return MediaQuery(

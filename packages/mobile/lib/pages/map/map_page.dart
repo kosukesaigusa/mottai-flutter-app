@@ -2,15 +2,20 @@ import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:gap/gap.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:ks_flutter_commons/ks_flutter_commons.dart';
-import 'package:mottai_flutter_app/theme/theme.dart';
-import 'package:mottai_flutter_app/utils/utils.dart';
 import 'package:mottai_flutter_app_models/models.dart';
 import 'package:rxdart/rxdart.dart';
+
+import '../../theme/theme.dart';
+import '../../utils/geo.dart';
+import '../../utils/utils.dart';
 
 const double stackedGreyBackgroundHeight = 200;
 const double stackedGreyBackgroundBorderRadius = 36;
@@ -41,17 +46,18 @@ class _MapPageState extends ConsumerState<MapPage> {
   late CameraPosition cameraPosition;
 
   /// デバッグ確認用の半径・ズームレベル
-  int debugRadius = 1;
-  double debugZoomLevel = 15;
+  int debugRadius = initialRadius;
+  double debugZoomLevel = initialZoomLevel;
 
-  ///
+  /// 準備中
+  bool ready = false;
+
+  /// 半径の変更を監視する
   final radiusBehaviorSubject = BehaviorSubject<double>.seeded(1);
   final markers = <MarkerId, Marker>{};
-  // final kagurazakaLatLng = const LatLng(31.921651553011934, 138.20455801498437);
-  final kagurazakaLatLng = const LatLng(35.7015, 139.7403);
   GeoFirePoint center = Geoflutterfire().point(
-    latitude: 35.7015,
-    longitude: 139.7403,
+    latitude: initialLocation.latitude,
+    longitude: initialLocation.longitude,
   );
 
   // late Stream<List<DocumentSnapshot>> stream;
@@ -61,17 +67,48 @@ class _MapPageState extends ConsumerState<MapPage> {
   @override
   void initState() {
     super.initState();
-    geo = Geoflutterfire();
-    cameraPosition = CameraPosition(target: kagurazakaLatLng, zoom: debugZoomLevel);
-    typedStream = radiusBehaviorSubject.switchMap((radius) {
-      final collectionReference = HostLocationRepository.hostLocationsRef;
-      return geo.collectionWithConverter(collectionRef: collectionReference).within(
-            center: center,
-            radius: radius,
-            field: 'position',
-            geopointFrom: (hostLocation) => hostLocation.position.geopoint,
-            strictMode: true,
-          );
+    Future<void>(() async {
+      geo = Geoflutterfire();
+      final serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        return;
+      }
+
+      final permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        final permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          return;
+        }
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        return;
+      }
+      // When we reach here, permissions are granted and we can
+      // continue accessing the position of the device.
+      final currentPosition = await Geolocator.getCurrentPosition();
+      center = GeoFirePoint(currentPosition.latitude, currentPosition.longitude);
+      cameraPosition = CameraPosition(
+        target: LatLng(
+          currentPosition.latitude,
+          currentPosition.longitude,
+        ),
+        zoom: debugZoomLevel,
+      );
+      typedStream = radiusBehaviorSubject.switchMap((radius) {
+        final collectionReference = HostLocationRepository.hostLocationsRef;
+        return geo.collectionWithConverter(collectionRef: collectionReference).within(
+              center: center,
+              radius: radius,
+              field: 'position',
+              geopointFrom: (hostLocation) => hostLocation.position.geopoint,
+              strictMode: true,
+            );
+      });
+      setState(() {
+        ready = true;
+      });
     });
   }
 
@@ -85,50 +122,67 @@ class _MapPageState extends ConsumerState<MapPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          await _setSeedLocationData();
-        },
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: const SystemUiOverlayStyle(
+        // TODO: ライトモード・ダークモードの切り替えに対応する。
+        statusBarIconBrightness: Brightness.light,
+        statusBarBrightness: Brightness.light,
       ),
-      body: Stack(
-        children: [
-          GoogleMap(
-            myLocationEnabled: true,
-            myLocationButtonEnabled: false,
-            minMaxZoomPreference: const MinMaxZoomPreference(5, 17),
-            onMapCreated: _onMapCreated,
-            initialCameraPosition: CameraPosition(
-              target: kagurazakaLatLng,
-              zoom: debugZoomLevel,
-            ),
-            markers: Set<Marker>.of(markers.values),
-            onCameraIdle: () {
-              final latLng = cameraPosition.target;
-              final zoom = cameraPosition.zoom;
-              final radius = _radiusFromZoom(zoom);
-              setState(() {
-                markers.clear();
-                debugRadius = radius.toInt();
-                debugZoomLevel = zoom;
-                center = Geoflutterfire().point(
-                  latitude: latLng.latitude,
-                  longitude: latLng.longitude,
-                );
-                radiusBehaviorSubject.add(radius);
-              });
-              typedStream.listen(_updateTypedMarkers);
-            },
-            onCameraMove: (newCameraPosition) {
-              setState(() {
-                cameraPosition = newCameraPosition;
-              });
-            },
-          ),
-          _buildStackedTopIndicator,
-          _buildStackedGreyBackGround,
-          _buildStackedPageViewWidget,
-        ],
+      child: Scaffold(
+        body: ready
+            ? Stack(
+                children: [
+                  GoogleMap(
+                    myLocationEnabled: true,
+                    myLocationButtonEnabled: false,
+                    circles: {
+                      Circle(
+                        circleId: const CircleId('value'),
+                        center: LatLng(center.latitude, center.longitude),
+                        radius: debugRadius.toDouble() * 1000,
+                        fillColor: Colors.black12,
+                        strokeWidth: 0,
+                      ),
+                    },
+                    minMaxZoomPreference: const MinMaxZoomPreference(minZoomLevel, maxZoomLevel),
+                    onMapCreated: _onMapCreated,
+                    initialCameraPosition: CameraPosition(
+                      target: LatLng(center.latitude, center.longitude),
+                      zoom: debugZoomLevel,
+                    ),
+                    markers: Set<Marker>.of(markers.values),
+                    onCameraIdle: () {
+                      final latLng = cameraPosition.target;
+                      final zoom = cameraPosition.zoom;
+                      final radius = getRadiusFromZoom(zoom);
+                      setState(() {
+                        markers.clear();
+                        debugRadius = radius.toInt();
+                        debugZoomLevel = zoom;
+                        center = Geoflutterfire().point(
+                          latitude: latLng.latitude,
+                          longitude: latLng.longitude,
+                        );
+                        radiusBehaviorSubject.add(radius);
+                      });
+                    },
+                    onCameraMove: (newCameraPosition) {
+                      setState(() {
+                        cameraPosition = newCameraPosition;
+                      });
+                    },
+                  ),
+                  _buildStackedTopIndicator,
+                  _buildStackedGreyBackGround,
+                  _buildStackedPageViewWidget,
+                ],
+              )
+            : SpinKitCircle(size: 48, color: Theme.of(context).colorScheme.primary),
+        // floatingActionButton: FloatingActionButton(
+        //   onPressed: () async {
+        //     await _setSeedLocationData();
+        //   },
+        // ),
       ),
     );
   }
@@ -140,8 +194,6 @@ class _MapPageState extends ConsumerState<MapPage> {
           child: Container(
             margin: const EdgeInsets.only(top: 48, left: 16, right: 16),
             padding: const EdgeInsets.all(8),
-            height: 80,
-            width: double.infinity,
             decoration: const BoxDecoration(
               color: Colors.black54,
               borderRadius: BorderRadius.all(Radius.circular(16)),
@@ -149,8 +201,10 @@ class _MapPageState extends ConsumerState<MapPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: [
-                const Text('デバッグ用', style: whiteBold12),
+                const Text('デバッグウィンドウ', style: whiteBold12),
+                const Gap(8),
                 Text(
                   'Center: (lat, lng) = ('
                   '${(center.geoPoint.latitude * 1000).round() / 1000}, '
@@ -165,6 +219,41 @@ class _MapPageState extends ConsumerState<MapPage> {
                   'Radius: ${addComma(debugRadius)} km',
                   style: white12,
                 ),
+                const Text(
+                  '検出範囲は、画面中央を中心とする薄灰色の円の内側です。',
+                  style: white12,
+                ),
+                const Gap(8),
+                Slider(
+                  min: minZoomLevel,
+                  max: maxZoomLevel,
+                  divisions: (maxZoomLevel - minZoomLevel).toInt(),
+                  value: debugZoomLevel,
+                  onChanged: (value) {
+                    setState(() {
+                      final latLng = cameraPosition.target;
+                      final zoom = value;
+                      final radius = getRadiusFromZoom(zoom);
+                      _mapController?.animateCamera(CameraUpdate.newCameraPosition(
+                        CameraPosition(
+                          target: latLng,
+                          zoom: zoom,
+                        ),
+                      ));
+                      setState(() {
+                        markers.clear();
+                        debugRadius = radius.toInt();
+                        debugZoomLevel = zoom;
+                        center = Geoflutterfire().point(
+                          latitude: latLng.latitude,
+                          longitude: latLng.longitude,
+                        );
+                        radiusBehaviorSubject.add(radius);
+                      });
+                    });
+                  },
+                ),
+                const Gap(8),
               ],
             ),
           ),
@@ -336,11 +425,30 @@ class _MapPageState extends ConsumerState<MapPage> {
     });
   }
 
-  void _showHome() {
-    _mapController!.animateCamera(CameraUpdate.newCameraPosition(
+  Future<void> _showHome() async {
+    final serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      return;
+    }
+
+    final permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      final permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return;
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      return;
+    }
+    // When we reach here, permissions are granted and we can
+    // continue accessing the position of the device.
+    final currentPosition = await Geolocator.getCurrentPosition();
+    await _mapController!.animateCamera(CameraUpdate.newCameraPosition(
       CameraPosition(
-        target: kagurazakaLatLng,
-        zoom: 15,
+        target: LatLng(currentPosition.latitude, currentPosition.longitude),
+        zoom: initialZoomLevel,
       ),
     ));
   }
@@ -379,7 +487,7 @@ class _MapPageState extends ConsumerState<MapPage> {
             'みかん収穫のお手伝いをしてくださる方募集中です🍊'
             'ぜひお気軽にマッチングリクエストお願いします！',
         imageURL: 'https://www.npo-mottai.org/image/news/2021-10-05-activity-report/image-6.jpg',
-        position: Position(
+        position: FirestorePosition(
           geohash: geoFirePoint.data['geohash'] as String,
           geopoint: geoFirePoint.data['geopoint'] as GeoPoint,
         ),
@@ -403,28 +511,4 @@ class _MapPageState extends ConsumerState<MapPage> {
     print('バッチコミットしました');
     showFloatingSnackBar(context, '完了しました');
   }
-
-  /// GoogleMap の CameraPosition.zoom の値から半径を決定する
-  double _radiusFromZoom(double zoom) {
-    if (zoom < 6) {
-      return 200;
-    }
-    if (zoom < 8) {
-      return 100;
-    }
-    if (zoom < 10) {
-      return 50;
-    }
-    if (zoom < 12) {
-      return 10;
-    }
-    if (zoom < 15) {
-      return 5;
-    }
-    return 2;
-  }
-
-  /// 度・分・秒 の緯度・経度を
-  double doubleFromDegree({required int degree, int minute = 0, int second = 0}) =>
-      degree + minute / 60 + second / 60 / 60;
 }

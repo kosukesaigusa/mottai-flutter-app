@@ -6,6 +6,7 @@ import 'package:gap/gap.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:ks_flutter_commons/ks_flutter_commons.dart';
 import 'package:mottai_flutter_app/theme/theme.dart';
 import 'package:mottai_flutter_app/utils/utils.dart';
 import 'package:mottai_flutter_app_models/models.dart';
@@ -39,6 +40,11 @@ class _MapPageState extends ConsumerState<MapPage> {
   final pageController = PageController(viewportFraction: 0.85);
   late CameraPosition cameraPosition;
 
+  /// デバッグ確認用の半径・ズームレベル
+  int debugRadius = 1;
+  double debugZoomLevel = 15;
+
+  ///
   final radiusBehaviorSubject = BehaviorSubject<double>.seeded(1);
   final markers = <MarkerId, Marker>{};
   // final kagurazakaLatLng = const LatLng(31.921651553011934, 138.20455801498437);
@@ -56,7 +62,7 @@ class _MapPageState extends ConsumerState<MapPage> {
   void initState() {
     super.initState();
     geo = Geoflutterfire();
-    cameraPosition = CameraPosition(target: kagurazakaLatLng, zoom: 15);
+    cameraPosition = CameraPosition(target: kagurazakaLatLng, zoom: debugZoomLevel);
     typedStream = radiusBehaviorSubject.switchMap((radius) {
       final collectionReference = HostLocationRepository.hostLocationsRef;
       return geo.collectionWithConverter(collectionRef: collectionReference).within(
@@ -80,32 +86,31 @@ class _MapPageState extends ConsumerState<MapPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () async {
-      //     await _setSeedLocationData();
-      //   },
-      // ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          await _setSeedLocationData();
+        },
+      ),
       body: Stack(
         children: [
           GoogleMap(
             myLocationEnabled: true,
             myLocationButtonEnabled: false,
+            minMaxZoomPreference: const MinMaxZoomPreference(5, 17),
             onMapCreated: _onMapCreated,
             initialCameraPosition: CameraPosition(
               target: kagurazakaLatLng,
-              zoom: 15,
+              zoom: debugZoomLevel,
             ),
             markers: Set<Marker>.of(markers.values),
             onCameraIdle: () {
               final latLng = cameraPosition.target;
-              // min: 2, max: 21？
               final zoom = cameraPosition.zoom;
               final radius = _radiusFromZoom(zoom);
-              print('----------------------------------------');
-              print('(zoom, radius): ($zoom, $radius km)');
-              print('----------------------------------------');
               setState(() {
-                markers.clear(); // 悪くない、最適化必要
+                markers.clear();
+                debugRadius = radius.toInt();
+                debugZoomLevel = zoom;
                 center = Geoflutterfire().point(
                   latitude: latLng.latitude,
                   longitude: latLng.longitude,
@@ -120,6 +125,7 @@ class _MapPageState extends ConsumerState<MapPage> {
               });
             },
           ),
+          _buildStackedTopIndicator,
           _buildStackedGreyBackGround,
           _buildStackedPageViewWidget,
         ],
@@ -127,19 +133,43 @@ class _MapPageState extends ConsumerState<MapPage> {
     );
   }
 
-  /// GoogleMap の CameraPosition.zoom の値から半径を決定する
-  double _radiusFromZoom(double zoom) {
-    if (zoom < 5) {
-      return 500;
-    }
-    if (zoom < 10) {
-      return 300;
-    }
-    if (zoom < 15) {
-      return 100;
-    }
-    return 10;
-  }
+  /// Stack で重ねているデバッグ用のズームレベル、半径のインジケータ
+  Widget get _buildStackedTopIndicator => Positioned(
+        child: Align(
+          alignment: Alignment.topCenter,
+          child: Container(
+            margin: const EdgeInsets.only(top: 48, left: 16, right: 16),
+            padding: const EdgeInsets.all(8),
+            height: 80,
+            width: double.infinity,
+            decoration: const BoxDecoration(
+              color: Colors.black54,
+              borderRadius: BorderRadius.all(Radius.circular(16)),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('デバッグ用', style: whiteBold12),
+                Text(
+                  'Center: (lat, lng) = ('
+                  '${(center.geoPoint.latitude * 1000).round() / 1000}, '
+                  '${(center.geoPoint.longitude * 1000).round() / 1000})',
+                  style: white12,
+                ),
+                Text(
+                  'Zoom level: ${(debugZoomLevel * 100).round() / 100}',
+                  style: white12,
+                ),
+                Text(
+                  'Radius: ${addComma(debugRadius)} km',
+                  style: white12,
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
 
   /// Stack で重ねている画面下部のグレー背景部分
   Widget get _buildStackedGreyBackGround => Positioned(
@@ -321,21 +351,28 @@ class _MapPageState extends ConsumerState<MapPage> {
   }
 
   Future<void> _setSeedLocationData() async {
-    for (var i = 0; i < 1000; i++) {
+    final batch = db.batch();
+    for (var i = 0; i < 500; i++) {
       final hostLocationId = uuid;
       final random = Random();
-      const minLatitude = 20.2531;
-      const maxLatitude = 35.5354;
-      const minLongitude = 136.0411;
-      const maxLongitude = 139.0106;
+      // 日本
+      final minLatitude = doubleFromDegree(degree: 33, minute: 13, second: 04);
+      final maxLatitude = doubleFromDegree(degree: 43, minute: 23, second: 06);
+      final minLongitude = doubleFromDegree(degree: 129, minute: 33, second: 09);
+      final maxLongitude = doubleFromDegree(degree: 145, minute: 48, second: 58);
+      // 小田原市
+      // final minLatitude = doubleFromDegree(degree: 35, minute: 10, second: 41);
+      // final maxLatitude = doubleFromDegree(degree: 35, minute: 19, second: 48);
+      // final minLongitude = doubleFromDegree(degree: 139, minute: 03, second: 37);
+      // final maxLongitude = doubleFromDegree(degree: 139, minute: 14, second: 18);
       final f1 = random.nextDouble();
       final f2 = random.nextDouble();
       final latitude = minLatitude + (maxLatitude - minLatitude) * f1;
       final longitude = minLongitude + (maxLongitude - minLongitude) * f2;
       final geoFirePoint = geo.point(latitude: latitude, longitude: longitude);
       final hostLocation = HostLocation(
-        hostLocationId: hostLocationId,
-        title: '${i + 1} 番目のホスト',
+        hostLocationId: uuid,
+        title: 'ホスト：${uuid.substring(0, 15)}',
         hostId: uuid,
         address: '東京都あいうえお区かきくけこ1-2-3',
         description: '神奈川県小田原市でみかんを育てています！'
@@ -343,13 +380,18 @@ class _MapPageState extends ConsumerState<MapPage> {
             'ぜひお気軽にマッチングリクエストお願いします！',
         imageURL: 'https://www.npo-mottai.org/image/news/2021-10-05-activity-report/image-6.jpg',
         position: Position(
-          geohash: geoFirePoint.data['hash'] as String,
-          geopoint: geoFirePoint.data['point'] as GeoPoint,
+          geohash: geoFirePoint.data['geohash'] as String,
+          geopoint: geoFirePoint.data['geopoint'] as GeoPoint,
         ),
       );
-      await HostLocationRepository.hostLocationRef(
-        hostLocationId: hostLocationId,
-      ).set(hostLocation);
+      // await HostLocationRepository.hostLocationRef(
+      //   hostLocationId: hostLocationId,
+      // ).set(hostLocation);
+      batch.set(
+        HostLocationRepository.hostLocationRef(hostLocationId: hostLocationId),
+        hostLocation,
+      );
+      print('${i + 1} 番目書き込み完了');
       // await db.collection('locations').doc(hostLocationId).set(<String, dynamic>{
       //   'position': <String, dynamic>{
       //     'geohash': geohash,
@@ -357,5 +399,32 @@ class _MapPageState extends ConsumerState<MapPage> {
       //   }
       // });
     }
+    await batch.commit();
+    print('バッチコミットしました');
+    showFloatingSnackBar(context, '完了しました');
   }
+
+  /// GoogleMap の CameraPosition.zoom の値から半径を決定する
+  double _radiusFromZoom(double zoom) {
+    if (zoom < 6) {
+      return 200;
+    }
+    if (zoom < 8) {
+      return 100;
+    }
+    if (zoom < 10) {
+      return 50;
+    }
+    if (zoom < 12) {
+      return 10;
+    }
+    if (zoom < 15) {
+      return 5;
+    }
+    return 2;
+  }
+
+  /// 度・分・秒 の緯度・経度を
+  double doubleFromDegree({required int degree, int minute = 0, int second = 0}) =>
+      degree + minute / 60 + second / 60 / 60;
 }

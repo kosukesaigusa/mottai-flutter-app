@@ -2,7 +2,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 const double viewportFraction = 0.85;
 const int initialRadius = 300;
-const double initialZoomLevel = 5;
+const double initialZoomLevel = 10;
 const double minZoomLevel = 5;
 const double maxZoomLevel = 17;
 const initialLocation = LatLng(35.6812, 139.7671);

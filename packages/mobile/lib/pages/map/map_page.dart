@@ -230,19 +230,7 @@ class _MapPageState extends ConsumerState<MapPage> {
               child: PageView(
                 controller: controller.pageController,
                 physics: const ClampingScrollPhysics(),
-                onPageChanged: (index) async {
-                  // PageView のスワイプによるカメラ移動では
-                  // 検出範囲をリセットしない
-                  controller.disableResetDetection();
-                  // ページビューを移動した先の HostLocation インスタンス
-                  final hostLocation = state.hostLocationsOnMap.elementAt(index);
-                  final geopoint = hostLocation.position.geopoint;
-                  final zoomLevel = await controller.googleMapController.getZoomLevel();
-                  await controller.updateCameraPosition(
-                    latLng: LatLng(geopoint.latitude, geopoint.longitude),
-                    zoom: zoomLevel,
-                  );
-                },
+                onPageChanged: controller.onPageChanged,
                 children: [
                   for (final hostLocation in state.hostLocationsOnMap) _buildPageItem(hostLocation),
                 ],

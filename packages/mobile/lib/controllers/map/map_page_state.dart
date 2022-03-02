@@ -15,5 +15,6 @@ class MapPageState with _$MapPageState {
     @Default(<MarkerId, Marker>{}) Map<MarkerId, Marker> markers,
     @Default(<HostLocation>[]) List<HostLocation> hostLocationsOnMap,
     @Default(initialLocation) LatLng center,
+    HostLocation? selectedHostLocation,
   }) = _MapPageState;
 }

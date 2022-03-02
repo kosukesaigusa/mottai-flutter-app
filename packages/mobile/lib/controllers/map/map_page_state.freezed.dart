@@ -19,15 +19,21 @@ class _$MapPageStateTearOff {
   const _$MapPageStateTearOff();
 
   _MapPageState call(
-      {bool loading = true,
-      GeoFirePoint? center,
-      List<HostLocation> locations = const <HostLocation>[],
-      List<GeoPoint> locations2 = const <GeoPoint>[]}) {
+      {bool ready = false,
+      int debugRadius = initialRadius,
+      double debugZoomLevel = initialZoomLevel,
+      bool resetDetection = true,
+      Map<MarkerId, Marker> markers = const <MarkerId, Marker>{},
+      List<HostLocation> hostLocationsOnMap = const <HostLocation>[],
+      LatLng center = initialLocation}) {
     return _MapPageState(
-      loading: loading,
+      ready: ready,
+      debugRadius: debugRadius,
+      debugZoomLevel: debugZoomLevel,
+      resetDetection: resetDetection,
+      markers: markers,
+      hostLocationsOnMap: hostLocationsOnMap,
       center: center,
-      locations: locations,
-      locations2: locations2,
     );
   }
 }
@@ -37,10 +43,14 @@ const $MapPageState = _$MapPageStateTearOff();
 
 /// @nodoc
 mixin _$MapPageState {
-  bool get loading => throw _privateConstructorUsedError;
-  GeoFirePoint? get center => throw _privateConstructorUsedError;
-  List<HostLocation> get locations => throw _privateConstructorUsedError;
-  List<GeoPoint> get locations2 => throw _privateConstructorUsedError;
+  bool get ready => throw _privateConstructorUsedError;
+  int get debugRadius => throw _privateConstructorUsedError;
+  double get debugZoomLevel => throw _privateConstructorUsedError;
+  bool get resetDetection => throw _privateConstructorUsedError;
+  Map<MarkerId, Marker> get markers => throw _privateConstructorUsedError;
+  List<HostLocation> get hostLocationsOnMap =>
+      throw _privateConstructorUsedError;
+  LatLng get center => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $MapPageStateCopyWith<MapPageState> get copyWith =>
@@ -53,10 +63,13 @@ abstract class $MapPageStateCopyWith<$Res> {
           MapPageState value, $Res Function(MapPageState) then) =
       _$MapPageStateCopyWithImpl<$Res>;
   $Res call(
-      {bool loading,
-      GeoFirePoint? center,
-      List<HostLocation> locations,
-      List<GeoPoint> locations2});
+      {bool ready,
+      int debugRadius,
+      double debugZoomLevel,
+      bool resetDetection,
+      Map<MarkerId, Marker> markers,
+      List<HostLocation> hostLocationsOnMap,
+      LatLng center});
 }
 
 /// @nodoc
@@ -69,28 +82,43 @@ class _$MapPageStateCopyWithImpl<$Res> implements $MapPageStateCopyWith<$Res> {
 
   @override
   $Res call({
-    Object? loading = freezed,
+    Object? ready = freezed,
+    Object? debugRadius = freezed,
+    Object? debugZoomLevel = freezed,
+    Object? resetDetection = freezed,
+    Object? markers = freezed,
+    Object? hostLocationsOnMap = freezed,
     Object? center = freezed,
-    Object? locations = freezed,
-    Object? locations2 = freezed,
   }) {
     return _then(_value.copyWith(
-      loading: loading == freezed
-          ? _value.loading
-          : loading // ignore: cast_nullable_to_non_nullable
+      ready: ready == freezed
+          ? _value.ready
+          : ready // ignore: cast_nullable_to_non_nullable
               as bool,
+      debugRadius: debugRadius == freezed
+          ? _value.debugRadius
+          : debugRadius // ignore: cast_nullable_to_non_nullable
+              as int,
+      debugZoomLevel: debugZoomLevel == freezed
+          ? _value.debugZoomLevel
+          : debugZoomLevel // ignore: cast_nullable_to_non_nullable
+              as double,
+      resetDetection: resetDetection == freezed
+          ? _value.resetDetection
+          : resetDetection // ignore: cast_nullable_to_non_nullable
+              as bool,
+      markers: markers == freezed
+          ? _value.markers
+          : markers // ignore: cast_nullable_to_non_nullable
+              as Map<MarkerId, Marker>,
+      hostLocationsOnMap: hostLocationsOnMap == freezed
+          ? _value.hostLocationsOnMap
+          : hostLocationsOnMap // ignore: cast_nullable_to_non_nullable
+              as List<HostLocation>,
       center: center == freezed
           ? _value.center
           : center // ignore: cast_nullable_to_non_nullable
-              as GeoFirePoint?,
-      locations: locations == freezed
-          ? _value.locations
-          : locations // ignore: cast_nullable_to_non_nullable
-              as List<HostLocation>,
-      locations2: locations2 == freezed
-          ? _value.locations2
-          : locations2 // ignore: cast_nullable_to_non_nullable
-              as List<GeoPoint>,
+              as LatLng,
     ));
   }
 }
@@ -103,10 +131,13 @@ abstract class _$MapPageStateCopyWith<$Res>
       __$MapPageStateCopyWithImpl<$Res>;
   @override
   $Res call(
-      {bool loading,
-      GeoFirePoint? center,
-      List<HostLocation> locations,
-      List<GeoPoint> locations2});
+      {bool ready,
+      int debugRadius,
+      double debugZoomLevel,
+      bool resetDetection,
+      Map<MarkerId, Marker> markers,
+      List<HostLocation> hostLocationsOnMap,
+      LatLng center});
 }
 
 /// @nodoc
@@ -121,28 +152,43 @@ class __$MapPageStateCopyWithImpl<$Res> extends _$MapPageStateCopyWithImpl<$Res>
 
   @override
   $Res call({
-    Object? loading = freezed,
+    Object? ready = freezed,
+    Object? debugRadius = freezed,
+    Object? debugZoomLevel = freezed,
+    Object? resetDetection = freezed,
+    Object? markers = freezed,
+    Object? hostLocationsOnMap = freezed,
     Object? center = freezed,
-    Object? locations = freezed,
-    Object? locations2 = freezed,
   }) {
     return _then(_MapPageState(
-      loading: loading == freezed
-          ? _value.loading
-          : loading // ignore: cast_nullable_to_non_nullable
+      ready: ready == freezed
+          ? _value.ready
+          : ready // ignore: cast_nullable_to_non_nullable
               as bool,
+      debugRadius: debugRadius == freezed
+          ? _value.debugRadius
+          : debugRadius // ignore: cast_nullable_to_non_nullable
+              as int,
+      debugZoomLevel: debugZoomLevel == freezed
+          ? _value.debugZoomLevel
+          : debugZoomLevel // ignore: cast_nullable_to_non_nullable
+              as double,
+      resetDetection: resetDetection == freezed
+          ? _value.resetDetection
+          : resetDetection // ignore: cast_nullable_to_non_nullable
+              as bool,
+      markers: markers == freezed
+          ? _value.markers
+          : markers // ignore: cast_nullable_to_non_nullable
+              as Map<MarkerId, Marker>,
+      hostLocationsOnMap: hostLocationsOnMap == freezed
+          ? _value.hostLocationsOnMap
+          : hostLocationsOnMap // ignore: cast_nullable_to_non_nullable
+              as List<HostLocation>,
       center: center == freezed
           ? _value.center
           : center // ignore: cast_nullable_to_non_nullable
-              as GeoFirePoint?,
-      locations: locations == freezed
-          ? _value.locations
-          : locations // ignore: cast_nullable_to_non_nullable
-              as List<HostLocation>,
-      locations2: locations2 == freezed
-          ? _value.locations2
-          : locations2 // ignore: cast_nullable_to_non_nullable
-              as List<GeoPoint>,
+              as LatLng,
     ));
   }
 }
@@ -151,26 +197,39 @@ class __$MapPageStateCopyWithImpl<$Res> extends _$MapPageStateCopyWithImpl<$Res>
 
 class _$_MapPageState implements _MapPageState {
   const _$_MapPageState(
-      {this.loading = true,
-      this.center,
-      this.locations = const <HostLocation>[],
-      this.locations2 = const <GeoPoint>[]});
+      {this.ready = false,
+      this.debugRadius = initialRadius,
+      this.debugZoomLevel = initialZoomLevel,
+      this.resetDetection = true,
+      this.markers = const <MarkerId, Marker>{},
+      this.hostLocationsOnMap = const <HostLocation>[],
+      this.center = initialLocation});
 
   @JsonKey()
   @override
-  final bool loading;
-  @override
-  final GeoFirePoint? center;
+  final bool ready;
   @JsonKey()
   @override
-  final List<HostLocation> locations;
+  final int debugRadius;
   @JsonKey()
   @override
-  final List<GeoPoint> locations2;
+  final double debugZoomLevel;
+  @JsonKey()
+  @override
+  final bool resetDetection;
+  @JsonKey()
+  @override
+  final Map<MarkerId, Marker> markers;
+  @JsonKey()
+  @override
+  final List<HostLocation> hostLocationsOnMap;
+  @JsonKey()
+  @override
+  final LatLng center;
 
   @override
   String toString() {
-    return 'MapPageState(loading: $loading, center: $center, locations: $locations, locations2: $locations2)';
+    return 'MapPageState(ready: $ready, debugRadius: $debugRadius, debugZoomLevel: $debugZoomLevel, resetDetection: $resetDetection, markers: $markers, hostLocationsOnMap: $hostLocationsOnMap, center: $center)';
   }
 
   @override
@@ -178,20 +237,29 @@ class _$_MapPageState implements _MapPageState {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _MapPageState &&
-            const DeepCollectionEquality().equals(other.loading, loading) &&
-            const DeepCollectionEquality().equals(other.center, center) &&
-            const DeepCollectionEquality().equals(other.locations, locations) &&
+            const DeepCollectionEquality().equals(other.ready, ready) &&
             const DeepCollectionEquality()
-                .equals(other.locations2, locations2));
+                .equals(other.debugRadius, debugRadius) &&
+            const DeepCollectionEquality()
+                .equals(other.debugZoomLevel, debugZoomLevel) &&
+            const DeepCollectionEquality()
+                .equals(other.resetDetection, resetDetection) &&
+            const DeepCollectionEquality().equals(other.markers, markers) &&
+            const DeepCollectionEquality()
+                .equals(other.hostLocationsOnMap, hostLocationsOnMap) &&
+            const DeepCollectionEquality().equals(other.center, center));
   }
 
   @override
   int get hashCode => Object.hash(
       runtimeType,
-      const DeepCollectionEquality().hash(loading),
-      const DeepCollectionEquality().hash(center),
-      const DeepCollectionEquality().hash(locations),
-      const DeepCollectionEquality().hash(locations2));
+      const DeepCollectionEquality().hash(ready),
+      const DeepCollectionEquality().hash(debugRadius),
+      const DeepCollectionEquality().hash(debugZoomLevel),
+      const DeepCollectionEquality().hash(resetDetection),
+      const DeepCollectionEquality().hash(markers),
+      const DeepCollectionEquality().hash(hostLocationsOnMap),
+      const DeepCollectionEquality().hash(center));
 
   @JsonKey(ignore: true)
   @override
@@ -201,19 +269,28 @@ class _$_MapPageState implements _MapPageState {
 
 abstract class _MapPageState implements MapPageState {
   const factory _MapPageState(
-      {bool loading,
-      GeoFirePoint? center,
-      List<HostLocation> locations,
-      List<GeoPoint> locations2}) = _$_MapPageState;
+      {bool ready,
+      int debugRadius,
+      double debugZoomLevel,
+      bool resetDetection,
+      Map<MarkerId, Marker> markers,
+      List<HostLocation> hostLocationsOnMap,
+      LatLng center}) = _$_MapPageState;
 
   @override
-  bool get loading;
+  bool get ready;
   @override
-  GeoFirePoint? get center;
+  int get debugRadius;
   @override
-  List<HostLocation> get locations;
+  double get debugZoomLevel;
   @override
-  List<GeoPoint> get locations2;
+  bool get resetDetection;
+  @override
+  Map<MarkerId, Marker> get markers;
+  @override
+  List<HostLocation> get hostLocationsOnMap;
+  @override
+  LatLng get center;
   @override
   @JsonKey(ignore: true)
   _$MapPageStateCopyWith<_MapPageState> get copyWith =>

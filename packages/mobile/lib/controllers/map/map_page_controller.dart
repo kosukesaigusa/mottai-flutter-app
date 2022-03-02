@@ -19,6 +19,7 @@ class MapPageController extends StateNotifier<MapPageState> {
     initialize();
   }
 
+  /// マップ・ページビュー関係のコントローラなど
   final pageController = PageController(viewportFraction: viewportFraction);
   late GoogleMapController googleMapController;
   late CameraPosition cameraPosition;
@@ -53,14 +54,6 @@ class MapPageController extends StateNotifier<MapPageState> {
     state = state.copyWith(ready: true);
   }
 
-  @override
-  void dispose() {
-    googleMapController.dispose();
-    pageController.dispose();
-    radiusBehaviorSubject.close();
-    super.dispose();
-  }
-
   /// Map の初回描画時に実行する
   void onMapCreated(GoogleMapController controller) {
     googleMapController = controller;
@@ -84,28 +77,71 @@ class MapPageController extends StateNotifier<MapPageState> {
   /// 緯度・経度の組をもとにした ID をキーにMap 型で取り扱っているので
   /// Marker が重複することはない。
   void _addMarker(HostLocation hostLocation) {
+    final marker = _getMarkerFromHostLocation(hostLocation);
+    final currentMarkers = state.markers;
+    currentMarkers[marker.markerId] = marker;
+    state = state.copyWith(
+      markers: currentMarkers,
+      hostLocationsOnMap: [...state.hostLocationsOnMap, hostLocation],
+    );
+  }
+
+  /// HostLocation から GoogleMap の Marker を作成して返す
+  Marker _getMarkerFromHostLocation(HostLocation hostLocation) {
     final geopoint = hostLocation.position.geopoint;
     final lat = geopoint.latitude;
     final lng = geopoint.longitude;
-    final markerId = MarkerId(lat.toString() + lng.toString());
-    final marker = Marker(
+    final markerId = _getMarkerIdFromLatLng(LatLng(lat, lng));
+    return Marker(
       markerId: markerId,
       position: LatLng(lat, lng),
-      icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+      icon: BitmapDescriptor.defaultMarkerWithHue(
+        state.selectedHostLocation == hostLocation
+            ? BitmapDescriptor.hueBlue
+            : BitmapDescriptor.hueRed,
+      ),
       onTap: () async {
         enableResetDetection();
         await updateCameraPosition(latLng: LatLng(lat, lng), zoom: state.debugZoomLevel);
+        // マーカーの色を更新する？
+        updateSelectedMarker(
+          oldMarkerId: state.selectedHostLocation == null
+              ? null
+              : _getMarkerIdFromLatLng(LatLng(
+                  state.selectedHostLocation!.position.geopoint.latitude,
+                  state.selectedHostLocation!.position.geopoint.longitude,
+                )),
+          oldHostLocation: state.selectedHostLocation,
+          newMarkerId: markerId,
+          newHostLocation: hostLocation,
+        );
         // 移動・状態更新後の index を取得する
         final index = state.hostLocationsOnMap.indexWhere((l) => hostLocation == l);
+        state = state.copyWith(selectedHostLocation: hostLocation);
         pageController.jumpToPage(index);
       },
     );
-    final markers = state.markers;
-    markers[markerId] = marker;
-    state = state.copyWith(
-      markers: markers,
-      hostLocationsOnMap: [...state.hostLocationsOnMap, hostLocation],
-    );
+  }
+
+  ///
+  MarkerId _getMarkerIdFromLatLng(LatLng latLng) {
+    return MarkerId(latLng.latitude.toString() + latLng.longitude.toString());
+  }
+
+  ///
+  void updateSelectedMarker({
+    required MarkerId? oldMarkerId,
+    required MarkerId newMarkerId,
+    required HostLocation? oldHostLocation,
+    required HostLocation newHostLocation,
+  }) {
+    state = state.copyWith(selectedHostLocation: newHostLocation);
+    final currentMarkers = state.markers;
+    if (oldMarkerId != null && oldHostLocation != null) {
+      currentMarkers[oldMarkerId] = _getMarkerFromHostLocation(oldHostLocation);
+    }
+    currentMarkers[newMarkerId] = _getMarkerFromHostLocation(newHostLocation);
+    state = state.copyWith(markers: currentMarkers);
   }
 
   /// カメラポジションとズームを移動する
@@ -116,6 +152,35 @@ class MapPageController extends StateNotifier<MapPageState> {
     await googleMapController.animateCamera(CameraUpdate.newCameraPosition(
       CameraPosition(target: latLng, zoom: zoom),
     ));
+  }
+
+  ///
+  Future<void> onPageChanged(int index) async {
+    // PageView のスワイプによるカメラ移動では
+    // 検出範囲をリセットしない
+    disableResetDetection();
+    // ページビューを移動した先の HostLocation インスタンス
+    final hostLocation = state.hostLocationsOnMap.elementAt(index);
+    final geopoint = hostLocation.position.geopoint;
+    final zoomLevel = await googleMapController.getZoomLevel();
+    await updateCameraPosition(
+      latLng: LatLng(geopoint.latitude, geopoint.longitude),
+      zoom: zoomLevel,
+    );
+    updateSelectedMarker(
+      oldMarkerId: state.selectedHostLocation == null
+          ? null
+          : _getMarkerIdFromLatLng(LatLng(
+              state.selectedHostLocation!.position.geopoint.latitude,
+              state.selectedHostLocation!.position.geopoint.longitude,
+            )),
+      oldHostLocation: state.selectedHostLocation,
+      newMarkerId: _getMarkerIdFromLatLng(LatLng(
+        hostLocation.position.geopoint.latitude,
+        hostLocation.position.geopoint.longitude,
+      )),
+      newHostLocation: hostLocation,
+    );
   }
 
   /// Zoom と CameraPosition を元に戻す
@@ -178,5 +243,13 @@ class MapPageController extends StateNotifier<MapPageState> {
   ///
   void disableResetDetection() {
     state = state.copyWith(resetDetection: false);
+  }
+
+  @override
+  void dispose() {
+    googleMapController.dispose();
+    pageController.dispose();
+    radiusBehaviorSubject.close();
+    super.dispose();
   }
 }

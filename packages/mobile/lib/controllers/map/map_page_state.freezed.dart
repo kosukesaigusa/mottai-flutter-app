@@ -25,7 +25,8 @@ class _$MapPageStateTearOff {
       bool resetDetection = true,
       Map<MarkerId, Marker> markers = const <MarkerId, Marker>{},
       List<HostLocation> hostLocationsOnMap = const <HostLocation>[],
-      LatLng center = initialLocation}) {
+      LatLng center = initialLocation,
+      HostLocation? selectedHostLocation}) {
     return _MapPageState(
       ready: ready,
       debugRadius: debugRadius,
@@ -34,6 +35,7 @@ class _$MapPageStateTearOff {
       markers: markers,
       hostLocationsOnMap: hostLocationsOnMap,
       center: center,
+      selectedHostLocation: selectedHostLocation,
     );
   }
 }
@@ -51,6 +53,7 @@ mixin _$MapPageState {
   List<HostLocation> get hostLocationsOnMap =>
       throw _privateConstructorUsedError;
   LatLng get center => throw _privateConstructorUsedError;
+  HostLocation? get selectedHostLocation => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $MapPageStateCopyWith<MapPageState> get copyWith =>
@@ -69,7 +72,10 @@ abstract class $MapPageStateCopyWith<$Res> {
       bool resetDetection,
       Map<MarkerId, Marker> markers,
       List<HostLocation> hostLocationsOnMap,
-      LatLng center});
+      LatLng center,
+      HostLocation? selectedHostLocation});
+
+  $HostLocationCopyWith<$Res>? get selectedHostLocation;
 }
 
 /// @nodoc
@@ -89,6 +95,7 @@ class _$MapPageStateCopyWithImpl<$Res> implements $MapPageStateCopyWith<$Res> {
     Object? markers = freezed,
     Object? hostLocationsOnMap = freezed,
     Object? center = freezed,
+    Object? selectedHostLocation = freezed,
   }) {
     return _then(_value.copyWith(
       ready: ready == freezed
@@ -119,7 +126,22 @@ class _$MapPageStateCopyWithImpl<$Res> implements $MapPageStateCopyWith<$Res> {
           ? _value.center
           : center // ignore: cast_nullable_to_non_nullable
               as LatLng,
+      selectedHostLocation: selectedHostLocation == freezed
+          ? _value.selectedHostLocation
+          : selectedHostLocation // ignore: cast_nullable_to_non_nullable
+              as HostLocation?,
     ));
+  }
+
+  @override
+  $HostLocationCopyWith<$Res>? get selectedHostLocation {
+    if (_value.selectedHostLocation == null) {
+      return null;
+    }
+
+    return $HostLocationCopyWith<$Res>(_value.selectedHostLocation!, (value) {
+      return _then(_value.copyWith(selectedHostLocation: value));
+    });
   }
 }
 
@@ -137,7 +159,11 @@ abstract class _$MapPageStateCopyWith<$Res>
       bool resetDetection,
       Map<MarkerId, Marker> markers,
       List<HostLocation> hostLocationsOnMap,
-      LatLng center});
+      LatLng center,
+      HostLocation? selectedHostLocation});
+
+  @override
+  $HostLocationCopyWith<$Res>? get selectedHostLocation;
 }
 
 /// @nodoc
@@ -159,6 +185,7 @@ class __$MapPageStateCopyWithImpl<$Res> extends _$MapPageStateCopyWithImpl<$Res>
     Object? markers = freezed,
     Object? hostLocationsOnMap = freezed,
     Object? center = freezed,
+    Object? selectedHostLocation = freezed,
   }) {
     return _then(_MapPageState(
       ready: ready == freezed
@@ -189,6 +216,10 @@ class __$MapPageStateCopyWithImpl<$Res> extends _$MapPageStateCopyWithImpl<$Res>
           ? _value.center
           : center // ignore: cast_nullable_to_non_nullable
               as LatLng,
+      selectedHostLocation: selectedHostLocation == freezed
+          ? _value.selectedHostLocation
+          : selectedHostLocation // ignore: cast_nullable_to_non_nullable
+              as HostLocation?,
     ));
   }
 }
@@ -203,7 +234,8 @@ class _$_MapPageState implements _MapPageState {
       this.resetDetection = true,
       this.markers = const <MarkerId, Marker>{},
       this.hostLocationsOnMap = const <HostLocation>[],
-      this.center = initialLocation});
+      this.center = initialLocation,
+      this.selectedHostLocation});
 
   @JsonKey()
   @override
@@ -226,10 +258,12 @@ class _$_MapPageState implements _MapPageState {
   @JsonKey()
   @override
   final LatLng center;
+  @override
+  final HostLocation? selectedHostLocation;
 
   @override
   String toString() {
-    return 'MapPageState(ready: $ready, debugRadius: $debugRadius, debugZoomLevel: $debugZoomLevel, resetDetection: $resetDetection, markers: $markers, hostLocationsOnMap: $hostLocationsOnMap, center: $center)';
+    return 'MapPageState(ready: $ready, debugRadius: $debugRadius, debugZoomLevel: $debugZoomLevel, resetDetection: $resetDetection, markers: $markers, hostLocationsOnMap: $hostLocationsOnMap, center: $center, selectedHostLocation: $selectedHostLocation)';
   }
 
   @override
@@ -247,7 +281,9 @@ class _$_MapPageState implements _MapPageState {
             const DeepCollectionEquality().equals(other.markers, markers) &&
             const DeepCollectionEquality()
                 .equals(other.hostLocationsOnMap, hostLocationsOnMap) &&
-            const DeepCollectionEquality().equals(other.center, center));
+            const DeepCollectionEquality().equals(other.center, center) &&
+            const DeepCollectionEquality()
+                .equals(other.selectedHostLocation, selectedHostLocation));
   }
 
   @override
@@ -259,7 +295,8 @@ class _$_MapPageState implements _MapPageState {
       const DeepCollectionEquality().hash(resetDetection),
       const DeepCollectionEquality().hash(markers),
       const DeepCollectionEquality().hash(hostLocationsOnMap),
-      const DeepCollectionEquality().hash(center));
+      const DeepCollectionEquality().hash(center),
+      const DeepCollectionEquality().hash(selectedHostLocation));
 
   @JsonKey(ignore: true)
   @override
@@ -275,7 +312,8 @@ abstract class _MapPageState implements MapPageState {
       bool resetDetection,
       Map<MarkerId, Marker> markers,
       List<HostLocation> hostLocationsOnMap,
-      LatLng center}) = _$_MapPageState;
+      LatLng center,
+      HostLocation? selectedHostLocation}) = _$_MapPageState;
 
   @override
   bool get ready;
@@ -291,6 +329,8 @@ abstract class _MapPageState implements MapPageState {
   List<HostLocation> get hostLocationsOnMap;
   @override
   LatLng get center;
+  @override
+  HostLocation? get selectedHostLocation;
   @override
   @JsonKey(ignore: true)
   _$MapPageStateCopyWith<_MapPageState> get copyWith =>

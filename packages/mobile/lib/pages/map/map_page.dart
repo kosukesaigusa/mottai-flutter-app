@@ -52,15 +52,28 @@ class _MapPageState extends ConsumerState<MapPage> {
   /// 準備中
   bool ready = false;
 
+  /// 検出範囲を変更するかどうか
+  bool resetDetection = true;
+
   /// 半径の変更を監視する
   final radiusBehaviorSubject = BehaviorSubject<double>.seeded(1);
+
+  /// マップ上に表示するマーカー
   final markers = <MarkerId, Marker>{};
+
+  /// マップ上に表示するマーカーに対応する HostLocation
+  final hostLocationsOnMap = <HostLocation>[];
+
+  /// 最後にタップしたマーカーに対応する HostLocation
+  HostLocation? lastTappedHostLocation;
+
+  /// マップの中心
   GeoFirePoint center = Geoflutterfire().point(
     latitude: initialLocation.latitude,
     longitude: initialLocation.longitude,
   );
 
-  late Stream<List<DocumentSnapshot<HostLocation>>> typedStream;
+  late Stream<List<DocumentSnapshot<HostLocation>>> hostLocationsStream;
   late Geoflutterfire geo;
 
   @override
@@ -77,7 +90,7 @@ class _MapPageState extends ConsumerState<MapPage> {
         target: LatLng(center.latitude, center.longitude),
         zoom: debugZoomLevel,
       );
-      typedStream = radiusBehaviorSubject.switchMap((radius) {
+      hostLocationsStream = radiusBehaviorSubject.switchMap((radius) {
         final collectionReference = HostLocationRepository.hostLocationsRef;
         return geo.collectionWithConverter(collectionRef: collectionReference).within(
               center: center,
@@ -133,19 +146,22 @@ class _MapPageState extends ConsumerState<MapPage> {
                     ),
                     markers: Set<Marker>.of(markers.values),
                     onCameraIdle: () {
-                      final latLng = cameraPosition.target;
-                      final zoom = cameraPosition.zoom;
-                      final radius = getRadiusFromZoom(zoom);
-                      setState(() {
-                        markers.clear();
-                        debugRadius = radius.toInt();
-                        debugZoomLevel = zoom;
-                        center = Geoflutterfire().point(
-                          latitude: latLng.latitude,
-                          longitude: latLng.longitude,
+                      // マップのドラッグ操作による移動およびズームの変更のときのみ。
+                      // 検出範囲をリセットする。
+                      if (resetDetection) {
+                        final zoom = cameraPosition.zoom;
+                        _updateDetectionRange(
+                          latLng: cameraPosition.target,
+                          r: getRadiusFromZoom(zoom),
+                          zoom: zoom,
                         );
-                        radiusBehaviorSubject.add(radius);
-                      });
+                      } else {
+                        // PageView のスワイプによるカメラ移動ではここが動作する。
+                        // 次のマップのドラッグ操作・ズーム変更に備えて true に更新する。
+                        setState(() {
+                          resetDetection = true;
+                        });
+                      }
                     },
                     onCameraMove: (newCameraPosition) {
                       setState(() {
@@ -186,6 +202,10 @@ class _MapPageState extends ConsumerState<MapPage> {
               children: [
                 const Text('デバッグウィンドウ', style: whiteBold12),
                 const Gap(8),
+                const Text(
+                  '検出範囲は、画面中央を中心とする薄灰色の円の内側です。',
+                  style: white12,
+                ),
                 Text(
                   'Center: (lat, lng) = ('
                   '${(center.geoPoint.latitude * 1000).round() / 1000}, '
@@ -200,10 +220,14 @@ class _MapPageState extends ConsumerState<MapPage> {
                   'Radius: ${addComma(debugRadius)} km',
                   style: white12,
                 ),
-                const Text(
-                  '検出範囲は、画面中央を中心とする薄灰色の円の内側です。',
+                Text(
+                  '検出件数：${addComma(markers.length)} 件',
                   style: white12,
                 ),
+                // Text(
+                //   '選択中: ${selectedHostLocation?.hostLocationId ?? ''}',
+                //   style: white12,
+                // ),
                 const Gap(8),
                 Slider(
                   min: minZoomLevel,
@@ -214,18 +238,8 @@ class _MapPageState extends ConsumerState<MapPage> {
                     setState(() {
                       final latLng = cameraPosition.target;
                       final zoom = value;
-                      final radius = getRadiusFromZoom(zoom);
                       _updateCameraPosition(latLng: latLng, zoom: zoom);
-                      setState(() {
-                        markers.clear();
-                        debugRadius = radius.toInt();
-                        debugZoomLevel = zoom;
-                        center = Geoflutterfire().point(
-                          latitude: latLng.latitude,
-                          longitude: latLng.longitude,
-                        );
-                        radiusBehaviorSubject.add(radius);
-                      });
+                      _updateDetectionRange(latLng: latLng, r: getRadiusFromZoom(zoom), zoom: zoom);
                     });
                   },
                 ),
@@ -288,8 +302,23 @@ class _MapPageState extends ConsumerState<MapPage> {
                 child: PageView(
                   controller: pageController,
                   physics: const ClampingScrollPhysics(),
+                  onPageChanged: (index) async {
+                    // PageView のスワイプによるカメラ移動では
+                    // 検出範囲をリセットしない
+                    setState(() {
+                      resetDetection = false;
+                    });
+                    // ページビューを移動した先の HostLocation インスタンス
+                    final hostLocation = hostLocationsOnMap.elementAt(index);
+                    final geopoint = hostLocation.position.geopoint;
+                    final zoomLevel = await _mapController!.getZoomLevel();
+                    await _updateCameraPosition(
+                      latLng: LatLng(geopoint.latitude, geopoint.longitude),
+                      zoom: zoomLevel,
+                    );
+                  },
                   children: [
-                    for (final index in List<int>.generate(10, (i) => i)) _buildPageItem(index),
+                    for (final hostLocation in hostLocationsOnMap) _buildPageItem(hostLocation),
                   ],
                 ),
               ),
@@ -300,7 +329,7 @@ class _MapPageState extends ConsumerState<MapPage> {
       );
 
   /// PageView のアイテム
-  Widget _buildPageItem(int index) {
+  Widget _buildPageItem(HostLocation hostLocation) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: pageViewHorizontalMargin),
       padding: const EdgeInsets.symmetric(
@@ -330,7 +359,12 @@ class _MapPageState extends ConsumerState<MapPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('${index + 1} 番目のホスト', style: bold14),
+                Text(
+                  hostLocation.hostLocationId,
+                  style: bold14,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                ),
                 const Gap(4),
                 Text(
                   '神奈川県小田原市でみかんを育てています！'
@@ -368,20 +402,19 @@ class _MapPageState extends ConsumerState<MapPage> {
   void _onMapCreated(GoogleMapController controller) {
     setState(() {
       _mapController = controller;
-      typedStream.listen(_updateTypedMarkers);
+      hostLocationsStream.listen(_updateMarkers);
     });
   }
 
   /// locations コレクションの位置情報リストを取得し、そのそれぞれに対して
   /// _addMarker() メソッドをコールして状態変数に格納する
-  void _updateTypedMarkers(List<DocumentSnapshot<HostLocation>> hostLocations) {
-    for (final location in hostLocations) {
-      final data = location.data();
-      if (data == null) {
+  void _updateMarkers(List<DocumentSnapshot<HostLocation>> documentSnapshots) {
+    for (final ds in documentSnapshots) {
+      final hostLocation = ds.data();
+      if (hostLocation == null) {
         continue;
       }
-      final geopoint = data.position.geopoint;
-      _addMarker(geopoint.latitude, geopoint.longitude);
+      _addMarker(hostLocation);
     }
   }
 
@@ -389,16 +422,42 @@ class _MapPageState extends ConsumerState<MapPage> {
   /// その位置情報を状態変数の Map に格納する。
   /// 緯度・経度の組をもとにした ID をキーにMap 型で取り扱っているので
   /// Marker が重複することはない。
-  void _addMarker(double lat, double lng) {
-    final id = MarkerId(lat.toString() + lng.toString());
-    final _marker = Marker(
-      markerId: id,
+  void _addMarker(HostLocation hostLocation) {
+    final geopoint = hostLocation.position.geopoint;
+    final lat = geopoint.latitude;
+    final lng = geopoint.longitude;
+    final markerId = MarkerId(lat.toString() + lng.toString());
+    final marker = Marker(
+      markerId: markerId,
       position: LatLng(lat, lng),
       icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+      onTap: () async {
+        setState(() {
+          resetDetection = true;
+        });
+        await _updateCameraPosition(latLng: LatLng(lat, lng), zoom: debugZoomLevel);
+        // 移動・状態更新後の index を取得する
+        final index = hostLocationsOnMap.indexWhere((l) => hostLocation == l);
+        setState(() {
+          lastTappedHostLocation = hostLocation;
+        });
+        pageController.jumpToPage(index);
+      },
     );
     setState(() {
-      markers[id] = _marker;
+      markers[markerId] = marker;
+      hostLocationsOnMap.add(hostLocation);
     });
+  }
+
+  /// カメラポジションとズームを移動する
+  Future<void> _updateCameraPosition({
+    required LatLng latLng,
+    required double zoom,
+  }) async {
+    await _mapController!.animateCamera(CameraUpdate.newCameraPosition(
+      CameraPosition(target: latLng, zoom: zoom),
+    ));
   }
 
   /// Zoom と CameraPosition を元に戻す
@@ -413,14 +472,23 @@ class _MapPageState extends ConsumerState<MapPage> {
     );
   }
 
-  /// カメラポジションとズームを移動する
-  Future<void> _updateCameraPosition({
+  /// 表示中のピンをリセットして検出範囲を更新する
+  void _updateDetectionRange({
     required LatLng latLng,
+    required double r,
     required double zoom,
-  }) async {
-    await _mapController!.animateCamera(CameraUpdate.newCameraPosition(
-      CameraPosition(target: latLng, zoom: zoom),
-    ));
+  }) {
+    setState(() {
+      markers.clear();
+      hostLocationsOnMap.clear();
+      debugRadius = r.toInt();
+      debugZoomLevel = zoom;
+      center = Geoflutterfire().point(
+        latitude: latLng.latitude,
+        longitude: latLng.longitude,
+      );
+      radiusBehaviorSubject.add(r);
+    });
   }
 
   /// 位置情報の許可を確認して、許可されている場合は現在の位置を返す

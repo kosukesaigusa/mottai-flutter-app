@@ -133,15 +133,14 @@ class _MainPageState extends ConsumerState<MainPage> with WidgetsBindingObserver
       print('data: $data');
       print('*****************************');
       if (remoteMessage.data.containsKey('path')) {
-        // 通知を元にページ遷移する
         await _navigateByNotification(path: path, data: data);
       }
     }
 
-    /// background (!= terminated) の状態から
+    /// foreground or background (!= terminated) の状態から
     /// 通知によってアプリを開いた場合に発火する。
     FirebaseMessaging.onMessageOpenedApp.listen((remoteMessage) async {
-      print('🔥 Open from FCM when app is background.');
+      print('🔥 FCM notification tapped.');
       if (remoteMessage.data.containsKey('path')) {
         final path = remoteMessage.data['path'] as String;
         final data = remoteMessage.data;
@@ -154,11 +153,13 @@ class _MainPageState extends ConsumerState<MainPage> with WidgetsBindingObserver
     });
   }
 
-  /// 通知によって遷移する
+  /// 通知によって現在のタブ上で画面遷移する
   Future<void> _navigateByNotification({
     required String path,
     required Map<String, dynamic> data,
   }) async {
-    await Navigator.pushNamed<void>(context, path, arguments: RouteArguments(data));
+    final currentTab = ref.read(bottomNavigationBarController).currentTab;
+    final navigatorKey = ref.read(applicationController.notifier).navigatorKeys[currentTab];
+    await navigatorKey?.currentState?.pushNamed<void>(path, arguments: RouteArguments(data));
   }
 }

@@ -1,18 +1,22 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:mottai_flutter_app/controllers/scaffold_messenger/scaffold_messenger_controller.dart';
 import 'package:mottai_flutter_app/pages/second/second_page.dart';
 import 'package:mottai_flutter_app/route/utils.dart';
 import 'package:mottai_flutter_app/theme/theme.dart';
 
-class HomePage extends StatelessWidget {
+import '../../utils/utils.dart';
+
+class HomePage extends HookConsumerWidget {
   const HomePage({Key? key}) : super(key: key);
 
   static const path = '/home/';
   static const name = 'HomePage';
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(),
       drawer: _buildDrawer(context),
@@ -30,6 +34,19 @@ class HomePage extends StatelessWidget {
                 );
               },
               child: const Text('Go to SecondPage'),
+            ),
+            const Gap(16),
+            ElevatedButton.icon(
+              onPressed: () async {
+                await db.collection('testNotificationRequests').doc(uuid).set(<String, dynamic>{
+                  'token': await FirebaseMessaging.instance.getToken(),
+                });
+                ref.read(scaffoldMessengerController).showSnackBar(
+                      'テスト通知をリクエストしました。まもなく通知が送られます。',
+                    );
+              },
+              icon: const Icon(Icons.notifications),
+              label: const Text('テスト通知を受け取る'),
             ),
           ],
         ),

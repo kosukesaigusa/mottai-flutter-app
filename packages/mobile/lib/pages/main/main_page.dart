@@ -121,27 +121,35 @@ class _MainPageState extends ConsumerState<MainPage> with WidgetsBindingObserver
     await FirebaseMessagingService.requestPermission();
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
-    /// terminated（background ではない）の状態から
+    /// terminated (!= background) の状態から
     /// 通知によってアプリを開いた場合に remoteMessage が非 null となる。
     final remoteMessage = await FirebaseMessaging.instance.getInitialMessage();
     if (remoteMessage != null) {
+      print('🔥 Open from FCM when app is terminated.');
+      final path = remoteMessage.data['path'] as String;
+      final data = remoteMessage.data;
+      print('*****************************');
+      print('path: $path');
+      print('data: $data');
+      print('*****************************');
       if (remoteMessage.data.containsKey('path')) {
         // 通知を元にページ遷移する
-        await _navigateByNotification(
-          path: remoteMessage.data['path'] as String,
-          data: remoteMessage.data,
-        );
+        await _navigateByNotification(path: path, data: data);
       }
     }
 
-    /// background（terminated ではない）の状態から
-    /// 通知によてアプリを開いた場合に発火する。
+    /// background (!= terminated) の状態から
+    /// 通知によってアプリを開いた場合に発火する。
     FirebaseMessaging.onMessageOpenedApp.listen((remoteMessage) async {
+      print('🔥 Open from FCM when app is background.');
       if (remoteMessage.data.containsKey('path')) {
-        await _navigateByNotification(
-          path: remoteMessage.data['path'] as String,
-          data: remoteMessage.data,
-        );
+        final path = remoteMessage.data['path'] as String;
+        final data = remoteMessage.data;
+        print('*****************************');
+        print('path: $path');
+        print('data: $data');
+        print('*****************************');
+        await _navigateByNotification(path: path, data: data);
       }
     });
   }
@@ -151,6 +159,6 @@ class _MainPageState extends ConsumerState<MainPage> with WidgetsBindingObserver
     required String path,
     required Map<String, dynamic> data,
   }) async {
-    await Navigator.pushNamed(context, path, arguments: RouteArguments(data));
+    await Navigator.pushNamed<void>(context, path, arguments: RouteArguments(data));
   }
 }

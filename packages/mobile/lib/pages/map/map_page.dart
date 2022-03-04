@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:gap/gap.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:ks_flutter_commons/ks_flutter_commons.dart';
@@ -232,6 +231,7 @@ class _MapPageState extends ConsumerState<MapPage> {
                 physics: const ClampingScrollPhysics(),
                 onPageChanged: controller.onPageChanged,
                 children: [
+                  if (state.hostLocationsOnMap.isEmpty) _buildEmptyPageItem,
                   for (final hostLocation in state.hostLocationsOnMap) _buildPageItem(hostLocation),
                 ],
               ),
@@ -243,8 +243,8 @@ class _MapPageState extends ConsumerState<MapPage> {
     );
   }
 
-  /// PageView のアイテム
-  Widget _buildPageItem(HostLocation hostLocation) {
+  /// PageView のコンテナ
+  Widget _buildPageViewContainer({required Widget child}) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: pageViewHorizontalMargin),
       padding: const EdgeInsets.symmetric(
@@ -255,6 +255,13 @@ class _MapPageState extends ConsumerState<MapPage> {
         color: Colors.white,
         borderRadius: BorderRadius.all(Radius.circular(pageViewBorderRadius)),
       ),
+      child: child,
+    );
+  }
+
+  /// PageView のアイテム
+  Widget _buildPageItem(HostLocation hostLocation) {
+    return _buildPageViewContainer(
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -313,23 +320,16 @@ class _MapPageState extends ConsumerState<MapPage> {
     );
   }
 
-  /// 位置情報の許可を確認して、許可されている場合は現在の位置を返す
-  Future<Position?> get currentPosition async {
-    final serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      return null;
-    }
-    final permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      final permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        return null;
-      }
-    }
-    if (permission == LocationPermission.deniedForever) {
-      return null;
-    }
-    return Geolocator.getCurrentPosition();
+  /// 検出範囲に Marker が存在しない場合の PageView のアイテム
+  Widget get _buildEmptyPageItem {
+    return _buildPageViewContainer(
+      child: Center(
+        child: Text(
+          '周辺にデータが見つかりません。',
+          style: grey12,
+        ),
+      ),
+    );
   }
 
   /// シードデータを作成する

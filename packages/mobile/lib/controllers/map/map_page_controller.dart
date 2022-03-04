@@ -100,6 +100,7 @@ class MapPageController extends StateNotifier<MapPageState> {
             ? BitmapDescriptor.hueBlue
             : BitmapDescriptor.hueRed,
       ),
+      zIndex: state.selectedHostLocation == hostLocation ? 10 : 0,
       onTap: () async {
         enableResetDetection();
         await updateCameraPosition(latLng: LatLng(lat, lng), zoom: state.debugZoomLevel);

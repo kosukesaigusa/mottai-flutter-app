@@ -457,7 +457,7 @@ packages:
     source: hosted
     version: "0.2.0+7"
   firebase_dynamic_links:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: firebase_dynamic_links
       url: "https://pub.dartlang.org"

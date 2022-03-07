@@ -3,21 +3,21 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>330095859862-dggicosj8oe26l47aoghlobuuv480ps5.apps.googleusercontent.com</string>
+	<string>709197089170-dsf1k646e2fducpfnefm7mhe6suo65f5.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.330095859862-dggicosj8oe26l47aoghlobuuv480ps5</string>
+	<string>com.googleusercontent.apps.709197089170-dsf1k646e2fducpfnefm7mhe6suo65f5</string>
 	<key>API_KEY</key>
-	<string>AIzaSyBOhGcC_UIfxqrllhmqjysnr64looOmKrk</string>
+	<string>AIzaSyAkaXi3WuwG4YgsTwDsHvqXKa6hfpmx77c</string>
 	<key>GCM_SENDER_ID</key>
-	<string>330095859862</string>
+	<string>709197089170</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
 	<string>com.kosukesaigusa.mottaiFlutterApp.dev</string>
 	<key>PROJECT_ID</key>
-	<string>mottai-app-dev</string>
+	<string>mottai-app-dev-2</string>
 	<key>STORAGE_BUCKET</key>
-	<string>mottai-app-dev.appspot.com</string>
+	<string>mottai-app-dev-2.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -29,6 +29,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:330095859862:ios:9c5812e81e6862513ccab7</string>
+	<string>1:709197089170:ios:7617a4349b5968e77ed94b</string>
 </dict>
 </plist>

@@ -1,10 +1,10 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../constants/dynamic_links.dart';
-import '../controllers/application/application_controller.dart';
-import '../controllers/bottom_navigation_bar/bottom_navigation_bar_controller.dart';
-import '../route/utils.dart';
-import 'utils.dart';
+import '../../constants/dynamic_links.dart';
+import '../../route/utils.dart';
+import '../../utils/utils.dart';
+import '../application/application_controller.dart';
+import '../bottom_navigation_bar/bottom_navigation_bar_controller.dart';
 
 final navigationController = Provider.autoDispose((ref) => NavigationController(ref.read));
 

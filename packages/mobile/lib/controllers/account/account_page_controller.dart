@@ -21,7 +21,7 @@ class AccountPageController extends StateNotifier<AccountPageState> {
     try {
       final googleSignInAccount = await googleSignIn.signIn();
       if (googleSignInAccount == null) {
-        _reader(scaffoldMessengerController).showSnackBar('ログインに失敗しました。');
+        _reader(scaffoldMessengerController).showSnackBar('サインインに失敗しました。');
         return;
       }
       final photoUrl = googleSignInAccount.photoUrl;
@@ -31,6 +31,7 @@ class AccountPageController extends StateNotifier<AccountPageState> {
           photoUrl,
         );
       }
+      _reader(scaffoldMessengerController).showSnackBar('サインインしました。');
       return;
     } on PlatformException catch (e) {
       _reader(scaffoldMessengerController).showSnackBar('[${e.code}] キャンセルしました。');

@@ -6,9 +6,9 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../controllers/application/application_controller.dart';
 import '../../controllers/bottom_navigation_bar/bottom_navigation_bar_controller.dart';
+import '../../controllers/navigation/navigation_controller.dart';
 import '../../route/main_tabs.dart';
 import '../../services/firebase_messaging_service.dart';
-import '../../utils/navigation.dart';
 import '../../utils/utils.dart';
 import '../../widgets/main/stacked_pages_navigator.dart';
 

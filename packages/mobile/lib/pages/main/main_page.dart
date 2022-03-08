@@ -9,7 +9,6 @@ import '../../controllers/bottom_navigation_bar/bottom_navigation_bar_controller
 import '../../controllers/navigation/navigation_controller.dart';
 import '../../route/main_tabs.dart';
 import '../../services/firebase_messaging_service.dart';
-import '../../utils/utils.dart';
 import '../../widgets/main/stacked_pages_navigator.dart';
 
 /// バックグラウンドから起動した際にFirebaseを有効化する。
@@ -129,7 +128,7 @@ class _MainPageState extends ConsumerState<MainPage> with WidgetsBindingObserver
     /// 通知によってアプリを開いた場合に remoteMessage が非 null となる。
     final remoteMessage = await FirebaseMessaging.instance.getInitialMessage();
     if (remoteMessage != null) {
-      print('🔥 Open from FCM when app is terminated.');
+      print('🔥 Open app from FCM when terminated.');
       final path = remoteMessage.data['path'] as String;
       final data = remoteMessage.data;
       print('*****************************');
@@ -162,24 +161,20 @@ class _MainPageState extends ConsumerState<MainPage> with WidgetsBindingObserver
     /// background (!= terminated) でリンクを踏んだ場合
     FirebaseDynamicLinks.instance.onLink.listen(
       (pendingDynamicLinkData) async {
-        print('🔗 Open from Firebase Dynamic Links');
-        final uri = pendingDynamicLinkData.link;
-        final path = normalizePathString(uri.path);
-        print('*****************************');
-        print('dynamicLink.link.path: $path');
-        print('*****************************');
-        await ref.read(navigationController).pushOnCurrentTab(
-          path: path,
-          data: <String, dynamic>{},
-        );
+        print('🔗 Open app from Firebase Dynamic Links when background.');
+        await ref
+            .read(navigationController)
+            .popUntilFirstRouteAndPushOnSpecifiedTabByDynamicLink(pendingDynamicLinkData.link);
       },
     );
 
     /// terminated (!= background) の状態からリンクを踏んだ場合
     final pendingDynamicLinkData = await FirebaseDynamicLinks.instance.getInitialLink();
     if (pendingDynamicLinkData != null) {
-      await ref.read(navigationController).navigateByDynamicLink(pendingDynamicLinkData.link);
-      return;
+      print('🔗 Open app from Firebase Dynamic Links when terminated.');
+      await ref
+          .read(navigationController)
+          .popUntilFirstRouteAndPushOnSpecifiedTabByDynamicLink(pendingDynamicLinkData.link);
     }
   }
 }

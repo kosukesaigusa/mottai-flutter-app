@@ -11,9 +11,8 @@ import 'package:mottai_flutter_app/services/shared_preferences_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  const flavor = String.fromEnvironment('FLAVOR');
   await Firebase.initializeApp();
-  if (flavor == 'local') {
+  if (const String.fromEnvironment('FLAVOR') == 'local') {
     await setUpLocalEmulator();
   }
   // 画面の向きを固定

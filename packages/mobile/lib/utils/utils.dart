@@ -24,6 +24,18 @@ bool get isSignedIn => auth.currentUser != null;
 /// サインイン済みの画面でしか使用してはいけないので注意する。
 String get nonNullUid => auth.currentUser!.uid;
 
+/// Dynamic Links などのパス文字列の先頭・末尾にスラッシュを付ける
+String normalizePathString(String path) {
+  var p = path;
+  if (!p.startsWith('/')) {
+    p = '/$p';
+  }
+  if (!p.endsWith('/')) {
+    p = '$p/';
+  }
+  return p;
+}
+
 /// BuildContext を引数にして SnackBar を表示する
 ScaffoldFeatureController<SnackBar, SnackBarClosedReason> showFloatingSnackBar(
   BuildContext context,

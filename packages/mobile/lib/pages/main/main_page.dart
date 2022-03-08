@@ -3,12 +3,14 @@ import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:mottai_flutter_app/controllers/application/application_controller.dart';
-import 'package:mottai_flutter_app/controllers/bottom_navigation_bar/bottom_navigation_bar_controller.dart';
-import 'package:mottai_flutter_app/route/main_tabs.dart';
-import 'package:mottai_flutter_app/route/utils.dart';
-import 'package:mottai_flutter_app/services/firebase_messaging_service.dart';
-import 'package:mottai_flutter_app/widgets/main/stacked_pages_navigator.dart';
+
+import '../../controllers/application/application_controller.dart';
+import '../../controllers/bottom_navigation_bar/bottom_navigation_bar_controller.dart';
+import '../../route/main_tabs.dart';
+import '../../services/firebase_messaging_service.dart';
+import '../../utils/navigation.dart';
+import '../../utils/utils.dart';
+import '../../widgets/main/stacked_pages_navigator.dart';
 
 /// バックグラウンドから起動した際にFirebaseを有効化する。
 /// グローバルに記述する必要がある
@@ -135,7 +137,7 @@ class _MainPageState extends ConsumerState<MainPage> with WidgetsBindingObserver
       print('data: $data');
       print('*****************************');
       if (remoteMessage.data.containsKey('path')) {
-        await _navigateOnCurrentTab(path: path, data: data);
+        await ref.read(navigationController).pushOnCurrentTab(path: path, data: data);
       }
     }
 
@@ -150,7 +152,7 @@ class _MainPageState extends ConsumerState<MainPage> with WidgetsBindingObserver
         print('path: $path');
         print('data: $data');
         print('*****************************');
-        await _navigateOnCurrentTab(path: path, data: data);
+        await ref.read(navigationController).pushOnCurrentTab(path: path, data: data);
       }
     });
   }
@@ -159,51 +161,25 @@ class _MainPageState extends ConsumerState<MainPage> with WidgetsBindingObserver
   Future<void> _initializeDynamicLinks() async {
     /// background (!= terminated) でリンクを踏んだ場合
     FirebaseDynamicLinks.instance.onLink.listen(
-      (dynamicLink) {
+      (pendingDynamicLinkData) async {
         print('🔗 Open from Firebase Dynamic Links');
-        final link = dynamicLink.link;
-        final path = link.path;
+        final uri = pendingDynamicLinkData.link;
+        final path = normalizePathString(uri.path);
         print('*****************************');
         print('dynamicLink.link.path: $path');
         print('*****************************');
-        _navigateOnCurrentTab(path: path, data: <String, dynamic>{});
+        await ref.read(navigationController).pushOnCurrentTab(
+          path: path,
+          data: <String, dynamic>{},
+        );
       },
     );
 
     /// terminated (!= background) の状態からリンクを踏んだ場合
-    final data = await FirebaseDynamicLinks.instance.getInitialLink();
-    if (data != null) {
-      navigateByDynamicLink(data.link.toString());
+    final pendingDynamicLinkData = await FirebaseDynamicLinks.instance.getInitialLink();
+    if (pendingDynamicLinkData != null) {
+      await ref.read(navigationController).navigateByDynamicLink(pendingDynamicLinkData.link);
       return;
-    }
-  }
-
-  /// 通知や Dynamic Links によって現在のタブ上で画面遷移する
-  Future<void> _navigateOnCurrentTab({
-    required String path,
-    required Map<String, dynamic> data,
-  }) async {
-    final currentTab = ref.read(bottomNavigationBarController).currentTab;
-    final navigatorKey = ref.read(applicationController.notifier).navigatorKeys[currentTab];
-    await navigatorKey?.currentState?.pushNamed<void>(path, arguments: RouteArguments(data));
-  }
-
-  /// Dynamic Links によって現在のタブ上で画面遷移する
-  void navigateByDynamicLink(String? link) {
-    try {
-      if ((link ?? '').isNotEmpty) {
-        final url = Uri.parse(link!);
-        if (url.host != 'mottaiflutterapp.page.link') {
-          return;
-        }
-        var path = url.path;
-        if (!path.endsWith('/')) {
-          path += '/';
-        }
-        _navigateOnCurrentTab(path: path, data: <String, dynamic>{});
-      }
-    } on FormatException {
-      // URI にパースできない場合は処理せずに終了する
     }
   }
 }

@@ -51,3 +51,21 @@ const bottomTabs = [
     iconData: Icons.person,
   ),
 ];
+
+/// BottomTabEnum から タブの index を取得する。
+int getIndexByTab(BottomTabEnum tab) {
+  return bottomTabs
+      .firstWhere(
+        (bottomTab) => bottomTab.tab == tab,
+        orElse: () => bottomTabs[0],
+      )
+      .index;
+}
+
+/// タブの名前からタブを取得する。
+BottomTabEnum getTabByTabName(String tabName) {
+  return BottomTabEnum.values.firstWhere(
+    (tab) => tab.name == tabName,
+    orElse: () => BottomTabEnum.home,
+  );
+}

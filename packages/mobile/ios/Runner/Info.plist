@@ -20,6 +20,20 @@
 	<string>$(FLUTTER_BUILD_NAME)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>Bundle ID</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.kosukesaigusa.mottaiFlutterApp.dev</string>
+				<string>com.googleusercontent.apps.709197089170-dsf1k646e2fducpfnefm7mhe6suo65f5</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
@@ -28,27 +42,10 @@
 	<true/>
 	<key>NSCameraUsageDescription</key>
 	<string>ユーザーがカメラを起動して、撮影した画像をメッセージやプロフィールに使用するために、端末のカメラを使用します。</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>マップ上で現在地に応じたイベントや情報を取得・表示するために、現在地を使用します。</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>ユーザーがメッセージに画像を添付したり、自身のプロフィール画像を選択したりするために、端末内の画像を使用します。</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-  <string>マップ上で現在地に応じたイベントや情報を取得・表示するために、現在地を使用します。</string>
-		<!-- Put me in the [my_project]/ios/Runner/Info.plist file -->
-	<!-- Google Sign-in Section -->
-	<key>CFBundleURLTypes</key>
-	<array>
-		<dict>
-			<key>CFBundleTypeRole</key>
-			<string>Editor</string>
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<!-- TODO Replace this value: -->
-				<!-- Copied from GoogleService-Info.plist key REVERSED_CLIENT_ID -->
-				<!-- TODO: Dev, Prod でこの値は変わるはずなので後で設定する -->
-				<string>com.googleusercontent.apps.330095859862-dggicosj8oe26l47aoghlobuuv480ps5</string>
-			</array>
-		</dict>
-	</array>
-	<!-- End of the Google Sign-in Section -->
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>

@@ -1,4 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -35,6 +36,7 @@ class _MainPageState extends ConsumerState<MainPage> with WidgetsBindingObserver
     // 必要な初期化処理を行う
     Future.wait([
       _initializePushNotification(),
+      _initializeDynamicLinks(),
     ]);
   }
 
@@ -133,7 +135,7 @@ class _MainPageState extends ConsumerState<MainPage> with WidgetsBindingObserver
       print('data: $data');
       print('*****************************');
       if (remoteMessage.data.containsKey('path')) {
-        await _navigateByNotification(path: path, data: data);
+        await _navigateOnCurrentTab(path: path, data: data);
       }
     }
 
@@ -148,18 +150,60 @@ class _MainPageState extends ConsumerState<MainPage> with WidgetsBindingObserver
         print('path: $path');
         print('data: $data');
         print('*****************************');
-        await _navigateByNotification(path: path, data: data);
+        await _navigateOnCurrentTab(path: path, data: data);
       }
     });
   }
 
-  /// 通知によって現在のタブ上で画面遷移する
-  Future<void> _navigateByNotification({
+  /// Firebase Dynamic Links 関係の初期化処理を行う
+  Future<void> _initializeDynamicLinks() async {
+    /// background (!= terminated) でリンクを踏んだ場合
+    FirebaseDynamicLinks.instance.onLink.listen(
+      (dynamicLink) {
+        print('🔗 Open from Firebase Dynamic Links');
+        final link = dynamicLink.link;
+        final path = link.path;
+        print('*****************************');
+        print('dynamicLink.link.path: $path');
+        print('*****************************');
+        _navigateOnCurrentTab(path: path, data: <String, dynamic>{});
+      },
+    );
+
+    /// terminated (!= background) の状態からリンクを踏んだ場合
+    final data = await FirebaseDynamicLinks.instance.getInitialLink();
+    if (data != null) {
+      navigateByDynamicLink(data.link.toString());
+      return;
+    }
+  }
+
+  /// 通知や Dynamic Links によって現在のタブ上で画面遷移する
+  Future<void> _navigateOnCurrentTab({
     required String path,
     required Map<String, dynamic> data,
   }) async {
     final currentTab = ref.read(bottomNavigationBarController).currentTab;
     final navigatorKey = ref.read(applicationController.notifier).navigatorKeys[currentTab];
     await navigatorKey?.currentState?.pushNamed<void>(path, arguments: RouteArguments(data));
+  }
+
+  /// Dynamic Links によって現在のタブ上で画面遷移する
+  void navigateByDynamicLink(String? link) {
+    try {
+      if ((link ?? '').isNotEmpty) {
+        final url = Uri.parse(link!);
+        if (url.host != 'mottaiflutterapp.page.link') {
+          return;
+        }
+        var path = url.path;
+        if (!path.endsWith('/')) {
+          path += '/';
+        }
+        _navigateOnCurrentTab(path: path, data: <String, dynamic>{});
+      }
+    } on FormatException {
+      // URI にパースできない場合は処理せずに終了する
+    }
   }
 }

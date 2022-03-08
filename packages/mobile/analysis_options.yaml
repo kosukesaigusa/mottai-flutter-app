@@ -44,7 +44,7 @@ linter:
     # - do_not_use_environment
     - exhaustive_cases
     - file_names
-    - flutter_style_todos
+    # - flutter_style_todos
     - invariant_booleans
     - iterable_contains_unrelated_type
     - join_return_with_assignment

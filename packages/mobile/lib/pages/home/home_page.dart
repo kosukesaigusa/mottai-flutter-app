@@ -1,10 +1,10 @@
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mottai_flutter_app/controllers/scaffold_messenger/scaffold_messenger_controller.dart';
 import 'package:mottai_flutter_app/pages/second/second_page.dart';
 import 'package:mottai_flutter_app/route/utils.dart';
+import 'package:mottai_flutter_app/services/firebase_messaging_service.dart';
 import 'package:mottai_flutter_app/theme/theme.dart';
 
 import '../../utils/utils.dart';
@@ -39,7 +39,7 @@ class HomePage extends HookConsumerWidget {
             ElevatedButton.icon(
               onPressed: () async {
                 await db.collection('testNotificationRequests').doc(uuid).set(<String, dynamic>{
-                  'token': await FirebaseMessaging.instance.getToken(),
+                  'token': await FirebaseMessagingService.getToken,
                 });
                 ref.read(scaffoldMessengerController).showSnackBar(
                       'テスト通知をリクエストしました。まもなく通知が送られます。',
@@ -92,7 +92,7 @@ class HomePage extends HookConsumerWidget {
     return ListTile(
       title: const Text('FCM トークンの確認'),
       onTap: () async {
-        final token = await FirebaseMessaging.instance.getToken();
+        final token = await FirebaseMessagingService.getToken;
         print('*** FCM token ***************');
         print(token);
         print('*****************************');

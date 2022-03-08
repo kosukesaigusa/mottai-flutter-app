@@ -1,9 +1,6 @@
 import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-
-final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
 class FirebaseMessagingService {
   factory FirebaseMessagingService() => _instance;
@@ -41,5 +38,5 @@ class FirebaseMessagingService {
   }
 
   /// FCM トークンを取得する
-  static Future<String?> getToken() => _messaging.getToken();
+  static Future<String?> get getToken => _messaging.getToken();
 }

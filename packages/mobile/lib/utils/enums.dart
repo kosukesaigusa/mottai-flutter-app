@@ -1,1 +1,4 @@
-
+enum SignInMethodEnum {
+  google,
+  apple,
+}

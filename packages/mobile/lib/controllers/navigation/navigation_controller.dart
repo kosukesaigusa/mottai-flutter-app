@@ -39,9 +39,20 @@ class NavigationController {
       return;
     }
     Navigator.popUntil(currentContext, (route) => route.isFirst);
-    _reader(bottomNavigationBarController.notifier).changeTab(index: getIndexByTab(tab), tab: tab);
-    final navigatorKey = _reader(applicationController.notifier).navigatorKeys[tab];
-    await navigatorKey?.currentState?.pushNamed<void>(path, arguments: RouteArguments(data));
+    // _reader(bottomNavigationBarController.notifier).changeTab(index: getIndexByTab(tab), tab: tab);
+    // final navigatorKey = _reader(applicationController.notifier).navigatorKeys[tab];
+    // await navigatorKey?.currentState?.pushNamed<void>(path, arguments: RouteArguments(data));
+    if (bottomTabs.map((bottomTab) => bottomTab.path).toList().contains(path)) {
+      // 指定されたパスが MainPage のいずれかのページのパスと一致する場合には新しい画面をプッシュせずに
+      // アクティブなタブを変更だけして終わりにする。
+      _reader(bottomNavigationBarController.notifier)
+          .changeTab(index: getIndexByTab(tab), tab: tab);
+    } else {
+      _reader(bottomNavigationBarController.notifier)
+          .changeTab(index: getIndexByTab(tab), tab: tab);
+      final navigatorKey = _reader(applicationController.notifier).navigatorKeys[tab];
+      await navigatorKey?.currentState?.pushNamed<void>(path, arguments: RouteArguments(data));
+    }
   }
 
   /// Dynamic Links によって（Uri を指定して）現在のタブ上で画面遷移する。
@@ -58,16 +69,17 @@ class NavigationController {
   /// 指定したタブをアクティブにして、その上で画面遷移する。
   Future<void> popUntilFirstRouteAndPushOnSpecifiedTabByDynamicLink(Uri uri) async {
     final path = _getNormalizedPathString(uri);
-    final tabName = uri.queryParameters['tab'] ?? BottomTabEnum.home.name;
     if (path.isEmpty) {
       return;
     }
+    final data = _getDataFromQueryParameters(uri);
+    final tabName = (data['tab'] ?? BottomTabEnum.home.name) as String;
     final tab = getTabByTabName(tabName);
     print('*****************************');
     print('Dynamic Link (path, tab) = ($path, ${tab.name})');
     print('*****************************');
     // TODO: DeepLink のクエリパラメータなどから data（画面の引数）を受け取れる仕組みを考える
-    await popUntilFirstRouteAndPushOnSpecifiedTab(tab: tab, path: path, data: <String, dynamic>{});
+    await popUntilFirstRouteAndPushOnSpecifiedTab(tab: tab, path: path, data: data);
   }
 
   /// 画面遷移のための Uri を検証して、ノーマライズした path (String) を返す。
@@ -85,5 +97,11 @@ class NavigationController {
       return '';
     }
     return path;
+  }
+
+  // /// 受け取った Uri のクエリパラメタを検証して、Map<String, dynamic> を返す
+  Map<String, dynamic> _getDataFromQueryParameters(Uri uri) {
+    final queryParameters = uri.queryParameters;
+    return queryParameters;
   }
 }

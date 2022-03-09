@@ -12,6 +12,7 @@ dependencies:
   cloud_firestore: ^3.1.8
   cloud_functions: ^3.2.7
   connectivity_plus: ^2.0.3
+  crypto: ^3.0.1
   cupertino_icons: ^1.0.2
   dart_geohash: ^2.0.2
   firebase_analytics: ^9.1.0
@@ -54,6 +55,7 @@ dependencies:
   photo_view: ^0.13.0
   rxdart: ^0.27.3
   shared_preferences: ^2.0.9
+  sign_in_with_apple: ^3.3.0
   state_notifier: ^0.7.1
   url_launcher: ^6.0.15
   uuid: ^3.0.5

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:gap/gap.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:ks_flutter_commons/ks_flutter_commons.dart';
 import 'package:mottai_flutter_app/controllers/map/map_page_controller.dart';
+import 'package:mottai_flutter_app/widgets/common/loading.dart';
 import 'package:mottai_flutter_app_models/models.dart';
 
 import '../../theme/theme.dart';
@@ -91,7 +91,7 @@ class _MapPageState extends ConsumerState<MapPage> {
                   _buildStackedPageViewWidget,
                 ],
               )
-            : SpinKitCircle(size: 48, color: Theme.of(context).colorScheme.primary),
+            : const PrimarySpinkitCircle(),
         // floatingActionButton: FloatingActionButton(
         //   onPressed: () async {
         //     await setSeedLocationData();

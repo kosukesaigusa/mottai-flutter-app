@@ -6,6 +6,9 @@ enum SharedPreferencesKey {
   isAdmin,
   isHost,
   profileImageURL,
+  displayName,
+  appleIdUserIdentifier,
+  lastSignedInMethod,
 }
 
 final sharedPreferencesService = Provider.autoDispose((ref) => SharedPreferencesService());
@@ -70,4 +73,5 @@ class SharedPreferencesService {
   static Future<bool> getIsAdmin() => _getBool(SharedPreferencesKey.isAdmin);
   static Future<bool> getIsHost() => _getBool(SharedPreferencesKey.isHost);
   static Future<String?> getProfileImageURL() => _getString(SharedPreferencesKey.profileImageURL);
+  static Future<String?> getDisplayName() => _getString(SharedPreferencesKey.displayName);
 }

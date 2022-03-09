@@ -5,7 +5,7 @@ class RouteArguments {
 
   final Map<String, dynamic> data;
 
-  dynamic operator [](String key) => data[key]!;
+  dynamic operator [](String key) => data[key];
 }
 
 /// パス文字列と対応するウィジェットを返すビルダーからなる

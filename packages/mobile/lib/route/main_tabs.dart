@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:mottai_flutter_app/pages/account/account_page.dart';
-import 'package:mottai_flutter_app/pages/home/home_page.dart';
-import 'package:mottai_flutter_app/pages/map/map_page.dart';
+
+import '../pages/account/account_page.dart';
+import '../pages/home/home_page.dart';
+import '../pages/map/map_page.dart';
 
 /// MainPage の BottomNavigationBar の enum
 enum BottomTabEnum {

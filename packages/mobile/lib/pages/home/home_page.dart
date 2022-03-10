@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:mottai_flutter_app/controllers/scaffold_messenger/scaffold_messenger_controller.dart';
-import 'package:mottai_flutter_app/pages/second/second_page.dart';
-import 'package:mottai_flutter_app/route/utils.dart';
-import 'package:mottai_flutter_app/services/firebase_messaging_service.dart';
-import 'package:mottai_flutter_app/theme/theme.dart';
 
+import '../../controllers/scaffold_messenger/scaffold_messenger_controller.dart';
+import '../../route/utils.dart';
+import '../../services/firebase_messaging_service.dart';
+import '../../theme/theme.dart';
 import '../../utils/utils.dart';
+import '../second/second_page.dart';
 
 class HomePage extends HookConsumerWidget {
   const HomePage({Key? key}) : super(key: key);

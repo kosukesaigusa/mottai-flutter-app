@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:ks_flutter_commons/ks_flutter_commons.dart';
-import 'package:mottai_flutter_app/pages/not_found/not_found_page.dart';
-import 'package:mottai_flutter_app/route/utils.dart';
-import 'package:mottai_flutter_app/utils/types.dart';
+
+import '../pages/not_found/not_found_page.dart';
+import '../utils/types.dart';
+import 'utils.dart';
 
 abstract class AppRouter {
   factory AppRouter.create(Map<String, PageBuilder> routeMap) => _AppRouterImpl(routeMap);

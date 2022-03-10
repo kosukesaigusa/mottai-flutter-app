@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:mottai_flutter_app/pages/map/map_page.dart';
-import 'package:mottai_flutter_app/route/utils.dart';
+
+import '../../route/utils.dart';
+import '../map/map_page.dart';
 
 class SecondPage extends StatefulWidget {
   const SecondPage._({

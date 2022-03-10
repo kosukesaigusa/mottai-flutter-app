@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:mottai_flutter_app/constants/localization.dart';
-import 'package:mottai_flutter_app/scaffold_messenger_navigator.dart';
+
+import 'constants/localization.dart';
+import 'scaffold_messenger_navigator.dart';
 
 /// MaterialApp を返すウィジェット。
 /// ここではルートは制御せず、home プロパティに

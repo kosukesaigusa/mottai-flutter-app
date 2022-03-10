@@ -1,4 +1,4 @@
-import 'package:mottai_flutter_app/utils/types.dart';
+import '../utils/types.dart';
 
 class RouteArguments {
   RouteArguments(this.data);

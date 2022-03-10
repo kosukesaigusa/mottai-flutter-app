@@ -2,8 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:mottai_flutter_app/constants/snack_bar.dart';
 import 'package:uuid/uuid.dart';
+
+import '../constants/snack_bar.dart';
 
 /// FirebaseAuth のインスタンス
 FirebaseAuth get auth => FirebaseAuth.instance;

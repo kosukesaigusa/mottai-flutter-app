@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:mottai_flutter_app/controllers/scaffold_messenger/scaffold_messenger_controller.dart';
-import 'package:mottai_flutter_app/pages/not_found/not_found_page.dart';
-import 'package:mottai_flutter_app/route/app_router.dart';
 import 'package:mottai_flutter_app/route/routes.dart';
+
+import 'controllers/scaffold_messenger/scaffold_messenger_controller.dart';
+import 'pages/not_found/not_found_page.dart';
+import 'route/app_router.dart';
 
 final appRouter = AppRouter.create(routeBuilder);
 

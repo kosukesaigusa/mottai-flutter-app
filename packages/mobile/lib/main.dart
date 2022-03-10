@@ -3,11 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:ks_flutter_commons/ks_flutter_commons.dart';
-import 'package:mottai_flutter_app/app.dart';
-import 'package:mottai_flutter_app/gen/firebase_options_dev.dart' as dev;
-import 'package:mottai_flutter_app/gen/firebase_options_prod.dart' as prod;
-import 'package:mottai_flutter_app/services/firebase_messaging_service.dart';
-import 'package:mottai_flutter_app/services/shared_preferences_service.dart';
+
+import 'app.dart';
+import 'gen/firebase_options_dev.dart' as dev;
+import 'gen/firebase_options_prod.dart' as prod;
+import 'services/firebase_messaging_service.dart';
+import 'services/shared_preferences_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

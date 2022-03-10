@@ -4,12 +4,12 @@ import 'package:gap/gap.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:ks_flutter_commons/ks_flutter_commons.dart';
-import 'package:mottai_flutter_app/controllers/map/map_page_controller.dart';
-import 'package:mottai_flutter_app/widgets/common/loading.dart';
 import 'package:mottai_flutter_app_models/models.dart';
 
+import '../../controllers/map/map_page_controller.dart';
 import '../../theme/theme.dart';
 import '../../utils/geo.dart';
+import '../../widgets/common/loading.dart';
 
 const double stackedGreyBackgroundHeight = 200;
 const double stackedGreyBackgroundBorderRadius = 36;

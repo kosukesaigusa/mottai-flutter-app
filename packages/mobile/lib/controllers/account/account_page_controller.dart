@@ -15,19 +15,33 @@ class AccountPageController extends StateNotifier<AccountPageState> {
 
   final Reader _reader;
 
-  /// Google でサインインして、SharedPreferences に画像や名前を保存する。
+  /// Google でサインインする。
   Future<void> signInWithGoogle() async {
     try {
       await _reader(authRepository).signInWithGoogle();
+      _reader(scaffoldMessengerController).showSnackBar('サインインしました。');
+    } on PlatformException catch (e) {
+      _reader(scaffoldMessengerController).showSnackBar('[${e.code}] キャンセルしました。');
+    } on Exception {
+      _reader(scaffoldMessengerController).showSnackBar('サインインに失敗しました。');
+    }
+  }
+
+  /// Apple でサインインする。
+  Future<void> signInWithApple() async {
+    try {
+      await _reader(authRepository).signInWithApple();
+      _reader(scaffoldMessengerController).showSnackBar('サインインしました。');
     } on PlatformException catch (e) {
       _reader(scaffoldMessengerController).showSnackBar('[${e.code}] キャンセルしました。');
     }
   }
 
-  /// Apple でサインインして、SharedPreferences に名前を保存する。
-  Future<void> signInWithApple() async {
+  /// LINE でサインインする。
+  Future<void> signInWithLine() async {
     try {
-      await _reader(authRepository).signInWithApple();
+      await _reader(authRepository).signInWithLine();
+      _reader(scaffoldMessengerController).showSnackBar('サインインしました。');
     } on PlatformException catch (e) {
       _reader(scaffoldMessengerController).showSnackBar('[${e.code}] キャンセルしました。');
     }

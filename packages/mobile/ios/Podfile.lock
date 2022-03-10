@@ -162,6 +162,9 @@ PODS:
     - FBSDKCoreKit (~> 12.3.2)
     - FBSDKLoginKit (~> 12.3.2)
     - Flutter
+  - flutter_line_sdk (2.1.0):
+    - Flutter
+    - LineSDKSwift (~> 5.3)
   - flutter_native_image (0.0.1):
     - Flutter
   - FMDB (2.7.5):
@@ -237,6 +240,9 @@ PODS:
   - image_picker (0.0.1):
     - Flutter
   - leveldb-library (1.22.1)
+  - LineSDKSwift (5.8.1):
+    - LineSDKSwift/Core (= 5.8.1)
+  - LineSDKSwift/Core (5.8.1)
   - nanopb (2.30908.0):
     - nanopb/decode (= 2.30908.0)
     - nanopb/encode (= 2.30908.0)
@@ -281,6 +287,7 @@ DEPENDENCIES:
   - FirebaseFirestore (from `https://github.com/invertase/firestore-ios-sdk-frameworks.git`, tag `8.11.0`)
   - Flutter (from `Flutter`)
   - flutter_facebook_auth (from `.symlinks/plugins/flutter_facebook_auth/ios`)
+  - flutter_line_sdk (from `.symlinks/plugins/flutter_line_sdk/ios`)
   - flutter_native_image (from `.symlinks/plugins/flutter_native_image/ios`)
   - geolocator_apple (from `.symlinks/plugins/geolocator_apple/ios`)
   - google_maps_flutter (from `.symlinks/plugins/google_maps_flutter/ios`)
@@ -325,6 +332,7 @@ SPEC REPOS:
     - GTMAppAuth
     - GTMSessionFetcher
     - leveldb-library
+    - LineSDKSwift
     - nanopb
     - PromisesObjC
     - ReachabilitySwift
@@ -360,6 +368,8 @@ EXTERNAL SOURCES:
     :path: Flutter
   flutter_facebook_auth:
     :path: ".symlinks/plugins/flutter_facebook_auth/ios"
+  flutter_line_sdk:
+    :path: ".symlinks/plugins/flutter_line_sdk/ios"
   flutter_native_image:
     :path: ".symlinks/plugins/flutter_native_image/ios"
   geolocator_apple:
@@ -428,6 +438,7 @@ SPEC CHECKSUMS:
   FirebaseStorage: 4d05cb1112ff8822a0f9f5090da8bd6d550602ec
   Flutter: 50d75fe2f02b26cc09d224853bb45737f8b3214a
   flutter_facebook_auth: 9fb37e24281c7f13198d03708bad164c2a20fb53
+  flutter_line_sdk: b4936acf03e5db45a412d79276f3483e4f27f0c7
   flutter_native_image: 9c0b7451838484458e5b0fae007b86a4c2d4bdfe
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
   geolocator_apple: cc556e6844d508c95df1e87e3ea6fa4e58c50401
@@ -443,6 +454,7 @@ SPEC CHECKSUMS:
   image_cropper: f1668dd8d2cad2d357955caad15a40547856edcb
   image_picker: 9aa50e1d8cdacdbed739e925b7eea16d014367e6
   leveldb-library: 50c7b45cbd7bf543c81a468fe557a16ae3db8729
+  LineSDKSwift: 55ea1486ad3b2802b7e00f80aeb5844e3ed3faa3
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
   package_info_plus: 6c92f08e1f853dc01228d6f553146438dafcd14e
   path_provider_ios: 7d7ce634493af4477d156294792024ec3485acd5

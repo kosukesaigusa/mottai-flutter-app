@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:ks_flutter_commons/ks_flutter_commons.dart';
@@ -9,6 +10,9 @@ import '../../controllers/scaffold_messenger/scaffold_messenger_controller.dart'
 import '../../services/shared_preferences_service.dart';
 import '../../utils/utils.dart';
 import '../../widgets/common/loading.dart';
+
+const double buttonHeight = 48;
+const double buttonWidth = 240;
 
 class AccountPage extends HookConsumerWidget {
   const AccountPage({Key? key}) : super(key: key);
@@ -47,25 +51,42 @@ class AccountPage extends HookConsumerWidget {
   Widget _buildNotSignedInWidget(WidgetRef ref) {
     return Column(
       children: [
-        ElevatedButton(
-          onPressed: () async {
-            await ref.read(accountPageController.notifier).signInWithGoogle();
-          },
-          child: const Text('Google でサインイン'),
+        SizedBox(
+          height: buttonHeight,
+          width: buttonWidth,
+          child: ElevatedButton.icon(
+            icon: const FaIcon(FontAwesomeIcons.google),
+            onPressed: () async {
+              await ref.read(accountPageController.notifier).signInWithGoogle();
+            },
+            label: const Text('Google でサインイン'),
+          ),
         ),
-        ElevatedButton(
-          onPressed: () async {
-            await ref.read(accountPageController.notifier).signInWithApple();
-          },
-          child: const Text('Apple でサインイン'),
+        const Gap(16),
+        SizedBox(
+          height: buttonHeight,
+          width: buttonWidth,
+          child: ElevatedButton.icon(
+            icon: const FaIcon(FontAwesomeIcons.apple),
+            onPressed: () async {
+              await ref.read(accountPageController.notifier).signInWithApple();
+            },
+            label: const Text('Apple でサインイン'),
+          ),
         ),
-        ElevatedButton(
-          onPressed: () async {
-            await ref.read(accountPageController.notifier).signInWithLine();
-          },
-          child: const Text('LINE でサインイン'),
+        const Gap(16),
+        SizedBox(
+          height: buttonHeight,
+          width: buttonWidth,
+          child: ElevatedButton.icon(
+            icon: const FaIcon(FontAwesomeIcons.line),
+            onPressed: () async {
+              await ref.read(accountPageController.notifier).signInWithLine();
+            },
+            label: const Text('LINE でサインイン'),
+          ),
         ),
-        const Gap(8),
+        const Gap(16),
         const Text('ログインしていません。'),
       ],
     );

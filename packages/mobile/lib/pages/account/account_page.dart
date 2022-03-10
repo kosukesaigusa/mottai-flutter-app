@@ -59,6 +59,12 @@ class AccountPage extends HookConsumerWidget {
           },
           child: const Text('Apple でサインイン'),
         ),
+        ElevatedButton(
+          onPressed: () async {
+            await ref.read(accountPageController.notifier).signInWithLine();
+          },
+          child: const Text('LINE でサインイン'),
+        ),
         const Gap(8),
         const Text('ログインしていません。'),
       ],

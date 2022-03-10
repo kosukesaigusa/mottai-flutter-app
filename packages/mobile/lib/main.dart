@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_line_sdk/flutter_line_sdk.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:ks_flutter_commons/ks_flutter_commons.dart';
 
@@ -47,5 +48,6 @@ Future<void> initialize() async {
   await Future.wait([
     SharedPreferencesService.initialize(),
     FirebaseMessagingService.initialize(),
+    LineSDK.instance.setup(const String.fromEnvironment('LINE_CHANNEL_ID')),
   ]);
 }

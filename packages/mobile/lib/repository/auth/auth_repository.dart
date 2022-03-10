@@ -4,22 +4,20 @@ import 'dart:math';
 import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_line_sdk/flutter_line_sdk.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 import '../../constants/string.dart';
 import '../../controllers/firebase/firebase_task_result.dart';
-import '../../controllers/scaffold_messenger/scaffold_messenger_controller.dart';
 import '../../services/shared_preferences_service.dart';
 import '../../utils/enums.dart';
 
-final authRepository = Provider.autoDispose((ref) => AuthRepository(ref.read));
+final authRepository = Provider.autoDispose((ref) => AuthRepository());
 
 class AuthRepository {
-  AuthRepository(this._reader);
-
-  final Reader _reader;
+  AuthRepository();
 
   final _auth = FirebaseAuth.instance;
   final _googleSignIn = GoogleSignIn(scopes: ['email', 'profile']);
@@ -84,8 +82,7 @@ class AuthRepository {
     try {
       final googleSignInAccount = await _googleSignIn.signIn();
       if (googleSignInAccount == null) {
-        _reader(scaffoldMessengerController).showSnackBar('サインインに失敗しました。');
-        return;
+        throw Exception();
       }
       final googleSignInAuthentication = await googleSignInAccount.authentication;
       final oAuthCredential = GoogleAuthProvider.credential(
@@ -98,11 +95,9 @@ class AuthRepository {
         photoUrl: googleSignInAccount.photoUrl,
         displayName: googleSignInAccount.displayName,
       );
-      _reader(scaffoldMessengerController).showSnackBar('サインインしました。');
     } on PlatformException {
       rethrow;
     }
-    return;
   }
 
   /// Apple でサインインして、SharedPreferences に名前を保存する。
@@ -135,10 +130,26 @@ class AuthRepository {
           appleIdUserIdentifier: authorizationCredentialAppleID.userIdentifier,
         );
       }
-      _reader(scaffoldMessengerController).showSnackBar('サインインしました。');
-    } on PlatformException catch (e) {
-      _reader(scaffoldMessengerController).showSnackBar('[${e.code}] キャンセルしました。');
+    } on PlatformException {
       rethrow;
+    }
+  }
+
+  /// LINE でサインインして、SharedPreferences に名前と画像を保存する。
+  Future<void> signInWithLine() async {
+    try {
+      final result = await LineSDK.instance.login();
+      final userProfile = result.userProfile;
+      await _storeUserProfileInSharedPreferences(
+        signInMethod: SignInMethodEnum.line,
+        photoUrl: userProfile?.pictureUrl,
+        displayName: userProfile?.displayName,
+      );
+    } on PlatformException catch (e) {
+      throw PlatformException(
+        code: e.code,
+        message: e.code == '3003' ? 'キャンセルしました。' : 'エラーが発生しました。',
+      );
     }
   }
 

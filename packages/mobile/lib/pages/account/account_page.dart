@@ -1,15 +1,16 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:ks_flutter_commons/ks_flutter_commons.dart';
+import 'package:mottai_flutter_app/utils/enums.dart';
 
 import '../../controllers/account/account_page_controller.dart';
 import '../../controllers/scaffold_messenger/scaffold_messenger_controller.dart';
 import '../../services/shared_preferences_service.dart';
 import '../../utils/utils.dart';
 import '../../widgets/common/loading.dart';
+import '../../widgets/sign_in/sign_in_buttons.dart';
 
 const double buttonHeight = 48;
 const double buttonWidth = 240;
@@ -51,42 +52,22 @@ class AccountPage extends HookConsumerWidget {
   Widget _buildNotSignedInWidget(WidgetRef ref) {
     return Column(
       children: [
-        SizedBox(
-          height: buttonHeight,
-          width: buttonWidth,
-          child: ElevatedButton.icon(
-            icon: const FaIcon(FontAwesomeIcons.google),
-            onPressed: () async {
-              await ref.read(accountPageController.notifier).signInWithGoogle();
-            },
-            label: const Text('Google でサインイン'),
-          ),
+        SocialSignInButton<void>(
+          method: SocialSignInMethod.Google,
+          onPressed: ref.read(accountPageController.notifier).signInWithGoogle,
+          innerPadding: const EdgeInsets.all(0),
         ),
-        const Gap(16),
-        SizedBox(
-          height: buttonHeight,
-          width: buttonWidth,
-          child: ElevatedButton.icon(
-            icon: const FaIcon(FontAwesomeIcons.apple),
-            onPressed: () async {
-              await ref.read(accountPageController.notifier).signInWithApple();
-            },
-            label: const Text('Apple でサインイン'),
-          ),
+        const Gap(8),
+        SocialSignInButton<void>(
+          method: SocialSignInMethod.Apple,
+          onPressed: ref.read(accountPageController.notifier).signInWithApple,
         ),
-        const Gap(16),
-        SizedBox(
-          height: buttonHeight,
-          width: buttonWidth,
-          child: ElevatedButton.icon(
-            icon: const FaIcon(FontAwesomeIcons.line),
-            onPressed: () async {
-              await ref.read(accountPageController.notifier).signInWithLine();
-            },
-            label: const Text('LINE でサインイン'),
-          ),
+        const Gap(8),
+        SocialSignInButton<void>(
+          method: SocialSignInMethod.LINE,
+          onPressed: ref.read(accountPageController.notifier).signInWithLine,
         ),
-        const Gap(16),
+        const Gap(8),
         const Text('ログインしていません。'),
       ],
     );

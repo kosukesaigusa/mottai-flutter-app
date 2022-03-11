@@ -91,7 +91,7 @@ class AuthRepository {
       );
       await FirebaseAuth.instance.signInWithCredential(oAuthCredential);
       await _storeUserProfileInSharedPreferences(
-        signInMethod: SignInMethodEnum.google,
+        signInMethod: SocialSignInMethod.Google,
         photoUrl: googleSignInAccount.photoUrl,
         displayName: googleSignInAccount.displayName,
       );
@@ -124,7 +124,7 @@ class AuthRepository {
       if (currentAppleIdUserIdentifier != newAppleIdUserIdentifier &&
           newAppleIdUserIdentifier != null) {
         await _storeUserProfileInSharedPreferences(
-          signInMethod: SignInMethodEnum.apple,
+          signInMethod: SocialSignInMethod.Apple,
           displayName: "${authorizationCredentialAppleID.familyName ?? ''} "
               "${authorizationCredentialAppleID.givenName ?? ''}",
           appleIdUserIdentifier: authorizationCredentialAppleID.userIdentifier,
@@ -141,7 +141,7 @@ class AuthRepository {
       final result = await LineSDK.instance.login();
       final userProfile = result.userProfile;
       await _storeUserProfileInSharedPreferences(
-        signInMethod: SignInMethodEnum.line,
+        signInMethod: SocialSignInMethod.LINE,
         photoUrl: userProfile?.pictureUrl,
         displayName: userProfile?.displayName,
       );
@@ -166,7 +166,7 @@ class AuthRepository {
 
   /// SharedPreferences に画像と表示名を保存する
   Future<void> _storeUserProfileInSharedPreferences({
-    required SignInMethodEnum signInMethod,
+    required SocialSignInMethod signInMethod,
     String? photoUrl,
     String? displayName,
     String? appleIdUserIdentifier,

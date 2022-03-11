@@ -55,7 +55,7 @@ class AccountPage extends HookConsumerWidget {
         SocialSignInButton<void>(
           method: SocialSignInMethod.Google,
           onPressed: ref.read(accountPageController.notifier).signInWithGoogle,
-          innerPadding: const EdgeInsets.all(0),
+          innerPadding: const EdgeInsets.only(left: 5, right: 0, top: 0, bottom: 0),
         ),
         const Gap(8),
         SocialSignInButton<void>(

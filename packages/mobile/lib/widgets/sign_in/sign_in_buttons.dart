@@ -33,10 +33,7 @@ class SocialSignInButton<T> extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               Padding(
-                padding: innerPadding ??
-                    const EdgeInsets.symmetric(
-                      horizontal: 13,
-                    ),
+                padding: innerPadding ?? const EdgeInsets.only(left: 13, right: 18),
                 child: method.buttonIcon,
               ),
               Text(

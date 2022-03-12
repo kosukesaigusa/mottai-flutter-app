@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:math';
 
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
@@ -136,20 +137,53 @@ class AuthRepository {
   }
 
   /// LINE でサインインして、SharedPreferences に名前と画像を保存する。
+  /// また、そのユーザー ID を使用して Callable Functions をコールして
+  /// Firebase Auth の Custom Token を取得する
   Future<void> signInWithLine() async {
     try {
       final result = await LineSDK.instance.login();
       final userProfile = result.userProfile;
-      await _storeUserProfileInSharedPreferences(
-        signInMethod: SocialSignInMethod.LINE,
-        photoUrl: userProfile?.pictureUrl,
-        displayName: userProfile?.displayName,
-      );
+      if (userProfile == null) {
+        throw Exception();
+      }
+      final lineAccessToken = result.accessToken.data['access_token'] as String;
+      await Future.wait<void>([
+        _storeUserProfileInSharedPreferences(
+          signInMethod: SocialSignInMethod.LINE,
+          photoUrl: userProfile.pictureUrl,
+          displayName: userProfile.displayName,
+        ),
+        _signInWithCustomToken(lineAccessToken),
+      ]);
     } on PlatformException catch (e) {
       throw PlatformException(
         code: e.code,
         message: e.code == '3003' ? 'キャンセルしました。' : 'エラーが発生しました。',
       );
+    }
+  }
+
+  /// カスタムトークン認証でサインインする
+  Future<void> _signInWithCustomToken(String accessToken) async {
+    final callable = FirebaseFunctions.instanceFor(region: 'asia-northeast1')
+        .httpsCallable('createFirebaseAuthCustomToken');
+    final data = <String, dynamic>{'accessToken': accessToken};
+    try {
+      final response = await callable.call<Map<String, dynamic>>(data);
+      final channelId = response.data['channelId'] as String;
+      final expiresIn = response.data['expiresIn'] as int;
+      final customToken = response.data['customToken'] as String;
+      // Channel ID の一致と expiresIn が正の数であることを検証する必要がある
+      // 参考：
+      // https://developers.line.biz/ja/docs/line-login/secure-login-process/#using-access-tokens
+      if (channelId != const String.fromEnvironment('LINE_CHANNEL_ID') || expiresIn <= 0) {
+        throw Exception();
+      }
+      await _auth.signInWithCustomToken(customToken);
+    } on FirebaseException {
+      rethrow;
+    } on Exception {
+      rethrow;
     }
   }
 

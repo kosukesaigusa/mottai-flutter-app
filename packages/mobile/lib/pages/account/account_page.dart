@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:ks_flutter_commons/ks_flutter_commons.dart';
@@ -54,14 +55,10 @@ class AccountPage extends HookConsumerWidget {
   /// 未ログイン時のウィジェット
   Widget _buildNotSignedInWidget(WidgetRef ref) {
     return Column(
-      children: const [
-        SocialSignInButton(SocialSignInMethod.Google),
-        Gap(8),
-        SocialSignInButton(SocialSignInMethod.Apple),
-        Gap(8),
-        SocialSignInButton(SocialSignInMethod.LINE),
-        Gap(8),
-        Text('ログインしていません。'),
+      children: [
+        _buildSocialLoginButtons,
+        const Gap(8),
+        const Text('ログインしていません。'),
       ],
     );
   }
@@ -91,11 +88,15 @@ class AccountPage extends HookConsumerWidget {
           const Expanded(child: Divider()),
         ]),
         const Gap(16),
-        const SocialSignInButton(SocialSignInMethod.Google),
-        const Gap(8),
-        const SocialSignInButton(SocialSignInMethod.Apple),
-        const Gap(8),
-        const SocialSignInButton(SocialSignInMethod.LINE),
+        StreamBuilder<User?>(
+          stream: auth.authStateChanges(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return const SizedBox();
+            }
+            return _buildSocialLoginButtons;
+          },
+        ),
       ],
     );
   }
@@ -142,16 +143,7 @@ class AccountPage extends HookConsumerWidget {
         return Column(
           children: [
             Text('こんにちは、$fullName さん。'),
-            if (_linkedSocialAccounts.contains('google.com'))
-              const Padding(
-                padding: EdgeInsets.only(top: 8),
-                child: Text('Google 連携済み'),
-              ),
-            if (_linkedSocialAccounts.contains('apple.com'))
-              const Padding(
-                padding: EdgeInsets.only(top: 8),
-                child: Text('Apple 連携済み'),
-              ),
+            _buildConnectedSocialAccounts,
           ],
         );
       },
@@ -165,5 +157,66 @@ class AccountPage extends HookConsumerWidget {
       return [];
     }
     return user.providerData.map((userInfo) => userInfo.providerId).toList();
+  }
+
+  /// 連携済みソーシャルログインのカラムを返す
+  Widget get _buildConnectedSocialAccounts {
+    return Column(
+      children: [
+        if (_linkedSocialAccounts.contains('google.com')) ...[
+          const Gap(8),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: const [
+              FaIcon(
+                FontAwesomeIcons.google,
+                size: 12,
+                color: Color(0xff3369E8),
+              ),
+              Gap(8),
+              Text(
+                'Google 連携済み',
+                style: TextStyle(color: Color.fromRGBO(0, 0, 0, 0.54)),
+              ),
+            ],
+          ),
+        ],
+        if (_linkedSocialAccounts.contains('apple.com')) ...[
+          const Gap(8),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: const [
+              FaIcon(
+                FontAwesomeIcons.apple,
+                size: 12,
+                color: Color(0xff3369E8),
+              ),
+              Gap(8),
+              Text(
+                'Apple 連携済み',
+                style: TextStyle(color: Color.fromRGBO(0, 0, 0, 0.54)),
+              ),
+            ],
+          ),
+        ],
+      ],
+    );
+  }
+
+  /// ソーシャルログインボタンのカラムを返す
+  Widget get _buildSocialLoginButtons {
+    return Column(
+      children: [
+        if (!_linkedSocialAccounts.contains('google.com')) ...[
+          const SocialSignInButton(SocialSignInMethod.Google),
+          const Gap(8),
+        ],
+        if (!_linkedSocialAccounts.contains('apple.com')) ...[
+          const SocialSignInButton(SocialSignInMethod.Apple),
+          const Gap(8),
+        ],
+        const SocialSignInButton(SocialSignInMethod.LINE),
+      ],
+    );
   }
 }

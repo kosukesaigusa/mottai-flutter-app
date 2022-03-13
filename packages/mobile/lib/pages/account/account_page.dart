@@ -65,7 +65,7 @@ class AccountPage extends HookConsumerWidget {
         const Gap(8),
         SocialSignInButton<void>(
           method: SocialSignInMethod.LINE,
-          onPressed: ref.read(accountPageController.notifier).signInWithLine,
+          onPressed: ref.read(accountPageController.notifier).signInWithLINE,
         ),
         const Gap(8),
         const Text('ログインしていません。'),

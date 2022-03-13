@@ -18,7 +18,11 @@ class AccountPageController extends StateNotifier<AccountPageState> {
   /// Google でサインインする。
   Future<void> signInWithGoogle() async {
     try {
-      await _reader(authRepository).signInWithGoogle();
+      final result = await _reader(authRepository).signInWithGoogle();
+      if (result == null) {
+        _reader(scaffoldMessengerController).showSnackBar('サインインに失敗しました。');
+        return;
+      }
       _reader(scaffoldMessengerController).showSnackBar('サインインしました。');
     } on PlatformException catch (e) {
       _reader(scaffoldMessengerController).showSnackBar('[${e.code}] キャンセルしました。');
@@ -30,7 +34,11 @@ class AccountPageController extends StateNotifier<AccountPageState> {
   /// Apple でサインインする。
   Future<void> signInWithApple() async {
     try {
-      await _reader(authRepository).signInWithApple();
+      final result = await _reader(authRepository).signInWithApple();
+      if (result == null) {
+        _reader(scaffoldMessengerController).showSnackBar('サインインに失敗しました。');
+        return;
+      }
       _reader(scaffoldMessengerController).showSnackBar('サインインしました。');
     } on PlatformException catch (e) {
       _reader(scaffoldMessengerController).showSnackBar('[${e.code}] キャンセルしました。');
@@ -38,9 +46,13 @@ class AccountPageController extends StateNotifier<AccountPageState> {
   }
 
   /// LINE でサインインする。
-  Future<void> signInWithLine() async {
+  Future<void> signInWithLINE() async {
     try {
-      await _reader(authRepository).signInWithLine();
+      final result = await _reader(authRepository).signInWithLINE();
+      if (result == null) {
+        _reader(scaffoldMessengerController).showSnackBar('サインインに失敗しました。');
+        return;
+      }
       _reader(scaffoldMessengerController).showSnackBar('サインインしました。');
     } on PlatformException catch (e) {
       _reader(scaffoldMessengerController).showSnackBar('[${e.code}] キャンセルしました。');

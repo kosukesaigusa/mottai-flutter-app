@@ -29,7 +29,7 @@
 			<string>Bundle ID</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.kosukesaigusa.mottaiFlutterApp.dev</string>
+				<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 				<string>com.googleusercontent.apps.709197089170-dsf1k646e2fducpfnefm7mhe6suo65f5</string>
 				<!-- Specify URL scheme to use when returning from LINE to your app. -->
 				<string>line3rdp.$(PRODUCT_BUNDLE_IDENTIFIER)</string>

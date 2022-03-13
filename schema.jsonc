@@ -1,0 +1,9 @@
+{
+  "collection /accounts": {
+    "document {userId}": {
+      "displayName": "Kosuke Saigusa",
+      "photoURL": "https://...",
+      "providers": ["google", "apple", "line"]
+    }
+  }
+}

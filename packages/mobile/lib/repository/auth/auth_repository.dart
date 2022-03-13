@@ -162,7 +162,8 @@ class AuthRepository {
         code: e.code,
         message: e.code == '3003' ? 'キャンセルしました。' : 'エラーが発生しました。',
       );
-    } on FirebaseException {
+    } on FirebaseException catch (e) {
+      print(e);
       rethrow;
     } on Exception {
       rethrow;
@@ -207,7 +208,10 @@ class AuthRepository {
   Future<String> _createFirebaseAuthCustomToken(String accessToken) async {
     final callable = FirebaseFunctions.instanceFor(region: 'asia-northeast1')
         .httpsCallable('createFirebaseAuthCustomToken');
-    final data = <String, dynamic>{'accessToken': accessToken};
+    final data = <String, dynamic>{
+      'accessToken': accessToken,
+      'firebaseAuthUserId': _auth.currentUser?.uid,
+    };
     try {
       final response = await callable.call<Map<String, dynamic>>(data);
       final channelId = response.data['channelId'] as String;

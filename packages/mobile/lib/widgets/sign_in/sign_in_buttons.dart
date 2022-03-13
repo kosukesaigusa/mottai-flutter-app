@@ -1,20 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../../controllers/account/account_page_controller.dart';
 import '../../utils/enums.dart';
 
-class SocialSignInButton<T> extends StatelessWidget {
-  const SocialSignInButton({
-    required this.method,
-    required this.onPressed,
-    this.innerPadding,
-  });
+class SocialSignInButton extends HookConsumerWidget {
+  const SocialSignInButton(this.method);
 
   final SocialSignInMethod method;
-  final Future<T> Function() onPressed;
-  final EdgeInsets? innerPadding;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return MaterialButton(
       key: ValueKey(method.name),
       height: 36,
@@ -23,7 +19,7 @@ class SocialSignInButton<T> extends StatelessWidget {
       color: const Color(0xFFFFFFFF),
       splashColor: Colors.white30,
       highlightColor: Colors.white30,
-      onPressed: onPressed,
+      onPressed: _onPressed(ref),
       child: Container(
         constraints: const BoxConstraints(
           maxWidth: 220,
@@ -33,7 +29,7 @@ class SocialSignInButton<T> extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               Padding(
-                padding: innerPadding ?? const EdgeInsets.only(left: 13, right: 18),
+                padding: _innerPadding(ref),
                 child: method.buttonIcon,
               ),
               Text(
@@ -49,5 +45,26 @@ class SocialSignInButton<T> extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  /// サインイン方法ごとのボタン押下時の処理
+  Future<void> Function() _onPressed(WidgetRef ref) {
+    if (method == SocialSignInMethod.Google) {
+      return ref.read(accountPageController.notifier).signInWithGoogle;
+    } else if (method == SocialSignInMethod.Apple) {
+      return ref.read(accountPageController.notifier).signInWithApple;
+    } else if (method == SocialSignInMethod.LINE) {
+      return ref.read(accountPageController.notifier).signInWithLINE;
+    }
+    return () async {};
+  }
+
+  /// サインイン方法ごとのボタン押下時の処理 innerPadding
+  EdgeInsets _innerPadding(WidgetRef ref) {
+    if (method == SocialSignInMethod.Google) {
+      return const EdgeInsets.only(left: 5, right: 0, top: 0, bottom: 0);
+    } else {
+      return const EdgeInsets.only(left: 13, right: 18);
+    }
   }
 }

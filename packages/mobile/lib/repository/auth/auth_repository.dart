@@ -78,8 +78,8 @@ class AuthRepository {
     }
   }
 
-  /// Google サインイン
-  Future<void> signInWithGoogle() async {
+  /// Google でサインインする。
+  Future<UserCredential?> signInWithGoogle() async {
     try {
       final googleSignInAccount = await _googleSignIn.signIn();
       if (googleSignInAccount == null) {
@@ -90,26 +90,24 @@ class AuthRepository {
         accessToken: googleSignInAuthentication.accessToken,
         idToken: googleSignInAuthentication.idToken,
       );
-      await FirebaseAuth.instance.signInWithCredential(oAuthCredential);
+      final userCredential = await _signInWithOAuthCredential(oAuthCredential);
       await _storeUserProfileInSharedPreferences(
         signInMethod: SocialSignInMethod.Google,
         photoUrl: googleSignInAccount.photoUrl,
         displayName: googleSignInAccount.displayName,
       );
+      return userCredential;
     } on PlatformException {
       rethrow;
     }
   }
 
   /// Apple でサインインして、SharedPreferences に名前を保存する。
-  Future<void> signInWithApple() async {
+  Future<UserCredential?> signInWithApple() async {
     final rawNonce = _generateNonce();
     final nonce = _sha256ofString(rawNonce);
     final authorizationCredentialAppleID = await SignInWithApple.getAppleIDCredential(
-      scopes: [
-        AppleIDAuthorizationScopes.email,
-        AppleIDAuthorizationScopes.fullName,
-      ],
+      scopes: [AppleIDAuthorizationScopes.email, AppleIDAuthorizationScopes.fullName],
       nonce: nonce,
     );
     try {
@@ -117,7 +115,7 @@ class AuthRepository {
         idToken: authorizationCredentialAppleID.identityToken,
         rawNonce: rawNonce,
       );
-      await FirebaseAuth.instance.signInWithCredential(oAuthCredential);
+      final userCredential = await _signInWithOAuthCredential(oAuthCredential);
       final currentAppleIdUserIdentifier =
           SharedPreferencesService.sp.getString(SharedPreferencesKey.appleIdUserIdentifier.name);
       final newAppleIdUserIdentifier = authorizationCredentialAppleID.userIdentifier;
@@ -131,6 +129,7 @@ class AuthRepository {
           appleIdUserIdentifier: authorizationCredentialAppleID.userIdentifier,
         );
       }
+      return userCredential;
     } on PlatformException {
       rethrow;
     }
@@ -139,32 +138,73 @@ class AuthRepository {
   /// LINE でサインインして、SharedPreferences に名前と画像を保存する。
   /// また、そのユーザー ID を使用して Callable Functions をコールして
   /// Firebase Auth の Custom Token を取得する
-  Future<void> signInWithLine() async {
+  Future<UserCredential?> signInWithLINE() async {
     try {
       final result = await LineSDK.instance.login();
       final userProfile = result.userProfile;
       if (userProfile == null) {
-        throw Exception();
+        return null;
       }
       final lineAccessToken = result.accessToken.data['access_token'] as String;
-      await Future.wait<void>([
+      final futures = await Future.wait<dynamic>([
+        _createFirebaseAuthCustomToken(lineAccessToken),
         _storeUserProfileInSharedPreferences(
           signInMethod: SocialSignInMethod.LINE,
           photoUrl: userProfile.pictureUrl,
           displayName: userProfile.displayName,
         ),
-        _signInWithCustomToken(lineAccessToken),
       ]);
+      final customToken = futures[0] as String;
+      final userCredential = await _signInWithCustomToken(customToken);
+      return userCredential;
     } on PlatformException catch (e) {
       throw PlatformException(
         code: e.code,
         message: e.code == '3003' ? 'キャンセルしました。' : 'エラーが発生しました。',
       );
+    } on FirebaseException {
+      rethrow;
+    } on Exception {
+      rethrow;
     }
   }
 
-  /// カスタムトークン認証でサインインする
-  Future<void> _signInWithCustomToken(String accessToken) async {
+  /// Google や Apple ログインを通じた OAuthCredential を受け取ってサインインする。
+  /// ログイン済みだった場合には、そのログイン済みのユーザーにリンクする。
+  Future<UserCredential> _signInWithOAuthCredential(OAuthCredential oAuthCredential) async {
+    final user = _auth.currentUser;
+    try {
+      final userCredential = user == null
+          ? await _auth.signInWithCredential(oAuthCredential)
+          : await user.linkWithCredential(oAuthCredential);
+      return userCredential;
+    } on FirebaseAuthException {
+      rethrow;
+    } on PlatformException {
+      rethrow;
+    } on Exception {
+      rethrow;
+    }
+  }
+
+  /// カスタムトークン認証でサインインする。
+  /// 既存のユーザーにカスタムトークン認証のユーザーを結びつけるのは容易ではなさそう。
+  /// 参考：
+  /// https://stackoverflow.com/questions/40171663/linking-custom-auth-provider-with-firebase
+  Future<UserCredential?> _signInWithCustomToken(String customToken) async {
+    try {
+      final userCredential = await _auth.signInWithCustomToken(customToken);
+      return userCredential;
+    } on FirebaseException {
+      rethrow;
+    } on Exception {
+      rethrow;
+    }
+  }
+
+  /// LINE の accessToken から FirebaseAuth の Custom Token を作成するための
+  /// Callable Functions をコールする。
+  Future<String> _createFirebaseAuthCustomToken(String accessToken) async {
     final callable = FirebaseFunctions.instanceFor(region: 'asia-northeast1')
         .httpsCallable('createFirebaseAuthCustomToken');
     final data = <String, dynamic>{'accessToken': accessToken};
@@ -179,7 +219,7 @@ class AuthRepository {
       if (channelId != const String.fromEnvironment('LINE_CHANNEL_ID') || expiresIn <= 0) {
         throw Exception();
       }
-      await _auth.signInWithCustomToken(customToken);
+      return customToken;
     } on FirebaseException {
       rethrow;
     } on Exception {

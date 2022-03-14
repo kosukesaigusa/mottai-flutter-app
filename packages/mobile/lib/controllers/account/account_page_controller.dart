@@ -1,8 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mottai_flutter_app/repository/auth/auth_repository.dart';
 
+import '../../theme/theme.dart';
 import '../scaffold_messenger/scaffold_messenger_controller.dart';
 import 'account_page_state.dart';
 
@@ -46,8 +50,46 @@ class AccountPageController extends StateNotifier<AccountPageState> {
   }
 
   /// LINE でサインインする。
+  /// LINE におけるサインインではメールアドレスの取得をするのに同意が必要なので
+  /// AlertDialog を表示する。
   Future<void> signInWithLINE() async {
     try {
+      final agreed = await showDialog<bool>(
+        context: _reader(scaffoldMessengerController).scaffoldMessengerKey.currentContext!,
+        builder: (context) {
+          return AlertDialog(
+            title: Row(
+              children: const [
+                FaIcon(FontAwesomeIcons.line, color: Color(0xff00ba52)),
+                Gap(8),
+                Text('LINE ログインについて', style: bold12),
+              ],
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'このアプリでは、ログイン時の確認画面で許可を頂いた場合のみ、'
+                  'あなたの LINE アカウントに登録されているメールアドレスを取得します。'
+                  '取得したメールアドレスは、ユーザー管理および、他のソーシャルログインと'
+                  '連携する目的以外では使用しません。'
+                  'また、法令に定められた場合を除き、第三者への提供も行うことはありません。',
+                  style: grey12,
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop<bool>(context, true),
+                child: const Text('同意して進む'),
+              ),
+            ],
+          );
+        },
+      );
+      if (!(agreed ?? false)) {
+        return;
+      }
       final result = await _reader(authRepository).signInWithLINE();
       if (result == null) {
         _reader(scaffoldMessengerController).showSnackBar('サインインに失敗しました。');

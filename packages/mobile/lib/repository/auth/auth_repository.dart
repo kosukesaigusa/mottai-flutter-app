@@ -140,14 +140,15 @@ class AuthRepository {
   /// Firebase Auth の Custom Token を取得する
   Future<UserCredential?> signInWithLINE() async {
     try {
-      final result = await LineSDK.instance.login();
+      final result = await LineSDK.instance.login(scopes: ['profile', 'openid', 'email']);
       final userProfile = result.userProfile;
       if (userProfile == null) {
         return null;
       }
       final lineAccessToken = result.accessToken.data['access_token'] as String;
+      final idToken = (result.data['accessToken'] as Map<String, dynamic>)['id_token'] as String;
       final futures = await Future.wait<dynamic>([
-        _createFirebaseAuthCustomToken(lineAccessToken),
+        _createFirebaseAuthCustomToken(accessToken: lineAccessToken, idToken: idToken),
         _storeUserProfileInSharedPreferences(
           signInMethod: SocialSignInMethod.LINE,
           photoUrl: userProfile.pictureUrl,
@@ -205,12 +206,15 @@ class AuthRepository {
 
   /// LINE の accessToken から FirebaseAuth の Custom Token を作成するための
   /// Callable Functions をコールする。
-  Future<String> _createFirebaseAuthCustomToken(String accessToken) async {
+  Future<String> _createFirebaseAuthCustomToken({
+    required String accessToken,
+    required String idToken,
+  }) async {
     final callable = FirebaseFunctions.instanceFor(region: 'asia-northeast1')
         .httpsCallable('createFirebaseAuthCustomToken');
     final data = <String, dynamic>{
       'accessToken': accessToken,
-      'firebaseAuthUserId': _auth.currentUser?.uid,
+      'idToken': idToken,
     };
     try {
       final response = await callable.call<Map<String, dynamic>>(data);

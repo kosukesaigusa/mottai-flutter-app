@@ -1,6 +1,9 @@
 {
   "collection /accounts": {
     "document {userId}": {
+      "userId": "accountId",
+      "createdAt": "2022-01-01",
+      "updatedAt": "2022-01-01",
       "displayName": "Kosuke Saigusa",
       "photoURL": "https://...",
       "providers": ["google", "apple", "line"]

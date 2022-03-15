@@ -28,7 +28,6 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   flutter_native_image: ^0.0.6+1
-  flutter_riverpod: ^1.0.3
   flutter_signin_button: ^2.0.0
   flutter_spinkit: ^5.1.0
   flutter_state_notifier: ^0.7.1

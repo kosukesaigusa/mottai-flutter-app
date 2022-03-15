@@ -1,12 +1,11 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:ks_flutter_commons/ks_flutter_commons.dart';
 
-import '../../controllers/scaffold_messenger/scaffold_messenger_controller.dart';
-import '../../services/shared_preferences_service.dart';
+import '../../providers/account/account_providers.dart';
 import '../../theme/theme.dart';
 import '../../utils/enums.dart';
 import '../../utils/utils.dart';
@@ -33,18 +32,14 @@ class AccountPage extends HookConsumerWidget {
             children: [
               const Text('AccountPage'),
               const Gap(16),
-              StreamBuilder<User?>(
-                stream: auth.authStateChanges(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const PrimarySpinkitCircle();
-                  }
-                  if (!snapshot.hasData) {
-                    return _buildNotSignedInWidget(ref);
-                  }
-                  return _buildSignedInWidget(ref);
-                },
-              ),
+              ref.watch(accountProvider).when<Widget>(
+                    loading: () => const PrimarySpinkitCircle(),
+                    error: (error, stackTrace) {
+                      print(stackTrace);
+                      return Text(error.toString());
+                    },
+                    data: (account) => account == null ? _notSignedInWidget : _signedInWidget,
+                  ),
             ],
           ),
         ),
@@ -53,170 +48,206 @@ class AccountPage extends HookConsumerWidget {
   }
 
   /// 未ログイン時のウィジェット
-  Widget _buildNotSignedInWidget(WidgetRef ref) {
-    return Column(
-      children: [
-        _buildSocialLoginButtons,
-        const Gap(8),
-        const Text('ログインしていません。'),
-      ],
-    );
-  }
-
-  /// ログイン済みのウィジェット
-  Widget _buildSignedInWidget(WidgetRef ref) {
-    return Column(
-      children: [
-        _buildProfileImageWidget,
-        const Gap(16),
-        _buildDisplayNameWidget,
-        const Gap(8),
-        ElevatedButton.icon(
-          icon: const Icon(Icons.exit_to_app),
-          onPressed: () async {
-            await auth.signOut();
-            ref.read(scaffoldMessengerController).showSnackBar('サインアウトしました。');
-          },
-          label: const Text('サインアウトする'),
-        ),
-        const Gap(16),
-        Row(children: [
-          const Expanded(child: Divider()),
-          const Gap(16),
-          Text('他のログイン方法と連携する', style: grey12),
-          const Gap(16),
-          const Expanded(child: Divider()),
-        ]),
-        const Gap(16),
-        StreamBuilder<User?>(
-          stream: auth.authStateChanges(),
-          builder: (context, snapshot) {
-            if (!snapshot.hasData) {
-              return const SizedBox();
-            }
-            return _buildSocialLoginButtons;
-          },
-        ),
-      ],
-    );
-  }
-
-  /// プロフィール画像のウィジェット
-  Widget get _buildProfileImageWidget {
-    return DocumentFutureBuilder<String>(
-      future: SharedPreferencesService.getProfileImageURL(),
-      waitingWidget: Container(
-        width: 36,
-        height: 36,
-        decoration: BoxDecoration(
-          color: Colors.grey[200],
-          shape: BoxShape.circle,
-        ),
-      ),
-      noDataWidget: Container(
-        decoration: BoxDecoration(
-          color: Colors.grey[200],
-          shape: BoxShape.circle,
-        ),
-        child: const Icon(
-          Icons.person,
-          size: 36,
-        ),
-      ),
-      builder: (context, url) {
-        return CircleImage(
-          radius: 64,
-          imageURL: url,
-        );
-      },
-    );
-  }
-
-  /// 表示名のウィジェット
-  Widget get _buildDisplayNameWidget {
-    return DocumentFutureBuilder<String>(
-      future: SharedPreferencesService.getDisplayName(),
-      builder: (context, fullName) {
-        if (fullName.trim().isEmpty) {
-          return const Text('ログイン済みです。');
-        }
+  Widget get _notSignedInWidget {
+    return HookConsumer(
+      builder: (context, ref, child) {
         return Column(
           children: [
-            Text('こんにちは、$fullName さん。'),
-            _buildConnectedSocialAccounts,
+            _buildSocialLoginButtons,
+            const Gap(8),
+            const Text('ログインしていません。'),
           ],
         );
       },
     );
   }
 
-  /// 連携済みのソーシャルアカウントの種類 (providerId) を返す
-  List<String> get _linkedSocialAccounts {
-    final user = auth.currentUser;
-    if (user == null) {
-      return [];
-    }
-    return user.providerData.map((userInfo) => userInfo.providerId).toList();
+  /// ログイン済みのウィジェット
+  Widget get _signedInWidget {
+    return HookConsumer(builder: (context, ref, child) {
+      return Column(
+        children: [
+          _buildProfileImageWidget,
+          const Gap(16),
+          _buildDisplayNameWidget,
+          const Gap(8),
+          ElevatedButton.icon(
+            icon: const Icon(Icons.exit_to_app),
+            onPressed: () async {
+              await auth.signOut();
+              RootWidget.restart(context);
+            },
+            label: const Text('サインアウトする'),
+          ),
+          _buildSocialLoginButtons,
+        ],
+      );
+    });
+  }
+
+  /// プロフィール画像のウィジェット
+  Widget get _buildProfileImageWidget {
+    return HookConsumer(
+      builder: (context, ref, child) {
+        return ref.watch(accountProvider).when<Widget>(
+              loading: () => const SizedBox(),
+              error: (error, stackTrace) => const SizedBox(),
+              data: (account) {
+                return CircleImage(
+                  radius: 64,
+                  imageURL: account?.photoUrl,
+                );
+              },
+            );
+      },
+    );
+  }
+
+  /// 表示名のウィジェット
+  Widget get _buildDisplayNameWidget {
+    return HookConsumer(
+      builder: (context, ref, child) {
+        return ref.watch(accountProvider).when<Widget>(
+              loading: () => const SizedBox(),
+              error: (error, stackTrace) => const SizedBox(),
+              data: (account) {
+                if (account == null) {
+                  return const SizedBox();
+                }
+                return Column(
+                  children: [
+                    Text('こんにちは、${account.displayName} さん。'),
+                    const Gap(8),
+                    _buildConnectedSocialAccounts,
+                  ],
+                );
+              },
+            );
+      },
+    );
   }
 
   /// 連携済みソーシャルログインのカラムを返す
   Widget get _buildConnectedSocialAccounts {
-    return Column(
-      children: [
-        if (_linkedSocialAccounts.contains('google.com')) ...[
-          const Gap(8),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
-              FaIcon(
-                FontAwesomeIcons.google,
-                size: 12,
-                color: Color(0xff3369E8),
-              ),
-              Gap(8),
-              Text(
-                'Google 連携済み',
-                style: TextStyle(color: Color.fromRGBO(0, 0, 0, 0.54)),
-              ),
-            ],
-          ),
-        ],
-        if (_linkedSocialAccounts.contains('apple.com')) ...[
-          const Gap(8),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
-              FaIcon(
-                FontAwesomeIcons.apple,
-                size: 12,
-                color: Color(0xff3369E8),
-              ),
-              Gap(8),
-              Text(
-                'Apple 連携済み',
-                style: TextStyle(color: Color.fromRGBO(0, 0, 0, 0.54)),
-              ),
-            ],
-          ),
-        ],
-      ],
+    return HookConsumer(
+      builder: (context, ref, child) {
+        return ref.watch(accountProvider).when<Widget>(
+              loading: () => const SizedBox(),
+              error: (error, stackTrace) => const SizedBox(),
+              data: (account) {
+                if (account == null) {
+                  return const SizedBox();
+                }
+                final providers = account.providers;
+                return Column(
+                  children: [
+                    if (providers.contains(SocialSignInMethod.Google.name)) ...[
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: const [
+                          FaIcon(
+                            FontAwesomeIcons.google,
+                            size: 12,
+                            color: Color(0xff3369E8),
+                          ),
+                          Gap(8),
+                          Text(
+                            'Google 連携済み',
+                            style: TextStyle(color: Color.fromRGBO(0, 0, 0, 0.54)),
+                          ),
+                        ],
+                      ),
+                      const Gap(8),
+                    ],
+                    if (providers.contains(SocialSignInMethod.Apple.name)) ...[
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: const [
+                          FaIcon(
+                            FontAwesomeIcons.apple,
+                            size: 16,
+                            color: Colors.black,
+                          ),
+                          Gap(8),
+                          Text(
+                            'Apple 連携済み',
+                            style: TextStyle(color: Color.fromRGBO(0, 0, 0, 0.54)),
+                          ),
+                        ],
+                      ),
+                      const Gap(8),
+                    ],
+                    if (providers.contains(SocialSignInMethod.LINE.name))
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: const [
+                          FaIcon(
+                            FontAwesomeIcons.line,
+                            size: 16,
+                            color: Color(0xff00ba52),
+                          ),
+                          Gap(8),
+                          Text(
+                            'LINE 連携済み',
+                            style: TextStyle(color: Color.fromRGBO(0, 0, 0, 0.54)),
+                          ),
+                        ],
+                      ),
+                  ],
+                );
+              },
+            );
+      },
     );
   }
 
   /// ソーシャルログインボタンのカラムを返す
   Widget get _buildSocialLoginButtons {
-    return Column(
-      children: [
-        if (!_linkedSocialAccounts.contains('google.com')) ...[
-          const SocialSignInButton(SocialSignInMethod.Google),
-          const Gap(8),
-        ],
-        if (!_linkedSocialAccounts.contains('apple.com')) ...[
-          const SocialSignInButton(SocialSignInMethod.Apple),
-          const Gap(8),
-        ],
-        const SocialSignInButton(SocialSignInMethod.LINE),
-      ],
+    return HookConsumer(
+      builder: (context, ref, child) {
+        return ref.watch(accountProvider).when<Widget>(
+              loading: () => const SizedBox(),
+              error: (error, stackTrace) => const SizedBox(),
+              data: (account) {
+                if (account == null) {
+                  return Column(
+                    children: const [
+                      SocialSignInButton(SocialSignInMethod.Google),
+                      Gap(8),
+                      SocialSignInButton(SocialSignInMethod.Apple),
+                      Gap(8),
+                      SocialSignInButton(SocialSignInMethod.LINE),
+                    ],
+                  );
+                }
+                final providers = account.providers;
+                return Column(
+                  children: [
+                    if (!setEquals(
+                      providers.toSet(),
+                      SocialSignInMethod.values.map((e) => e.name).toSet(),
+                    ))
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        child: Row(children: [
+                          const Expanded(child: Divider()),
+                          const Gap(16),
+                          Text('他のログイン方法と連携する', style: grey12),
+                          const Gap(16),
+                          const Expanded(child: Divider()),
+                        ]),
+                      ),
+                    if (!providers.contains(SocialSignInMethod.Google.name))
+                      const SocialSignInButton(SocialSignInMethod.Google),
+                    if (!providers.contains(SocialSignInMethod.Apple.name))
+                      const SocialSignInButton(SocialSignInMethod.Apple),
+                    if (!providers.contains(SocialSignInMethod.LINE.name))
+                      const SocialSignInButton(SocialSignInMethod.LINE),
+                  ],
+                );
+              },
+            );
+      },
     );
   }
 }

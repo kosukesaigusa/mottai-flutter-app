@@ -22,15 +22,20 @@ class AccountPageController extends StateNotifier<AccountPageState> {
   /// Google でサインインする。
   Future<void> signInWithGoogle() async {
     try {
+      state = state.copyWith(loading: true);
       final result = await _reader(authRepository).signInWithGoogle();
       if (result == null) {
+        state = state.copyWith(loading: false);
         _reader(scaffoldMessengerController).showSnackBar('サインインに失敗しました。');
         return;
       }
+      state = state.copyWith(loading: false);
       _reader(scaffoldMessengerController).showSnackBar('サインインしました。');
     } on PlatformException catch (e) {
+      state = state.copyWith(loading: false);
       _reader(scaffoldMessengerController).showSnackBar('[${e.code}] キャンセルしました。');
     } on Exception {
+      state = state.copyWith(loading: false);
       _reader(scaffoldMessengerController).showSnackBar('サインインに失敗しました。');
     }
   }
@@ -38,13 +43,17 @@ class AccountPageController extends StateNotifier<AccountPageState> {
   /// Apple でサインインする。
   Future<void> signInWithApple() async {
     try {
+      state = state.copyWith(loading: true);
       final result = await _reader(authRepository).signInWithApple();
       if (result == null) {
+        state = state.copyWith(loading: false);
         _reader(scaffoldMessengerController).showSnackBar('サインインに失敗しました。');
         return;
       }
+      state = state.copyWith(loading: false);
       _reader(scaffoldMessengerController).showSnackBar('サインインしました。');
     } on PlatformException catch (e) {
+      state = state.copyWith(loading: false);
       _reader(scaffoldMessengerController).showSnackBar('[${e.code}] キャンセルしました。');
     }
   }
@@ -90,13 +99,17 @@ class AccountPageController extends StateNotifier<AccountPageState> {
       if (!(agreed ?? false)) {
         return;
       }
+      state = state.copyWith(loading: true);
       final result = await _reader(authRepository).signInWithLINE();
       if (result == null) {
+        state = state.copyWith(loading: false);
         _reader(scaffoldMessengerController).showSnackBar('サインインに失敗しました。');
         return;
       }
+      state = state.copyWith(loading: false);
       _reader(scaffoldMessengerController).showSnackBar('サインインしました。');
     } on PlatformException catch (e) {
+      state = state.copyWith(loading: false);
       _reader(scaffoldMessengerController).showSnackBar('[${e.code}] キャンセルしました。');
     }
   }

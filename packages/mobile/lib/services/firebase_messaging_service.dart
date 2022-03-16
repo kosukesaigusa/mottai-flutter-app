@@ -2,6 +2,12 @@ import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 
+/// main.dart でのイニシャライズ処理と
+/// MainPage でのイニシャライズ処理および通知受信時のハンドリングで使用するメソッドを
+/// まとめたクラス。
+/// Riverpod の Provider で提供するほどでもないのと、
+/// ref が取れない main.dart のグローバルな関数内でこのクラスのメソッドを呼ぶ方法が分からないので
+/// とりあえずシングルトンクラスで定義する。
 class FirebaseMessagingService {
   factory FirebaseMessagingService() => _instance;
   FirebaseMessagingService._internal();
@@ -20,7 +26,7 @@ class FirebaseMessagingService {
     }
   }
 
-  /// Push通知の許可を取る
+  /// Push 通知の許可を取る
   static Future<void> requestPermission() async {
     try {
       await _messaging.requestPermission(

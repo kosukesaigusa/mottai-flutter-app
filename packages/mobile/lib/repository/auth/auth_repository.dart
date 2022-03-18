@@ -23,7 +23,7 @@ class AuthRepository {
   final _auth = FirebaseAuth.instance;
   final _googleSignIn = GoogleSignIn(scopes: ['email', 'profile']);
 
-  /// ログイン済みかつCustomClaims のアドミンユーザーかどうか
+  /// ログイン済みかつ CustomClaims のアドミンユーザーかどうか
   Future<bool> get isAdminUser async {
     final user = _auth.currentUser;
     if (user == null) {

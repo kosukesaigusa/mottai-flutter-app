@@ -19,7 +19,9 @@ class SocialSignInButton extends HookConsumerWidget {
       color: const Color(0xFFFFFFFF),
       splashColor: Colors.white30,
       highlightColor: Colors.white30,
-      onPressed: _onPressed(ref),
+      onPressed: () async {
+        await ref.read(accountPageController.notifier).signIn(method);
+      },
       child: Container(
         constraints: const BoxConstraints(
           maxWidth: 220,
@@ -45,18 +47,6 @@ class SocialSignInButton extends HookConsumerWidget {
         ),
       ),
     );
-  }
-
-  /// サインイン方法ごとのボタン押下時の処理
-  Future<void> Function() _onPressed(WidgetRef ref) {
-    if (method == SocialSignInMethod.Google) {
-      return ref.read(accountPageController.notifier).signInWithGoogle;
-    } else if (method == SocialSignInMethod.Apple) {
-      return ref.read(accountPageController.notifier).signInWithApple;
-    } else if (method == SocialSignInMethod.LINE) {
-      return ref.read(accountPageController.notifier).signInWithLINE;
-    }
-    return () async {};
   }
 
   /// サインイン方法ごとのボタン押下時の処理 innerPadding

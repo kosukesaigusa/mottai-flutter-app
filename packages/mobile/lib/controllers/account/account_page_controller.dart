@@ -4,7 +4,8 @@ import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:mottai_flutter_app/repository/auth/auth_repository.dart';
+import 'package:mottai_flutter_app/services/auth/auth_service.dart';
+import 'package:mottai_flutter_app/utils/enums.dart';
 
 import '../../theme/theme.dart';
 import '../scaffold_messenger/scaffold_messenger_controller.dart';
@@ -14,110 +15,79 @@ final accountPageController = StateNotifierProvider<AccountPageController, Accou
   (ref) => AccountPageController(ref.read),
 );
 
+/// アカウントページのビューコントローラ。
+/// 認証関係の処理については、AuthService とだけやり取りをして、
+/// AuthRepository とは直接やり取りをしない。
 class AccountPageController extends StateNotifier<AccountPageState> {
   AccountPageController(this._reader) : super(const AccountPageState());
 
   final Reader _reader;
 
-  /// Google でサインインする。
-  Future<void> signInWithGoogle() async {
-    try {
-      state = state.copyWith(loading: true);
-      final result = await _reader(authRepository).signInWithGoogle();
-      if (result == null) {
-        state = state.copyWith(loading: false);
-        _reader(scaffoldMessengerController).showSnackBar('サインインに失敗しました。');
+  /// Google, Apple, or LINE でサインインする
+  Future<void> signIn(SocialSignInMethod method) async {
+    if (method == SocialSignInMethod.LINE) {
+      final agreed = await _agreeWithLINEEmailHandling;
+      if (!agreed) {
         return;
       }
-      state = state.copyWith(loading: false);
-      _reader(scaffoldMessengerController).showSnackBar('サインインしました。');
+    }
+    state = state.copyWith(loading: true);
+    try {
+      await _reader(authService).signIn(method);
     } on PlatformException catch (e) {
-      state = state.copyWith(loading: false);
       _reader(scaffoldMessengerController).showSnackBar('[${e.code}] キャンセルしました。');
+    } on FirebaseException catch (e) {
+      _reader(scaffoldMessengerController).showSnackBarByFirebaseException(e);
     } on Exception {
-      state = state.copyWith(loading: false);
       _reader(scaffoldMessengerController).showSnackBar('サインインに失敗しました。');
+    } finally {
+      state = state.copyWith(loading: false);
     }
   }
 
-  /// Apple でサインインする。
-  Future<void> signInWithApple() async {
-    try {
-      state = state.copyWith(loading: true);
-      final result = await _reader(authRepository).signInWithApple();
-      if (result == null) {
-        state = state.copyWith(loading: false);
-        _reader(scaffoldMessengerController).showSnackBar('サインインに失敗しました。');
-        return;
-      }
-      state = state.copyWith(loading: false);
-      _reader(scaffoldMessengerController).showSnackBar('サインインしました。');
-    } on PlatformException catch (e) {
-      state = state.copyWith(loading: false);
-      _reader(scaffoldMessengerController).showSnackBar('[${e.code}] キャンセルしました。');
-    }
-  }
-
-  /// LINE でサインインする。
-  /// LINE におけるサインインではメールアドレスの取得をするのに同意が必要なので
-  /// AlertDialog を表示する。
-  Future<void> signInWithLINE() async {
-    try {
-      final agreed = await showDialog<bool>(
-        context: _reader(scaffoldMessengerController).scaffoldMessengerKey.currentContext!,
-        builder: (context) {
-          return AlertDialog(
-            title: Row(
-              children: const [
-                FaIcon(FontAwesomeIcons.line, color: Color(0xff00ba52)),
-                Gap(8),
-                Text('LINE ログインについて', style: bold12),
-              ],
-            ),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  'このアプリでは、ログイン時の確認画面で許可を頂いた場合のみ、'
-                  'あなたの LINE アカウントに登録されているメールアドレスを取得します。'
-                  '取得したメールアドレスは、ユーザー管理および、他のソーシャルログインと'
-                  '連携する目的以外では使用しません。'
-                  'また、法令に定められた場合を除き、第三者へ提供することはありません。',
-                  style: grey12,
-                ),
-              ],
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop<bool>(context, true),
-                child: const Text('同意して進む'),
+  /// LINE のログインの前にメールアドレスの取り扱いに
+  /// 同意するかどうか確認するためのダイアログを表示する
+  Future<bool> get _agreeWithLINEEmailHandling async {
+    final agreed = await showDialog<bool>(
+      context: _reader(scaffoldMessengerController).scaffoldMessengerKey.currentContext!,
+      builder: (context) {
+        return AlertDialog(
+          title: Row(
+            children: const [
+              FaIcon(FontAwesomeIcons.line, color: Color(0xff00ba52)),
+              Gap(8),
+              Text('LINE ログインについて', style: bold12),
+            ],
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'このアプリでは、ログイン時の確認画面で許可を頂いた場合のみ、'
+                'あなたの LINE アカウントに登録されているメールアドレスを取得します。'
+                '取得したメールアドレスは、ユーザー管理および、他のソーシャルログインと'
+                '連携する目的以外では使用しません。'
+                'また、法令に定められた場合を除き、第三者へ提供することはありません。',
+                style: grey12,
               ),
             ],
-          );
-        },
-      );
-      if (!(agreed ?? false)) {
-        return;
-      }
-      state = state.copyWith(loading: true);
-      final result = await _reader(authRepository).signInWithLINE();
-      if (result == null) {
-        state = state.copyWith(loading: false);
-        _reader(scaffoldMessengerController).showSnackBar('サインインに失敗しました。');
-        return;
-      }
-      state = state.copyWith(loading: false);
-      _reader(scaffoldMessengerController).showSnackBar('サインインしました。');
-    } on PlatformException catch (e) {
-      state = state.copyWith(loading: false);
-      _reader(scaffoldMessengerController).showSnackBar('[${e.code}] キャンセルしました。');
-    }
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop<bool>(context, true),
+              child: const Text('同意して進む'),
+            ),
+          ],
+        );
+      },
+    );
+    return agreed ?? false;
   }
 
-  /// サインアウト
+  /// サインアウトする。
   Future<void> signOut() async {
     try {
-      await _reader(authRepository).signOut();
+      await _reader(authService).signOut();
     } on FirebaseAuthException catch (e) {
       _reader(scaffoldMessengerController).showSnackBar('[${e.code}] サインアウトに失敗しました。');
     } on Exception {

@@ -112,11 +112,13 @@ class AuthService {
     final account = _reader(accountFutureProvider).value;
     try {
       if (account != null) {
-        // すでにドキュメントが存在しているときは update
+        // すでにドキュメントが存在しているので update する
+        // displayName, imageURL のフィールドについては現在保存されている値が
+        // null の場合のみ更新する（意味のある値が保存されいてる場合は上書きしない）
         await _reader(accountRefProvider).update(
           removeNullValueMapEntries(<String, dynamic>{
-            'displayName': displayName,
-            'imageURL': imageURL,
+            'displayName': account.displayName == null ? displayName : null,
+            'imageURL': account.imageURL == null ? imageURL : null,
             'providers': FieldValue.arrayUnion(<String>[method.name]),
             'updatedAt': FieldValue.serverTimestamp(),
           }),

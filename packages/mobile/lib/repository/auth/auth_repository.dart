@@ -8,12 +8,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_line_sdk/flutter_line_sdk.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:mottai_flutter_app_models/models.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 import '../../constants/string.dart';
 import '../../controllers/firebase/firebase_task_result.dart';
-import '../../services/shared_preferences_service.dart';
-import '../../utils/enums.dart';
 
 final authRepository = Provider.autoDispose((ref) => AuthRepository());
 
@@ -79,7 +78,7 @@ class AuthRepository {
   }
 
   /// Google でサインインする。
-  Future<UserCredential?> signInWithGoogle() async {
+  Future<AuthResult> signInWithGoogle() async {
     try {
       final googleSignInAccount = await _googleSignIn.signIn();
       if (googleSignInAccount == null) {
@@ -91,19 +90,20 @@ class AuthRepository {
         idToken: googleSignInAuthentication.idToken,
       );
       final userCredential = await _signInWithOAuthCredential(oAuthCredential);
-      await _storeUserProfileInSharedPreferences(
-        signInMethod: SocialSignInMethod.Google,
-        photoUrl: googleSignInAccount.photoUrl,
+      return AuthResult(
+        userCredential: userCredential,
         displayName: googleSignInAccount.displayName,
+        imageURL: googleSignInAccount.photoUrl,
       );
-      return userCredential;
     } on PlatformException {
+      rethrow;
+    } on Exception {
       rethrow;
     }
   }
 
-  /// Apple でサインインして、SharedPreferences に名前を保存する。
-  Future<UserCredential?> signInWithApple() async {
+  /// Apple でサインインする。
+  Future<AuthResult> signInWithApple() async {
     final rawNonce = _generateNonce();
     final nonce = _sha256ofString(rawNonce);
     final authorizationCredentialAppleID = await SignInWithApple.getAppleIDCredential(
@@ -116,48 +116,41 @@ class AuthRepository {
         rawNonce: rawNonce,
       );
       final userCredential = await _signInWithOAuthCredential(oAuthCredential);
-      final currentAppleIdUserIdentifier =
-          SharedPreferencesService.sp.getString(SharedPreferencesKey.appleIdUserIdentifier.name);
-      final newAppleIdUserIdentifier = authorizationCredentialAppleID.userIdentifier;
-      // Apple ID の userIdentifier が変わった時だけ SharedPreferences を上書きする
-      if (currentAppleIdUserIdentifier != newAppleIdUserIdentifier &&
-          newAppleIdUserIdentifier != null) {
-        await _storeUserProfileInSharedPreferences(
-          signInMethod: SocialSignInMethod.Apple,
-          displayName: "${authorizationCredentialAppleID.familyName ?? ''} "
-              "${authorizationCredentialAppleID.givenName ?? ''}",
-          appleIdUserIdentifier: authorizationCredentialAppleID.userIdentifier,
-        );
-      }
-      return userCredential;
+      return AuthResult(
+        userCredential: userCredential,
+        appleUserIdentifier: authorizationCredentialAppleID.userIdentifier,
+        displayName: _getJapaneseFullName(
+          familyName: authorizationCredentialAppleID.familyName,
+          givenName: authorizationCredentialAppleID.givenName,
+        ),
+      );
     } on PlatformException {
+      rethrow;
+    } on Exception {
       rethrow;
     }
   }
 
-  /// LINE でサインインして、SharedPreferences に名前と画像を保存する。
-  /// また、そのユーザー ID を使用して Callable Functions をコールして
-  /// Firebase Auth の Custom Token を取得する
-  Future<UserCredential?> signInWithLINE() async {
+  /// LINE でサインインする。
+  /// LINE ログインで得られた アクセストークンと ID トークンとを使用して
+  /// Callable Functions をコールして Firebase Auth の Custom Token を取得して
+  Future<AuthResult> signInWithLINE() async {
     try {
       final result = await LineSDK.instance.login(scopes: ['profile', 'openid', 'email']);
       final userProfile = result.userProfile;
       if (userProfile == null) {
-        return null;
+        return AuthResult(userCredential: null);
       }
-      final lineAccessToken = result.accessToken.data['access_token'] as String;
+      final accessToken = result.accessToken.data['access_token'] as String;
       final idToken = (result.data['accessToken'] as Map<String, dynamic>)['id_token'] as String;
-      final futures = await Future.wait<dynamic>([
-        _createFirebaseAuthCustomToken(accessToken: lineAccessToken, idToken: idToken),
-        _storeUserProfileInSharedPreferences(
-          signInMethod: SocialSignInMethod.LINE,
-          photoUrl: userProfile.pictureUrl,
-          displayName: userProfile.displayName,
-        ),
-      ]);
-      final customToken = futures[0] as String;
+      final customToken =
+          await _createFirebaseAuthCustomToken(accessToken: accessToken, idToken: idToken);
       final userCredential = await _signInWithCustomToken(customToken);
-      return userCredential;
+      return AuthResult(
+        userCredential: userCredential,
+        displayName: userProfile.displayName,
+        imageURL: userProfile.pictureUrl,
+      );
     } on PlatformException catch (e) {
       throw PlatformException(
         code: e.code,
@@ -246,37 +239,6 @@ class AuthRepository {
     }
   }
 
-  /// SharedPreferences に画像と表示名を保存する
-  Future<void> _storeUserProfileInSharedPreferences({
-    required SocialSignInMethod signInMethod,
-    String? photoUrl,
-    String? displayName,
-    String? appleIdUserIdentifier,
-  }) async {
-    await SharedPreferencesService.sp.setString(
-      SharedPreferencesKey.lastSignedInMethod.name,
-      signInMethod.name,
-    );
-    if (photoUrl != null) {
-      await SharedPreferencesService.sp.setString(
-        SharedPreferencesKey.profileImageURL.name,
-        photoUrl,
-      );
-    }
-    if (displayName != null) {
-      await SharedPreferencesService.sp.setString(
-        SharedPreferencesKey.displayName.name,
-        displayName,
-      );
-    }
-    if (appleIdUserIdentifier != null) {
-      await SharedPreferencesService.sp.setString(
-        SharedPreferencesKey.appleIdUserIdentifier.name,
-        appleIdUserIdentifier,
-      );
-    }
-  }
-
   /// Generates a cryptographically secure random nonce, to be included in a
   /// credential request.
   String _generateNonce([int length = 32]) {
@@ -290,5 +252,16 @@ class AuthRepository {
     final bytes = utf8.encode(input);
     final digest = sha256.convert(bytes);
     return digest.toString();
+  }
+
+  /// 姓・名を合わせてフルネームを返す。
+  String _getJapaneseFullName({String? familyName, String? givenName}) {
+    if ((familyName ?? '').isEmpty) {
+      return givenName ?? '';
+    }
+    if ((givenName ?? '').isEmpty) {
+      return familyName ?? '';
+    }
+    return '$familyName $givenName';
   }
 }

@@ -32,7 +32,7 @@ class AccountPage extends HookConsumerWidget {
             children: [
               const Text('AccountPage'),
               const Gap(16),
-              ref.watch(accountProvider).when<Widget>(
+              ref.watch(accountStreamProvider).when<Widget>(
                     loading: () => const PrimarySpinkitCircle(),
                     error: (error, stackTrace) {
                       print(stackTrace);
@@ -89,13 +89,13 @@ class AccountPage extends HookConsumerWidget {
   Widget get _buildProfileImageWidget {
     return HookConsumer(
       builder: (context, ref, child) {
-        return ref.watch(accountProvider).when<Widget>(
+        return ref.watch(accountStreamProvider).when<Widget>(
               loading: () => const SizedBox(),
               error: (error, stackTrace) => const SizedBox(),
               data: (account) {
                 return CircleImage(
                   radius: 64,
-                  imageURL: account?.photoUrl,
+                  imageURL: account?.imageURL,
                 );
               },
             );
@@ -107,7 +107,7 @@ class AccountPage extends HookConsumerWidget {
   Widget get _buildDisplayNameWidget {
     return HookConsumer(
       builder: (context, ref, child) {
-        return ref.watch(accountProvider).when<Widget>(
+        return ref.watch(accountStreamProvider).when<Widget>(
               loading: () => const SizedBox(),
               error: (error, stackTrace) => const SizedBox(),
               data: (account) {
@@ -131,7 +131,7 @@ class AccountPage extends HookConsumerWidget {
   Widget get _buildConnectedSocialAccounts {
     return HookConsumer(
       builder: (context, ref, child) {
-        return ref.watch(accountProvider).when<Widget>(
+        return ref.watch(accountStreamProvider).when<Widget>(
               loading: () => const SizedBox(),
               error: (error, stackTrace) => const SizedBox(),
               data: (account) {
@@ -205,7 +205,7 @@ class AccountPage extends HookConsumerWidget {
   Widget get _buildSocialLoginButtons {
     return HookConsumer(
       builder: (context, ref, child) {
-        return ref.watch(accountProvider).when<Widget>(
+        return ref.watch(accountStreamProvider).when<Widget>(
               loading: () => const SizedBox(),
               error: (error, stackTrace) => const SizedBox(),
               data: (account) {

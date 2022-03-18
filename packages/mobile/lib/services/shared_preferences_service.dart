@@ -28,9 +28,9 @@ class SharedPreferencesService {
   }
 
   /// int 型のキー・バリューを保存する
-  static Future<int> _getInt(SharedPreferencesKey key) async {
-    return _spInstance.then((i) => i.getInt(key.name) ?? 0);
-  }
+  // static Future<int> _getInt(SharedPreferencesKey key) async {
+  //   return _spInstance.then((i) => i.getInt(key.name) ?? 0);
+  // }
 
   /// String 型のキー・バリューを保存する
   static Future<String> _getString(SharedPreferencesKey key) async {
@@ -43,9 +43,9 @@ class SharedPreferencesService {
   }
 
   /// int 型のキー・バリューペアを保存する
-  static Future<bool> _setInt(SharedPreferencesKey key, int value) async {
-    return _spInstance.then((i) => i.setInt(key.name, value));
-  }
+  // static Future<bool> _setInt(SharedPreferencesKey key, int value) async {
+  //   return _spInstance.then((i) => i.setInt(key.name, value));
+  // }
 
   /// String 型のキー・バリューペアを保存する
   static Future<bool> _setString(SharedPreferencesKey key, String value) async {

@@ -21,12 +21,12 @@ final accountFutureProvider = FutureProvider<Account?>((ref) {
   return AccountRepository.fetchAccount(accountId: userId);
 });
 
-/// ユーザーの account の DocumentReference を取得する Provider
+/// サインイン済みのユーザーの DocumentReference<Account> を取得する Provider
+/// 未サインインの場合は例外をスローする。
 final accountRefProvider = Provider<DocumentReference<Account>>((ref) {
-  // TODO: Non-null の保証はないが、返り値は Non-null で気軽に使いたいので良い方法を考える
-  final userId = ref.watch(userIdProvider).value!;
-  // if (userId == null) {
-  //   return Future.value(null);
-  // }
+  final userId = ref.watch(userIdProvider).value;
+  if (userId == null) {
+    throw const SignInRequiredException();
+  }
   return AccountRepository.accountRef(accountId: userId);
 });

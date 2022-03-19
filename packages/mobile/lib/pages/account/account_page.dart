@@ -54,8 +54,11 @@ class AccountPage extends HookConsumerWidget {
         return Column(
           children: [
             _buildSocialLoginButtons,
-            const Gap(8),
-            const Text('ログインしていません。'),
+            const Gap(16),
+            Text(
+              '上記のソーシャルアカウントでログインすることができます。',
+              style: grey14,
+            ),
           ],
         );
       },

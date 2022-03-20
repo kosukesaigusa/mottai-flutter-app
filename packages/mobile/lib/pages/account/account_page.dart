@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:ks_flutter_commons/ks_flutter_commons.dart';
+import 'package:mottai_flutter_app/providers/auth/auth_providers.dart';
 
 import '../../providers/account/account_providers.dart';
 import '../../theme/theme.dart';
@@ -120,6 +121,8 @@ class AccountPage extends HookConsumerWidget {
                 return Column(
                   children: [
                     Text('こんにちは、${account.displayName} さん。'),
+                    const Gap(8),
+                    Text('User ID: ${(ref.watch(userIdProvider).value ?? '-').substring(0, 8)}...'),
                     const Gap(8),
                     _buildConnectedSocialAccounts,
                   ],

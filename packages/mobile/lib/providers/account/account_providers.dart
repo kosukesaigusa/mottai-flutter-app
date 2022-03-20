@@ -13,12 +13,13 @@ final accountStreamProvider = StreamProvider<Account?>((ref) {
 });
 
 /// ユーザーの account ドキュメントを取得する FutureProvider
-final accountFutureProvider = FutureProvider<Account?>((ref) {
+final accountFutureProvider = FutureProvider<Account?>((ref) async {
   final userId = ref.watch(userIdProvider).value;
   if (userId == null) {
     return Future.value(null);
   }
-  return AccountRepository.fetchAccount(accountId: userId);
+  final account = await AccountRepository.fetchAccount(accountId: userId);
+  return account;
 });
 
 /// サインイン済みのユーザーの DocumentReference<Account> を取得する Provider

@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 import '../pages/account/account_page.dart';
 import '../pages/home/home_page.dart';
 import '../pages/map/map_page.dart';
+import '../pages/message/message_page.dart';
 
 /// MainPage の BottomNavigationBar の enum
 enum BottomTabEnum {
   home,
   map,
+  message,
   account,
 }
 
@@ -43,6 +45,13 @@ const bottomTabs = [
     label: 'マップ',
     path: MapPage.path,
     iconData: Icons.map,
+  ),
+  BottomTab(
+    index: 1,
+    tab: BottomTabEnum.message,
+    label: 'メッセージ',
+    path: MessagePage.path,
+    iconData: Icons.message,
   ),
   BottomTab(
     index: 2,

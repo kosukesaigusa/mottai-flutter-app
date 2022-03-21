@@ -75,6 +75,7 @@ class _MainPageState extends ConsumerState<MainPage> with WidgetsBindingObserver
               children: [for (final tab in bottomTabs) _buildStackedPages(tab)],
             ),
             bottomNavigationBar: BottomNavigationBar(
+              type: BottomNavigationBarType.fixed,
               selectedItemColor: Theme.of(context).colorScheme.primary,
               // BottomTab の画面を切り替える。
               // 現在表示している状態のタブをタップした場合は画面をすべて pop する。

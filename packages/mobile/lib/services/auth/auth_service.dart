@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:ks_flutter_commons/ks_flutter_commons.dart';
 import 'package:mottai_flutter_app/providers/account/account_providers.dart';
+import 'package:mottai_flutter_app/providers/auth/auth_providers.dart';
 import 'package:mottai_flutter_app/utils/utils.dart';
 import 'package:mottai_flutter_app_models/models.dart';
 
@@ -109,14 +110,19 @@ class AuthService {
     String? displayName,
     String? imageURL,
   }) async {
-    final account = _reader(accountFutureProvider).value;
+    // final account = _reader(accountFutureProvider).value;
+    final userId = _reader(userIdProvider).value;
+    if (userId == null) {
+      return;
+    }
+    final account = await AccountRepository.fetchAccount(accountId: userId);
     try {
       if (account != null) {
         // すでにドキュメントが存在しているので update する
         // displayName, imageURL のフィールドについては現在保存されている値が
         // null の場合のみ更新する（意味のある値が保存されいてる場合は上書きしない）
         await _reader(accountRefProvider).update(
-          removeNullValueMapEntries(<String, dynamic>{
+          processMapToUpdateFirestoreDoc(<String, dynamic>{
             'displayName': account.displayName == null ? displayName : null,
             'imageURL': account.imageURL == null ? imageURL : null,
             'providers': FieldValue.arrayUnion(<String>[method.name]),

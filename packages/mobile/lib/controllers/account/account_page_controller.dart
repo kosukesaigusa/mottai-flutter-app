@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:mottai_flutter_app/providers/main/main_page_providers.dart';
 import 'package:mottai_flutter_app/services/auth/auth_service.dart';
 import 'package:mottai_flutter_app/utils/enums.dart';
 
@@ -31,7 +32,7 @@ class AccountPageController extends StateNotifier<AccountPageState> {
         return;
       }
     }
-    state = state.copyWith(loading: true);
+    _reader(mainPageLoadingProvider.notifier).update((s) => true);
     try {
       await _reader(authService).signIn(method);
     } on PlatformException catch (e) {
@@ -41,7 +42,7 @@ class AccountPageController extends StateNotifier<AccountPageState> {
     } on Exception {
       _reader(scaffoldMessengerController).showSnackBar('サインインに失敗しました。');
     } finally {
-      state = state.copyWith(loading: false);
+      _reader(mainPageLoadingProvider.notifier).update((s) => false);
     }
   }
 

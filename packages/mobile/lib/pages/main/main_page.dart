@@ -3,6 +3,8 @@ import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:mottai_flutter_app/providers/main/main_page_providers.dart';
+import 'package:mottai_flutter_app/widgets/common/loading.dart';
 
 import '../../controllers/application/application_controller.dart';
 import '../../controllers/bottom_navigation_bar/bottom_navigation_bar_controller.dart';
@@ -101,6 +103,7 @@ class _MainPageState extends ConsumerState<MainPage> with WidgetsBindingObserver
               ],
             ),
           ),
+          if (ref.watch(mainPageLoadingProvider)) const OverlayLoadingWidget(),
         ],
       ),
     );

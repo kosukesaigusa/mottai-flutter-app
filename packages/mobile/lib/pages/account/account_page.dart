@@ -98,7 +98,7 @@ class AccountPage extends HookConsumerWidget {
               error: (error, stackTrace) => const SizedBox(),
               data: (account) {
                 return CircleImage(
-                  radius: 64,
+                  size: 64,
                   imageURL: account?.imageURL,
                 );
               },

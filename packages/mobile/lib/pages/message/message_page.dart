@@ -9,6 +9,11 @@ class MessagePage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return const SizedBox();
+    return const Scaffold(
+        // body: ListView.builder(
+        //   itemBuilder: itemBuilder,
+        //   itemCount: ,
+        // ),
+        );
   }
 }

@@ -5,8 +5,49 @@
       "createdAt": "2022-01-01",
       "updatedAt": "2022-01-01",
       "displayName": "Kosuke Saigusa",
-      "photoURL": "https://...",
-      "providers": ["google", "apple", "line"]
+      "imageURL": "https://...",
+      "providers": ["Google", "Apple", "LINE"]
+    }
+  },
+  "collection /attendingRooms": {
+    "document {userId}": {
+      "collection /attendingRooms": {
+        "document {roomId}": {
+          "roomId": "{roomId}",
+          "hostId": "{userId}",
+          "workerId": "{userId}",
+          "roomName": "相手の名前",
+          "updatedAt": "2022-01-01",
+          "unreadCount": 10,
+          "muteNotification": false,
+          "lastReadMessageId": "{messageId}" // 最後に読んだ messageId,
+        }
+      }
+    }
+  },
+  "collection /rooms": {
+    "document {roomId}": {
+      "roomId": "roomId",
+      "hostId": "{userId}",
+      "workerId": "{userId}",
+      "updatedAt": "2022-01-01",
+      "collection /attendingUsers": {
+        "document {userId}": {
+          "userId": "{userId}",
+          "createdAt": "2022-01-01"
+        }
+      },
+      "collection /messages": {
+        "document {messageId}": {
+          "messageId": "{messageId}",
+          "createdAt": "2022-01-01",
+          "type": "plain", // plain, reply, images, information
+          "senderId": "{userId}",
+          "body": "",
+          "imageURLs": ["https://...", "https://..."],
+          "detail": {} // 内容の詳細は未定
+        }
+      }
     }
   }
 }

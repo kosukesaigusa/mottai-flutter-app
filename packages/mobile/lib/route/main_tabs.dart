@@ -51,7 +51,7 @@ const bottomTabs = [
     tab: BottomTabEnum.message,
     label: 'メッセージ',
     path: MessagePage.path,
-    iconData: Icons.message,
+    iconData: Icons.mail,
   ),
   BottomTab(
     index: 2,

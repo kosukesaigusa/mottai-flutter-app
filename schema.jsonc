@@ -22,7 +22,6 @@
               "roomId": "{roomId}",
               "hostId": "{userId}",
               "workerId": "{userId}",
-              "roomName": "相手の名前",
               "updatedAt": "2022-01-01",
               "unreadCount": 10,
               "muteNotification": false,

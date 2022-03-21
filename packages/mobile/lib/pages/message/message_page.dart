@@ -2,25 +2,33 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:ks_flutter_commons/ks_flutter_commons.dart';
+import 'package:mottai_flutter_app/route/utils.dart';
 import 'package:mottai_flutter_app/theme/theme.dart';
 
-class MessagePage extends StatefulHookConsumerWidget {
-  const MessagePage({Key? key}) : super(key: key);
+import '../room/room_page.dart';
 
-  static const path = '/message/';
-  static const name = 'MessagePage';
+class AttendingRoomPage extends StatefulHookConsumerWidget {
+  const AttendingRoomPage({Key? key}) : super(key: key);
+
+  static const path = '/attending-room/';
+  static const name = 'AttendingRoomPage';
 
   @override
-  ConsumerState<MessagePage> createState() => _MessagePageState();
+  ConsumerState<AttendingRoomPage> createState() => _AttendingRoomPageState();
 }
 
-class _MessagePageState extends ConsumerState<MessagePage> {
+class _AttendingRoomPageState extends ConsumerState<AttendingRoomPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8),
+      body: InkWell(
+        onTap: () async {
+          await Navigator.pushNamed(context, RoomPage.path,
+              arguments: RouteArguments(<String, dynamic>{
+                'roomId': 'roomId',
+              }));
+        },
         child: ListView.builder(
           itemBuilder: (context, index) {
             return _buildAttendingRooms;
@@ -33,13 +41,13 @@ class _MessagePageState extends ConsumerState<MessagePage> {
 
   Widget get _buildAttendingRooms {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           // const Icon(Icons.person, size: 48),
           const CircleImage(
-              radius: 48,
+              size: 48,
               imageURL:
                   'https://firebasestorage.googleapis.com/v0/b/mottai-app-dev-2.appspot.com/o/hosts%2Fyago-san.jpeg?alt=media&token=637a9f78-9243-4ce8-8734-5776a40cc7fd'),
           const Gap(8),

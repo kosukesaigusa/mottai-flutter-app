@@ -17,22 +17,18 @@ class PrimarySpinkitCircle extends StatelessWidget {
 
 /// 二度押しを防止したいときなどの重ねるローディングウィジェット
 class OverlayLoadingWidget extends StatelessWidget {
-  const OverlayLoadingWidget({
-    this.backgroundColor = Colors.black26,
-    this.child,
-  });
+  const OverlayLoadingWidget({this.backgroundColor = Colors.black26});
 
   final Color backgroundColor;
-  final Widget? child;
 
   @override
   Widget build(BuildContext context) {
     return ColoredBox(
       color: backgroundColor,
-      child: SizedBox(
+      child: const SizedBox(
         width: double.infinity,
         height: double.infinity,
-        child: child,
+        child: Center(child: PrimarySpinkitCircle(size: 48)),
       ),
     );
   }

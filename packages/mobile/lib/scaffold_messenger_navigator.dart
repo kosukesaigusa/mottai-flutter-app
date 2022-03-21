@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mottai_flutter_app/route/routes.dart';
+import 'package:mottai_flutter_app/widgets/common/loading.dart';
 
 import 'controllers/scaffold_messenger/scaffold_messenger_controller.dart';
 import 'pages/not_found/not_found_page.dart';
+import 'providers/common/common_provider.dart';
 import 'route/app_router.dart';
 
 final appRouter = AppRouter.create(routeBuilder);
@@ -19,17 +21,22 @@ class ScaffoldMessengerNavigator extends HookConsumerWidget {
     return ScaffoldMessenger(
       key: ref.watch(scaffoldMessengerController.select((c) => c.scaffoldMessengerKey)),
       child: Scaffold(
-        body: Navigator(
-          key: ref.watch(scaffoldMessengerController.select((c) => c.navigatorKey)),
-          initialRoute: AppRouter.initialRoute,
-          onGenerateRoute: appRouter.generateRoute,
-          onUnknownRoute: (settings) {
-            final route = MaterialPageRoute<void>(
-              settings: settings,
-              builder: (context) => const NotFoundPage(),
-            );
-            return route;
-          },
+        body: Stack(
+          children: [
+            Navigator(
+              key: ref.watch(scaffoldMessengerController.select((c) => c.navigatorKey)),
+              initialRoute: AppRouter.initialRoute,
+              onGenerateRoute: appRouter.generateRoute,
+              onUnknownRoute: (settings) {
+                final route = MaterialPageRoute<void>(
+                  settings: settings,
+                  builder: (context) => const NotFoundPage(),
+                );
+                return route;
+              },
+            ),
+            if (ref.watch(overlayLoadingProvider)) const OverlayLoadingWidget(),
+          ],
         ),
       ),
     );

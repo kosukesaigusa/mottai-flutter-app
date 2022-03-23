@@ -8,6 +8,9 @@ final grey500 = Colors.grey[500]!;
 final grey600 = Colors.grey[600]!;
 final grey700 = Colors.grey[700]!;
 
+/// RoomPage のメッセージやメッセージ入力欄の背景色
+const messageBackgroundColor = Color(0xfff1eef1);
+
 /// テキストスタイル
 const TextStyle bold = TextStyle(
   fontWeight: FontWeight.bold,

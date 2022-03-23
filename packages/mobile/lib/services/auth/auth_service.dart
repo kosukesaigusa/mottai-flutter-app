@@ -19,8 +19,8 @@ final authService = Provider.autoDispose((ref) => AuthService(ref.read));
 /// 結果をコントローラに返す。
 /// クラス名はこれが最適かどうかは確信がない。
 class AuthService {
-  AuthService(this._reader);
-  final Reader _reader;
+  AuthService(this._read);
+  final Reader _read;
 
   Future<void> signIn(SocialSignInMethod method) async {
     try {
@@ -54,7 +54,7 @@ class AuthService {
   /// Google でサインインする。
   Future<AuthResult?> signInWithGoogle() async {
     try {
-      final result = await _reader(authRepository).signInWithGoogle();
+      final result = await _read(authRepository).signInWithGoogle();
       return result;
     } on PlatformException {
       rethrow;
@@ -66,7 +66,7 @@ class AuthService {
   // Apple でサインインする。
   Future<AuthResult?> signInWithApple() async {
     try {
-      final result = await _reader(authRepository).signInWithApple();
+      final result = await _read(authRepository).signInWithApple();
       return result;
     } on PlatformException {
       rethrow;
@@ -80,7 +80,7 @@ class AuthService {
   // LINE でサインインする。
   Future<AuthResult?> signInWithLINE() async {
     try {
-      final result = await _reader(authRepository).signInWithLINE();
+      final result = await _read(authRepository).signInWithLINE();
       return result;
     } on PlatformException {
       rethrow;
@@ -94,7 +94,7 @@ class AuthService {
   /// サインアウトする。
   Future<void> signOut() async {
     try {
-      await _reader(authRepository).signOut();
+      await _read(authRepository).signOut();
     } on PlatformException {
       rethrow;
     } on FirebaseException {
@@ -110,8 +110,8 @@ class AuthService {
     String? displayName,
     String? imageURL,
   }) async {
-    // final account = _reader(accountFutureProvider).value;
-    final userId = _reader(userIdProvider).value;
+    // final account = _read(accountFutureProvider).value;
+    final userId = _read(userIdProvider).value;
     if (userId == null) {
       return;
     }
@@ -121,7 +121,7 @@ class AuthService {
         // すでにドキュメントが存在しているので update する
         // displayName, imageURL のフィールドについては現在保存されている値が
         // null の場合のみ更新する（意味のある値が保存されいてる場合は上書きしない）
-        await _reader(accountRefProvider).update(
+        await _read(accountRefProvider).update(
           processMapToUpdateFirestoreDoc(<String, dynamic>{
             'displayName': account.displayName == null ? displayName : null,
             'imageURL': account.imageURL == null ? imageURL : null,
@@ -130,7 +130,7 @@ class AuthService {
           }),
         );
       } else {
-        await _reader(accountRefProvider).set(Account(
+        await _read(accountRefProvider).set(Account(
           accountId: nonNullUid,
           displayName: displayName,
           imageURL: imageURL,

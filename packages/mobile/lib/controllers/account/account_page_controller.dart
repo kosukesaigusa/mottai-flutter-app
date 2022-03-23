@@ -20,9 +20,9 @@ final accountPageController = StateNotifierProvider<AccountPageController, Accou
 /// 認証関係の処理については、AuthService とだけやり取りをして、
 /// AuthRepository とは直接やり取りをしない。
 class AccountPageController extends StateNotifier<AccountPageState> {
-  AccountPageController(this._reader) : super(const AccountPageState());
+  AccountPageController(this._read) : super(const AccountPageState());
 
-  final Reader _reader;
+  final Reader _read;
 
   /// Google, Apple, or LINE でサインインする
   Future<void> signIn(SocialSignInMethod method) async {
@@ -32,17 +32,17 @@ class AccountPageController extends StateNotifier<AccountPageState> {
         return;
       }
     }
-    _reader(overlayLoadingProvider.notifier).update((s) => true);
+    _read(overlayLoadingProvider.notifier).update((s) => true);
     try {
-      await _reader(authService).signIn(method);
+      await _read(authService).signIn(method);
     } on PlatformException catch (e) {
-      _reader(scaffoldMessengerController).showSnackBar('[${e.code}] キャンセルしました。');
+      _read(scaffoldMessengerController).showSnackBar('[${e.code}] キャンセルしました。');
     } on FirebaseException catch (e) {
-      _reader(scaffoldMessengerController).showSnackBarByFirebaseException(e);
+      _read(scaffoldMessengerController).showSnackBarByFirebaseException(e);
     } on Exception {
-      _reader(scaffoldMessengerController).showSnackBar('サインインに失敗しました。');
+      _read(scaffoldMessengerController).showSnackBar('サインインに失敗しました。');
     } finally {
-      _reader(overlayLoadingProvider.notifier).update((s) => false);
+      _read(overlayLoadingProvider.notifier).update((s) => false);
     }
   }
 
@@ -50,7 +50,7 @@ class AccountPageController extends StateNotifier<AccountPageState> {
   /// 同意するかどうか確認するためのダイアログを表示する
   Future<bool> get _agreeWithLINEEmailHandling async {
     final agreed = await showDialog<bool>(
-      context: _reader(scaffoldMessengerController).scaffoldMessengerKey.currentContext!,
+      context: _read(scaffoldMessengerController).scaffoldMessengerKey.currentContext!,
       builder: (context) {
         return AlertDialog(
           title: Row(
@@ -88,11 +88,11 @@ class AccountPageController extends StateNotifier<AccountPageState> {
   /// サインアウトする。
   Future<void> signOut() async {
     try {
-      await _reader(authService).signOut();
+      await _read(authService).signOut();
     } on FirebaseAuthException catch (e) {
-      _reader(scaffoldMessengerController).showSnackBar('[${e.code}] サインアウトに失敗しました。');
+      _read(scaffoldMessengerController).showSnackBar('[${e.code}] サインアウトに失敗しました。');
     } on Exception {
-      _reader(scaffoldMessengerController).showSnackBar('サインアウトに失敗しました。');
+      _read(scaffoldMessengerController).showSnackBar('サインアウトに失敗しました。');
     }
   }
 }

@@ -11,17 +11,17 @@ import '../bottom_navigation_bar/bottom_navigation_bar_controller.dart';
 final navigationController = Provider.autoDispose((ref) => NavigationController(ref.read));
 
 class NavigationController {
-  NavigationController(this._reader);
+  NavigationController(this._read);
 
-  final Reader _reader;
+  final Reader _read;
 
   /// 通知や Dynamic Links によって現在のタブ上で画面遷移する。
   Future<void> pushOnCurrentTab({
     required String path,
     required Map<String, dynamic> data,
   }) async {
-    final currentTab = _reader(bottomNavigationBarController).currentTab;
-    final navigatorKey = _reader(applicationController.notifier).navigatorKeys[currentTab];
+    final currentTab = _read(bottomNavigationBarController).currentTab;
+    final navigatorKey = _read(applicationController.notifier).navigatorKeys[currentTab];
     await navigatorKey?.currentState?.pushNamed<void>(path, arguments: RouteArguments(data));
   }
 
@@ -32,25 +32,23 @@ class NavigationController {
     required String path,
     required Map<String, dynamic> data,
   }) async {
-    final currentTab = _reader(bottomNavigationBarController).currentTab;
-    final currentNavigatorKey = _reader(applicationController.notifier).navigatorKeys[currentTab];
+    final currentTab = _read(bottomNavigationBarController).currentTab;
+    final currentNavigatorKey = _read(applicationController.notifier).navigatorKeys[currentTab];
     final currentContext = currentNavigatorKey?.currentContext;
     if (currentContext == null) {
       return;
     }
     Navigator.popUntil(currentContext, (route) => route.isFirst);
-    // _reader(bottomNavigationBarController.notifier).changeTab(index: getIndexByTab(tab), tab: tab);
-    // final navigatorKey = _reader(applicationController.notifier).navigatorKeys[tab];
+    // _read(bottomNavigationBarController.notifier).changeTab(index: getIndexByTab(tab), tab: tab);
+    // final navigatorKey = _read(applicationController.notifier).navigatorKeys[tab];
     // await navigatorKey?.currentState?.pushNamed<void>(path, arguments: RouteArguments(data));
     if (bottomTabs.map((bottomTab) => bottomTab.path).toList().contains(path)) {
       // 指定されたパスが MainPage のいずれかのページのパスと一致する場合には新しい画面をプッシュせずに
       // アクティブなタブを変更だけして終わりにする。
-      _reader(bottomNavigationBarController.notifier)
-          .changeTab(index: getIndexByTab(tab), tab: tab);
+      _read(bottomNavigationBarController.notifier).changeTab(index: getIndexByTab(tab), tab: tab);
     } else {
-      _reader(bottomNavigationBarController.notifier)
-          .changeTab(index: getIndexByTab(tab), tab: tab);
-      final navigatorKey = _reader(applicationController.notifier).navigatorKeys[tab];
+      _read(bottomNavigationBarController.notifier).changeTab(index: getIndexByTab(tab), tab: tab);
+      final navigatorKey = _read(applicationController.notifier).navigatorKeys[tab];
       await navigatorKey?.currentState?.pushNamed<void>(path, arguments: RouteArguments(data));
     }
   }

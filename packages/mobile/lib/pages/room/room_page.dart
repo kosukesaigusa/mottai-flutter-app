@@ -53,28 +53,25 @@ class _RoomPageState extends ConsumerState<RoomPage> {
                   imageURL:
                       'https://firebasestorage.googleapis.com/v0/b/mottai-app-dev-2.appspot.com/o/hosts%2Fyago-san.jpeg?alt=media&token=637a9f78-9243-4ce8-8734-5776a40cc7fd'),
               const Gap(8),
-              Flexible(
-                child: Container(
-                  padding: const EdgeInsets.all(12),
-                  width: (MediaQuery.of(context).size.width -
-                          partnerImageSize -
-                          horizontalPadding * 3) *
-                      0.9,
-                  decoration: const BoxDecoration(
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(8),
-                      topRight: Radius.circular(8),
-                      bottomRight: Radius.circular(8),
-                    ),
-                    color: Colors.black54,
+              Container(
+                padding: const EdgeInsets.all(12),
+                width:
+                    (MediaQuery.of(context).size.width - partnerImageSize - horizontalPadding * 3) *
+                        0.9,
+                decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(8),
+                    topRight: Radius.circular(8),
+                    bottomRight: Radius.circular(8),
                   ),
-                  child: const Text(
-                    '相手からのメッセージ、相手からのメッセージ、相手からのメッセージ、'
-                    '相手からのメッセージ、相手からのメッセージ、相手からのメッセージ、'
-                    '相手からのメッセージ、相手からのメッセージ、相手からのメッセージ、'
-                    '相手からのメッセージ、相手からのメッセージ、相手からのメッセージ、',
-                    style: white12,
-                  ),
+                  color: Colors.black54,
+                ),
+                child: const Text(
+                  '相手からのメッセージ、相手からのメッセージ、相手からのメッセージ、'
+                  '相手からのメッセージ、相手からのメッセージ、相手からのメッセージ、'
+                  '相手からのメッセージ、相手からのメッセージ、相手からのメッセージ、'
+                  '相手からのメッセージ、相手からのメッセージ、相手からのメッセージ、',
+                  style: white12,
                 ),
               ),
             ],
@@ -96,42 +93,37 @@ class _RoomPageState extends ConsumerState<RoomPage> {
   Widget _buildMessageByMyself() {
     return Padding(
       padding: const EdgeInsets.all(8),
-      child: Flexible(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(12),
-              width:
-                  (MediaQuery.of(context).size.width - partnerImageSize - horizontalPadding * 3) *
-                      0.9,
-              decoration: BoxDecoration(
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(8),
-                  topRight: Radius.circular(8),
-                  bottomLeft: Radius.circular(8),
-                ),
-                color: Theme.of(context).colorScheme.primary,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            width: (MediaQuery.of(context).size.width - partnerImageSize - horizontalPadding * 3) *
+                0.9,
+            decoration: BoxDecoration(
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(8),
+                topRight: Radius.circular(8),
+                bottomLeft: Radius.circular(8),
               ),
-              child: const Flexible(
-                child: Text(
-                  '自分からのメッセージ、自分からのメッセージ、自分からのメッセージ、'
-                  '自分からのメッセージ、自分からのメッセージ、自分からのメッセージ、'
-                  '自分からのメッセージ、自分からのメッセージ、自分からのメッセージ、'
-                  '自分からのメッセージ、自分からのメッセージ、自分からのメッセージ、',
-                  style: white12,
-                ),
-              ),
+              color: Theme.of(context).colorScheme.primary,
             ),
-            Padding(
-              padding: const EdgeInsets.only(
-                top: 4,
-                bottom: 16,
-              ),
-              child: Text('00:00', style: grey12),
+            child: const Text(
+              '自分からのメッセージ、自分からのメッセージ、自分からのメッセージ、'
+              '自分からのメッセージ、自分からのメッセージ、自分からのメッセージ、'
+              '自分からのメッセージ、自分からのメッセージ、自分からのメッセージ、'
+              '自分からのメッセージ、自分からのメッセージ、自分からのメッセージ、',
+              style: white12,
             ),
-          ],
-        ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(
+              top: 4,
+              bottom: 16,
+            ),
+            child: Text('00:00', style: grey12),
+          ),
+        ],
       ),
     );
   }

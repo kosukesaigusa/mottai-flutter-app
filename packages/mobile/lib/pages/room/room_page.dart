@@ -23,16 +23,46 @@ class _RoomPageState extends ConsumerState<RoomPage> {
     return TapToUnfocusWidget(
       child: Scaffold(
         appBar: AppBar(),
-        body: ListView.builder(
-          itemBuilder: (context, index) {
-            if (index.isEven) {
-              return _buildMessageByPartner();
-            } else {
-              return _buildMessageByMyself();
-            }
-          },
-          itemCount: 10,
-          reverse: true,
+        body: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: Column(
+            children: [
+              Expanded(
+                child: ListView.builder(
+                  itemBuilder: (context, index) {
+                    if (index.isEven) {
+                      return _buildMessageByPartner();
+                    } else {
+                      return _buildMessageByMyself();
+                    }
+                  },
+                  itemCount: 10,
+                  reverse: true,
+                ),
+              ),
+              Container(
+                margin: const EdgeInsets.only(bottom: 16),
+                decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(16)),
+                  color: messageBackgroundColor,
+                ),
+                child: const TextField(
+                  minLines: 1,
+                  maxLines: 5,
+                  style: regular12,
+                  decoration: InputDecoration(
+                    contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    focusedBorder: InputBorder.none,
+                    enabledBorder: InputBorder.none,
+                    errorBorder: InputBorder.none,
+                    disabledBorder: InputBorder.none,
+                    hintText: 'メッセージを入力',
+                    hintStyle: regular12,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -41,7 +71,7 @@ class _RoomPageState extends ConsumerState<RoomPage> {
   /// 相手からのメッセージ
   Widget _buildMessageByPartner() {
     return Padding(
-      padding: const EdgeInsets.all(8),
+      padding: const EdgeInsets.symmetric(vertical: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -64,14 +94,14 @@ class _RoomPageState extends ConsumerState<RoomPage> {
                     topRight: Radius.circular(8),
                     bottomRight: Radius.circular(8),
                   ),
-                  color: Colors.black54,
+                  color: messageBackgroundColor,
                 ),
                 child: const Text(
                   '相手からのメッセージ、相手からのメッセージ、相手からのメッセージ、'
                   '相手からのメッセージ、相手からのメッセージ、相手からのメッセージ、'
                   '相手からのメッセージ、相手からのメッセージ、相手からのメッセージ、'
                   '相手からのメッセージ、相手からのメッセージ、相手からのメッセージ、',
-                  style: white12,
+                  style: regular12,
                 ),
               ),
             ],
@@ -92,7 +122,7 @@ class _RoomPageState extends ConsumerState<RoomPage> {
   /// 自分からのメッセージ
   Widget _buildMessageByMyself() {
     return Padding(
-      padding: const EdgeInsets.all(8),
+      padding: const EdgeInsets.symmetric(vertical: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [

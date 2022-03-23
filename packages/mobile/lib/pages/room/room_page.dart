@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:ks_flutter_commons/ks_flutter_commons.dart';
+import 'package:mottai_flutter_app/controllers/scaffold_messenger/scaffold_messenger_controller.dart';
 import 'package:mottai_flutter_app/theme/theme.dart';
 
 const double horizontalPadding = 8;
@@ -46,19 +47,50 @@ class _RoomPageState extends ConsumerState<RoomPage> {
                   borderRadius: BorderRadius.all(Radius.circular(16)),
                   color: messageBackgroundColor,
                 ),
-                child: const TextField(
-                  minLines: 1,
-                  maxLines: 5,
-                  style: regular12,
-                  decoration: InputDecoration(
-                    contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    focusedBorder: InputBorder.none,
-                    enabledBorder: InputBorder.none,
-                    errorBorder: InputBorder.none,
-                    disabledBorder: InputBorder.none,
-                    hintText: 'メッセージを入力',
-                    hintStyle: regular12,
-                  ),
+                child: Stack(
+                  children: [
+                    const TextField(
+                      minLines: 1,
+                      maxLines: 5,
+                      style: regular12,
+                      decoration: InputDecoration(
+                        contentPadding: EdgeInsets.only(
+                          left: 16,
+                          right: 36,
+                          top: 8,
+                          bottom: 8,
+                        ),
+                        focusedBorder: InputBorder.none,
+                        enabledBorder: InputBorder.none,
+                        errorBorder: InputBorder.none,
+                        disabledBorder: InputBorder.none,
+                        hintText: 'メッセージを入力',
+                        hintStyle: regular12,
+                      ),
+                    ),
+                    Positioned(
+                      right: 0,
+                      bottom: 0,
+                      child: Container(
+                        width: 32,
+                        height: 32,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                        child: GestureDetector(
+                          onTap: () {
+                            ref.read(scaffoldMessengerController).showSnackBar('まだ何も起こりません');
+                          },
+                          child: const Icon(
+                            Icons.send,
+                            size: 20,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],

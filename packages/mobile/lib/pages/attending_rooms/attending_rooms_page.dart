@@ -2,26 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:ks_flutter_commons/ks_flutter_commons.dart';
-import 'package:mottai_flutter_app/providers/attending_room/attending_room_provider.dart';
-import 'package:mottai_flutter_app/route/utils.dart';
-import 'package:mottai_flutter_app/theme/theme.dart';
 import 'package:mottai_flutter_app_models/models.dart';
 
+import '../../providers/attending_room/attending_room_provider.dart';
 import '../../providers/message/message_provider.dart';
+import '../../route/utils.dart';
+import '../../theme/theme.dart';
 import '../../widgets/common/loading.dart';
 import '../room/room_page.dart';
 
-class AttendingRoomPage extends StatefulHookConsumerWidget {
-  const AttendingRoomPage({Key? key}) : super(key: key);
+class AttendingRoomsPage extends StatefulHookConsumerWidget {
+  const AttendingRoomsPage({Key? key}) : super(key: key);
 
-  static const path = '/attending-room/';
-  static const name = 'AttendingRoomPage';
+  static const path = '/attending-rooms/';
+  static const name = 'AttendingRoomsPage';
 
   @override
-  ConsumerState<AttendingRoomPage> createState() => _AttendingRoomPageState();
+  ConsumerState<AttendingRoomsPage> createState() => _AttendingRoomsPageState();
 }
 
-class _AttendingRoomPageState extends ConsumerState<AttendingRoomPage> {
+class _AttendingRoomsPageState extends ConsumerState<AttendingRoomsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,25 +48,31 @@ class _AttendingRoomPageState extends ConsumerState<AttendingRoomPage> {
                     ),
                   )
                 : ListView.builder(
-                    itemBuilder: (context, index) {
-                      return _buildAttendingRooms(attendingRooms[index]);
-                    },
+                    itemBuilder: (context, index) => AttendingRoomWidget(attendingRooms[index]),
                     itemCount: attendingRooms.length,
                   ),
           ),
     );
   }
+}
 
-  Widget _buildAttendingRooms(AttendingRoom attendingRoom) {
+/// AttendingRoom ページのひとつひとつのウィジェット
+class AttendingRoomWidget extends HookConsumerWidget {
+  const AttendingRoomWidget(this.attendingRoom);
+  final AttendingRoom attendingRoom;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
     return InkWell(
       onTap: () async {
-        await Navigator.pushNamed(context, RoomPage.path,
-            arguments: RouteArguments(<String, dynamic>{
-              'roomId': attendingRoom.roomId,
-            }));
+        await Navigator.pushNamed(
+          context,
+          RoomPage.path,
+          arguments: RouteArguments(<String, dynamic>{'roomId': attendingRoom.roomId}),
+        );
       },
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+        padding: const EdgeInsets.all(8),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -90,7 +96,7 @@ class _AttendingRoomPageState extends ConsumerState<AttendingRoomPage> {
                           return const SizedBox();
                         },
                         data: (messages) => Text(
-                          messages.last.body,
+                          messages.first.body,
                           style: grey12,
                           overflow: TextOverflow.ellipsis,
                           maxLines: 2,
@@ -103,7 +109,10 @@ class _AttendingRoomPageState extends ConsumerState<AttendingRoomPage> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Text('00:00', style: grey10),
+                Text(
+                  humanReadableDateTimeString(attendingRoom.updatedAt),
+                  style: grey10,
+                ),
                 const Gap(4),
                 Container(
                   width: 20,

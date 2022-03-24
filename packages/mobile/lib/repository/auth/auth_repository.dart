@@ -33,7 +33,7 @@ class AuthRepository {
   }
 
   /// メールアドレスとパスワードによるサインイン
-  Future<FirebaseTaskResult<UserCredential>> signInWithEmail({
+  Future<FirebaseTaskResult<UserCredential>> signInWithEmailAndPassword({
     required String email,
     required String password,
   }) async {

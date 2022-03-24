@@ -2,11 +2,21 @@
   "collection /accounts": {
     "document {userId}": {
       "userId": "accountId",
+      "isHost": false,
       "createdAt": "2022-01-01",
       "updatedAt": "2022-01-01",
       "displayName": "Kosuke Saigusa",
       "imageURL": "https://...",
       "providers": ["Google", "Apple", "LINE"]
+    }
+  },
+  // ユーザーの公開情報関係のドメイン
+  "collection /publicUsers": {
+    "document {userId}": {
+      "userId": "accountId",
+      "updatedAt": "2022-01-01",
+      "displayName": "Kosuke Saigusa",
+      "imageURL": "https://..."
     }
   },
   // message 関係のドメイン

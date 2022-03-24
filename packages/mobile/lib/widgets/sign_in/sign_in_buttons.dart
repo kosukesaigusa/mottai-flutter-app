@@ -20,7 +20,7 @@ class SocialSignInButton extends HookConsumerWidget {
       splashColor: Colors.white30,
       highlightColor: Colors.white30,
       onPressed: () async {
-        await ref.read(accountPageController.notifier).signIn(method);
+        await ref.read(accountPageController.notifier).signInWithSocialAccount(method);
       },
       child: Container(
         constraints: const BoxConstraints(

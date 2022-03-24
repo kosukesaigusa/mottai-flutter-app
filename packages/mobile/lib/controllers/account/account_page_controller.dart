@@ -24,8 +24,28 @@ class AccountPageController extends StateNotifier<AccountPageState> {
 
   final Reader _read;
 
+  /// メールアドレスとパスワードでサインインする
+  Future<void> signInWithEmailAndPassword({
+    required String email,
+    required String password,
+  }) async {
+    _read(overlayLoadingProvider.notifier).update((s) => true);
+    try {
+      await _read(authService).signInWithEmailAndPassword(email: email, password: password);
+      _read(scaffoldMessengerController).showSnackBar('サインインしました。');
+    } on PlatformException catch (e) {
+      _read(scaffoldMessengerController).showSnackBar('[${e.code}] キャンセルしました。');
+    } on FirebaseException catch (e) {
+      _read(scaffoldMessengerController).showSnackBarByFirebaseException(e);
+    } on Exception {
+      _read(scaffoldMessengerController).showSnackBar('サインインに失敗しました。');
+    } finally {
+      _read(overlayLoadingProvider.notifier).update((s) => false);
+    }
+  }
+
   /// Google, Apple, or LINE でサインインする
-  Future<void> signIn(SocialSignInMethod method) async {
+  Future<void> signInWithSocialAccount(SocialSignInMethod method) async {
     if (method == SocialSignInMethod.LINE) {
       final agreed = await _agreeWithLINEEmailHandling;
       if (!agreed) {
@@ -34,7 +54,7 @@ class AccountPageController extends StateNotifier<AccountPageState> {
     }
     _read(overlayLoadingProvider.notifier).update((s) => true);
     try {
-      await _read(authService).signIn(method);
+      await _read(authService).signInWithSocialAccount(method);
     } on PlatformException catch (e) {
       _read(scaffoldMessengerController).showSnackBar('[${e.code}] キャンセルしました。');
     } on FirebaseException catch (e) {

@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:ks_flutter_commons/ks_flutter_commons.dart';
+import 'package:mottai_flutter_app/controllers/account/account_page_controller.dart';
 import 'package:mottai_flutter_app/providers/auth/auth_providers.dart';
 
 import '../../providers/account/account_providers.dart';
@@ -57,8 +58,24 @@ class AccountPage extends HookConsumerWidget {
             _buildSocialLoginButtons,
             const Gap(16),
             Text(
-              '上記のソーシャルアカウントでログインすることができます。',
-              style: grey14,
+              '上記のソーシャルアカウントでログインすることができます。'
+              'または、以下のボタンを押してテスト用ホストアカウントとして'
+              'ログインすることができます。',
+              style: grey12,
+            ),
+            const Gap(16),
+            SizedBox(
+              height: 36,
+              width: 220,
+              child: ElevatedButton(
+                onPressed: () async {
+                  await ref.read(accountPageController.notifier).signInWithEmailAndPassword(
+                        email: 'host-1@npo-mottai.org',
+                        password: const String.fromEnvironment('HOST_1_PASSWORD'),
+                      );
+                },
+                child: const Text('ホスト 1'),
+              ),
             ),
           ],
         );
@@ -227,30 +244,33 @@ class AccountPage extends HookConsumerWidget {
                   );
                 }
                 final providers = account.providers;
-                return Column(
-                  children: [
-                    if (!setEquals(
-                      providers.toSet(),
-                      SocialSignInMethod.values.map((e) => e.name).toSet(),
-                    ))
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        child: Row(children: [
-                          const Expanded(child: Divider()),
-                          const Gap(16),
-                          Text('他のログイン方法と連携する', style: grey12),
-                          const Gap(16),
-                          const Expanded(child: Divider()),
-                        ]),
-                      ),
-                    if (!providers.contains(SocialSignInMethod.Google.name))
-                      const SocialSignInButton(SocialSignInMethod.Google),
-                    if (!providers.contains(SocialSignInMethod.Apple.name))
-                      const SocialSignInButton(SocialSignInMethod.Apple),
-                    if (!providers.contains(SocialSignInMethod.LINE.name))
-                      const SocialSignInButton(SocialSignInMethod.LINE),
-                  ],
-                );
+                final isHost = account.isHost;
+                return isHost
+                    ? const SizedBox()
+                    : Column(
+                        children: [
+                          if (!setEquals(
+                            providers.toSet(),
+                            SocialSignInMethod.values.map((e) => e.name).toSet(),
+                          ))
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              child: Row(children: [
+                                const Expanded(child: Divider()),
+                                const Gap(16),
+                                Text('他のログイン方法と連携する', style: grey12),
+                                const Gap(16),
+                                const Expanded(child: Divider()),
+                              ]),
+                            ),
+                          if (!providers.contains(SocialSignInMethod.Google.name))
+                            const SocialSignInButton(SocialSignInMethod.Google),
+                          if (!providers.contains(SocialSignInMethod.Apple.name))
+                            const SocialSignInButton(SocialSignInMethod.Apple),
+                          if (!providers.contains(SocialSignInMethod.LINE.name))
+                            const SocialSignInButton(SocialSignInMethod.LINE),
+                        ],
+                      );
               },
             );
       },

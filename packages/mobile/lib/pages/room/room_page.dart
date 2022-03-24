@@ -2,8 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:ks_flutter_commons/ks_flutter_commons.dart';
-import 'package:mottai_flutter_app/controllers/scaffold_messenger/scaffold_messenger_controller.dart';
+import 'package:mottai_flutter_app/controllers/room/room_page_controller.dart';
+import 'package:mottai_flutter_app/providers/message/message_provider.dart';
+import 'package:mottai_flutter_app/route/utils.dart';
 import 'package:mottai_flutter_app/theme/theme.dart';
+import 'package:mottai_flutter_app/utils/utils.dart';
+import 'package:mottai_flutter_app_models/models.dart';
 
 const double horizontalPadding = 8;
 const double partnerImageSize = 36;
@@ -21,6 +25,8 @@ class RoomPage extends StatefulHookConsumerWidget {
 class _RoomPageState extends ConsumerState<RoomPage> {
   @override
   Widget build(BuildContext context) {
+    final roomId =
+        (ModalRoute.of(context)!.settings.arguments! as RouteArguments)['roomId'] as String;
     return TapToUnfocusWidget(
       child: Scaffold(
         appBar: AppBar(),
@@ -28,19 +34,30 @@ class _RoomPageState extends ConsumerState<RoomPage> {
           padding: const EdgeInsets.symmetric(horizontal: 8),
           child: Column(
             children: [
-              Expanded(
-                child: ListView.builder(
-                  itemBuilder: (context, index) {
-                    if (index.isEven) {
-                      return _buildMessageByPartner();
-                    } else {
-                      return _buildMessageByMyself();
-                    }
-                  },
-                  itemCount: 10,
-                  reverse: true,
-                ),
-              ),
+              ref.watch(messagesStreamProvider(roomId)).when(
+                    loading: () => const SizedBox(),
+                    error: (error, stackTrace) {
+                      print('=============================');
+                      print('⛔️ $error');
+                      print(stackTrace);
+                      print('=============================');
+                      return const SizedBox();
+                    },
+                    data: (messages) => Expanded(
+                      child: ListView.builder(
+                        itemBuilder: (context, index) {
+                          final message = messages[index];
+                          if (message.senderId == nonNullUid) {
+                            return _buildMessageByMyself(message);
+                          } else {
+                            return _buildMessageByPartner(message);
+                          }
+                        },
+                        itemCount: messages.length,
+                        reverse: true,
+                      ),
+                    ),
+                  ),
               Container(
                 margin: const EdgeInsets.only(bottom: 16),
                 decoration: const BoxDecoration(
@@ -49,11 +66,13 @@ class _RoomPageState extends ConsumerState<RoomPage> {
                 ),
                 child: Stack(
                   children: [
-                    const TextField(
+                    TextField(
+                      controller:
+                          ref.watch(roomPageController(roomId).notifier).textEditingController,
                       minLines: 1,
                       maxLines: 5,
-                      style: regular12,
-                      decoration: InputDecoration(
+                      style: regular14,
+                      decoration: const InputDecoration(
                         contentPadding: EdgeInsets.only(
                           left: 16,
                           right: 36,
@@ -70,7 +89,7 @@ class _RoomPageState extends ConsumerState<RoomPage> {
                     ),
                     Positioned(
                       right: 0,
-                      bottom: 0,
+                      bottom: 8,
                       child: Container(
                         width: 32,
                         height: 32,
@@ -79,8 +98,8 @@ class _RoomPageState extends ConsumerState<RoomPage> {
                           color: Theme.of(context).colorScheme.primary,
                         ),
                         child: GestureDetector(
-                          onTap: () {
-                            ref.read(scaffoldMessengerController).showSnackBar('まだ何も起こりません');
+                          onTap: () async {
+                            await ref.read(roomPageController(roomId).notifier).send();
                           },
                           child: const Icon(
                             Icons.send,
@@ -101,7 +120,7 @@ class _RoomPageState extends ConsumerState<RoomPage> {
   }
 
   /// 相手からのメッセージ
-  Widget _buildMessageByPartner() {
+  Widget _buildMessageByPartner(Message message) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Column(
@@ -116,10 +135,13 @@ class _RoomPageState extends ConsumerState<RoomPage> {
                       'https://firebasestorage.googleapis.com/v0/b/mottai-app-dev-2.appspot.com/o/hosts%2Fyago-san.jpeg?alt=media&token=637a9f78-9243-4ce8-8734-5776a40cc7fd'),
               const Gap(8),
               Container(
+                constraints: BoxConstraints(
+                  maxWidth: (MediaQuery.of(context).size.width -
+                          partnerImageSize -
+                          horizontalPadding * 3) *
+                      0.9,
+                ),
                 padding: const EdgeInsets.all(12),
-                width:
-                    (MediaQuery.of(context).size.width - partnerImageSize - horizontalPadding * 3) *
-                        0.9,
                 decoration: const BoxDecoration(
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(8),
@@ -128,13 +150,7 @@ class _RoomPageState extends ConsumerState<RoomPage> {
                   ),
                   color: messageBackgroundColor,
                 ),
-                child: const Text(
-                  '相手からのメッセージ、相手からのメッセージ、相手からのメッセージ、'
-                  '相手からのメッセージ、相手からのメッセージ、相手からのメッセージ、'
-                  '相手からのメッセージ、相手からのメッセージ、相手からのメッセージ、'
-                  '相手からのメッセージ、相手からのメッセージ、相手からのメッセージ、',
-                  style: regular12,
-                ),
+                child: Text(message.body, style: regular12),
               ),
             ],
           ),
@@ -144,7 +160,7 @@ class _RoomPageState extends ConsumerState<RoomPage> {
               left: partnerImageSize + horizontalPadding,
               bottom: 16,
             ),
-            child: Text('00:00', style: grey12),
+            child: Text(timeString(message.createdAt), style: grey12),
           ),
         ],
       ),
@@ -152,16 +168,19 @@ class _RoomPageState extends ConsumerState<RoomPage> {
   }
 
   /// 自分からのメッセージ
-  Widget _buildMessageByMyself() {
+  Widget _buildMessageByMyself(Message message) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           Container(
+            constraints: BoxConstraints(
+              maxWidth:
+                  (MediaQuery.of(context).size.width - partnerImageSize - horizontalPadding * 3) *
+                      0.9,
+            ),
             padding: const EdgeInsets.all(12),
-            width: (MediaQuery.of(context).size.width - partnerImageSize - horizontalPadding * 3) *
-                0.9,
             decoration: BoxDecoration(
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(8),
@@ -170,20 +189,11 @@ class _RoomPageState extends ConsumerState<RoomPage> {
               ),
               color: Theme.of(context).colorScheme.primary,
             ),
-            child: const Text(
-              '自分からのメッセージ、自分からのメッセージ、自分からのメッセージ、'
-              '自分からのメッセージ、自分からのメッセージ、自分からのメッセージ、'
-              '自分からのメッセージ、自分からのメッセージ、自分からのメッセージ、'
-              '自分からのメッセージ、自分からのメッセージ、自分からのメッセージ、',
-              style: white12,
-            ),
+            child: Text(message.body, style: white12),
           ),
           Padding(
-            padding: const EdgeInsets.only(
-              top: 4,
-              bottom: 16,
-            ),
-            child: Text('00:00', style: grey12),
+            padding: const EdgeInsets.only(top: 4, bottom: 16),
+            child: Text(timeString(message.createdAt), style: grey12),
           ),
         ],
       ),

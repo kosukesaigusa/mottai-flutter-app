@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../pages/account/account_page.dart';
+import '../pages/attending_rooms/attending_rooms_page.dart';
 import '../pages/home/home_page.dart';
 import '../pages/map/map_page.dart';
-import '../pages/message/message_page.dart';
 
 /// MainPage の BottomNavigationBar の enum
 enum BottomTabEnum {
@@ -50,7 +50,7 @@ const bottomTabs = [
     index: 1,
     tab: BottomTabEnum.message,
     label: 'メッセージ',
-    path: AttendingRoomPage.path,
+    path: AttendingRoomsPage.path,
     iconData: Icons.mail,
   ),
   BottomTab(

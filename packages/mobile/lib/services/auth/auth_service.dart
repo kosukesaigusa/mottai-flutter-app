@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:ks_flutter_commons/ks_flutter_commons.dart';
@@ -22,7 +23,26 @@ class AuthService {
   AuthService(this._read);
   final Reader _read;
 
-  Future<void> signIn(SocialSignInMethod method) async {
+  /// メールアドレスとパスワードでサインインする（本番では使わない予定）。
+  Future<void> signInWithEmailAndPassword({
+    required String email,
+    required String password,
+  }) async {
+    try {
+      final userCredential = await _signInWithEmailAndPassword(email: email, password: password);
+      if (userCredential == null) {
+        throw Exception();
+      }
+    } on PlatformException {
+      rethrow;
+    } on FirebaseException {
+      rethrow;
+    } on Exception {
+      rethrow;
+    }
+  }
+
+  Future<void> signInWithSocialAccount(SocialSignInMethod method) async {
     try {
       AuthResult? result;
       if (method == SocialSignInMethod.Google) {
@@ -45,6 +65,28 @@ class AuthService {
     } on PlatformException {
       rethrow;
     } on FirebaseException {
+      rethrow;
+    } on Exception {
+      rethrow;
+    }
+  }
+
+  /// メールアドレスとパスワードでサインインする。
+  Future<UserCredential?> _signInWithEmailAndPassword({
+    required String email,
+    required String password,
+  }) async {
+    try {
+      final result = await _read(authRepository).signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      return result.when(
+        success: (userCredential, message, success) => userCredential,
+        failure: (message, code) => throw Exception(),
+        error: (e) => throw Exception(),
+      );
+    } on PlatformException {
       rethrow;
     } on Exception {
       rethrow;

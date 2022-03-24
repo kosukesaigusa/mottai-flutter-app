@@ -57,4 +57,9 @@ class ScaffoldMessengerController {
   ScaffoldFeatureController<SnackBar, SnackBarClosedReason> showSnackBarByException(Exception e) {
     return showSnackBar('[${e.toString()}]: エラーが発生しました。');
   }
+
+  /// フォーカスを外す
+  void unFocus() {
+    FocusScope.of(scaffoldMessengerKey.currentContext!).unfocus();
+  }
 }

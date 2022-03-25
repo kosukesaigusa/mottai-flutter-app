@@ -3,13 +3,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:ks_flutter_commons/ks_flutter_commons.dart';
-import 'package:mottai_flutter_app/providers/account/account_providers.dart';
-import 'package:mottai_flutter_app/providers/auth/auth_providers.dart';
-import 'package:mottai_flutter_app/utils/utils.dart';
 import 'package:mottai_flutter_app_models/models.dart';
 
+import '../../providers/account/account_providers.dart';
+import '../../providers/auth/auth_providers.dart';
 import '../../repository/auth/auth_repository.dart';
 import '../../utils/enums.dart';
+import '../../utils/utils.dart';
 
 final authService = Provider.autoDispose((ref) => AuthService(ref.read));
 

@@ -36,7 +36,7 @@ class _RoomPageState extends ConsumerState<RoomPage> {
           padding: const EdgeInsets.symmetric(horizontal: 8),
           child: Column(
             children: [
-              ref.watch(messagesStreamProvider(roomId)).when(
+              ref.watch(messagesStreamProvider(roomId)).when<Widget>(
                     loading: () => const SizedBox(),
                     error: (error, stackTrace) {
                       print('=============================');
@@ -129,7 +129,7 @@ class _RoomPageState extends ConsumerState<RoomPage> {
         Row(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            ref.watch(publicUserStreamProvider(message.senderId)).when(
+            ref.watch(publicUserStreamProvider(message.senderId)).when<Widget>(
                   loading: () => const SizedBox(),
                   error: (error, stackTrace) => const SizedBox(),
                   data: (publicUser) => CircleImage(size: 36, imageURL: publicUser?.imageURL),

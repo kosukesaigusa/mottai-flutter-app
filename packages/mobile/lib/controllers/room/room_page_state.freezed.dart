@@ -18,10 +18,12 @@ final _privateConstructorUsedError = UnsupportedError(
 class _$RoomPageStateTearOff {
   const _$RoomPageStateTearOff();
 
-  _RoomPageState call({bool loading = true, bool sending = false}) {
+  _RoomPageState call(
+      {bool loading = true, bool sending = false, bool isValid = false}) {
     return _RoomPageState(
       loading: loading,
       sending: sending,
+      isValid: isValid,
     );
   }
 }
@@ -33,6 +35,7 @@ const $RoomPageState = _$RoomPageStateTearOff();
 mixin _$RoomPageState {
   bool get loading => throw _privateConstructorUsedError;
   bool get sending => throw _privateConstructorUsedError;
+  bool get isValid => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $RoomPageStateCopyWith<RoomPageState> get copyWith =>
@@ -44,7 +47,7 @@ abstract class $RoomPageStateCopyWith<$Res> {
   factory $RoomPageStateCopyWith(
           RoomPageState value, $Res Function(RoomPageState) then) =
       _$RoomPageStateCopyWithImpl<$Res>;
-  $Res call({bool loading, bool sending});
+  $Res call({bool loading, bool sending, bool isValid});
 }
 
 /// @nodoc
@@ -60,6 +63,7 @@ class _$RoomPageStateCopyWithImpl<$Res>
   $Res call({
     Object? loading = freezed,
     Object? sending = freezed,
+    Object? isValid = freezed,
   }) {
     return _then(_value.copyWith(
       loading: loading == freezed
@@ -69,6 +73,10 @@ class _$RoomPageStateCopyWithImpl<$Res>
       sending: sending == freezed
           ? _value.sending
           : sending // ignore: cast_nullable_to_non_nullable
+              as bool,
+      isValid: isValid == freezed
+          ? _value.isValid
+          : isValid // ignore: cast_nullable_to_non_nullable
               as bool,
     ));
   }
@@ -81,7 +89,7 @@ abstract class _$RoomPageStateCopyWith<$Res>
           _RoomPageState value, $Res Function(_RoomPageState) then) =
       __$RoomPageStateCopyWithImpl<$Res>;
   @override
-  $Res call({bool loading, bool sending});
+  $Res call({bool loading, bool sending, bool isValid});
 }
 
 /// @nodoc
@@ -99,6 +107,7 @@ class __$RoomPageStateCopyWithImpl<$Res>
   $Res call({
     Object? loading = freezed,
     Object? sending = freezed,
+    Object? isValid = freezed,
   }) {
     return _then(_RoomPageState(
       loading: loading == freezed
@@ -109,6 +118,10 @@ class __$RoomPageStateCopyWithImpl<$Res>
           ? _value.sending
           : sending // ignore: cast_nullable_to_non_nullable
               as bool,
+      isValid: isValid == freezed
+          ? _value.isValid
+          : isValid // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
@@ -116,7 +129,8 @@ class __$RoomPageStateCopyWithImpl<$Res>
 /// @nodoc
 
 class _$_RoomPageState implements _RoomPageState {
-  const _$_RoomPageState({this.loading = true, this.sending = false});
+  const _$_RoomPageState(
+      {this.loading = true, this.sending = false, this.isValid = false});
 
   @JsonKey()
   @override
@@ -124,10 +138,13 @@ class _$_RoomPageState implements _RoomPageState {
   @JsonKey()
   @override
   final bool sending;
+  @JsonKey()
+  @override
+  final bool isValid;
 
   @override
   String toString() {
-    return 'RoomPageState(loading: $loading, sending: $sending)';
+    return 'RoomPageState(loading: $loading, sending: $sending, isValid: $isValid)';
   }
 
   @override
@@ -136,14 +153,16 @@ class _$_RoomPageState implements _RoomPageState {
         (other.runtimeType == runtimeType &&
             other is _RoomPageState &&
             const DeepCollectionEquality().equals(other.loading, loading) &&
-            const DeepCollectionEquality().equals(other.sending, sending));
+            const DeepCollectionEquality().equals(other.sending, sending) &&
+            const DeepCollectionEquality().equals(other.isValid, isValid));
   }
 
   @override
   int get hashCode => Object.hash(
       runtimeType,
       const DeepCollectionEquality().hash(loading),
-      const DeepCollectionEquality().hash(sending));
+      const DeepCollectionEquality().hash(sending),
+      const DeepCollectionEquality().hash(isValid));
 
   @JsonKey(ignore: true)
   @override
@@ -152,12 +171,15 @@ class _$_RoomPageState implements _RoomPageState {
 }
 
 abstract class _RoomPageState implements RoomPageState {
-  const factory _RoomPageState({bool loading, bool sending}) = _$_RoomPageState;
+  const factory _RoomPageState({bool loading, bool sending, bool isValid}) =
+      _$_RoomPageState;
 
   @override
   bool get loading;
   @override
   bool get sending;
+  @override
+  bool get isValid;
   @override
   @JsonKey(ignore: true)
   _$RoomPageStateCopyWith<_RoomPageState> get copyWith =>

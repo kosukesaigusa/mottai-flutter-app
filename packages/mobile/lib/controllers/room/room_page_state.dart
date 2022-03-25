@@ -7,5 +7,6 @@ class RoomPageState with _$RoomPageState {
   const factory RoomPageState({
     @Default(true) bool loading,
     @Default(false) bool sending,
+    @Default(false) bool isValid,
   }) = _RoomPageState;
 }

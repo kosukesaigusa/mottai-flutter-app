@@ -37,7 +37,12 @@ class SharedPreferencesService {
     return _spInstance.then((i) => i.getString(key.name) ?? '');
   }
 
-  /// bool 型のキー・バリューを保存する
+  /// String 型のキー・バリューを取得する
+  static Future<String> _getStringByStringKey(String stringKey) async {
+    return _spInstance.then((i) => i.getString(stringKey) ?? '');
+  }
+
+  /// bool 型のキー・バリューを取得する
   static Future<bool> _getBool(SharedPreferencesKey key) async {
     return _spInstance.then((i) => i.getBool(key.name) ?? false);
   }
@@ -50,6 +55,11 @@ class SharedPreferencesService {
   /// String 型のキー・バリューペアを保存する
   static Future<bool> _setString(SharedPreferencesKey key, String value) async {
     return _spInstance.then((i) => i.setString(key.name, value));
+  }
+
+  /// String 型のキー・バリューペアを保存する
+  static Future<bool> _setStringByStringKey(String stringKey, String value) async {
+    return _spInstance.then((i) => i.setString(stringKey, value));
   }
 
   /// bool 型のキー・バリューペアを保存する
@@ -68,10 +78,13 @@ class SharedPreferencesService {
   static Future<bool> setIsHost() => _setBool(SharedPreferencesKey.isHost, true);
   static Future<bool> setProfileImageURL(String url) =>
       _setString(SharedPreferencesKey.profileImageURL, url);
+  static Future<bool> setDraftMessage({required String roomId, required String message}) =>
+      _setStringByStringKey(roomId, message);
 
   // 取得
   static Future<bool> getIsAdmin() => _getBool(SharedPreferencesKey.isAdmin);
   static Future<bool> getIsHost() => _getBool(SharedPreferencesKey.isHost);
-  static Future<String?> getProfileImageURL() => _getString(SharedPreferencesKey.profileImageURL);
-  static Future<String?> getDisplayName() => _getString(SharedPreferencesKey.displayName);
+  static Future<String> getProfileImageURL() => _getString(SharedPreferencesKey.profileImageURL);
+  static Future<String> getDisplayName() => _getString(SharedPreferencesKey.displayName);
+  static Future<String> getDraftMessage(String roomId) => _getStringByStringKey(roomId);
 }

@@ -4,38 +4,57 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mottai_flutter_app/controllers/room/room_page_state.dart';
 import 'package:mottai_flutter_app/controllers/scaffold_messenger/scaffold_messenger_controller.dart';
 import 'package:mottai_flutter_app/providers/auth/auth_providers.dart';
+import 'package:mottai_flutter_app/services/shared_preferences_service.dart';
 import 'package:mottai_flutter_app_models/models.dart';
-import 'package:state_notifier/state_notifier.dart';
 
 import '../../utils/utils.dart';
 
 final roomPageController = StateNotifierProvider.autoDispose
     .family<RoomPageController, RoomPageState, String>((ref, roomId) {
-  return RoomPageController(ref.read, roomId);
+  return RoomPageController(ref.read, roomId)..initialize();
 });
 
-class RoomPageController extends StateNotifier<RoomPageState> with LocatorMixin {
+class RoomPageController extends StateNotifier<RoomPageState> {
   RoomPageController(this._read, this._roomId) : super(const RoomPageState());
   TextEditingController textEditingController = TextEditingController();
   final Reader _read;
   final String _roomId;
 
-  @override
-  void initState() {
-    initialize();
-    super.initState();
+  /// ルームに必要な初期化処理を行う。
+  Future<void> initialize() async {
+    _listenTextEditingController();
+    textEditingController.text = await _getDraftMessageFromSharedPreferences();
+    state = state.copyWith(loading: false);
   }
 
   @override
   void dispose() {
     super.dispose();
-    textEditingController.dispose();
+    Future<void>(() async {
+      await _setDraftMessageFromSharedPreferences();
+      textEditingController.dispose();
+    });
   }
 
-  /// ルームに必要なものをイニシャライズする
-  Future<void> initialize() async {
-    // SharedPreferences を確認して下書きメッセージを取得するなどする
-    state = state.copyWith(loading: false);
+  /// TextEditingController にリスナーを設定する
+  void _listenTextEditingController() {
+    textEditingController.addListener(() {
+      final text = textEditingController.text;
+      state = state.copyWith(isValid: text.isNotEmpty);
+    });
+  }
+
+  /// SharedPreferences に roomId をキーとした下書きが存在すれば取得する
+  Future<String> _getDraftMessageFromSharedPreferences() async {
+    return SharedPreferencesService.getDraftMessage(_roomId);
+  }
+
+  /// SharedPreferences に roomId をキーとした下書きを保存する
+  Future<void> _setDraftMessageFromSharedPreferences() async {
+    await SharedPreferencesService.setDraftMessage(
+      roomId: _roomId,
+      message: textEditingController.value.text,
+    );
   }
 
   /// メッセージを送信する
@@ -72,7 +91,4 @@ class RoomPageController extends StateNotifier<RoomPageState> with LocatorMixin 
       textEditingController.clear();
     }
   }
-
-  /// 下書きを SharedPreferences に保存する
-  Future<void> saveDraftMessage() async {}
 }

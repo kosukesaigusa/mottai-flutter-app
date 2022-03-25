@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mottai_flutter_app/route/routes.dart';
 import 'package:mottai_flutter_app/widgets/common/loading.dart';
@@ -18,8 +19,7 @@ class ScaffoldMessengerNavigator extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return ScaffoldMessenger(
-      key: ref.watch(scaffoldMessengerController.select((c) => c.scaffoldMessengerKey)),
+    return KeyboardVisibilityProvider(
       child: Scaffold(
         body: Stack(
           children: [

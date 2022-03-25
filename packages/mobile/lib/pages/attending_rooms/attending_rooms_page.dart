@@ -77,7 +77,7 @@ class AttendingRoomWidget extends HookConsumerWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            ref.watch(publicUserStreamProvider(attendingRoom.partnerId)).when(
+            ref.watch(publicUserStreamProvider(attendingRoom.partnerId)).when<Widget>(
                   loading: () => const CirclePlaceHolder(size: 48),
                   error: (error, stackTrace) => const CirclePlaceHolder(size: 48),
                   data: (publicUser) => publicUser == null
@@ -89,14 +89,14 @@ class AttendingRoomWidget extends HookConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  ref.watch(publicUserStreamProvider(attendingRoom.partnerId)).when(
+                  ref.watch(publicUserStreamProvider(attendingRoom.partnerId)).when<Widget>(
                         loading: () => const SizedBox(),
                         error: (error, stackTrace) => const SizedBox(),
                         data: (publicUser) => publicUser == null
                             ? const Text('-', style: bold12)
                             : Text(publicUser.displayName, style: bold12),
                       ),
-                  ref.watch(messagesStreamProvider(attendingRoom.roomId)).when(
+                  ref.watch(messagesStreamProvider(attendingRoom.roomId)).when<Widget>(
                         loading: () => const SizedBox(),
                         error: (error, stackTrace) {
                           print('=============================');
@@ -119,10 +119,16 @@ class AttendingRoomWidget extends HookConsumerWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Text(
-                  humanReadableDateTimeString(attendingRoom.updatedAt),
-                  style: grey10,
-                ),
+                ref.watch(messagesStreamProvider(attendingRoom.roomId)).when<Widget>(
+                      loading: () => const SizedBox(),
+                      error: (_, __) => const SizedBox(),
+                      data: (messages) => Text(
+                        messages.isEmpty
+                            ? ''
+                            : humanReadableDateTimeString(messages.first.createdAt),
+                        style: grey10,
+                      ),
+                    ),
                 const Gap(4),
                 attendingRoom.unreadCount > 0
                     ? Container(

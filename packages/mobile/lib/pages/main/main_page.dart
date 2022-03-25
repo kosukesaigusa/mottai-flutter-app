@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../controllers/application/application_controller.dart';
@@ -65,44 +66,52 @@ class _MainPageState extends ConsumerState<MainPage> with WidgetsBindingObserver
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: [
-          Scaffold(
-            body: Stack(
-              children: [for (final tab in bottomTabs) _buildStackedPages(tab)],
+    return KeyboardVisibilityProvider(
+      child: Scaffold(
+        body: Stack(
+          children: [
+            Scaffold(
+              body: Stack(
+                children: [for (final tab in bottomTabs) _buildStackedPages(tab)],
+              ),
+              bottomNavigationBar: KeyboardVisibilityProvider.isKeyboardVisible(context)
+                  ? null
+                  : BottomNavigationBar(
+                      type: BottomNavigationBarType.fixed,
+                      selectedItemColor: Theme.of(context).colorScheme.primary,
+                      // BottomTab の画面を切り替える。
+                      // 現在表示している状態のタブをタップした場合は画面をすべて pop する。
+                      onTap: (index) {
+                        FocusScope.of(context).unfocus();
+                        final tab = bottomTabs[index].tab;
+                        final state = ref.watch(bottomNavigationBarController);
+                        final tabNavigatorKey = ref
+                            .watch(applicationController.notifier)
+                            .navigatorKeys[state.currentTab];
+                        if (tabNavigatorKey == null) {
+                          return;
+                        }
+                        if (tab == state.currentTab) {
+                          tabNavigatorKey.currentState!.popUntil((route) => route.isFirst);
+                          return;
+                        }
+                        ref
+                            .read(bottomNavigationBarController.notifier)
+                            .changeTab(index: index, tab: tab);
+                      },
+                      currentIndex:
+                          ref.watch(bottomNavigationBarController.select((c) => c.currentIndex)),
+                      items: [
+                        for (final item in bottomTabs)
+                          BottomNavigationBarItem(
+                            icon: Icon(item.iconData),
+                            label: item.label,
+                          ),
+                      ],
+                    ),
             ),
-            bottomNavigationBar: BottomNavigationBar(
-              type: BottomNavigationBarType.fixed,
-              selectedItemColor: Theme.of(context).colorScheme.primary,
-              // BottomTab の画面を切り替える。
-              // 現在表示している状態のタブをタップした場合は画面をすべて pop する。
-              onTap: (index) {
-                FocusScope.of(context).unfocus();
-                final tab = bottomTabs[index].tab;
-                final state = ref.watch(bottomNavigationBarController);
-                final tabNavigatorKey =
-                    ref.watch(applicationController.notifier).navigatorKeys[state.currentTab];
-                if (tabNavigatorKey == null) {
-                  return;
-                }
-                if (tab == state.currentTab) {
-                  tabNavigatorKey.currentState!.popUntil((route) => route.isFirst);
-                  return;
-                }
-                ref.read(bottomNavigationBarController.notifier).changeTab(index: index, tab: tab);
-              },
-              currentIndex: ref.watch(bottomNavigationBarController.select((c) => c.currentIndex)),
-              items: [
-                for (final item in bottomTabs)
-                  BottomNavigationBarItem(
-                    icon: Icon(item.iconData),
-                    label: item.label,
-                  ),
-              ],
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -24,6 +24,7 @@ dependencies:
   firebase_storage: ^10.2.7
   flutter:
     sdk: flutter
+  flutter_keyboard_visibility: ^5.2.0
   flutter_line_sdk: ^2.1.0
   flutter_localizations:
     sdk: flutter

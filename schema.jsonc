@@ -1,19 +1,20 @@
 {
   "collection /accounts": {
     "document {userId}": {
-      "userId": "accountId",
+      "userId": "{userId}",
       "isHost": false,
       "createdAt": "2022-01-01",
       "updatedAt": "2022-01-01",
       "displayName": "Kosuke Saigusa",
       "imageURL": "https://...",
-      "providers": ["Google", "Apple", "LINE"]
+      "providers": ["Google", "Apple", "LINE"],
+      "fcmTokens": ["fcm-token-1", "fcm-token-2"]
     }
   },
   // ユーザーの公開情報関係のドメイン
   "collection /publicUsers": {
     "document {userId}": {
-      "userId": "accountId",
+      "userId": "{userId}",
       "updatedAt": "2022-01-01",
       "displayName": "Kosuke Saigusa",
       "imageURL": "https://..."
@@ -30,8 +31,7 @@
             // 少なくとも attendingRooms の onUpdate で発火する関数は作成しない。
             "document {roomId}": {
               "roomId": "{roomId}",
-              "hostId": "{userId}",
-              "workerId": "{userId}",
+              "partnerId": "{partner-userId}",
               "updatedAt": "2022-01-01",
               "unreadCount": 10,
               "muteNotification": false,
@@ -46,12 +46,6 @@
           "hostId": "{userId}",
           "workerId": "{userId}",
           "updatedAt": "2022-01-01",
-          "collection /attendingUsers": {
-            "document {userId}": {
-              "userId": "{userId}",
-              "createdAt": "2022-01-01"
-            }
-          },
           "collection /messages": {
             "document {messageId}": {
               "messageId": "{messageId}",

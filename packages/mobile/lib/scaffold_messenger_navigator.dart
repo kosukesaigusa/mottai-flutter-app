@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:mottai_flutter_app/route/routes.dart';
-import 'package:mottai_flutter_app/widgets/common/loading.dart';
 
 import 'controllers/scaffold_messenger/scaffold_messenger_controller.dart';
 import 'pages/not_found/not_found_page.dart';
 import 'providers/common/common_provider.dart';
 import 'route/app_router.dart';
+import 'route/routes.dart';
+import 'widgets/common/loading.dart';
 
 final appRouter = AppRouter.create(routeBuilder);
 
@@ -20,23 +20,26 @@ class ScaffoldMessengerNavigator extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return KeyboardVisibilityProvider(
-      child: Scaffold(
-        body: Stack(
-          children: [
-            Navigator(
-              key: ref.watch(scaffoldMessengerController.select((c) => c.navigatorKey)),
-              initialRoute: AppRouter.initialRoute,
-              onGenerateRoute: appRouter.generateRoute,
-              onUnknownRoute: (settings) {
-                final route = MaterialPageRoute<void>(
-                  settings: settings,
-                  builder: (context) => const NotFoundPage(),
-                );
-                return route;
-              },
-            ),
-            if (ref.watch(overlayLoadingProvider)) const OverlayLoadingWidget(),
-          ],
+      child: ScaffoldMessenger(
+        key: ref.watch(scaffoldMessengerController.select((c) => c.scaffoldMessengerKey)),
+        child: Scaffold(
+          body: Stack(
+            children: [
+              Navigator(
+                key: ref.watch(scaffoldMessengerController.select((c) => c.navigatorKey)),
+                initialRoute: AppRouter.initialRoute,
+                onGenerateRoute: appRouter.generateRoute,
+                onUnknownRoute: (settings) {
+                  final route = MaterialPageRoute<void>(
+                    settings: settings,
+                    builder: (context) => const NotFoundPage(),
+                  );
+                  return route;
+                },
+              ),
+              if (ref.watch(overlayLoadingProvider)) const OverlayLoadingWidget(),
+            ],
+          ),
         ),
       ),
     );

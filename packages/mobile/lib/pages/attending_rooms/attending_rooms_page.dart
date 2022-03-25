@@ -35,9 +35,12 @@ class _AttendingRoomsPageState extends ConsumerState<AttendingRoomsPage> {
               print(stackTrace);
               print('=============================');
               return Center(
-                child: Text(
-                  error.toString(),
-                  style: grey12,
+                child: SizedBox(
+                  width: 280,
+                  child: Text(
+                    error.toString(),
+                    style: grey12,
+                  ),
                 ),
               );
             },

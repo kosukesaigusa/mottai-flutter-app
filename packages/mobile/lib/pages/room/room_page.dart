@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:ks_flutter_commons/ks_flutter_commons.dart';
@@ -32,38 +33,46 @@ class _RoomPageState extends ConsumerState<RoomPage> {
     return TapToUnfocusWidget(
       child: Scaffold(
         appBar: AppBar(),
-        body: Column(
-          children: [
-            ref.watch(messagesStreamProvider(roomId)).when<Widget>(
-                  loading: () => const SizedBox(),
-                  error: (error, stackTrace) {
-                    print('=============================');
-                    print('⛔️ $error');
-                    print(stackTrace);
-                    print('=============================');
-                    return const SizedBox();
-                  },
-                  data: (messages) => Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
-                      child: ListView.builder(
-                        itemBuilder: (context, index) {
-                          final message = messages[index];
-                          if (message.senderId == nonNullUid) {
-                            return _buildMessageByMyself(message);
-                          } else {
-                            return _buildMessageByPartner(message);
-                          }
-                        },
-                        itemCount: messages.length,
-                        reverse: true,
-                      ),
-                    ),
-                  ),
+        body: ref.watch(roomPageController(roomId)).loading
+            ? const Center(
+                child: FaIcon(
+                  FontAwesomeIcons.solidComment,
+                  size: 72,
+                  color: Colors.black12,
                 ),
-            _buildInputWidget(roomId),
-          ],
-        ),
+              )
+            : Column(
+                children: [
+                  ref.watch(messagesStreamProvider(roomId)).when<Widget>(
+                        loading: () => const SizedBox(),
+                        error: (error, stackTrace) {
+                          print('=============================');
+                          print('⛔️ $error');
+                          print(stackTrace);
+                          print('=============================');
+                          return const SizedBox();
+                        },
+                        data: (messages) => Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                            child: ListView.builder(
+                              itemBuilder: (context, index) {
+                                final message = messages[index];
+                                if (message.senderId == nonNullUid) {
+                                  return _buildMessageByMyself(message);
+                                } else {
+                                  return _buildMessageByPartner(message);
+                                }
+                              },
+                              itemCount: messages.length,
+                              reverse: true,
+                            ),
+                          ),
+                        ),
+                      ),
+                  _buildInputWidget(roomId),
+                ],
+              ),
       ),
     );
   }

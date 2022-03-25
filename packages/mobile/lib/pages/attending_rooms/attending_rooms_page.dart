@@ -6,6 +6,7 @@ import 'package:mottai_flutter_app_models/models.dart';
 
 import '../../providers/attending_room/attending_room_provider.dart';
 import '../../providers/message/message_provider.dart';
+import '../../providers/public_user/public_user.dart';
 import '../../route/utils.dart';
 import '../../theme/theme.dart';
 import '../../widgets/common/loading.dart';
@@ -76,16 +77,25 @@ class AttendingRoomWidget extends HookConsumerWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const CircleImage(
-                size: 48,
-                imageURL:
-                    'https://firebasestorage.googleapis.com/v0/b/mottai-app-dev-2.appspot.com/o/hosts%2Fyago-san.jpeg?alt=media&token=637a9f78-9243-4ce8-8734-5776a40cc7fd'),
+            ref.watch(publicUserStreamProvider(attendingRoom.partnerId)).when(
+                  loading: () => const CirclePlaceHolder(size: 48),
+                  error: (error, stackTrace) => const CirclePlaceHolder(size: 48),
+                  data: (publicUser) => publicUser == null
+                      ? const CirclePlaceHolder(size: 48)
+                      : CircleImage(size: 48, imageURL: publicUser.imageURL),
+                ),
             const Gap(8),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('矢郷 史郎', style: bold12),
+                  ref.watch(publicUserStreamProvider(attendingRoom.partnerId)).when(
+                        loading: () => const SizedBox(),
+                        error: (error, stackTrace) => const SizedBox(),
+                        data: (publicUser) => publicUser == null
+                            ? const Text('-', style: bold12)
+                            : Text(publicUser.displayName, style: bold12),
+                      ),
                   ref.watch(messagesStreamProvider(attendingRoom.roomId)).when(
                         loading: () => const SizedBox(),
                         error: (error, stackTrace) {
@@ -96,7 +106,7 @@ class AttendingRoomWidget extends HookConsumerWidget {
                           return const SizedBox();
                         },
                         data: (messages) => Text(
-                          messages.first.body,
+                          messages.isEmpty ? 'ルームが作成されました。' : messages.first.body,
                           style: grey12,
                           overflow: TextOverflow.ellipsis,
                           maxLines: 2,
@@ -114,22 +124,22 @@ class AttendingRoomWidget extends HookConsumerWidget {
                   style: grey10,
                 ),
                 const Gap(4),
-                Container(
-                  width: 20,
-                  height: 20,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                  child: attendingRoom.unreadCount > 0
-                      ? Center(
+                attendingRoom.unreadCount > 0
+                    ? Container(
+                        width: 20,
+                        height: 20,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                        child: Center(
                           child: Text(
                             attendingRoom.unreadCount.toString(),
                             style: whiteBold12,
                           ),
-                        )
-                      : const SizedBox(),
-                ),
+                        ),
+                      )
+                    : const SizedBox(width: 20, height: 20),
               ],
             ),
           ],

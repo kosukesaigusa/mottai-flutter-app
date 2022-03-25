@@ -9,6 +9,8 @@ import 'package:mottai_flutter_app/theme/theme.dart';
 import 'package:mottai_flutter_app/utils/utils.dart';
 import 'package:mottai_flutter_app_models/models.dart';
 
+import '../../providers/public_user/public_user.dart';
+
 const double horizontalPadding = 8;
 const double partnerImageSize = 36;
 
@@ -121,82 +123,76 @@ class _RoomPageState extends ConsumerState<RoomPage> {
 
   /// 相手からのメッセージ
   Widget _buildMessageByPartner(Message message) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              const CircleImage(
-                  size: 36,
-                  imageURL:
-                      'https://firebasestorage.googleapis.com/v0/b/mottai-app-dev-2.appspot.com/o/hosts%2Fyago-san.jpeg?alt=media&token=637a9f78-9243-4ce8-8734-5776a40cc7fd'),
-              const Gap(8),
-              Container(
-                constraints: BoxConstraints(
-                  maxWidth: (MediaQuery.of(context).size.width -
-                          partnerImageSize -
-                          horizontalPadding * 3) *
-                      0.9,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            ref.watch(publicUserStreamProvider(message.senderId)).when(
+                  loading: () => const SizedBox(),
+                  error: (error, stackTrace) => const SizedBox(),
+                  data: (publicUser) => CircleImage(size: 36, imageURL: publicUser?.imageURL),
                 ),
-                padding: const EdgeInsets.all(12),
-                decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(8),
-                    topRight: Radius.circular(8),
-                    bottomRight: Radius.circular(8),
-                  ),
-                  color: messageBackgroundColor,
-                ),
-                child: Text(message.body, style: regular12),
+            const Gap(8),
+            Container(
+              constraints: BoxConstraints(
+                maxWidth:
+                    (MediaQuery.of(context).size.width - partnerImageSize - horizontalPadding * 3) *
+                        0.9,
               ),
-            ],
-          ),
-          Padding(
-            padding: const EdgeInsets.only(
-              top: 4,
-              left: partnerImageSize + horizontalPadding,
-              bottom: 16,
+              padding: const EdgeInsets.all(12),
+              decoration: const BoxDecoration(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(8),
+                  topRight: Radius.circular(8),
+                  bottomRight: Radius.circular(8),
+                ),
+                color: messageBackgroundColor,
+              ),
+              child: Text(message.body, style: regular12),
             ),
-            child: Text(timeString(message.createdAt), style: grey12),
+          ],
+        ),
+        Padding(
+          padding: const EdgeInsets.only(
+            top: 4,
+            left: partnerImageSize + horizontalPadding,
+            bottom: 16,
           ),
-        ],
-      ),
+          child: Text(timeString(message.createdAt), style: grey12),
+        ),
+      ],
     );
   }
 
   /// 自分からのメッセージ
   Widget _buildMessageByMyself(Message message) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          Container(
-            constraints: BoxConstraints(
-              maxWidth:
-                  (MediaQuery.of(context).size.width - partnerImageSize - horizontalPadding * 3) *
-                      0.9,
-            ),
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(8),
-                topRight: Radius.circular(8),
-                bottomLeft: Radius.circular(8),
-              ),
-              color: Theme.of(context).colorScheme.primary,
-            ),
-            child: Text(message.body, style: white12),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Container(
+          constraints: BoxConstraints(
+            maxWidth:
+                (MediaQuery.of(context).size.width - partnerImageSize - horizontalPadding * 3) *
+                    0.9,
           ),
-          Padding(
-            padding: const EdgeInsets.only(top: 4, bottom: 16),
-            child: Text(timeString(message.createdAt), style: grey12),
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(8),
+              topRight: Radius.circular(8),
+              bottomLeft: Radius.circular(8),
+            ),
+            color: Theme.of(context).colorScheme.primary,
           ),
-        ],
-      ),
+          child: Text(message.body, style: white12),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 4, bottom: 16),
+          child: Text(timeString(message.createdAt), style: grey12),
+        ),
+      ],
     );
   }
 }

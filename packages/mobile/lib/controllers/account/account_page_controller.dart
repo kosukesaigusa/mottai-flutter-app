@@ -55,6 +55,7 @@ class AccountPageController extends StateNotifier<AccountPageState> {
     _read(overlayLoadingProvider.notifier).update((s) => true);
     try {
       await _read(authService).signInWithSocialAccount(method);
+      _read(scaffoldMessengerController).showSnackBar('サインインしました。');
     } on PlatformException catch (e) {
       _read(scaffoldMessengerController).showSnackBar('[${e.code}] キャンセルしました。');
     } on FirebaseException catch (e) {

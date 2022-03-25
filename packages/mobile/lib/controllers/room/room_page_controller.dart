@@ -11,7 +11,7 @@ import '../../utils/utils.dart';
 
 final roomPageController = StateNotifierProvider.autoDispose
     .family<RoomPageController, RoomPageState, String>((ref, roomId) {
-  return RoomPageController(ref.read, roomId)..initialize();
+  return RoomPageController(ref.read, roomId)..init();
 });
 
 class RoomPageController extends StateNotifier<RoomPageState> {
@@ -20,11 +20,20 @@ class RoomPageController extends StateNotifier<RoomPageState> {
   final Reader _read;
   final String _roomId;
 
+  /// このクラスをインスタンス化する際にコールする。
+  /// Wantedly アプリを参考に、あえていくらか画面を表示するまでに待たせる。
+  Future<void> init() async {
+    await Future.wait<void>([
+      _initialize(),
+      Future<void>.delayed(const Duration(milliseconds: 500)),
+    ]);
+    state = state.copyWith(loading: false);
+  }
+
   /// ルームに必要な初期化処理を行う。
-  Future<void> initialize() async {
+  Future<void> _initialize() async {
     _listenTextEditingController();
     textEditingController.text = await _getDraftMessageFromSharedPreferences();
-    state = state.copyWith(loading: false);
   }
 
   @override

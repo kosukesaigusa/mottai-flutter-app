@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -34,6 +36,14 @@ class RoomPageController extends StateNotifier<RoomPageState> {
   Future<void> _initialize() async {
     _listenTextEditingController();
     textEditingController.text = await _getDraftMessageFromSharedPreferences();
+    final userId = _read(userIdProvider).value;
+    if (userId != null) {
+      // 非同期的に lastReadAt を更新する
+      unawaited(MessageRepository.readStatusRef(
+        roomId: _roomId,
+        readStatusId: userId,
+      ).set(const ReadStatus(), SetOptions(merge: true)));
+    }
   }
 
   @override

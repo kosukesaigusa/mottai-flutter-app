@@ -1,6 +1,3 @@
-import 'dart:async';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gap/gap.dart';
@@ -35,11 +32,6 @@ class _RoomPageState extends ConsumerState<RoomPage> {
     if (userId == null) {
       return const SizedBox();
     }
-    // 非同期的に lastReadAt を更新する
-    unawaited(MessageRepository.readStatusRef(
-      roomId: roomId,
-      readStatusId: userId,
-    ).set(const ReadStatus(), SetOptions(merge: true)));
     return TapToUnfocusWidget(
       child: Scaffold(
         appBar: AppBar(),
@@ -69,9 +61,21 @@ class _RoomPageState extends ConsumerState<RoomPage> {
                               itemBuilder: (context, index) {
                                 final message = messages[index];
                                 if (message.senderId == userId) {
-                                  return _buildMessageByMyself(message);
+                                  return _buildMessageByMyself(
+                                      message: message,
+                                      showDate: _showDate(
+                                        itemCount: messages.length,
+                                        index: index,
+                                        messages: messages,
+                                      ));
                                 } else {
-                                  return _buildMessageByPartner(message);
+                                  return _buildMessageByPartner(
+                                      message: message,
+                                      showDate: _showDate(
+                                        itemCount: messages.length,
+                                        index: index,
+                                        messages: messages,
+                                      ));
                                 }
                               },
                               itemCount: messages.length,
@@ -88,10 +92,30 @@ class _RoomPageState extends ConsumerState<RoomPage> {
   }
 
   /// 相手からのメッセージ
-  Widget _buildMessageByPartner(Message message) {
+  Widget _buildMessageByPartner({
+    required Message message,
+    required bool showDate,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        if (showDate) ...[
+          const Gap(24),
+          Center(
+            child: Container(
+              padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+              decoration: const BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(8)),
+                color: messageBackgroundColor,
+              ),
+              child: Text(
+                toIsoStringWithWeekDay(message.createdAt),
+                style: grey10,
+              ),
+            ),
+          ),
+          const Gap(24),
+        ],
         Row(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
@@ -133,10 +157,14 @@ class _RoomPageState extends ConsumerState<RoomPage> {
   }
 
   /// 自分からのメッセージ
-  Widget _buildMessageByMyself(Message message) {
+  Widget _buildMessageByMyself({
+    required Message message,
+    required bool showDate,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
+        if (showDate) Text(timeString(message.createdAt)),
         Container(
           constraints: BoxConstraints(
             maxWidth:
@@ -221,5 +249,28 @@ class _RoomPageState extends ConsumerState<RoomPage> {
         ),
       ],
     );
+  }
+
+  ///
+  bool _showDate({
+    required int itemCount,
+    required int index,
+    required List<Message> messages,
+  }) {
+    if (itemCount == 1) {
+      return true;
+    }
+    if (index == itemCount - 1) {
+      return true;
+    }
+    final lastCreatedAt = messages[index].createdAt;
+    final previouslyCreatedAt = messages[index + 1].createdAt;
+    if (lastCreatedAt == null || previouslyCreatedAt == null) {
+      return false;
+    }
+    if (sameDay(lastCreatedAt, previouslyCreatedAt)) {
+      return false;
+    }
+    return true;
   }
 }

@@ -27,6 +27,30 @@ class _AttendingRoomsPageState extends ConsumerState<AttendingRoomsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // TODO: 開発中のみ。後で消す。
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () async {
+      //     final userId = ref.watch(userIdProvider).value;
+      //     if (userId == null) {
+      //       return;
+      //     }
+      //     final roomId = uuid;
+      //     const hostId = 'mSHQlbzX2BKY6TwdwfQ1Anf2KPaa';
+      //     await MessageRepository.roomRef(roomId: roomId).set(Room(
+      //       roomId: roomId,
+      //       hostId: hostId,
+      //       workerId: userId,
+      //     ));
+      //     await MessageRepository.attendingRoomRef(userId: userId, roomId: roomId)
+      //         .set(AttendingRoom(
+      //       roomId: roomId,
+      //       partnerId: hostId,
+      //     ));
+      //     ref.read(scaffoldMessengerController).showSnackBar(
+      //           'ホスト 1 とのルームを作成しました。',
+      //         );
+      //   },
+      // ),
       appBar: AppBar(),
       body: ref.watch(attendingRoomsStreamProvider).when<Widget>(
             loading: () => const PrimarySpinkitCircle(),

@@ -7,9 +7,11 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:ks_flutter_commons/ks_flutter_commons.dart';
 import 'package:mottai_flutter_app_models/models.dart';
 
+import '../../controllers/scaffold_messenger/scaffold_messenger_controller.dart';
 import '../../providers/providers.dart';
 import '../../route/utils.dart';
 import '../../theme/theme.dart';
+import '../../utils/utils.dart';
 import '../../widgets/common/loading.dart';
 import '../room/room_page.dart';
 
@@ -27,30 +29,6 @@ class _AttendingRoomsPageState extends ConsumerState<AttendingRoomsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // TODO: 開発中のみ。後で消す。
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () async {
-      //     final userId = ref.watch(userIdProvider).value;
-      //     if (userId == null) {
-      //       return;
-      //     }
-      //     final roomId = uuid;
-      //     const hostId = 'mSHQlbzX2BKY6TwdwfQ1Anf2KPaa';
-      //     await MessageRepository.roomRef(roomId: roomId).set(Room(
-      //       roomId: roomId,
-      //       hostId: hostId,
-      //       workerId: userId,
-      //     ));
-      //     await MessageRepository.attendingRoomRef(userId: userId, roomId: roomId)
-      //         .set(AttendingRoom(
-      //       roomId: roomId,
-      //       partnerId: hostId,
-      //     ));
-      //     ref.read(scaffoldMessengerController).showSnackBar(
-      //           'ホスト 1 とのルームを作成しました。',
-      //         );
-      //   },
-      // ),
       appBar: AppBar(),
       body: ref.watch(attendingRoomsStreamProvider).when<Widget>(
             loading: () => const PrimarySpinkitCircle(),
@@ -81,8 +59,45 @@ class _AttendingRoomsPageState extends ConsumerState<AttendingRoomsPage> {
                     itemCount: attendingRooms.length,
                   ),
           ),
+      floatingActionButton: _showFloatingActionButton ? _fab : null,
     );
   }
+
+  // TODO: 開発中のみ。後で消す。
+  bool get _showFloatingActionButton {
+    try {
+      return (ref.watch(attendingRoomsStreamProvider).value ?? <AttendingRoom>[]).isEmpty;
+    } on SignInRequiredException {
+      return false;
+    } on Exception {
+      return false;
+    }
+  }
+
+  Widget get _fab => FloatingActionButton(
+        child: const Icon(Icons.add),
+        onPressed: () async {
+          final userId = ref.watch(userIdProvider).value;
+          if (userId == null) {
+            return;
+          }
+          final roomId = uuid;
+          const hostId = String.fromEnvironment('HOST_1_ID');
+          await MessageRepository.roomRef(roomId: roomId).set(Room(
+            roomId: roomId,
+            hostId: hostId,
+            workerId: userId,
+          ));
+          await MessageRepository.attendingRoomRef(userId: userId, roomId: roomId)
+              .set(AttendingRoom(
+            roomId: roomId,
+            partnerId: hostId,
+          ));
+          ref.read(scaffoldMessengerController).showSnackBar(
+                '【テスト用】ホスト 1 とのルームを作成しました。',
+              );
+        },
+      );
 }
 
 /// AttendingRoom ページのひとつひとつのウィジェット

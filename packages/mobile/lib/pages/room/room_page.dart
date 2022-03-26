@@ -99,23 +99,7 @@ class _RoomPageState extends ConsumerState<RoomPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (showDate) ...[
-          const Gap(24),
-          Center(
-            child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(8)),
-                color: messageBackgroundColor,
-              ),
-              child: Text(
-                toIsoStringWithWeekDay(message.createdAt),
-                style: grey10,
-              ),
-            ),
-          ),
-          const Gap(24),
-        ],
+        if (showDate) ..._dateWidget(message),
         Row(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
@@ -164,7 +148,7 @@ class _RoomPageState extends ConsumerState<RoomPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        if (showDate) Text(timeString(message.createdAt)),
+        if (showDate) ..._dateWidget(message),
         Container(
           constraints: BoxConstraints(
             maxWidth:
@@ -251,7 +235,7 @@ class _RoomPageState extends ConsumerState<RoomPage> {
     );
   }
 
-  ///
+  /// 日付を表示するかどうか
   bool _showDate({
     required int itemCount,
     required int index,
@@ -272,5 +256,26 @@ class _RoomPageState extends ConsumerState<RoomPage> {
       return false;
     }
     return true;
+  }
+
+  /// 表示する日付
+  List<Widget> _dateWidget(Message message) {
+    return [
+      const Gap(24),
+      Center(
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+          decoration: const BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(8)),
+            color: messageBackgroundColor,
+          ),
+          child: Text(
+            toIsoStringWithWeekDay(message.createdAt),
+            style: grey10,
+          ),
+        ),
+      ),
+      const Gap(24),
+    ];
   }
 }

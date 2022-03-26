@@ -14,7 +14,7 @@ final attendingRoomsStreamProvider = StreamProvider.autoDispose<List<AttendingRo
 
 /// 指定した roomId の messages サブコレクションに、指定した DateTime より
 /// createdAt が未来の相手が送信した（送信者が自分ではない）
-/// ドキュメントの個数（最大 9 個）を購読する StreamProvider
+/// ドキュメントの個数（最大 10 個）を購読する StreamProvider
 final unreadCountStreamProvider = StreamProvider.autoDispose.family<int, String>((ref, roomId) {
   final userId = ref.watch(userIdProvider).value;
   if (userId == null) {
@@ -24,15 +24,15 @@ final unreadCountStreamProvider = StreamProvider.autoDispose.family<int, String>
   if (room == null) {
     throw Exception('指定したルームが見つかりませんでした。');
   }
-  final lastReadAt = room.lastReadAt[userId];
-  if (lastReadAt == null) {
-    return Stream.value(0);
-  }
+  final readStatus = ref.watch(readStatusStreamProvider(roomId)).value;
+  final lastReadAt = readStatus?.lastReadAt;
   return MessageRepository.subscribeMessages(
     roomId: room.roomId,
-    queryBuilder: (q) => q
-        .where('createdAt', isGreaterThan: lastReadAt)
-        .orderBy('createdAt', descending: true)
-        .limit(10),
+    queryBuilder: (q) => lastReadAt != null
+        ? q
+            .where('createdAt', isGreaterThan: lastReadAt)
+            .orderBy('createdAt', descending: true)
+            .limit(10)
+        : q.orderBy('createdAt', descending: true).limit(10),
   ).map((messages) => messages.where((message) => message.senderId != userId).toList().length);
 });

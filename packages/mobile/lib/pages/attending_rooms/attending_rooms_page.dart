@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -65,97 +68,105 @@ class AttendingRoomWidget extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return InkWell(
-      onTap: () async {
-        await Navigator.pushNamed(
-          context,
-          RoomPage.path,
-          arguments: RouteArguments(<String, dynamic>{'roomId': attendingRoom.roomId}),
-        );
-      },
-      child: Padding(
-        padding: const EdgeInsets.all(8),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            ref.watch(publicUserStreamProvider(attendingRoom.partnerId)).when<Widget>(
-                  loading: () => const CirclePlaceHolder(size: 48),
-                  error: (error, stackTrace) => const CirclePlaceHolder(size: 48),
-                  data: (publicUser) => publicUser == null
-                      ? const CirclePlaceHolder(size: 48)
-                      : CircleImage(size: 48, imageURL: publicUser.imageURL),
-                ),
-            const Gap(8),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+    final userId = ref.watch(userIdProvider).value;
+    return userId != null
+        ? InkWell(
+            onTap: () async {
+              await Navigator.pushNamed(
+                context,
+                RoomPage.path,
+                arguments: RouteArguments(<String, dynamic>{'roomId': attendingRoom.roomId}),
+              );
+              // 非同期的に lastReadAt を更新する
+              unawaited(MessageRepository.readStatusRef(
+                roomId: attendingRoom.roomId,
+                readStatusId: userId,
+              ).set(const ReadStatus(), SetOptions(merge: true)));
+            },
+            child: Padding(
+              padding: const EdgeInsets.all(8),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   ref.watch(publicUserStreamProvider(attendingRoom.partnerId)).when<Widget>(
-                        loading: () => const SizedBox(),
-                        error: (error, stackTrace) => const SizedBox(),
+                        loading: () => const CirclePlaceHolder(size: 48),
+                        error: (error, stackTrace) => const CirclePlaceHolder(size: 48),
                         data: (publicUser) => publicUser == null
-                            ? const Text('-', style: bold12)
-                            : Text(publicUser.displayName, style: bold12),
+                            ? const CirclePlaceHolder(size: 48)
+                            : CircleImage(size: 48, imageURL: publicUser.imageURL),
                       ),
-                  ref.watch(messagesStreamProvider(attendingRoom.roomId)).when<Widget>(
-                        loading: () => const SizedBox(),
-                        error: (error, stackTrace) {
-                          print('=============================');
-                          print('⛔️ $error');
-                          print(stackTrace);
-                          print('=============================');
-                          return const SizedBox();
-                        },
-                        data: (messages) => Text(
-                          messages.isEmpty ? 'ルームが作成されました。' : messages.first.body,
-                          style: grey12,
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 2,
-                        ),
-                      ),
+                  const Gap(8),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ref.watch(publicUserStreamProvider(attendingRoom.partnerId)).when<Widget>(
+                              loading: () => const SizedBox(),
+                              error: (error, stackTrace) => const SizedBox(),
+                              data: (publicUser) => publicUser == null
+                                  ? const Text('-', style: bold12)
+                                  : Text(publicUser.displayName, style: bold12),
+                            ),
+                        ref.watch(messagesStreamProvider(attendingRoom.roomId)).when<Widget>(
+                              loading: () => const SizedBox(),
+                              error: (error, stackTrace) {
+                                print('=============================');
+                                print('⛔️ $error');
+                                print(stackTrace);
+                                print('=============================');
+                                return const SizedBox();
+                              },
+                              data: (messages) => Text(
+                                messages.isEmpty ? 'ルームが作成されました。' : messages.first.body,
+                                style: grey12,
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 2,
+                              ),
+                            ),
+                      ],
+                    ),
+                  ),
+                  const Gap(16),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      ref.watch(messagesStreamProvider(attendingRoom.roomId)).when<Widget>(
+                            loading: () => const SizedBox(),
+                            error: (_, __) => const SizedBox(),
+                            data: (messages) => Text(
+                              messages.isEmpty
+                                  ? ''
+                                  : humanReadableDateTimeString(messages.first.createdAt),
+                              style: grey10,
+                            ),
+                          ),
+                      const Gap(4),
+                      ref.watch(unreadCountStreamProvider(attendingRoom.roomId)).when<Widget>(
+                            loading: () => const SizedBox(),
+                            error: (_, __) => const SizedBox(),
+                            data: (count) => count > 0
+                                ? Container(
+                                    width: 20,
+                                    height: 20,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Theme.of(context).colorScheme.primary,
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        count > 9 ? '9+' : count.toString(),
+                                        style: whiteBold10,
+                                      ),
+                                    ),
+                                  )
+                                : const SizedBox(width: 20, height: 20),
+                          ),
+                    ],
+                  ),
                 ],
               ),
             ),
-            const Gap(16),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                ref.watch(messagesStreamProvider(attendingRoom.roomId)).when<Widget>(
-                      loading: () => const SizedBox(),
-                      error: (_, __) => const SizedBox(),
-                      data: (messages) => Text(
-                        messages.isEmpty
-                            ? ''
-                            : humanReadableDateTimeString(messages.first.createdAt),
-                        style: grey10,
-                      ),
-                    ),
-                const Gap(4),
-                ref.watch(unreadCountStreamProvider(attendingRoom.roomId)).when<Widget>(
-                      loading: () => const SizedBox(),
-                      error: (_, __) => const SizedBox(),
-                      data: (count) => count > 0
-                          ? Container(
-                              width: 20,
-                              height: 20,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                              child: Center(
-                                child: Text(
-                                  count > 9 ? '9+' : count.toString(),
-                                  style: whiteBold10,
-                                ),
-                              ),
-                            )
-                          : const SizedBox(width: 20, height: 20),
-                    ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
+          )
+        : const SizedBox();
   }
 }

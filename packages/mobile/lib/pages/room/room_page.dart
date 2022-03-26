@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gap/gap.dart';
@@ -9,7 +12,6 @@ import '../../controllers/room/room_page_controller.dart';
 import '../../providers/providers.dart';
 import '../../route/utils.dart';
 import '../../theme/theme.dart';
-import '../../utils/utils.dart';
 
 const double horizontalPadding = 8;
 const double partnerImageSize = 36;
@@ -29,6 +31,15 @@ class _RoomPageState extends ConsumerState<RoomPage> {
   Widget build(BuildContext context) {
     final roomId =
         (ModalRoute.of(context)!.settings.arguments! as RouteArguments)['roomId'] as String;
+    final userId = ref.watch(userIdProvider).value;
+    if (userId == null) {
+      return const SizedBox();
+    }
+    // 非同期的に lastReadAt を更新する
+    unawaited(MessageRepository.readStatusRef(
+      roomId: roomId,
+      readStatusId: userId,
+    ).set(const ReadStatus(), SetOptions(merge: true)));
     return TapToUnfocusWidget(
       child: Scaffold(
         appBar: AppBar(),
@@ -57,7 +68,7 @@ class _RoomPageState extends ConsumerState<RoomPage> {
                             child: ListView.builder(
                               itemBuilder: (context, index) {
                                 final message = messages[index];
-                                if (message.senderId == nonNullUid) {
+                                if (message.senderId == userId) {
                                   return _buildMessageByMyself(message);
                                 } else {
                                   return _buildMessageByPartner(message);

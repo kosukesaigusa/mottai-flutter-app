@@ -195,23 +195,23 @@ class _RoomPageState extends ConsumerState<RoomPage> {
             ),
           ),
         ),
-        Container(
-          margin: const EdgeInsets.only(right: 8),
-          width: 32,
-          height: 32,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: ref.watch(roomPageController(roomId)).isValid
-                ? Theme.of(context).colorScheme.primary
-                : grey400,
-          ),
-          child: GestureDetector(
-            onTap: () async {
-              if (!ref.read(roomPageController(roomId)).isValid) {
-                return;
-              }
-              await ref.read(roomPageController(roomId).notifier).send();
-            },
+        GestureDetector(
+          onTap: () async {
+            if (!ref.read(roomPageController(roomId)).isValid) {
+              return;
+            }
+            await ref.read(roomPageController(roomId).notifier).send();
+          },
+          child: Container(
+            margin: const EdgeInsets.only(right: 8, top: 8, bottom: 8),
+            width: 32,
+            height: 32,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: ref.watch(roomPageController(roomId)).isValid
+                  ? Theme.of(context).colorScheme.primary
+                  : grey400,
+            ),
             child: const Icon(
               Icons.send,
               size: 20,

@@ -4,7 +4,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'controllers/scaffold_messenger/scaffold_messenger_controller.dart';
 import 'pages/not_found/not_found_page.dart';
-import 'providers/common/common_provider.dart';
+import 'providers/providers.dart';
 import 'route/app_router.dart';
 import 'route/routes.dart';
 import 'widgets/common/loading.dart';

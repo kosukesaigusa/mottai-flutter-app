@@ -4,9 +4,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:ks_flutter_commons/ks_flutter_commons.dart';
 import 'package:mottai_flutter_app_models/models.dart';
 
-import '../../providers/attending_room/attending_room_provider.dart';
-import '../../providers/message/message_provider.dart';
-import '../../providers/public_user/public_user.dart';
+import '../../providers/providers.dart';
 import '../../route/utils.dart';
 import '../../theme/theme.dart';
 import '../../widgets/common/loading.dart';

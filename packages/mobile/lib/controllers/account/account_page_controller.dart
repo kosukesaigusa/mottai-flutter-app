@@ -4,11 +4,11 @@ import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:mottai_flutter_app/services/auth/auth_service.dart';
-import 'package:mottai_flutter_app/utils/enums.dart';
 
-import '../../providers/common/common_provider.dart';
+import '../../providers/providers.dart';
+import '../../services/auth/auth_service.dart';
 import '../../theme/theme.dart';
+import '../../utils/enums.dart';
 import '../scaffold_messenger/scaffold_messenger_controller.dart';
 import 'account_page_state.dart';
 

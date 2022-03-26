@@ -5,9 +5,8 @@ import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:ks_flutter_commons/ks_flutter_commons.dart';
 import 'package:mottai_flutter_app/controllers/account/account_page_controller.dart';
-import 'package:mottai_flutter_app/providers/auth/auth_providers.dart';
 
-import '../../providers/account/account_providers.dart';
+import '../../providers/providers.dart';
 import '../../theme/theme.dart';
 import '../../utils/enums.dart';
 import '../../utils/utils.dart';

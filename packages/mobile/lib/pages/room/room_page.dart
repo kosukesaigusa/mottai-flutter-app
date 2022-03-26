@@ -3,14 +3,13 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:ks_flutter_commons/ks_flutter_commons.dart';
-import 'package:mottai_flutter_app/controllers/room/room_page_controller.dart';
-import 'package:mottai_flutter_app/providers/message/message_provider.dart';
-import 'package:mottai_flutter_app/route/utils.dart';
-import 'package:mottai_flutter_app/theme/theme.dart';
-import 'package:mottai_flutter_app/utils/utils.dart';
 import 'package:mottai_flutter_app_models/models.dart';
 
-import '../../providers/public_user/public_user.dart';
+import '../../controllers/room/room_page_controller.dart';
+import '../../providers/providers.dart';
+import '../../route/utils.dart';
+import '../../theme/theme.dart';
+import '../../utils/utils.dart';
 
 const double horizontalPadding = 8;
 const double partnerImageSize = 36;

@@ -1,13 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:mottai_flutter_app/controllers/room/room_page_state.dart';
-import 'package:mottai_flutter_app/controllers/scaffold_messenger/scaffold_messenger_controller.dart';
-import 'package:mottai_flutter_app/providers/auth/auth_providers.dart';
-import 'package:mottai_flutter_app/services/shared_preferences_service.dart';
 import 'package:mottai_flutter_app_models/models.dart';
 
+import '../../providers/providers.dart';
+import '../../services/shared_preferences_service.dart';
 import '../../utils/utils.dart';
+import '../scaffold_messenger/scaffold_messenger_controller.dart';
+import 'room_page_state.dart';
 
 final roomPageController = StateNotifierProvider.autoDispose
     .family<RoomPageController, RoomPageState, String>((ref, roomId) {

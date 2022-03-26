@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:ks_flutter_commons/ks_flutter_commons.dart';
 
 import '../../controllers/scaffold_messenger/scaffold_messenger_controller.dart';
 import '../../route/utils.dart';
@@ -61,6 +62,7 @@ class HomePage extends HookConsumerWidget {
         children: [
           _buildDrawerHeader(context),
           _buildFcmTokenDrawerItem(context),
+          _buildSignOutDrawerItem(context),
         ],
       ),
     );
@@ -123,6 +125,16 @@ class HomePage extends HookConsumerWidget {
             );
           },
         );
+      },
+    );
+  }
+
+  Widget _buildSignOutDrawerItem(BuildContext context) {
+    return ListTile(
+      title: const Text('サインアウト'),
+      onTap: () async {
+        await auth.signOut();
+        RootWidget.restart(context);
       },
     );
   }

@@ -47,10 +47,6 @@
           "hostId": "{userId}",
           "workerId": "{userId}",
           "updatedAt": "2022-01-01",
-          "lastReadAt": {
-            "{hostId}": "2022-01-01",
-            "{workerId}": "2022-01-01"
-          },
           "collection /messages": {
             "document {messageId}": {
               "messageId": "{messageId}",
@@ -60,6 +56,11 @@
               "body": "",
               "imageURLs": ["https://...", "https://..."],
               "detail": {} // 内容の詳細は未定
+            }
+          },
+          "collection /readStatus": {
+            "document {userId}": {
+              "lastReadAt": "2022-01-01"
             }
           }
         }

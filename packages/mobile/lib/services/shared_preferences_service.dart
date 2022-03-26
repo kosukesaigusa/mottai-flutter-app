@@ -67,8 +67,13 @@ class SharedPreferencesService {
     return _spInstance.then((i) => i.setBool(key.name, value));
   }
 
+  /// SharedPreferences に保存している特定のキーを消す
+  static Future<bool> removeByStringKey(String stringKey) async {
+    return _spInstance.then((i) => i.remove(stringKey));
+  }
+
   /// SharedPreferences に保存している値をすべて消す
-  static Future<bool> deleteAll() async {
+  static Future<bool> clearAll() async {
     return _spInstance.then((i) => i.clear());
   }
 

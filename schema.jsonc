@@ -35,7 +35,8 @@
               "updatedAt": "2022-01-01",
               "unreadCount": 10,
               "muteNotification": false,
-              "lastReadMessageId": "{messageId}" // 最後に読んだ messageId,
+              "lastReadMessageId": "{messageId}", // 最後に読んだ messageId,
+              "isBlocked": false
             }
           }
         }
@@ -46,6 +47,10 @@
           "hostId": "{userId}",
           "workerId": "{userId}",
           "updatedAt": "2022-01-01",
+          "lastReadAt": {
+            "{hostId}": "2022-01-01",
+            "{workerId}": "2022-01-01"
+          },
           "collection /messages": {
             "document {messageId}": {
               "messageId": "{messageId}",

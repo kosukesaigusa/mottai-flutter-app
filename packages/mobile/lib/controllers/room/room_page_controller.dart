@@ -98,6 +98,7 @@ class RoomPageController extends StateNotifier<RoomPageState> {
       _read(scaffoldMessengerController).unFocus();
       state = state.copyWith(sending: false);
       textEditingController.clear();
+      await SharedPreferencesService.removeByStringKey(_roomId);
     }
   }
 }

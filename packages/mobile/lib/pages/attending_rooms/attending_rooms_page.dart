@@ -133,22 +133,26 @@ class AttendingRoomWidget extends HookConsumerWidget {
                       ),
                     ),
                 const Gap(4),
-                attendingRoom.unreadCount > 0
-                    ? Container(
-                        width: 20,
-                        height: 20,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                        child: Center(
-                          child: Text(
-                            attendingRoom.unreadCount.toString(),
-                            style: whiteBold12,
-                          ),
-                        ),
-                      )
-                    : const SizedBox(width: 20, height: 20),
+                ref.watch(unreadCountStreamProvider(attendingRoom.roomId)).when<Widget>(
+                      loading: () => const SizedBox(),
+                      error: (_, __) => const SizedBox(),
+                      data: (count) => count > 0
+                          ? Container(
+                              width: 20,
+                              height: 20,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                              child: Center(
+                                child: Text(
+                                  count > 9 ? '9+' : count.toString(),
+                                  style: whiteBold10,
+                                ),
+                              ),
+                            )
+                          : const SizedBox(width: 20, height: 20),
+                    ),
               ],
             ),
           ],

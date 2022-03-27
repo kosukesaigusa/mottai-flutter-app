@@ -18,13 +18,16 @@ final roomPageController = StateNotifierProvider.autoDispose
 
 class RoomPageController extends StateNotifier<RoomPageState> {
   RoomPageController(this._read, this._roomId) : super(const RoomPageState());
-  TextEditingController textEditingController = TextEditingController();
+  late TextEditingController textEditingController;
+  late ScrollController scrollController;
   final Reader _read;
   final String _roomId;
 
   /// このクラスをインスタンス化する際にコールする。
   /// Wantedly アプリを参考に、あえていくらか画面を表示するまでに待たせる。
   Future<void> init() async {
+    textEditingController = TextEditingController();
+    scrollController = ScrollController();
     await Future.wait<void>([
       _initialize(),
       Future<void>.delayed(const Duration(milliseconds: 500)),
@@ -52,6 +55,7 @@ class RoomPageController extends StateNotifier<RoomPageState> {
     Future<void>(() async {
       await _setDraftMessageFromSharedPreferences();
       textEditingController.dispose();
+      scrollController.dispose();
     });
   }
 
@@ -107,6 +111,11 @@ class RoomPageController extends StateNotifier<RoomPageState> {
     } finally {
       state = state.copyWith(sending: false);
       textEditingController.clear();
+      await scrollController.animateTo(
+        0,
+        duration: const Duration(milliseconds: 100),
+        curve: Curves.linear,
+      );
       await SharedPreferencesService.removeByStringKey(_roomId);
     }
   }

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:ks_flutter_commons/ks_flutter_commons.dart';
@@ -75,7 +76,7 @@ class _AttendingRoomsPageState extends ConsumerState<AttendingRoomsPage> {
   }
 
   Widget get _fab => FloatingActionButton(
-        child: const Icon(Icons.add),
+        child: const FaIcon(FontAwesomeIcons.solidComment),
         onPressed: () async {
           final userId = ref.watch(userIdProvider).value;
           if (userId == null) {

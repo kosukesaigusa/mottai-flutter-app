@@ -70,9 +70,8 @@ class AccountPage extends HookConsumerWidget {
               child: ElevatedButton(
                 onPressed: () async {
                   await ref.read(accountPageController.notifier).signInWithEmailAndPassword(
-                        email: 'host-1@npo-mottai.org',
-                        // password: const String.fromEnvironment('HOST_1_PASSWORD'),
-                        password: '12345678',
+                        email: const String.fromEnvironment('HOST_1_EMAIL'),
+                        password: const String.fromEnvironment('HOST_1_PASSWORD'),
                       );
                 },
                 child: const Text('ホスト 1'),

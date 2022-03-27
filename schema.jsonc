@@ -1,7 +1,7 @@
 {
   "collection /accounts": {
     "document {userId}": {
-      "userId": "{userId}",
+      "accountId": "{userId}",
       "isHost": false,
       "createdAt": "2022-01-01",
       "updatedAt": "2022-01-01",

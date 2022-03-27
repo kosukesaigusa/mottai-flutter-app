@@ -105,7 +105,6 @@ class RoomPageController extends StateNotifier<RoomPageState> {
     } on FirebaseException catch (e) {
       _read(scaffoldMessengerController).showSnackBarByFirebaseException(e);
     } finally {
-      _read(scaffoldMessengerController).unFocus();
       state = state.copyWith(sending: false);
       textEditingController.clear();
       await SharedPreferencesService.removeByStringKey(_roomId);

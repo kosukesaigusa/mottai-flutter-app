@@ -58,6 +58,8 @@ class _RoomPageState extends ConsumerState<RoomPage> {
                           child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 8),
                             child: ListView.builder(
+                              controller:
+                                  ref.watch(roomPageController(roomId).notifier).scrollController,
                               itemBuilder: (context, index) {
                                 final message = messages[index];
                                 if (message.senderId == userId) {

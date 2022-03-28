@@ -9,19 +9,19 @@ environment:
 
 dependencies:
   cached_network_image: ^3.1.0+1
-  cloud_firestore: ^3.1.8
-  cloud_functions: ^3.2.7
+  cloud_firestore:
+  cloud_functions:
   connectivity_plus: ^2.0.3
   crypto: ^3.0.1
   cupertino_icons: ^1.0.2
   dart_geohash: ^2.0.2
-  firebase_analytics: ^9.1.0
-  firebase_auth: ^3.3.7
-  firebase_core: ^1.12.0
-  firebase_crashlytics: ^2.5.1
-  firebase_dynamic_links: ^4.0.8
-  firebase_messaging: ^11.2.6
-  firebase_storage: ^10.2.7
+  firebase_analytics:
+  firebase_auth:
+  firebase_core:
+  firebase_crashlytics:
+  firebase_dynamic_links:
+  firebase_messaging:
+  firebase_storage:
   flutter:
     sdk: flutter
   flutter_keyboard_visibility: ^5.2.0
@@ -34,8 +34,8 @@ dependencies:
   flutter_state_notifier: ^0.7.1
   flutterfire_ui: ^0.3.5+1
   font_awesome_flutter: ^9.2.0
-  freezed: ^1.1.0
-  freezed_annotation: ^1.1.0
+  freezed:
+  freezed_annotation:
   gap: ^2.0.0
   # geoflutterfire: ^3.0.3
   geoflutterfire:
@@ -44,11 +44,12 @@ dependencies:
   google_fonts: ^2.1.0
   google_maps_flutter: ^2.1.1
   google_sign_in: ^5.2.4
-  hooks_riverpod: ^1.0.3
+  # hooks_riverpod: ^1.0.3
+  hooks_riverpod: ^2.0.0-dev.5
   image_cropper: ^1.4.1
   image_picker: ^0.8.4+4
   intl: ^0.17.0
-  json_annotation: ^4.4.0
+  json_annotation:
   keyboard_actions: ^3.4.0
   ks_flutter_commons:
     path: ../ks_flutter_commons
@@ -65,7 +66,7 @@ dependencies:
   wechat_assets_picker: ^6.3.0
 
 dev_dependencies:
-  build_runner: ^2.1.7
+  build_runner:
   flutter_launcher_icons: ^0.9.2
   flutter_lints: ^1.0.0
   flutter_test:

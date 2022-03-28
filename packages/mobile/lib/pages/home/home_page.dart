@@ -8,19 +8,25 @@ import '../../route/utils.dart';
 import '../../services/firebase_messaging_service.dart';
 import '../../theme/theme.dart';
 import '../../utils/utils.dart';
+import '../playground/playground_page.dart';
 import '../second/second_page.dart';
 
-class HomePage extends HookConsumerWidget {
+class HomePage extends StatefulHookConsumerWidget {
   const HomePage({Key? key}) : super(key: key);
 
   static const path = '/home/';
   static const name = 'HomePage';
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  HomePageState createState() => HomePageState();
+}
+
+class HomePageState extends ConsumerState<HomePage> {
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),
-      drawer: _buildDrawer(context),
+      drawer: _buildDrawer,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -55,42 +61,32 @@ class HomePage extends HookConsumerWidget {
     );
   }
 
-  Drawer _buildDrawer(BuildContext context) {
+  Drawer get _buildDrawer {
     return Drawer(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildDrawerHeader(context),
-          _buildFcmTokenDrawerItem(context),
-          _buildSignOutDrawerItem(context),
+          _buildDrawerHeader,
+          _buildFcmTokenDrawerItem,
+          _buildPlaygroundMenuDrawerItem,
+          _buildSignOutDrawerItem,
         ],
       ),
     );
   }
 
-  Widget _buildDrawerHeader(BuildContext context) {
+  Widget get _buildDrawerHeader {
     return DrawerHeader(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text('いちさんマップ（仮称）開発版', style: grey12),
-          const Gap(8),
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.grey[200],
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(
-              Icons.person,
-              size: 36,
-            ),
-          ),
         ],
       ),
     );
   }
 
-  Widget _buildFcmTokenDrawerItem(BuildContext context) {
+  Widget get _buildFcmTokenDrawerItem {
     return ListTile(
       title: const Text('FCM トークンの確認'),
       onTap: () async {
@@ -129,7 +125,18 @@ class HomePage extends HookConsumerWidget {
     );
   }
 
-  Widget _buildSignOutDrawerItem(BuildContext context) {
+  ///
+  Widget get _buildPlaygroundMenuDrawerItem {
+    return ListTile(
+      title: const Text('プレイグランド'),
+      onTap: () async {
+        await Navigator.pushNamed<void>(context, PlaygroundPage.path);
+      },
+    );
+  }
+
+  /// サインアウトボタン
+  Widget get _buildSignOutDrawerItem {
     return ListTile(
       title: const Text('サインアウト'),
       onTap: () async {

@@ -7,6 +7,8 @@ import '../pages/main/main_page.dart';
 import '../pages/map/map_page.dart';
 import '../pages/not_found/not_found_page.dart';
 import '../pages/notification/notification.dart';
+import '../pages/playgrounds/infinite_scroll_page.dart';
+import '../pages/playgrounds/playground_page.dart';
 import '../pages/room/room_page.dart';
 import '../pages/second/second_page.dart';
 import '../utils/types.dart';
@@ -24,4 +26,7 @@ final routeBuilder = <String, PageBuilder>{
   NotFoundPage.path: (_, args) => const NotFoundPage(key: ValueKey(NotFoundPage.name)),
   SecondPage.path: (_, args) =>
       SecondPage.withArguments(args: args, key: const ValueKey(SecondPage.name)),
+  PlaygroundPage.path: (_, args) => const PlaygroundPage(key: ValueKey(PlaygroundPage.name)),
+  InfiniteScrollPage.path: (_, args) =>
+      const InfiniteScrollPage(key: ValueKey(InfiniteScrollPage.name)),
 };

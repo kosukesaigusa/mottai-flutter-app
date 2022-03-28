@@ -8,7 +8,7 @@ import '../../route/utils.dart';
 import '../../services/firebase_messaging_service.dart';
 import '../../theme/theme.dart';
 import '../../utils/utils.dart';
-import '../playground/playground_page.dart';
+import '../playgrounds/playground_page.dart';
 import '../second/second_page.dart';
 
 class HomePage extends StatefulHookConsumerWidget {

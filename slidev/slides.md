@@ -63,6 +63,8 @@ NPO 法人 MOTTAI について
 - Callable Functions に LINE ログインを通じてクライアントで得られた `accessToken` と `idToken` を送って、その検証を行う API 通信を複数行った後に、Firebase Auth のカスタムトークン認証を行って Firebase Auth と LINE ログインを連携する、同一メールアドレスの場合は他のソーシャルログインとも連携する
 - サウナライフや Always 次郎を参考に、`geoflutterfire`, `geolocator`, `google_maps_flutter` を用いて、現在地及び指定した場所を中心とした一定範囲内の情報を取得。カード式の UI のスライドと連動して動作
 
+---
+
 ## やったこと 2
 
 - Riverpod の複数の Provider を細かめに分けて組み合わせることで内部でリアルタイムなクライアントサイドジョイン的なことをして、ビューではひとつの Provider を watch すれば良い感じの実装
@@ -73,6 +75,8 @@ NPO 法人 MOTTAI について
 - 新規アカウント登録時に発火する Firebase Functions の実装
 - 試行錯誤しながらデータモデリング
 - ... など
+
+---
 
 ## これからやってみたいこと
 

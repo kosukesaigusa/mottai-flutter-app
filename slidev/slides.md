@@ -88,6 +88,8 @@ NPO 法人 MOTTAI について
 - Firestore ではどうしようもないユースケースがあれば、何かしらの RDB（[PlanetScale](https://planetscale.com/) を触ってみたい）を使用して、自作のサーバサイドアプリケーション or API を実装する（まだ全然調べてないけど [NestJS](https://nestjs.com/), [Prisma](https://www.prisma.io/) あたりを使ってみたいかも）
 - ... など
 
+---
+
 ## さいごに
 
 - 今後もコツコツ開発しつつ [#times_kosuke](https://flutteruniv.slack.com/archives/C01B82Y27U4) でも共有していこうと思いますのでよろしくお願いします！

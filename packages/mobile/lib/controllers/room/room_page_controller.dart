@@ -26,8 +26,6 @@ class RoomPageController extends StateNotifier<RoomPageState> {
   /// このクラスをインスタンス化する際にコールする。
   /// Wantedly アプリを参考に、あえていくらか画面を表示するまでに待たせる。
   Future<void> init() async {
-    textEditingController = TextEditingController();
-    scrollController = ScrollController();
     await Future.wait<void>([
       _initialize(),
       Future<void>.delayed(const Duration(milliseconds: 500)),
@@ -37,8 +35,8 @@ class RoomPageController extends StateNotifier<RoomPageState> {
 
   /// ルームに必要な初期化処理を行う。
   Future<void> _initialize() async {
-    _listenTextEditingController();
-    textEditingController.text = await _getDraftMessageFromSharedPreferences();
+    await _initializeTextEditingController();
+    _initializeScrollController();
     final userId = _read(userIdProvider).value;
     if (userId != null) {
       // 非同期的に lastReadAt を更新する
@@ -59,12 +57,42 @@ class RoomPageController extends StateNotifier<RoomPageState> {
     });
   }
 
-  /// TextEditingController にリスナーを設定する
-  void _listenTextEditingController() {
+  /// TextEditingController を初期化してリスナーを設定する
+  Future<void> _initializeTextEditingController() async {
+    textEditingController = TextEditingController();
     textEditingController.addListener(() {
       final text = textEditingController.text;
       state = state.copyWith(isValid: text.isNotEmpty);
     });
+    // 以前の下書きが残っていれば予め入力しておく
+    textEditingController.text = await _getDraftMessageFromSharedPreferences();
+  }
+
+  /// ScrollController を初期化してリスナーを設定する
+  void _initializeScrollController() {
+    scrollController = ScrollController();
+    scrollController.addListener(() {
+      final maxScrollExtent = scrollController.position.maxScrollExtent;
+      final currentPosition = scrollController.position.pixels;
+      // スクロール位置の終端（チャットは画面上端が終端）から 20 ピクセルの位置に達したら
+      // 次のメッセージを読み込む
+      if (maxScrollExtent > 0 && (maxScrollExtent - 20.0) <= currentPosition) {
+        final a = state.lastVisibleQds;
+        print('スクロールのしきい値超えた: ${a?.id ?? ''}');
+        // _read(lastVisibleMessageQdsProvider.notifier).update((state) => a);
+      }
+    });
+  }
+
+  List<Message> updateLastVisibleQds({
+    required List<Message> messages,
+    required QueryDocumentSnapshot<Message>? qds,
+  }) {
+    state = state.copyWith(
+      messages: [...state.messages, ...messages],
+      lastVisibleQds: qds,
+    );
+    return state.messages;
   }
 
   /// SharedPreferences に roomId をキーとした下書きが存在すれば取得する

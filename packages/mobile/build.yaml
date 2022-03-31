@@ -9,3 +9,4 @@ targets:
           include:
             - lib/controllers/**/*state.dart
             - lib/controllers/**/firebase_task_result.dart
+            - lib/providers/**/*_state.dart

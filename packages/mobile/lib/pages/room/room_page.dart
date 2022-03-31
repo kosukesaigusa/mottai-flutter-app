@@ -47,116 +47,84 @@ class _RoomPageState extends ConsumerState<RoomPage> {
             : Column(
                 children: [
                   Expanded(
-                    child:
-                        // ref.watch(messagesStreamProvider(roomId))
-                        ref
-                            .watch(pastMessagesFutureProvider(
-                                ref.watch(lastVisibleMessageQdsProvider)))
-                            // ref.watch(newMessagesStreamProvider(roomId))
-                            // ref.watch(messagesProvider(roomId))
-                            //
-                            .when<Widget>(
-                              // TODO: いちいちローディングに入ってしまうのを修正する
-                              loading: () => const PrimarySpinkitCircle(),
-                              error: (error, stackTrace) {
-                                print('=============================');
-                                print('⛔️ $error');
-                                print(stackTrace);
-                                print('=============================');
-                                return const SizedBox();
+                    child: ref.watch(messagesStreamProvider(roomId)).when<Widget>(
+                          loading: () => const PrimarySpinkitCircle(),
+                          error: (error, stackTrace) {
+                            print('=============================');
+                            print('⛔️ $error');
+                            print(stackTrace);
+                            print('=============================');
+                            return const SizedBox();
+                          },
+                          data: (messages) => Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                            child: ListView.builder(
+                              controller:
+                                  ref.watch(roomPageController(roomId).notifier).scrollController,
+                              itemBuilder: (context, index) {
+                                final message = messages[index];
+                                if (message.senderId == userId) {
+                                  return _buildMessageByMyself(
+                                      message: message,
+                                      showDate: _showDate(
+                                        itemCount: messages.length,
+                                        index: index,
+                                        messages: messages,
+                                      ));
+                                } else {
+                                  return _buildMessageByPartner(
+                                      message: message,
+                                      showDate: _showDate(
+                                        itemCount: messages.length,
+                                        index: index,
+                                        messages: messages,
+                                      ));
+                                }
                               },
-                              data: (messages) => Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 8),
-                                child: SingleChildScrollView(
-                                  controller: ref
-                                      .watch(roomPageController(roomId).notifier)
-                                      .scrollController,
-                                  reverse: true,
-                                  child: Column(
-                                    children: [
-                                      for (var index = 0; index < messages.length; index++)
-                                        messages[index].senderId == userId
-                                            ? _buildMessageByMyself(
-                                                message: messages[index],
-                                                showDate: _showDate(
-                                                  itemCount: messages.length,
-                                                  index: index,
-                                                  messages: messages,
-                                                ))
-                                            : _buildMessageByPartner(
-                                                message: messages[index],
-                                                showDate: _showDate(
-                                                  itemCount: messages.length,
-                                                  index: index,
-                                                  messages: messages,
-                                                )),
-                                    ],
-                                  ),
-                                ),
-                                // ListView.builder(
-                                //   controller: ref
-                                //       .watch(roomPageController(roomId).notifier)
-                                //       .scrollController,
-                                //   itemBuilder: (context, index) {
-                                //     final message = messages[index];
-                                //     if (message.senderId == userId) {
-                                //       return _buildMessageByMyself(
-                                //           message: message,
-                                //           showDate: _showDate(
-                                //             itemCount: messages.length,
-                                //             index: index,
-                                //             messages: messages,
-                                //           ));
-                                //     } else {
-                                //       return _buildMessageByPartner(
-                                //           message: message,
-                                //           showDate: _showDate(
-                                //             itemCount: messages.length,
-                                //             index: index,
-                                //             messages: messages,
-                                //           ));
-                                //     }
-                                //   },
-                                //   itemCount: messages.length,
-                                //   reverse: true,
-                                // ),
-                              ),
+                              itemCount: messages.length,
+                              reverse: true,
                             ),
+                          ),
+                        ),
                   ),
-                  // Expanded(
-                  //   child: Padding(
-                  //     padding: const EdgeInsets.symmetric(horizontal: 8),
-                  //     child: ListView.builder(
-                  //       controller: ref.watch(roomPageController(roomId).notifier).scrollController,
-                  //       itemBuilder: (context, index) {
-                  //         final message = messages[index];
-                  //         if (message.senderId == userId) {
-                  //           return _buildMessageByMyself(
-                  //               message: message,
-                  //               showDate: _showDate(
-                  //                 itemCount: messages.length,
-                  //                 index: index,
-                  //                 messages: messages,
-                  //               ));
-                  //         } else {
-                  //           return _buildMessageByPartner(
-                  //               message: message,
-                  //               showDate: _showDate(
-                  //                 itemCount: messages.length,
-                  //                 index: index,
-                  //                 messages: messages,
-                  //               ));
-                  //         }
-                  //       },
-                  //       itemCount: messages.length,
-                  //       reverse: true,
-                  //     ),
-                  //   ),
-                  // ),
                   _buildInputWidget(roomId),
                 ],
               ),
       ),
+    );
+  }
+
+  /// 自分からのメッセージ
+  Widget _buildMessageByMyself({
+    required Message message,
+    required bool showDate,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        if (showDate) ..._dateWidget(message),
+        Container(
+          constraints: BoxConstraints(
+            maxWidth:
+                (MediaQuery.of(context).size.width - partnerImageSize - horizontalPadding * 3) *
+                    0.9,
+          ),
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(8),
+              topRight: Radius.circular(8),
+              bottomLeft: Radius.circular(8),
+            ),
+            color: Theme.of(context).colorScheme.primary,
+          ),
+          child: Text(message.body, style: white12),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 4, bottom: 16),
+          child: Text(to24HourNotationString(message.createdAt), style: grey12),
+        ),
+      ],
     );
   }
 
@@ -203,41 +171,7 @@ class _RoomPageState extends ConsumerState<RoomPage> {
             left: partnerImageSize + horizontalPadding,
             bottom: 16,
           ),
-          child: Text(timeString(message.createdAt), style: grey12),
-        ),
-      ],
-    );
-  }
-
-  /// 自分からのメッセージ
-  Widget _buildMessageByMyself({
-    required Message message,
-    required bool showDate,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        if (showDate) ..._dateWidget(message),
-        Container(
-          constraints: BoxConstraints(
-            maxWidth:
-                (MediaQuery.of(context).size.width - partnerImageSize - horizontalPadding * 3) *
-                    0.9,
-          ),
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(8),
-              topRight: Radius.circular(8),
-              bottomLeft: Radius.circular(8),
-            ),
-            color: Theme.of(context).colorScheme.primary,
-          ),
-          child: Text(message.body, style: white12),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(top: 4, bottom: 16),
-          child: Text(timeString(message.createdAt), style: grey12),
+          child: Text(to24HourNotationString(message.createdAt), style: grey12),
         ),
       ],
     );
@@ -339,7 +273,7 @@ class _RoomPageState extends ConsumerState<RoomPage> {
             color: messageBackgroundColor,
           ),
           child: Text(
-            toIsoStringWithWeekDay(message.createdAt),
+            toIsoStringDateWithWeekDay(message.createdAt),
             style: grey10,
           ),
         ),

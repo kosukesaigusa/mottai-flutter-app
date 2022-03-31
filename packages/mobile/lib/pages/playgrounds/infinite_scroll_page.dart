@@ -3,16 +3,16 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:ks_flutter_commons/ks_flutter_commons.dart';
-import 'package:mottai_flutter_app/providers/providers.dart';
-import 'package:mottai_flutter_app/widgets/common/loading.dart';
 import 'package:mottai_flutter_app_models/models.dart';
 
+import '../../providers/providers.dart';
 import '../../theme/theme.dart';
 import '../../utils/utils.dart';
 
 const double horizontalPadding = 8;
 const double partnerImageSize = 36;
 
+/// 無限スクロールの練習ページ
 class InfiniteScrollPage extends StatefulHookConsumerWidget {
   const InfiniteScrollPage({Key? key}) : super(key: key);
 
@@ -26,15 +26,25 @@ class InfiniteScrollPage extends StatefulHookConsumerWidget {
 class _InfiniteScrollPageState extends ConsumerState<InfiniteScrollPage> {
   @override
   Widget build(BuildContext context) {
+    final messages = ref.watch(playgroundMessageStateNotifierProvider.select((s) => s.messages));
     return Scaffold(
-      appBar: AppBar(title: const Text('Riverpod 無限スクロール')),
-      body: ref.watch(playgroundMessagesStreamProvider).when<Widget>(
-            data: (playgroundMessages) => Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: ListView.builder(
-                itemBuilder: (context, index) {
-                  final playgroundMessage = playgroundMessages[index];
-                  return Column(
+      appBar: AppBar(title: Text('現在の表示件数：$_count 件')),
+      body: ref.watch(playgroundMessageStateNotifierProvider).loading
+          ? const Center(
+              child: FaIcon(
+                FontAwesomeIcons.solidComment,
+                size: 72,
+                color: Colors.black12,
+              ),
+            )
+          : ListView.builder(
+              controller:
+                  ref.watch(playgroundMessageStateNotifierProvider.notifier).scrollController,
+              itemBuilder: (context, index) {
+                final message = messages[index];
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Gap(8),
@@ -43,8 +53,8 @@ class _InfiniteScrollPageState extends ConsumerState<InfiniteScrollPage> {
                         children: [
                           const CircleImage(
                             size: 36,
-                            imageURL:
-                                'https://full-count.jp/wp-content/uploads/2022/03/22062924/20220322_ohtani4_ap-560x373.jpg',
+                            imageURL: 'https://full-count.jp/wp-content/uploads/'
+                                '2022/03/22062924/20220322_ohtani4_ap-560x373.jpg',
                           ),
                           const Gap(8),
                           Container(
@@ -63,7 +73,7 @@ class _InfiniteScrollPageState extends ConsumerState<InfiniteScrollPage> {
                               ),
                               color: messageBackgroundColor,
                             ),
-                            child: Text(playgroundMessage.body, style: regular12),
+                            child: Text(message.body, style: regular12),
                           ),
                         ],
                       ),
@@ -73,18 +83,19 @@ class _InfiniteScrollPageState extends ConsumerState<InfiniteScrollPage> {
                           left: partnerImageSize + horizontalPadding,
                           bottom: 16,
                         ),
-                        child: Text(timeString(playgroundMessage.createdAt), style: grey12),
+                        child: Text(
+                          // to24HourNotationString(message.createdAt),
+                          message.createdAt?.toIso8601String() ?? '',
+                          style: grey12,
+                        ),
                       ),
                     ],
-                  );
-                },
-                itemCount: playgroundMessages.length,
-                reverse: true,
-              ),
+                  ),
+                );
+              },
+              itemCount: messages.length,
+              reverse: true,
             ),
-            error: (_, __) => const Text('error'),
-            loading: () => const PrimarySpinkitCircle(),
-          ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           final playgroundMessageId = uuid;
@@ -99,4 +110,8 @@ class _InfiniteScrollPageState extends ConsumerState<InfiniteScrollPage> {
       ),
     );
   }
+
+  /// AppBar に表示する現在の取得メッセージ数
+  int get _count =>
+      ref.watch(playgroundMessageStateNotifierProvider.select((s) => s.messages)).length;
 }

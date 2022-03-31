@@ -43,11 +43,16 @@ class _InfiniteScrollPageState extends ConsumerState<InfiniteScrollPage> {
               itemBuilder: (context, index) {
                 final message = messages[index];
                 return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  padding: const EdgeInsets.all(8),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Gap(8),
+                      if (_showDate(
+                        itemCount: messages.length,
+                        index: index,
+                        messages: messages,
+                      ))
+                        ..._dateWidget(message),
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
@@ -84,8 +89,7 @@ class _InfiniteScrollPageState extends ConsumerState<InfiniteScrollPage> {
                           bottom: 16,
                         ),
                         child: Text(
-                          // to24HourNotationString(message.createdAt),
-                          message.createdAt?.toIso8601String() ?? '',
+                          to24HourNotationString(message.createdAt),
                           style: grey12,
                         ),
                       ),
@@ -114,4 +118,48 @@ class _InfiniteScrollPageState extends ConsumerState<InfiniteScrollPage> {
   /// AppBar に表示する現在の取得メッセージ数
   int get _count =>
       ref.watch(playgroundMessageStateNotifierProvider.select((s) => s.messages)).length;
+
+  /// 各メッセージの上に日付を表示するかどうか
+  bool _showDate({
+    required int itemCount,
+    required int index,
+    required List<PlaygroundMessage> messages,
+  }) {
+    if (itemCount == 1) {
+      return true;
+    }
+    if (index == itemCount - 1) {
+      return true;
+    }
+    final lastCreatedAt = messages[index].createdAt;
+    final previouslyCreatedAt = messages[index + 1].createdAt;
+    if (lastCreatedAt == null || previouslyCreatedAt == null) {
+      return false;
+    }
+    if (sameDay(lastCreatedAt, previouslyCreatedAt)) {
+      return false;
+    }
+    return true;
+  }
+
+  /// 各メッセージの上に表示する日付
+  List<Widget> _dateWidget(PlaygroundMessage message) {
+    return [
+      const Gap(24),
+      Center(
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+          decoration: const BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(8)),
+            color: messageBackgroundColor,
+          ),
+          child: Text(
+            toIsoStringDateWithWeekDay(message.createdAt),
+            style: grey10,
+          ),
+        ),
+      ),
+      const Gap(24),
+    ];
+  }
 }

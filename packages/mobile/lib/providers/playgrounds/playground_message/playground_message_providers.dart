@@ -4,21 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mottai_flutter_app_models/models.dart';
 
-import '../providers.dart';
+import '../../providers.dart';
 import 'playground_message_state.dart';
 
 const limit = 10;
 const scrollValueThreshold = 0.8;
-
-/// 生成時刻以降の Stream<List<PlaygroundMessage>> を提供する Provider
-final newPlaygroundMessagesStreamProvider =
-    Provider.autoDispose<Stream<List<PlaygroundMessage>>>((ref) {
-  final now = DateTime.now();
-  return PlaygroundMessageRepository.subscribePlaygroundMessages(
-    queryBuilder: (q) =>
-        q.orderBy('createdAt', descending: true).where('createdAt', isGreaterThanOrEqualTo: now),
-  );
-});
 
 final playgroundMessageStateNotifierProvider = StateNotifierProvider.autoDispose<
     PlaygroundMessageStateNotifierProvider, PlaygroundMessageState>(

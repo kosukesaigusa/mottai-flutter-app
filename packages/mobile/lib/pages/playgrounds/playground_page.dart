@@ -26,7 +26,7 @@ class _PlaygroundPageState extends ConsumerState<PlaygroundPage> {
               onPressed: () async {
                 await Navigator.pushNamed<void>(context, InfiniteScrollPage.path);
               },
-              child: const Text('Riverpod 無限スクロール'),
+              child: const Text('Riverpod 無限スクロールのチャット'),
             ),
           ],
         ),

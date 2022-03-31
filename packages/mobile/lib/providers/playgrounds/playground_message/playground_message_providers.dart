@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mottai_flutter_app_models/models.dart';
@@ -83,13 +84,7 @@ class PlaygroundMessageStateNotifierProvider extends StateNotifier<PlaygroundMes
       return;
     }
     state = state.copyWith(fetching: true);
-    var query =
-        PlaygroundMessageRepository.playgroundMessagesRef.orderBy('createdAt', descending: true);
-    final qds = state.lastVisibleQds;
-    if (qds != null) {
-      query = query.startAfterDocument(qds);
-    }
-    final qs = await query.limit(limit).get();
+    final qs = await _query.limit(limit).get();
     final messages = qs.docs.map((qds) => qds.data()).toList();
     state = state.copyWith(pastMessages: [...state.pastMessages, ...messages]);
     _updateMessages();
@@ -98,6 +93,17 @@ class PlaygroundMessageStateNotifierProvider extends StateNotifier<PlaygroundMes
       lastVisibleQds: qs.docs.isNotEmpty ? qs.docs.last : null,
       hasMore: qs.docs.length >= limit,
     );
+  }
+
+  /// 無限スクロールのクエリ
+  Query<PlaygroundMessage> get _query {
+    var query =
+        PlaygroundMessageRepository.playgroundMessagesRef.orderBy('createdAt', descending: true);
+    final qds = state.lastVisibleQds;
+    if (qds != null) {
+      query = query.startAfterDocument(qds);
+    }
+    return query.limit(limit);
   }
 
   /// 表示するメッセージを更新する

@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:ks_flutter_commons/ks_flutter_commons.dart';
+import 'package:mottai_flutter_app/services/firebase_messaging_service.dart';
 import 'package:mottai_flutter_app_models/models.dart';
 
 import '../../providers/providers.dart';
@@ -135,6 +136,7 @@ class AuthService {
   /// サインアウトする。
   Future<void> signOut() async {
     try {
+      await _removeFcmToken();
       await _read(authRepository).signOut();
     } on PlatformException {
       rethrow;
@@ -157,6 +159,7 @@ class AuthService {
       return;
     }
     final account = await AccountRepository.fetchAccount(accountId: userId);
+    final fcmToken = await FirebaseMessagingService.getToken;
     try {
       if (account != null) {
         // すでにドキュメントが存在しているので update する
@@ -164,10 +167,10 @@ class AuthService {
         // null の場合のみ更新する（意味のある値が保存されいてる場合は上書きしない）
         await _read(accountRefProvider).update(
           processMapToUpdateFirestoreDoc(<String, dynamic>{
-            'displayName': account.displayName == null ? displayName : null,
-            'imageURL': account.imageURL == null ? imageURL : null,
+            if (displayName == null) 'displayName': displayName,
+            if (account.imageURL == null) 'imageURL': imageURL,
+            if (fcmToken != null) 'fcmTokens': FieldValue.arrayUnion(<String>[fcmToken]),
             'providers': FieldValue.arrayUnion(<String>[method.name]),
-            'updatedAt': FieldValue.serverTimestamp(),
           }),
         );
       } else {
@@ -178,6 +181,35 @@ class AuthService {
           providers: <String>[method.name],
         ));
       }
+    } on FirebaseException {
+      rethrow;
+    } on Exception {
+      rethrow;
+    }
+  }
+
+  /// サインアウトする前に現在の FCM トークンを
+  /// Account ドキュメントから削除する。
+  Future<void> _removeFcmToken() async {
+    final userId = _read(userIdProvider).value;
+    if (userId == null) {
+      return;
+    }
+    String? fcmToken;
+    try {
+      await FirebaseMessagingService.getToken;
+    } on FirebaseException {
+      rethrow;
+    } on Exception {
+      rethrow;
+    }
+    if (fcmToken == null) {
+      return;
+    }
+    try {
+      await _read(accountRefProvider).update(<String, dynamic>{
+        'fcmTokens': FieldValue.arrayRemove(<String>[fcmToken])
+      });
     } on FirebaseException {
       rethrow;
     } on Exception {

@@ -11,8 +11,10 @@ class RoomPageState with _$RoomPageState {
     @Default(false) bool sending,
     @Default(false) bool isValid,
     @Default(<Message>[]) List<Message> messages,
-    @Default(true) bool hasNext,
-    DateTime? lastVisibleCreatedAt,
+    @Default(<Message>[]) List<Message> newMessages,
+    @Default(<Message>[]) List<Message> pastMessages,
+    @Default(false) bool fetching,
+    @Default(true) bool hasMore,
     QueryDocumentSnapshot<Message>? lastVisibleQds,
   }) = _RoomPageState;
 }

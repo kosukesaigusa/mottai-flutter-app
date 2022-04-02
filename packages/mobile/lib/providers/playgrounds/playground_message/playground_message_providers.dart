@@ -5,11 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mottai_flutter_app_models/models.dart';
 
+import '../../../constants/room.dart';
 import '../../providers.dart';
 import 'playground_message_state.dart';
-
-const limit = 10;
-const scrollValueThreshold = 0.8;
 
 final playgroundMessageStateNotifierProvider = StateNotifierProvider.autoDispose<
     PlaygroundMessageStateNotifierProvider, PlaygroundMessageState>(
@@ -84,14 +82,14 @@ class PlaygroundMessageStateNotifierProvider extends StateNotifier<PlaygroundMes
       return;
     }
     state = state.copyWith(fetching: true);
-    final qs = await _query.limit(limit).get();
+    final qs = await _query.limit(messageLimit).get();
     final messages = qs.docs.map((qds) => qds.data()).toList();
     state = state.copyWith(pastMessages: [...state.pastMessages, ...messages]);
     _updateMessages();
     state = state.copyWith(
       fetching: false,
       lastVisibleQds: qs.docs.isNotEmpty ? qs.docs.last : null,
-      hasMore: qs.docs.length >= limit,
+      hasMore: qs.docs.length >= messageLimit,
     );
   }
 
@@ -103,7 +101,7 @@ class PlaygroundMessageStateNotifierProvider extends StateNotifier<PlaygroundMes
     if (qds != null) {
       query = query.startAfterDocument(qds);
     }
-    return query.limit(limit);
+    return query.limit(messageLimit);
   }
 
   /// 表示するメッセージを更新する

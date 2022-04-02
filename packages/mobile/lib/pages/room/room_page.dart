@@ -5,11 +5,9 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:ks_flutter_commons/ks_flutter_commons.dart';
 import 'package:mottai_flutter_app_models/models.dart';
 
-import '../../controllers/room/room_page_controller.dart';
 import '../../providers/providers.dart';
 import '../../route/utils.dart';
 import '../../theme/theme.dart';
-import '../../widgets/common/loading.dart';
 
 const double horizontalPadding = 8;
 const double partnerImageSize = 36;
@@ -30,13 +28,15 @@ class _RoomPageState extends ConsumerState<RoomPage> {
     final roomId =
         (ModalRoute.of(context)!.settings.arguments! as RouteArguments)['roomId'] as String;
     final userId = ref.watch(userIdProvider).value;
+    // TODO: 他の画面を表示するべき？
     if (userId == null) {
       return const SizedBox();
     }
+    final messages = ref.watch(roomPageStateNotifierProvider(roomId).select((s) => s.messages));
     return TapToUnfocusWidget(
       child: Scaffold(
-        appBar: AppBar(),
-        body: ref.watch(roomPageController(roomId)).loading
+        appBar: AppBar(title: Text('現在：${messages.length} 件')),
+        body: ref.watch(roomPageStateNotifierProvider(roomId)).loading
             ? const Center(
                 child: FaIcon(
                   FontAwesomeIcons.solidComment,
@@ -47,45 +47,36 @@ class _RoomPageState extends ConsumerState<RoomPage> {
             : Column(
                 children: [
                   Expanded(
-                    child: ref.watch(messagesStreamProvider(roomId)).when<Widget>(
-                          loading: () => const PrimarySpinkitCircle(),
-                          error: (error, stackTrace) {
-                            print('=============================');
-                            print('⛔️ $error');
-                            print(stackTrace);
-                            print('=============================');
-                            return const SizedBox();
-                          },
-                          data: (messages) => Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 8),
-                            child: ListView.builder(
-                              controller:
-                                  ref.watch(roomPageController(roomId).notifier).scrollController,
-                              itemBuilder: (context, index) {
-                                final message = messages[index];
-                                if (message.senderId == userId) {
-                                  return _buildMessageByMyself(
-                                      message: message,
-                                      showDate: _showDate(
-                                        itemCount: messages.length,
-                                        index: index,
-                                        messages: messages,
-                                      ));
-                                } else {
-                                  return _buildMessageByPartner(
-                                      message: message,
-                                      showDate: _showDate(
-                                        itemCount: messages.length,
-                                        index: index,
-                                        messages: messages,
-                                      ));
-                                }
-                              },
-                              itemCount: messages.length,
-                              reverse: true,
-                            ),
-                          ),
-                        ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      child: ListView.builder(
+                        controller: ref
+                            .watch(roomPageStateNotifierProvider(roomId).notifier)
+                            .scrollController,
+                        itemBuilder: (context, index) {
+                          final message = messages[index];
+                          if (message.senderId == userId) {
+                            return _buildMessageByMyself(
+                                message: message,
+                                showDate: _showDate(
+                                  itemCount: messages.length,
+                                  index: index,
+                                  messages: messages,
+                                ));
+                          } else {
+                            return _buildMessageByPartner(
+                                message: message,
+                                showDate: _showDate(
+                                  itemCount: messages.length,
+                                  index: index,
+                                  messages: messages,
+                                ));
+                          }
+                        },
+                        itemCount: messages.length,
+                        reverse: true,
+                      ),
+                    ),
                   ),
                   _buildInputWidget(roomId),
                 ],
@@ -189,7 +180,8 @@ class _RoomPageState extends ConsumerState<RoomPage> {
               color: messageBackgroundColor,
             ),
             child: TextField(
-              controller: ref.watch(roomPageController(roomId).notifier).textEditingController,
+              controller:
+                  ref.watch(roomPageStateNotifierProvider(roomId).notifier).textEditingController,
               minLines: 1,
               maxLines: 5,
               style: regular14,
@@ -212,10 +204,10 @@ class _RoomPageState extends ConsumerState<RoomPage> {
         ),
         GestureDetector(
           onTap: () async {
-            if (!ref.read(roomPageController(roomId)).isValid) {
+            if (!ref.read(roomPageStateNotifierProvider(roomId)).isValid) {
               return;
             }
-            await ref.read(roomPageController(roomId).notifier).send();
+            await ref.read(roomPageStateNotifierProvider(roomId).notifier).send();
           },
           child: Container(
             margin: const EdgeInsets.only(right: 8, top: 8, bottom: 8),
@@ -223,7 +215,7 @@ class _RoomPageState extends ConsumerState<RoomPage> {
             height: 32,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: ref.watch(roomPageController(roomId)).isValid
+              color: ref.watch(roomPageStateNotifierProvider(roomId)).isValid
                   ? Theme.of(context).colorScheme.primary
                   : grey400,
             ),

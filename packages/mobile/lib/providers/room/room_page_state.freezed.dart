@@ -23,16 +23,20 @@ class _$RoomPageStateTearOff {
       bool sending = false,
       bool isValid = false,
       List<Message> messages = const <Message>[],
-      bool hasNext = true,
-      DateTime? lastVisibleCreatedAt,
+      List<Message> newMessages = const <Message>[],
+      List<Message> pastMessages = const <Message>[],
+      bool fetching = false,
+      bool hasMore = true,
       QueryDocumentSnapshot<Message>? lastVisibleQds}) {
     return _RoomPageState(
       loading: loading,
       sending: sending,
       isValid: isValid,
       messages: messages,
-      hasNext: hasNext,
-      lastVisibleCreatedAt: lastVisibleCreatedAt,
+      newMessages: newMessages,
+      pastMessages: pastMessages,
+      fetching: fetching,
+      hasMore: hasMore,
       lastVisibleQds: lastVisibleQds,
     );
   }
@@ -47,8 +51,10 @@ mixin _$RoomPageState {
   bool get sending => throw _privateConstructorUsedError;
   bool get isValid => throw _privateConstructorUsedError;
   List<Message> get messages => throw _privateConstructorUsedError;
-  bool get hasNext => throw _privateConstructorUsedError;
-  DateTime? get lastVisibleCreatedAt => throw _privateConstructorUsedError;
+  List<Message> get newMessages => throw _privateConstructorUsedError;
+  List<Message> get pastMessages => throw _privateConstructorUsedError;
+  bool get fetching => throw _privateConstructorUsedError;
+  bool get hasMore => throw _privateConstructorUsedError;
   QueryDocumentSnapshot<Message>? get lastVisibleQds =>
       throw _privateConstructorUsedError;
 
@@ -67,8 +73,10 @@ abstract class $RoomPageStateCopyWith<$Res> {
       bool sending,
       bool isValid,
       List<Message> messages,
-      bool hasNext,
-      DateTime? lastVisibleCreatedAt,
+      List<Message> newMessages,
+      List<Message> pastMessages,
+      bool fetching,
+      bool hasMore,
       QueryDocumentSnapshot<Message>? lastVisibleQds});
 }
 
@@ -87,8 +95,10 @@ class _$RoomPageStateCopyWithImpl<$Res>
     Object? sending = freezed,
     Object? isValid = freezed,
     Object? messages = freezed,
-    Object? hasNext = freezed,
-    Object? lastVisibleCreatedAt = freezed,
+    Object? newMessages = freezed,
+    Object? pastMessages = freezed,
+    Object? fetching = freezed,
+    Object? hasMore = freezed,
     Object? lastVisibleQds = freezed,
   }) {
     return _then(_value.copyWith(
@@ -108,14 +118,22 @@ class _$RoomPageStateCopyWithImpl<$Res>
           ? _value.messages
           : messages // ignore: cast_nullable_to_non_nullable
               as List<Message>,
-      hasNext: hasNext == freezed
-          ? _value.hasNext
-          : hasNext // ignore: cast_nullable_to_non_nullable
+      newMessages: newMessages == freezed
+          ? _value.newMessages
+          : newMessages // ignore: cast_nullable_to_non_nullable
+              as List<Message>,
+      pastMessages: pastMessages == freezed
+          ? _value.pastMessages
+          : pastMessages // ignore: cast_nullable_to_non_nullable
+              as List<Message>,
+      fetching: fetching == freezed
+          ? _value.fetching
+          : fetching // ignore: cast_nullable_to_non_nullable
               as bool,
-      lastVisibleCreatedAt: lastVisibleCreatedAt == freezed
-          ? _value.lastVisibleCreatedAt
-          : lastVisibleCreatedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
+      hasMore: hasMore == freezed
+          ? _value.hasMore
+          : hasMore // ignore: cast_nullable_to_non_nullable
+              as bool,
       lastVisibleQds: lastVisibleQds == freezed
           ? _value.lastVisibleQds
           : lastVisibleQds // ignore: cast_nullable_to_non_nullable
@@ -136,8 +154,10 @@ abstract class _$RoomPageStateCopyWith<$Res>
       bool sending,
       bool isValid,
       List<Message> messages,
-      bool hasNext,
-      DateTime? lastVisibleCreatedAt,
+      List<Message> newMessages,
+      List<Message> pastMessages,
+      bool fetching,
+      bool hasMore,
       QueryDocumentSnapshot<Message>? lastVisibleQds});
 }
 
@@ -158,8 +178,10 @@ class __$RoomPageStateCopyWithImpl<$Res>
     Object? sending = freezed,
     Object? isValid = freezed,
     Object? messages = freezed,
-    Object? hasNext = freezed,
-    Object? lastVisibleCreatedAt = freezed,
+    Object? newMessages = freezed,
+    Object? pastMessages = freezed,
+    Object? fetching = freezed,
+    Object? hasMore = freezed,
     Object? lastVisibleQds = freezed,
   }) {
     return _then(_RoomPageState(
@@ -179,14 +201,22 @@ class __$RoomPageStateCopyWithImpl<$Res>
           ? _value.messages
           : messages // ignore: cast_nullable_to_non_nullable
               as List<Message>,
-      hasNext: hasNext == freezed
-          ? _value.hasNext
-          : hasNext // ignore: cast_nullable_to_non_nullable
+      newMessages: newMessages == freezed
+          ? _value.newMessages
+          : newMessages // ignore: cast_nullable_to_non_nullable
+              as List<Message>,
+      pastMessages: pastMessages == freezed
+          ? _value.pastMessages
+          : pastMessages // ignore: cast_nullable_to_non_nullable
+              as List<Message>,
+      fetching: fetching == freezed
+          ? _value.fetching
+          : fetching // ignore: cast_nullable_to_non_nullable
               as bool,
-      lastVisibleCreatedAt: lastVisibleCreatedAt == freezed
-          ? _value.lastVisibleCreatedAt
-          : lastVisibleCreatedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
+      hasMore: hasMore == freezed
+          ? _value.hasMore
+          : hasMore // ignore: cast_nullable_to_non_nullable
+              as bool,
       lastVisibleQds: lastVisibleQds == freezed
           ? _value.lastVisibleQds
           : lastVisibleQds // ignore: cast_nullable_to_non_nullable
@@ -203,8 +233,10 @@ class _$_RoomPageState implements _RoomPageState {
       this.sending = false,
       this.isValid = false,
       this.messages = const <Message>[],
-      this.hasNext = true,
-      this.lastVisibleCreatedAt,
+      this.newMessages = const <Message>[],
+      this.pastMessages = const <Message>[],
+      this.fetching = false,
+      this.hasMore = true,
       this.lastVisibleQds});
 
   @JsonKey()
@@ -221,15 +253,22 @@ class _$_RoomPageState implements _RoomPageState {
   final List<Message> messages;
   @JsonKey()
   @override
-  final bool hasNext;
+  final List<Message> newMessages;
+  @JsonKey()
   @override
-  final DateTime? lastVisibleCreatedAt;
+  final List<Message> pastMessages;
+  @JsonKey()
+  @override
+  final bool fetching;
+  @JsonKey()
+  @override
+  final bool hasMore;
   @override
   final QueryDocumentSnapshot<Message>? lastVisibleQds;
 
   @override
   String toString() {
-    return 'RoomPageState(loading: $loading, sending: $sending, isValid: $isValid, messages: $messages, hasNext: $hasNext, lastVisibleCreatedAt: $lastVisibleCreatedAt, lastVisibleQds: $lastVisibleQds)';
+    return 'RoomPageState(loading: $loading, sending: $sending, isValid: $isValid, messages: $messages, newMessages: $newMessages, pastMessages: $pastMessages, fetching: $fetching, hasMore: $hasMore, lastVisibleQds: $lastVisibleQds)';
   }
 
   @override
@@ -241,9 +280,12 @@ class _$_RoomPageState implements _RoomPageState {
             const DeepCollectionEquality().equals(other.sending, sending) &&
             const DeepCollectionEquality().equals(other.isValid, isValid) &&
             const DeepCollectionEquality().equals(other.messages, messages) &&
-            const DeepCollectionEquality().equals(other.hasNext, hasNext) &&
             const DeepCollectionEquality()
-                .equals(other.lastVisibleCreatedAt, lastVisibleCreatedAt) &&
+                .equals(other.newMessages, newMessages) &&
+            const DeepCollectionEquality()
+                .equals(other.pastMessages, pastMessages) &&
+            const DeepCollectionEquality().equals(other.fetching, fetching) &&
+            const DeepCollectionEquality().equals(other.hasMore, hasMore) &&
             const DeepCollectionEquality()
                 .equals(other.lastVisibleQds, lastVisibleQds));
   }
@@ -255,8 +297,10 @@ class _$_RoomPageState implements _RoomPageState {
       const DeepCollectionEquality().hash(sending),
       const DeepCollectionEquality().hash(isValid),
       const DeepCollectionEquality().hash(messages),
-      const DeepCollectionEquality().hash(hasNext),
-      const DeepCollectionEquality().hash(lastVisibleCreatedAt),
+      const DeepCollectionEquality().hash(newMessages),
+      const DeepCollectionEquality().hash(pastMessages),
+      const DeepCollectionEquality().hash(fetching),
+      const DeepCollectionEquality().hash(hasMore),
       const DeepCollectionEquality().hash(lastVisibleQds));
 
   @JsonKey(ignore: true)
@@ -271,8 +315,10 @@ abstract class _RoomPageState implements RoomPageState {
       bool sending,
       bool isValid,
       List<Message> messages,
-      bool hasNext,
-      DateTime? lastVisibleCreatedAt,
+      List<Message> newMessages,
+      List<Message> pastMessages,
+      bool fetching,
+      bool hasMore,
       QueryDocumentSnapshot<Message>? lastVisibleQds}) = _$_RoomPageState;
 
   @override
@@ -284,9 +330,13 @@ abstract class _RoomPageState implements RoomPageState {
   @override
   List<Message> get messages;
   @override
-  bool get hasNext;
+  List<Message> get newMessages;
   @override
-  DateTime? get lastVisibleCreatedAt;
+  List<Message> get pastMessages;
+  @override
+  bool get fetching;
+  @override
+  bool get hasMore;
   @override
   QueryDocumentSnapshot<Message>? get lastVisibleQds;
   @override

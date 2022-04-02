@@ -9,7 +9,10 @@ final attendingRoomsStreamProvider = StreamProvider.autoDispose<List<AttendingRo
   if (userId == null) {
     throw const SignInRequiredException();
   }
-  return MessageRepository.subscribeAttendingRooms(userId: userId);
+  return MessageRepository.subscribeAttendingRooms(
+    userId: userId,
+    queryBuilder: (q) => q.orderBy('createdAt', descending: true),
+  );
 });
 
 /// 指定した roomId の messages サブコレクションに、指定した DateTime より

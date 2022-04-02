@@ -55,7 +55,8 @@
               "senderId": "{userId}",
               "body": "",
               "imageURLs": ["https://...", "https://..."],
-              "detail": {} // 内容の詳細は未定
+              "detail": {}, // 内容の詳細は未定
+              "isDeleted": false
             }
           },
           "collection /readStatus": {

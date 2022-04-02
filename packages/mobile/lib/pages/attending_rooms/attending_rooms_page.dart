@@ -94,9 +94,7 @@ class _AttendingRoomsPageState extends ConsumerState<AttendingRoomsPage> {
             roomId: roomId,
             partnerId: hostId,
           ));
-          ref.read(scaffoldMessengerController).showSnackBar(
-                '【テスト用】ホスト 1 とのルームを作成しました。',
-              );
+          ref.read(scaffoldMessengerController).showSnackBar('【テスト用】ホスト 1 とのルームを作成しました。');
         },
       );
 }

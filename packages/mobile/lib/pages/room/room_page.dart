@@ -35,7 +35,7 @@ class _RoomPageState extends ConsumerState<RoomPage> {
     final messages = ref.watch(roomPageStateNotifierProvider(roomId).select((s) => s.messages));
     return TapToUnfocusWidget(
       child: Scaffold(
-        appBar: AppBar(title: Text('現在：${messages.length} 件')),
+        appBar: AppBar(),
         body: ref.watch(roomPageStateNotifierProvider(roomId)).loading
             ? const Center(
                 child: FaIcon(

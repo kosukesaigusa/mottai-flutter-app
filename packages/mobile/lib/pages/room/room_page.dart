@@ -8,6 +8,7 @@ import 'package:mottai_flutter_app_models/models.dart';
 import '../../providers/providers.dart';
 import '../../route/utils.dart';
 import '../../theme/theme.dart';
+import '../../utils/enums.dart';
 
 const double horizontalPadding = 8;
 const double partnerImageSize = 36;
@@ -55,88 +56,81 @@ class _RoomPageState extends ConsumerState<RoomPage> {
                             .scrollController,
                         itemBuilder: (context, index) {
                           final message = messages[index];
-                          if (message.senderId == userId) {
-                            return _buildMessageByMyself(
-                                message: message,
-                                showDate: _showDate(
-                                  itemCount: messages.length,
-                                  index: index,
-                                  messages: messages,
-                                ));
-                          } else {
-                            return _buildMessageByPartner(
-                                message: message,
-                                showDate: _showDate(
-                                  itemCount: messages.length,
-                                  index: index,
-                                  messages: messages,
-                                ));
-                          }
+                          return MessageWidget(
+                            message: message,
+                            showDate: _showDate(
+                              itemCount: messages.length,
+                              index: index,
+                              messages: messages,
+                            ),
+                            senderType:
+                                message.senderId == userId ? SenderType.myself : SenderType.partner,
+                          );
                         },
                         itemCount: messages.length,
                         reverse: true,
                       ),
                     ),
                   ),
-                  _buildInputWidget(roomId),
+                  RoomMessageInputWidget(roomId: roomId),
                 ],
               ),
       ),
     );
   }
 
-  /// 自分からのメッセージ
-  Widget _buildMessageByMyself({
-    required Message message,
-    required bool showDate,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        if (showDate) ..._dateWidget(message),
-        Container(
-          constraints: BoxConstraints(
-            maxWidth:
-                (MediaQuery.of(context).size.width - partnerImageSize - horizontalPadding * 3) *
-                    0.9,
-          ),
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(8),
-              topRight: Radius.circular(8),
-              bottomLeft: Radius.circular(8),
-            ),
-            color: Theme.of(context).colorScheme.primary,
-          ),
-          child: Text(message.body, style: white12),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(top: 4, bottom: 16),
-          child: Text(to24HourNotationString(message.createdAt), style: grey12),
-        ),
-      ],
-    );
+  /// 日付を表示するかどうか
+  bool _showDate({required int itemCount, required int index, required List<Message> messages}) {
+    if (itemCount == 1) {
+      return true;
+    }
+    if (index == itemCount - 1) {
+      return true;
+    }
+    final lastCreatedAt = messages[index].createdAt;
+    final previouslyCreatedAt = messages[index + 1].createdAt;
+    if (lastCreatedAt == null || previouslyCreatedAt == null) {
+      return false;
+    }
+    if (sameDay(lastCreatedAt, previouslyCreatedAt)) {
+      return false;
+    }
+    return true;
   }
+}
 
-  /// 相手からのメッセージ
-  Widget _buildMessageByPartner({
-    required Message message,
-    required bool showDate,
-  }) {
+/// メッセージ、日付、相手のアイコン、送信日時のウィジェット
+class MessageWidget extends HookConsumerWidget {
+  const MessageWidget({
+    required this.message,
+    required this.showDate,
+    required this.senderType,
+  });
+
+  final Message message;
+  final bool showDate;
+  final SenderType senderType;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment:
+          senderType == SenderType.myself ? CrossAxisAlignment.end : CrossAxisAlignment.start,
       children: [
         if (showDate) ..._dateWidget(message),
         Row(
+          mainAxisAlignment:
+              senderType == SenderType.myself ? MainAxisAlignment.end : MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            ref.watch(publicUserStreamProvider(message.senderId)).when<Widget>(
-                  loading: () => const SizedBox(),
-                  error: (error, stackTrace) => const SizedBox(),
-                  data: (publicUser) => CircleImage(size: 36, imageURL: publicUser?.imageURL),
-                ),
-            const Gap(8),
+            if (senderType == SenderType.partner) ...[
+              ref.watch(publicUserStreamProvider(message.senderId)).when<Widget>(
+                    loading: () => const SizedBox(),
+                    error: (error, stackTrace) => const SizedBox(),
+                    data: (publicUser) => CircleImage(size: 36, imageURL: publicUser?.imageURL),
+                  ),
+              const Gap(8),
+            ],
             Container(
               constraints: BoxConstraints(
                 maxWidth:
@@ -144,22 +138,34 @@ class _RoomPageState extends ConsumerState<RoomPage> {
                         0.9,
               ),
               padding: const EdgeInsets.all(12),
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(8),
-                  topRight: Radius.circular(8),
-                  bottomRight: Radius.circular(8),
-                ),
-                color: messageBackgroundColor,
+              decoration: senderType == SenderType.myself
+                  ? BoxDecoration(
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(8),
+                        topRight: Radius.circular(8),
+                        bottomLeft: Radius.circular(8),
+                      ),
+                      color: Theme.of(context).colorScheme.primary,
+                    )
+                  : const BoxDecoration(
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(8),
+                        topRight: Radius.circular(8),
+                        bottomRight: Radius.circular(8),
+                      ),
+                      color: messageBackgroundColor,
+                    ),
+              child: Text(
+                message.body,
+                style: senderType == SenderType.myself ? white12 : regular12,
               ),
-              child: Text(message.body, style: regular12),
             ),
           ],
         ),
         Padding(
-          padding: const EdgeInsets.only(
+          padding: EdgeInsets.only(
             top: 4,
-            left: partnerImageSize + horizontalPadding,
+            left: senderType == SenderType.myself ? 0 : partnerImageSize + horizontalPadding,
             bottom: 16,
           ),
           child: Text(to24HourNotationString(message.createdAt), style: grey12),
@@ -168,8 +174,35 @@ class _RoomPageState extends ConsumerState<RoomPage> {
     );
   }
 
-  /// 下部の入力欄部分
-  Widget _buildInputWidget(String roomId) {
+  /// 表示する日付
+  List<Widget> _dateWidget(Message message) {
+    return [
+      const Gap(24),
+      Center(
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+          decoration: const BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(8)),
+            color: messageBackgroundColor,
+          ),
+          child: Text(
+            toIsoStringDateWithWeekDay(message.createdAt),
+            style: grey10,
+          ),
+        ),
+      ),
+      const Gap(24),
+    ];
+  }
+}
+
+/// ルームページのメッセージ入力欄のウィジェット
+class RoomMessageInputWidget extends HookConsumerWidget {
+  const RoomMessageInputWidget({required this.roomId});
+  final String roomId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
     return Row(
       children: [
         Expanded(
@@ -228,49 +261,5 @@ class _RoomPageState extends ConsumerState<RoomPage> {
         ),
       ],
     );
-  }
-
-  /// 日付を表示するかどうか
-  bool _showDate({
-    required int itemCount,
-    required int index,
-    required List<Message> messages,
-  }) {
-    if (itemCount == 1) {
-      return true;
-    }
-    if (index == itemCount - 1) {
-      return true;
-    }
-    final lastCreatedAt = messages[index].createdAt;
-    final previouslyCreatedAt = messages[index + 1].createdAt;
-    if (lastCreatedAt == null || previouslyCreatedAt == null) {
-      return false;
-    }
-    if (sameDay(lastCreatedAt, previouslyCreatedAt)) {
-      return false;
-    }
-    return true;
-  }
-
-  /// 表示する日付
-  List<Widget> _dateWidget(Message message) {
-    return [
-      const Gap(24),
-      Center(
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-          decoration: const BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(8)),
-            color: messageBackgroundColor,
-          ),
-          child: Text(
-            toIsoStringDateWithWeekDay(message.createdAt),
-            style: grey10,
-          ),
-        ),
-      ),
-      const Gap(24),
-    ];
   }
 }

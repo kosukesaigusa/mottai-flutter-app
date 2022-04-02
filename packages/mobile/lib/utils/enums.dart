@@ -49,3 +49,6 @@ extension SocialSignInMethodExtension on SocialSignInMethod {
     }
   }
 }
+
+/// メッセージの送信者（自分か相手か）
+enum SenderType { myself, partner }

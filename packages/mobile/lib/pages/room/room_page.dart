@@ -57,6 +57,7 @@ class _RoomPageState extends ConsumerState<RoomPage> {
                         itemBuilder: (context, index) {
                           final message = messages[index];
                           return MessageWidget(
+                            roomId: roomId,
                             message: message,
                             showDate: _showDate(
                               itemCount: messages.length,
@@ -102,11 +103,13 @@ class _RoomPageState extends ConsumerState<RoomPage> {
 /// メッセージ、日付、相手のアイコン、送信日時のウィジェット
 class MessageWidget extends HookConsumerWidget {
   const MessageWidget({
+    required this.roomId,
     required this.message,
     required this.showDate,
     required this.senderType,
   });
 
+  final String roomId;
   final Message message;
   final bool showDate;
   final SenderType senderType;
@@ -168,7 +171,25 @@ class MessageWidget extends HookConsumerWidget {
             left: senderType == SenderType.myself ? 0 : partnerImageSize + horizontalPadding,
             bottom: 16,
           ),
-          child: Text(to24HourNotationString(message.createdAt), style: grey12),
+          child: Column(
+            crossAxisAlignment:
+                senderType == SenderType.myself ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+            children: [
+              Text(to24HourNotationString(message.createdAt), style: grey10),
+              if (senderType == SenderType.myself)
+                SizedBox(
+                  height: 14,
+                  child: ref.watch(partnerReadStatusStreamProvider(roomId)).when(
+                        data: (readStatus) => Text(
+                          _read(message: message, lastReadAt: readStatus?.lastReadAt) ? '既読' : '未読',
+                          style: grey10,
+                        ),
+                        error: (_, __) => const SizedBox(),
+                        loading: () => const SizedBox(),
+                      ),
+                ),
+            ],
+          ),
         ),
       ],
     );
@@ -193,6 +214,15 @@ class MessageWidget extends HookConsumerWidget {
       ),
       const Gap(24),
     ];
+  }
+
+  /// Message.createdAt と 最後に読んだ日を比較して既読かどうかを返す
+  bool _read({required Message message, required DateTime? lastReadAt}) {
+    final createdAt = message.createdAt;
+    if (createdAt == null || lastReadAt == null) {
+      return false;
+    }
+    return lastReadAt.isAfter(createdAt);
   }
 }
 

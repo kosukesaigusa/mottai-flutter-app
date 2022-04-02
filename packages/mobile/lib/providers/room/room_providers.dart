@@ -72,9 +72,18 @@ class RoomPageStateNotifierProvider extends StateNotifier<RoomPageState> {
       queryBuilder: (q) => q
           .orderBy('createdAt', descending: true)
           .where('createdAt', isGreaterThanOrEqualTo: DateTime.now()),
-    ).listen((messages) {
+    ).listen((messages) async {
       state = state.copyWith(newMessages: messages);
       _updateMessages();
+      // ルームを開いている間にメッセージが届いた場合は
+      // すぐに既読になるように lastReadAt も更新する。
+      final userId = _read(userIdProvider).value;
+      if (userId != null) {
+        await MessageRepository.readStatusRef(
+          roomId: _roomId,
+          readStatusId: userId,
+        ).set(const ReadStatus(), SetOptions(merge: true));
+      }
     });
   }
 
@@ -112,6 +121,22 @@ class RoomPageStateNotifierProvider extends StateNotifier<RoomPageState> {
       roomId: _roomId,
       message: textEditingController.value.text,
     );
+  }
+
+  /// 無限スクロールのクエリ
+  Query<Message> get _query {
+    var query =
+        MessageRepository.messagesRef(roomId: _roomId).orderBy('createdAt', descending: true);
+    final qds = state.lastVisibleQds;
+    if (qds != null) {
+      query = query.startAfterDocument(qds);
+    }
+    return query.limit(messageLimit);
+  }
+
+  /// 表示するメッセージを更新する
+  void _updateMessages() {
+    state = state.copyWith(messages: [...state.newMessages, ...state.pastMessages]);
   }
 
   /// メッセージを送信する
@@ -174,21 +199,5 @@ class RoomPageStateNotifierProvider extends StateNotifier<RoomPageState> {
       lastVisibleQds: qs.docs.isNotEmpty ? qs.docs.last : null,
       hasMore: qs.docs.length >= messageLimit,
     );
-  }
-
-  /// 無限スクロールのクエリ
-  Query<Message> get _query {
-    var query =
-        MessageRepository.messagesRef(roomId: _roomId).orderBy('createdAt', descending: true);
-    final qds = state.lastVisibleQds;
-    if (qds != null) {
-      query = query.startAfterDocument(qds);
-    }
-    return query.limit(messageLimit);
-  }
-
-  /// 表示するメッセージを更新する
-  void _updateMessages() {
-    state = state.copyWith(messages: [...state.newMessages, ...state.pastMessages]);
   }
 }

@@ -111,7 +111,7 @@ class AccountPageController extends StateNotifier<AccountPageState> {
     try {
       await _read(authService).signOut();
     } on FirebaseAuthException catch (e) {
-      _read(scaffoldMessengerController).showSnackBar('[${e.code}] サインアウトに失敗しました。');
+      _read(scaffoldMessengerController).showSnackBarByException(e);
     } on Exception {
       _read(scaffoldMessengerController).showSnackBar('サインアウトに失敗しました。');
     }

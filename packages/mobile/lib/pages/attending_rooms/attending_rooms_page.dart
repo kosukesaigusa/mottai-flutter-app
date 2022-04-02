@@ -182,8 +182,8 @@ class AttendingRoomWidget extends HookConsumerWidget {
                           ),
                       const Gap(4),
                       ref.watch(unreadCountStreamProvider(attendingRoom.roomId)).when<Widget>(
-                            loading: () => const SizedBox(),
-                            error: (_, __) => const SizedBox(),
+                            loading: () => const SizedBox(width: 20, height: 20),
+                            error: (_, __) => const SizedBox(width: 20, height: 20),
                             data: (count) => count > 0
                                 ? Container(
                                     width: 20,

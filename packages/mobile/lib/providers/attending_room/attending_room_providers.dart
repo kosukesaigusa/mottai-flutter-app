@@ -11,7 +11,7 @@ final attendingRoomsStreamProvider = StreamProvider.autoDispose<List<AttendingRo
   }
   return MessageRepository.subscribeAttendingRooms(
     userId: userId,
-    // queryBuilder: (q) => q.orderBy('updatedAt', descending: true),
+    queryBuilder: (q) => q.orderBy('updatedAt', descending: true),
   );
 });
 

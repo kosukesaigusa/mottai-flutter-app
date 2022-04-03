@@ -12,9 +12,9 @@ dependencies:
   cloud_firestore:
   cloud_functions:
   connectivity_plus:
-  crypto: ^3.0.1
-  cupertino_icons: ^1.0.2
-  dart_geohash: ^2.0.2
+  crypto:
+  cupertino_icons:
+  dart_geohash:
   firebase_analytics:
   firebase_auth:
   firebase_core:
@@ -25,14 +25,14 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_hooks:
-  flutter_keyboard_visibility: ^5.2.0
-  flutter_line_sdk: ^2.1.0
+  flutter_keyboard_visibility:
+  flutter_line_sdk:
   flutter_localizations:
     sdk: flutter
-  flutter_native_image: ^0.0.6+1
-  flutter_signin_button: ^2.0.0
+  flutter_native_image:
+  flutter_signin_button:
   flutter_spinkit:
-  flutter_state_notifier: ^0.7.1
+  flutter_state_notifier:
   flutterfire_ui:
   font_awesome_flutter:
   freezed:
@@ -41,14 +41,14 @@ dependencies:
   # geoflutterfire: ^3.0.3
   geoflutterfire:
     path: ../geoflutterfire
-  geolocator: ^8.2.0
+  geolocator:
   google_fonts:
   google_maps_flutter:
   google_sign_in:
   hooks_riverpod: ^2.0.0-dev.5
   image_cropper:
   image_picker:
-  intl: ^0.17.0
+  intl:
   json_annotation:
   keyboard_actions:
   ks_flutter_commons:
@@ -57,18 +57,18 @@ dependencies:
     path: ../models
   package_info_plus:
   photo_view:
-  rxdart: ^0.27.3
+  rxdart:
   shared_preferences:
   sign_in_with_apple:
-  state_notifier: ^0.7.1
+  state_notifier:
   url_launcher:
   uuid:
-  wechat_assets_picker: ^6.3.0
+  wechat_assets_picker:
 
 dev_dependencies:
   build_runner:
-  flutter_launcher_icons: ^0.9.2
-  flutter_lints: ^1.0.0
+  flutter_launcher_icons:
+  flutter_lints:
   flutter_test:
     sdk: flutter
 

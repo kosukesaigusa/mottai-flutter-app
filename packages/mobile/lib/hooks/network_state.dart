@@ -3,20 +3,22 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
 NetworkState useNetworkState() {
-  final state = useRef(const NetworkState(fetched: false));
-  final connectivityChanged = useStream(useMemoized(() => Connectivity().onConnectivityChanged));
+  final objectRef = useRef<NetworkState>(const NetworkState(fetched: false));
+  final connectivityChanged = useStream<ConnectivityResult>(
+      useMemoized<Stream<ConnectivityResult>>(() => Connectivity().onConnectivityChanged));
   // ignore: join_return_with_assignment
-  state.value =
+  objectRef.value =
       NetworkState(fetched: connectivityChanged.hasData, connectivity: connectivityChanged.data);
-  return state.value;
+  return objectRef.value;
 }
 
 bool useNetworkConnected() {
-  final state = useRef(const NetworkState(fetched: false));
-  final connectivityChanged = useStream(useMemoized(() => Connectivity().onConnectivityChanged));
-  state.value =
+  final objectRef = useRef<NetworkState>(const NetworkState(fetched: false));
+  final connectivityChanged = useStream<ConnectivityResult>(
+      useMemoized<Stream<ConnectivityResult>>(() => Connectivity().onConnectivityChanged));
+  objectRef.value =
       NetworkState(fetched: connectivityChanged.hasData, connectivity: connectivityChanged.data);
-  return state.value.connected;
+  return objectRef.value.connected;
 }
 
 @immutable

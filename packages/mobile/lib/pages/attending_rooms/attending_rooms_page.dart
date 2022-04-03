@@ -110,16 +110,16 @@ class AttendingRoomWidget extends HookConsumerWidget {
     return userId != null
         ? InkWell(
             onTap: () async {
-              await Navigator.pushNamed(
-                context,
-                RoomPage.path,
-                arguments: RouteArguments(<String, dynamic>{'roomId': attendingRoom.roomId}),
-              );
               // 非同期的に lastReadAt を更新する
               unawaited(MessageRepository.readStatusRef(
                 roomId: attendingRoom.roomId,
                 readStatusId: userId,
               ).set(const ReadStatus(), SetOptions(merge: true)));
+              await Navigator.pushNamed(
+                context,
+                RoomPage.path,
+                arguments: RouteArguments(<String, dynamic>{'roomId': attendingRoom.roomId}),
+              );
             },
             child: Padding(
               padding: const EdgeInsets.all(8),

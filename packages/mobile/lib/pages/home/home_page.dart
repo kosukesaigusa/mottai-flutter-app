@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:ks_flutter_commons/ks_flutter_commons.dart';
+import 'package:mottai_flutter_app/hooks/package_info_state.dart';
 
 import '../../controllers/scaffold_messenger/scaffold_messenger_controller.dart';
 import '../../route/utils.dart';
@@ -61,6 +62,7 @@ class HomePageState extends ConsumerState<HomePage> {
     );
   }
 
+  /// ドロワー全体
   Drawer get _buildDrawer {
     return Drawer(
       child: Column(
@@ -75,17 +77,27 @@ class HomePageState extends ConsumerState<HomePage> {
     );
   }
 
+  /// ドロワーヘッダー
   Widget get _buildDrawerHeader {
+    final packageInfoState = usePackageInfoState();
+    final packageInfo = packageInfoState.packageInfo;
     return DrawerHeader(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('いちさんマップ（仮称）開発版', style: grey12),
+          Text(
+            packageInfo == null
+                ? ''
+                : '${packageInfo.appName}: '
+                    '${packageInfo.version} (${packageInfo.buildNumber})',
+            style: grey10,
+          ),
         ],
       ),
     );
   }
 
+  /// FCM トークンの確認アイテム
   Widget get _buildFcmTokenDrawerItem {
     return ListTile(
       title: const Text('FCM トークンの確認'),
@@ -125,7 +137,7 @@ class HomePageState extends ConsumerState<HomePage> {
     );
   }
 
-  ///
+  /// プレイグラウンドへ遷移するためのアイテム
   Widget get _buildPlaygroundMenuDrawerItem {
     return ListTile(
       title: const Text('プレイグランド'),

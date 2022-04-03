@@ -11,7 +11,11 @@ final readStatusStreamProvider =
   if (userId == null) {
     throw const SignInRequiredException();
   }
-  return MessageRepository.subscribeReadStatus(roomId: roomId, readStatusId: userId);
+  return MessageRepository.subscribeReadStatus(
+    roomId: roomId,
+    readStatusId: userId,
+    excludePendingWrites: true,
+  );
 });
 
 /// 指定した roomId の相手が最後にメッセージ読んだ時間を購読する StreamProvider。

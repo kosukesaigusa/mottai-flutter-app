@@ -1,0 +1,19 @@
+# grinder 用の pubspec.yaml
+
+name: mottai_flutter_app_tools
+description: mottai_flutter_app
+publish_to: none
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=2.16.1 <3.0.0'
+
+dependencies:
+  grinder:
+  path:
+  prompts:
+  yaml:
+
+dev_dependencies:
+  flutter_lints:

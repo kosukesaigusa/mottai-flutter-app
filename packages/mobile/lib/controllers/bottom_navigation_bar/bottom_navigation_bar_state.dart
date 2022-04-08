@@ -1,5 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:mottai_flutter_app/route/main_tabs.dart';
+
+import '../../route/main_tabs.dart';
 
 part 'bottom_navigation_bar_state.freezed.dart';
 

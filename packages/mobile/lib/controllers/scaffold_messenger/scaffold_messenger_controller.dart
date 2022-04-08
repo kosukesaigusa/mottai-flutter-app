@@ -1,7 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:mottai_flutter_app/constants/snack_bar.dart';
+
+import '../../constants/snack_bar.dart';
 
 final scaffoldMessengerController = Provider.autoDispose((ref) => ScaffoldMessengerController());
 

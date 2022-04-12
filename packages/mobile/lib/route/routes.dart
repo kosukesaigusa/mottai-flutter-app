@@ -7,6 +7,8 @@ import '../pages/main/main_page.dart';
 import '../pages/map/map_page.dart';
 import '../pages/not_found/not_found_page.dart';
 import '../pages/notification/notification.dart';
+import '../pages/playgrounds/hero/hero_detail_page.dart';
+import '../pages/playgrounds/hero/hero_page.dart';
 import '../pages/playgrounds/infinite_scroll_page.dart';
 import '../pages/playgrounds/playground_page.dart';
 import '../pages/room/room_page.dart';
@@ -29,4 +31,9 @@ final routeBuilder = <String, PageBuilder>{
   PlaygroundPage.path: (_, args) => const PlaygroundPage(key: ValueKey(PlaygroundPage.name)),
   InfiniteScrollPage.path: (_, args) =>
       const InfiniteScrollPage(key: ValueKey(InfiniteScrollPage.name)),
+  HeroImagesPage.path: (_, args) => HeroImagesPage(key: const ValueKey(HeroImagesPage.name)),
+  HeroImageDetailPage.path: (_, args) =>
+      HeroImageDetailPage.withArguments(args: args, key: const ValueKey(HeroImageDetailPage.name)),
+  GreenContainerPage.path: (_, args) =>
+      const GreenContainerPage(key: ValueKey(GreenContainerPage.name)),
 };

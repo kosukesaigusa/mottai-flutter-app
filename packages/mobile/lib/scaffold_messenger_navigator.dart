@@ -29,6 +29,7 @@ class ScaffoldMessengerNavigator extends HookConsumerWidget {
                 key: ref.watch(scaffoldMessengerController.select((c) => c.navigatorKey)),
                 initialRoute: AppRouter.initialRoute,
                 onGenerateRoute: appRouter.generateRoute,
+                observers: const [],
                 onUnknownRoute: (settings) {
                   final route = MaterialPageRoute<void>(
                     settings: settings,

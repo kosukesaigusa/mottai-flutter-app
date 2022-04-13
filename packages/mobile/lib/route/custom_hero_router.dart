@@ -125,8 +125,9 @@ class CustomHeroPageTransition extends StatelessWidget {
             height: double.infinity,
             child: BackdropFilter(
               filter: ui.ImageFilter.blur(
-                  sigmaX: (1 - _secondaryPositionAnimation.value) * 5,
-                  sigmaY: (1 - _secondaryPositionAnimation.value) * 5),
+                sigmaX: (1 - _secondaryPositionAnimation.value) * 5,
+                sigmaY: (1 - _secondaryPositionAnimation.value) * 5,
+              ),
               child: Container(
                 decoration: const BoxDecoration(color: Colors.transparent),
               ),

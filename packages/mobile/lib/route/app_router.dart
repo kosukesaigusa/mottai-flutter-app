@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:ks_flutter_commons/ks_flutter_commons.dart';
 
 import '../pages/not_found/not_found_page.dart';
+import '../pages/playgrounds/hero/hero_detail_page.dart';
 import '../utils/types.dart';
+import 'custom_hero_router.dart';
 import 'utils.dart';
 
 abstract class AppRouter {
@@ -50,12 +52,22 @@ class _AppRouterImpl implements AppRouter {
         (appRoute) => appRoute.path == path,
         orElse: () => throw RouteNotFoundException(path),
       );
-      final route = MaterialPageRoute<dynamic>(
-        settings: settings,
-        builder: (context) => appRoute.pageBuilder(context, RouteArguments(data)),
-        fullscreenDialog: toBool(queryParams['fullScreenDialog'] ?? false),
-      );
-      return route;
+      if (path == '/hero-detail/') {
+        final customRoute = CustomHeroPageRouter(
+          builder: (_) => HeroImageDetailPage.withArguments(
+            args: RouteArguments(data),
+          ),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) => child,
+        );
+        return customRoute;
+      } else {
+        final route = MaterialPageRoute<dynamic>(
+          settings: settings,
+          builder: (context) => appRoute.pageBuilder(context, RouteArguments(data)),
+          fullscreenDialog: toBool(queryParams['fullScreenDialog'] ?? false),
+        );
+        return route;
+      }
     } on RouteNotFoundException {
       final route = MaterialPageRoute<void>(
         settings: settings,

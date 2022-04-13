@@ -29,12 +29,22 @@ class HeroImageDetailPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final size = MediaQuery.of(context).size;
     return Scaffold(
+      backgroundColor: Colors.transparent,
       body: Stack(
         children: [
-          Hero(
-            tag: tag,
-            child: HeroCardWidget(item: item),
+          SingleChildScrollView(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minWidth: size.width,
+                minHeight: size.height,
+              ),
+              child: Hero(
+                tag: tag,
+                child: HeroCardWidget(item: item),
+              ),
+            ),
           ),
           Positioned(
             top: 32,

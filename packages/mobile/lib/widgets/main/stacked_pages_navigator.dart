@@ -22,6 +22,9 @@ class MainStackedPagesNavigator extends HookConsumerWidget {
     return Navigator(
       key: ref.watch(applicationController.notifier).navigatorKeys[tab.tab],
       initialRoute: MainPage.path,
+      observers: [
+        HeroController(),
+      ],
       // MainPage の StackedPages 上での Navigation なので
       // tab.path を渡す
       onGenerateRoute: (routeSettings) => appRouter.generateRoute(

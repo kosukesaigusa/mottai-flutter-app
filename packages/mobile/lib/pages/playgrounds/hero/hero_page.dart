@@ -2,6 +2,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../../../route/utils.dart';
+import 'hero_detail_page.dart';
+
 class HeroItem {
   const HeroItem({
     required this.tag,
@@ -22,122 +25,32 @@ class HeroImagesPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final item = _items.first;
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Home'),
-      ),
-      body: GestureDetector(
-        onTap: () {
-          // Navigator.pushNamed<void>(context, GreenContainerPage.path);
-          Navigator.push<void>(
-            context,
-            PageRouteBuilder(
-              transitionDuration: const Duration(milliseconds: 1000),
-              pageBuilder: (_, __, ___) => const GreenContainerPage(),
-              // transitionsBuilder: (context, animation, secondaryAnimation, child) =>
-              //     SlideTransition(
-              //   position: Tween<Offset>(
-              //     begin: const Offset(1, 0),
-              //     end: Offset.zero,
-              //   ).animate(animation),
-              //   child: SlideTransition(
-              //     position: Tween<Offset>(
-              //       begin: Offset.zero,
-              //       end: const Offset(-1, 0),
-              //     ).animate(secondaryAnimation),
-              //     child: child,
-              //   ),
-              // ),
+    return Padding(
+      padding: const EdgeInsets.all(8),
+      child: ListView.builder(
+        itemCount: _items.length,
+        itemBuilder: (context, index) {
+          final item = _items[index];
+          return TapToScaleDownAnimationWidget(
+            child: Hero(
+              tag: item.tag,
+              child: HeroCardWidget(
+                item: item,
+                onTap: () async {
+                  await Navigator.pushNamed(
+                    context,
+                    HeroImageDetailPage.path,
+                    arguments: RouteArguments(
+                      <String, dynamic>{'item': item, 'tag': item.tag},
+                    ),
+                  );
+                },
+              ),
             ),
           );
         },
-        child: Hero(
-          tag: 'boxHero',
-          child: Container(
-            width: 100,
-            height: 100,
-            color: Colors.green,
-          ),
-        ),
       ),
     );
-
-    // Scaffold(
-    //   appBar: AppBar(),
-    //   body: GestureDetector(
-    //     onTap: () {
-    //       Navigator.push<void>(
-    //         context,
-    //         MaterialPageRoute(
-    //           builder: (context) => const GreenContainerPage(),
-    //           // Scaffold(
-    //           //   body: Hero(
-    //           //     tag: item.tag,
-    //           //     child: Image.network(item.imageURL),
-    //           //   ),
-    //           // ),
-    //           // HeroImageDetailPage.withArguments(
-    //           //   args: RouteArguments(
-    //           //     <String, dynamic>{'item': item, 'tag': item.tag},
-    //           //   ),
-    //           // ),
-    //         ),
-    //       );
-    //     },
-    //     // child: Hero(
-    //     //   tag: item.tag,
-    //     //   child: Image.network(item.imageURL),
-    //     // ),
-    //     child: Hero(
-    //       tag: 'boxHero',
-    //       child: Container(
-    //         width: 100,
-    //         height: 100,
-    //         color: Colors.green,
-    //       ),
-    //     ),
-    //   ),
-    // );
-
-    // Padding(
-    //   padding: const EdgeInsets.all(8),
-    //   child: ListView.builder(
-    //     itemCount: _items.length,
-    //     itemBuilder: (context, index) {
-    //       final item = _items[index];
-    //       return GestureDetector(
-    //         onTap: () async {
-    //           await Navigator.push<void>(
-    //             context,
-    //             MaterialPageRoute(
-    //               builder: (context) => HeroImageDetailPage.withArguments(
-    //                 args: RouteArguments(
-    //                   <String, dynamic>{'item': item, 'tag': item.tag},
-    //                 ),
-    //               ),
-    //             ),
-    //           );
-    //         },
-    //         child: Hero(
-    //           tag: item.tag,
-    //           child: HeroCardWidget(
-    //             item: item,
-    //             onTap: () async {
-    //               // await Navigator.pushNamed(
-    //               //   context,
-    //               //   HeroImageDetailPage.path,
-    //               //   arguments: RouteArguments(
-    //               //     <String, dynamic>{'item': item, 'tag': item.tag},
-    //               //   ),
-    //               // );
-    //             },
-    //           ),
-    //         ),
-    //       );
-    //     },
-    //   ),
-    // );
   }
 
   final _items = <HeroItem>[
@@ -232,54 +145,16 @@ class HeroCardWidget extends HookConsumerWidget {
             ],
           ),
         ),
-        // if (onTap != null)
-        //   Positioned.fill(
-        //     child: Material(
-        //       color: Colors.transparent,
-        //       child: InkWell(onTap: onTap),
-        //     ),
-        //   ),
+        if (onTap != null)
+          Positioned.fill(
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(onTap: onTap),
+            ),
+          ),
       ],
     );
   }
-}
-
-class CustomPopupRoute extends PageRoute<void> {
-  CustomPopupRoute({required this.builder}) : super();
-
-  final WidgetBuilder builder;
-
-  @override
-  Widget buildPage(
-      BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation) {
-    return builder(context);
-  }
-
-  @override
-  Widget buildTransitions(BuildContext context, Animation<double> animation,
-      Animation<double> secondaryAnimation, Widget child) {
-    // アニメーションは Hero が担当するためここでは不要
-    // child は上記 buildPage メソッドの戻り値
-    return child;
-  }
-
-  @override
-  bool get opaque => false;
-
-  @override
-  Color? get barrierColor => Colors.black54;
-
-  @override
-  bool get barrierDismissible => true;
-
-  @override
-  String? get barrierLabel => 'Dismiss this dialog';
-
-  @override
-  Duration get transitionDuration => const Duration(milliseconds: 1200);
-
-  @override
-  bool get maintainState => true;
 }
 
 /// タップして押し込むとそのウィジェットサイズが縮小する

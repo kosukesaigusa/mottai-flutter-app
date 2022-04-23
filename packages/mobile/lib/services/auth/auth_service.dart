@@ -7,7 +7,7 @@ import 'package:mottai_flutter_app/services/firebase_messaging_service.dart';
 import 'package:mottai_flutter_app_models/models.dart';
 
 import '../../providers/providers.dart';
-import '../../repository/auth/auth_repository.dart';
+import '../../repositories/auth/auth_repository.dart';
 import '../../utils/enums.dart';
 import '../../utils/utils.dart';
 

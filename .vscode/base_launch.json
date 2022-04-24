@@ -1,0 +1,21 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug",
+      "program": "packages/mobile/lib/main.dart",
+      "request": "launch",
+      "type": "dart",
+      "args": [
+        "--debug",
+        "--dart-define=FLAVOR=...",
+        "--dart-define=USE_LOCAL_EMULATOR=true",
+        "--dart-define=GOOGLE_SIGN_IN_CLIENT_ID=...",
+        "--dart-define=LINE_CHANNEL_ID=...",
+        "--dart-define=HOST_1_ID=...",
+        "--dart-define=HOST_1_EMAIL=...",
+        "--dart-define=HOST_1_PASSWORD=..."
+      ]
+    }
+  ]
+}

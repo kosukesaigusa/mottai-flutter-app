@@ -130,7 +130,7 @@ class _MainPageState extends ConsumerState<MainPage> with WidgetsBindingObserver
 
   /// プッシュ通知関係の初期化処理を行う
   Future<void> _initializePushNotification() async {
-    await FirebaseMessagingService.requestPermission();
+    await ref.read(fcmServiceProvider).requestPermission();
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
     /// terminated (!= background) の状態から

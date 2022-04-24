@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:mottai_flutter_app_models/models.dart';
 
@@ -49,8 +50,8 @@ Future<void> setSeedLocationData() async {
       HostLocationRepository.hostLocationRef(hostLocationId: hostLocationId),
       hostLocation,
     );
-    print('${i + 1} 番目書き込み完了');
+    debugPrint('${i + 1} 番目書き込み完了');
   }
   await batch.commit();
-  print('バッチコミットしました');
+  debugPrint('バッチコミットしました');
 }

@@ -156,8 +156,7 @@ class AuthRepository {
         code: e.code,
         message: e.code == '3003' ? 'キャンセルしました。' : 'エラーが発生しました。',
       );
-    } on FirebaseException catch (e) {
-      print(e);
+    } on FirebaseException {
       rethrow;
     } on Exception {
       rethrow;

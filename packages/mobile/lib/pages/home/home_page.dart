@@ -101,9 +101,9 @@ class HomePageState extends ConsumerState<HomePage> {
       title: const Text('FCM トークンの確認'),
       onTap: () async {
         final token = await ref.read(fcmServiceProvider).getToken;
-        print('*** FCM token ***************');
-        print(token);
-        print('*****************************');
+        debugPrint('*** FCM token ***************');
+        debugPrint(token);
+        debugPrint('*****************************');
         await showDialog<void>(
           context: context,
           barrierDismissible: false,

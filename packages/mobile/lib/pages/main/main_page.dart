@@ -17,7 +17,7 @@ import '../../widgets/main/stacked_pages_navigator.dart';
 /// バックグラウンドから起動した際にFirebaseを有効化する。
 /// グローバルに記述する必要がある
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  print('バックグラウンドで通知を受信');
+  debugPrint('バックグラウンドで通知を受信');
   await Firebase.initializeApp();
 }
 
@@ -48,21 +48,21 @@ class _MainPageState extends ConsumerState<MainPage> with WidgetsBindingObserver
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-      print('==========================================');
-      print('AppLifecycleState: resumed');
-      print('==========================================');
+      debugPrint('==========================================');
+      debugPrint('AppLifecycleState: resumed');
+      debugPrint('==========================================');
     } else if (state == AppLifecycleState.paused) {
-      print('==========================================');
-      print('AppLifecycleState: paused');
-      print('==========================================');
+      debugPrint('==========================================');
+      debugPrint('AppLifecycleState: paused');
+      debugPrint('==========================================');
     } else if (state == AppLifecycleState.detached) {
-      print('==========================================');
-      print('AppLifecycleState: detached');
-      print('==========================================');
+      debugPrint('==========================================');
+      debugPrint('AppLifecycleState: detached');
+      debugPrint('==========================================');
     } else if (state == AppLifecycleState.inactive) {
-      print('==========================================');
-      print('AppLifecycleState: inactive');
-      print('==========================================');
+      debugPrint('==========================================');
+      debugPrint('AppLifecycleState: inactive');
+      debugPrint('==========================================');
     }
   }
 
@@ -138,13 +138,13 @@ class _MainPageState extends ConsumerState<MainPage> with WidgetsBindingObserver
     /// 通知によってアプリを開いた場合に remoteMessage が非 null となる。
     final remoteMessage = await FirebaseMessaging.instance.getInitialMessage();
     if (remoteMessage != null) {
-      print('🔥 Open app from FCM when terminated.');
+      debugPrint('🔥 Open app from FCM when terminated.');
       final path = remoteMessage.data['path'] as String;
       final data = remoteMessage.data;
-      print('*****************************');
-      print('path: $path');
-      print('data: $data');
-      print('*****************************');
+      debugPrint('*****************************');
+      debugPrint('path: $path');
+      debugPrint('data: $data');
+      debugPrint('*****************************');
       if (remoteMessage.data.containsKey('path')) {
         await ref.read(navigationController).pushOnCurrentTab(path: path, data: data);
       }
@@ -153,14 +153,14 @@ class _MainPageState extends ConsumerState<MainPage> with WidgetsBindingObserver
     /// foreground or background (!= terminated) の状態から
     /// 通知によってアプリを開いた場合に発火する。
     FirebaseMessaging.onMessageOpenedApp.listen((remoteMessage) async {
-      print('🔥 FCM notification tapped.');
+      debugPrint('🔥 FCM notification tapped.');
       if (remoteMessage.data.containsKey('path')) {
         final path = remoteMessage.data['path'] as String;
         final data = remoteMessage.data;
-        print('*****************************');
-        print('path: $path');
-        print('data: $data');
-        print('*****************************');
+        debugPrint('*****************************');
+        debugPrint('path: $path');
+        debugPrint('data: $data');
+        debugPrint('*****************************');
         await ref.read(navigationController).pushOnCurrentTab(path: path, data: data);
       }
     });
@@ -171,7 +171,7 @@ class _MainPageState extends ConsumerState<MainPage> with WidgetsBindingObserver
     /// background (!= terminated) でリンクを踏んだ場合
     FirebaseDynamicLinks.instance.onLink.listen(
       (pendingDynamicLinkData) async {
-        print('🔗 Open app from Firebase Dynamic Links when background.');
+        debugPrint('🔗 Open app from Firebase Dynamic Links when background.');
         await ref
             .read(navigationController)
             .popUntilFirstRouteAndPushOnSpecifiedTabByDynamicLink(pendingDynamicLinkData.link);
@@ -181,7 +181,7 @@ class _MainPageState extends ConsumerState<MainPage> with WidgetsBindingObserver
     /// terminated (!= background) の状態からリンクを踏んだ場合
     final pendingDynamicLinkData = await FirebaseDynamicLinks.instance.getInitialLink();
     if (pendingDynamicLinkData != null) {
-      print('🔗 Open app from Firebase Dynamic Links when terminated.');
+      debugPrint('🔗 Open app from Firebase Dynamic Links when terminated.');
       await ref
           .read(navigationController)
           .popUntilFirstRouteAndPushOnSpecifiedTabByDynamicLink(pendingDynamicLinkData.link);

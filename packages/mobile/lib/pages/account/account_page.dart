@@ -38,7 +38,7 @@ class AccountPage extends HookConsumerWidget {
               ref.watch(accountStreamProvider).when<Widget>(
                     loading: () => const PrimarySpinkitCircle(),
                     error: (error, stackTrace) {
-                      print(stackTrace);
+                      debugPrint(stackTrace.toString());
                       return Text(error.toString());
                     },
                     data: (account) => account == null ? _notSignedInWidget : _signedInWidget,

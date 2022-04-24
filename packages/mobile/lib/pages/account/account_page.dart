@@ -235,11 +235,11 @@ class AccountPage extends HookConsumerWidget {
                 if (account == null) {
                   return Column(
                     children: const [
-                      SocialSignInButton(SocialSignInMethod.Google),
+                      SocialSignInButton(method: SocialSignInMethod.Google),
                       Gap(8),
-                      SocialSignInButton(SocialSignInMethod.Apple),
+                      SocialSignInButton(method: SocialSignInMethod.Apple),
                       Gap(8),
-                      SocialSignInButton(SocialSignInMethod.LINE),
+                      SocialSignInButton(method: SocialSignInMethod.LINE),
                     ],
                   );
                 }
@@ -264,11 +264,11 @@ class AccountPage extends HookConsumerWidget {
                               ]),
                             ),
                           if (!providers.contains(SocialSignInMethod.Google.name))
-                            const SocialSignInButton(SocialSignInMethod.Google),
+                            const SocialSignInButton(method: SocialSignInMethod.Google),
                           if (!providers.contains(SocialSignInMethod.Apple.name))
-                            const SocialSignInButton(SocialSignInMethod.Apple),
+                            const SocialSignInButton(method: SocialSignInMethod.Apple),
                           if (!providers.contains(SocialSignInMethod.LINE.name))
-                            const SocialSignInButton(SocialSignInMethod.LINE),
+                            const SocialSignInButton(method: SocialSignInMethod.LINE),
                         ],
                       );
               },

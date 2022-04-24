@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_line_sdk/flutter_line_sdk.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:ks_flutter_commons/ks_flutter_commons.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'app.dart';
 import 'gen/firebase_options_dev.dart' as dev;
@@ -14,16 +15,21 @@ import 'services/shared_preferences_service.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  if (const String.fromEnvironment('FLAVOR') == 'local') {
-    await setUpLocalEmulator();
-  }
-  // 画面の向きを固定
-  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   await initialize();
+  // 画面の向きを固定する
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   runApp(
-    const RootWidget(
+    RootWidget(
       child: ProviderScope(
-        child: App(),
+        // ProviderScope の overrides したい Provider やその値を列挙する。
+        // 起動時に一回インスタンス化したキャッシュを使いませせるようにすることで、
+        // それ以降 await なしでアクセスしたいときなどに便利。
+        overrides: [
+          sharedPreferencesProvider.overrideWithValue(
+            await SharedPreferences.getInstance(),
+          ),
+        ],
+        child: const App(),
       ),
     ),
   );
@@ -46,7 +52,7 @@ FirebaseOptions getFirebaseOptions(String flavor) {
 /// 各種サービス関係での初期化処理を行う。
 Future<void> initialize() async {
   await Future.wait([
-    SharedPreferencesService.initialize(),
+    if (const String.fromEnvironment('FLAVOR') == 'local') setUpLocalEmulator(),
     FirebaseMessagingService.initialize(),
     LineSDK.instance.setup(const String.fromEnvironment('LINE_CHANNEL_ID')),
   ]);

@@ -47,7 +47,7 @@ class HomePageState extends ConsumerState<HomePage> {
             ElevatedButton.icon(
               onPressed: () async {
                 await db.collection('testNotificationRequests').doc(uuid).set(<String, dynamic>{
-                  'token': await FirebaseMessagingService.getToken,
+                  'token': ref.read(fcmServiceProvider).getToken,
                 });
                 ref.read(scaffoldMessengerController).showSnackBar(
                       'テスト通知をリクエストしました。まもなく通知が送られます。',
@@ -102,7 +102,7 @@ class HomePageState extends ConsumerState<HomePage> {
     return ListTile(
       title: const Text('FCM トークンの確認'),
       onTap: () async {
-        final token = await FirebaseMessagingService.getToken;
+        final token = await ref.read(fcmServiceProvider).getToken;
         print('*** FCM token ***************');
         print(token);
         print('*****************************');

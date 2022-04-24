@@ -159,7 +159,7 @@ class AuthService {
       return;
     }
     final account = await AccountRepository.fetchAccount(accountId: userId);
-    final fcmToken = await FirebaseMessagingService.getToken;
+    final fcmToken = await _read(fcmServiceProvider).getToken;
     try {
       if (account != null) {
         // すでにドキュメントが存在しているので update する
@@ -197,7 +197,7 @@ class AuthService {
     }
     String? fcmToken;
     try {
-      await FirebaseMessagingService.getToken;
+      await _read(fcmServiceProvider).getToken;
     } on FirebaseException {
       rethrow;
     } on Exception {

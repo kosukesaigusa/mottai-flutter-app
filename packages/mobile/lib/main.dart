@@ -7,8 +7,6 @@ import 'package:ks_flutter_commons/ks_flutter_commons.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'app.dart';
-import 'gen/firebase_options_dev.dart' as dev;
-import 'gen/firebase_options_prod.dart' as prod;
 import 'services/firebase_messaging_service.dart';
 import 'services/shared_preferences_service.dart';
 
@@ -28,6 +26,9 @@ Future<void> main() async {
           sharedPreferencesProvider.overrideWithValue(
             await SharedPreferences.getInstance(),
           ),
+          fcmProvider.overrideWithValue(
+            await getFirebaseMessagingInstance,
+          ),
         ],
         child: const App(),
       ),
@@ -35,25 +36,10 @@ Future<void> main() async {
   );
 }
 
-/// 接続する Firebase プロジェクトを決定する。
-FirebaseOptions getFirebaseOptions(String flavor) {
-  switch (flavor) {
-    case 'local':
-      return dev.DefaultFirebaseOptions.currentPlatform;
-    case 'dev':
-      return dev.DefaultFirebaseOptions.currentPlatform;
-    case 'prod':
-      return prod.DefaultFirebaseOptions.currentPlatform;
-    default:
-      throw AssertionError('--dart-define flavor: $flavor is not supported.');
-  }
-}
-
 /// 各種サービス関係での初期化処理を行う。
 Future<void> initialize() async {
   await Future.wait([
     if (const String.fromEnvironment('FLAVOR') == 'local') setUpLocalEmulator(),
-    FirebaseMessagingService.initialize(),
     LineSDK.instance.setup(const String.fromEnvironment('LINE_CHANNEL_ID')),
   ]);
 }

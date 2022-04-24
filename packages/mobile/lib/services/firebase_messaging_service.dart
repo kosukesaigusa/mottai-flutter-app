@@ -1,35 +1,40 @@
 import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-/// main.dart でのイニシャライズ処理と
-/// MainPage でのイニシャライズ処理および通知受信時のハンドリングで使用するメソッドを
-/// まとめたクラス。
-/// Riverpod の Provider で提供するほどでもないのと、
-/// ref が取れない main.dart のグローバルな関数内でこのクラスのメソッドを呼ぶ方法が分からないので
-/// とりあえずシングルトンクラスで定義する。
-class FirebaseMessagingService {
-  factory FirebaseMessagingService() => _instance;
-  FirebaseMessagingService._internal();
-  static final FirebaseMessagingService _instance = FirebaseMessagingService._internal();
-
-  static final _messaging = FirebaseMessaging.instance;
-
-  static Future<void> initialize() async {
-    if (Platform.isIOS) {
-      /// Push通知をフォアグラウンドでも受け取る設定
-      await _messaging.setForegroundNotificationPresentationOptions(
-        alert: true,
-        badge: true,
-        sound: true,
-      );
-    }
+/// iOS のフォアグラウンドでの通知受信の設定を済ませて
+/// FirebaseMessaging のインスタンスを返す。
+/// ProviderScope の overrides で使用して fcmProvider.value を上書きする。
+Future<FirebaseMessaging> get getFirebaseMessagingInstance async {
+  final _messaging = FirebaseMessaging.instance;
+  if (Platform.isIOS) {
+    // Push 通知をフォアグラウンドでも受け取るよう設定する。
+    await _messaging.setForegroundNotificationPresentationOptions(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
   }
+  return _messaging;
+}
+
+/// FirebaseMessaging のインスタンスを提供するプロバイダ。
+/// ProviderScope の overrides で使用する。
+final fcmProvider = Provider<FirebaseMessaging>((_) => throw UnimplementedError());
+
+/// FirebaseMessaging の各機能を提供するプロバイダ。
+final fcmServiceProvider =
+    Provider<FirebaseMessagingService>((ref) => FirebaseMessagingService(ref.read));
+
+class FirebaseMessagingService {
+  FirebaseMessagingService(this._read);
+  final Reader _read;
 
   /// Push 通知の許可を取る
-  static Future<void> requestPermission() async {
+  Future<void> requestPermission() async {
     try {
-      await _messaging.requestPermission(
+      await _read(fcmProvider).requestPermission(
         alert: true,
         announcement: false,
         badge: true,
@@ -44,5 +49,5 @@ class FirebaseMessagingService {
   }
 
   /// FCM トークンを取得する
-  static Future<String?> get getToken => _messaging.getToken();
+  Future<String?> get getToken => _read(fcmProvider).getToken();
 }

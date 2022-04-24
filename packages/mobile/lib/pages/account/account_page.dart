@@ -11,7 +11,7 @@ import '../../providers/auth/auth_providers.dart';
 import '../../theme/theme.dart';
 import '../../utils/enums.dart';
 import '../../utils/utils.dart';
-import '../../widgets/common/loading.dart';
+import '../../widgets/loading/loading.dart';
 import '../../widgets/sign_in/sign_in_buttons.dart';
 
 const double buttonHeight = 48;

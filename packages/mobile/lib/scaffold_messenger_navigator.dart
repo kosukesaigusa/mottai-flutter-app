@@ -7,7 +7,7 @@ import 'providers/overlay_loading/overlay_loading.dart';
 import 'providers/scaffold_messenger/scaffold_messenger_controller.dart';
 import 'route/app_router.dart';
 import 'route/routes.dart';
-import 'widgets/common/loading.dart';
+import 'widgets/loading/loading.dart';
 
 final appRouter = AppRouter.create(routeBuilder);
 

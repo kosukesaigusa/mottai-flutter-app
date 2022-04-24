@@ -159,7 +159,7 @@ class AuthService {
     if (userId == null) {
       return;
     }
-    final account = await AccountRepository.fetchAccount(accountId: userId);
+    final account = await _read(accountRepositoryProvider).fetchAccount(accountId: userId);
     final fcmToken = await _read(fcmServiceProvider).getToken;
     try {
       if (account != null) {

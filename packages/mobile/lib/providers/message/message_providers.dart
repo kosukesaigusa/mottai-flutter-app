@@ -10,8 +10,8 @@ final messagesStreamProvider =
   if (userId == null) {
     throw const SignInRequiredException();
   }
-  return MessageRepository.subscribeMessages(
-    roomId: roomId,
-    queryBuilder: (q) => q.orderBy('createdAt', descending: true),
-  );
+  return ref.read(messageRepositoryProvider).subscribeMessages(
+        roomId: roomId,
+        queryBuilder: (q) => q.orderBy('createdAt', descending: true),
+      );
 });

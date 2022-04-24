@@ -103,12 +103,13 @@ class _InfiniteScrollPageState extends ConsumerState<InfiniteScrollPage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           final playgroundMessageId = uuid;
-          await PlaygroundMessageRepository.playgroundMessageRef(
-                  playgroundMessageId: playgroundMessageId)
+          await ref
+              .read(playgroundMessageRepositoryProvider)
+              .playgroundMessageRef(playgroundMessageId: playgroundMessageId)
               .set(PlaygroundMessage(
-            playgroundMessageId: playgroundMessageId,
-            body: '$uuid-$uuid',
-          ));
+                playgroundMessageId: playgroundMessageId,
+                body: '$uuid-$uuid',
+              ));
         },
         child: const FaIcon(FontAwesomeIcons.solidComment),
       ),

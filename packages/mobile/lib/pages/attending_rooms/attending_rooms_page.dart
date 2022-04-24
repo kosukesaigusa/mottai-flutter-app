@@ -88,16 +88,17 @@ class _AttendingRoomsPageState extends ConsumerState<AttendingRoomsPage> {
           }
           final roomId = uuid;
           const hostId = String.fromEnvironment('HOST_1_ID');
-          await MessageRepository.roomRef(roomId: roomId).set(Room(
-            roomId: roomId,
-            hostId: hostId,
-            workerId: userId,
-          ));
-          await MessageRepository.attendingRoomRef(userId: userId, roomId: roomId)
+          await ref
+              .read(messageRepositoryProvider)
+              .roomRef(roomId: roomId)
+              .set(Room(roomId: roomId, hostId: hostId, workerId: userId));
+          await ref
+              .read(messageRepositoryProvider)
+              .attendingRoomRef(userId: userId, roomId: roomId)
               .set(AttendingRoom(
-            roomId: roomId,
-            partnerId: hostId,
-          ));
+                roomId: roomId,
+                partnerId: hostId,
+              ));
           ref.read(scaffoldMessengerController).showSnackBar('【テスト用】ホスト 1 とのルームを作成しました。');
         },
       );
@@ -115,10 +116,10 @@ class AttendingRoomWidget extends HookConsumerWidget {
         ? InkWell(
             onTap: () async {
               // 非同期的に lastReadAt を更新する
-              unawaited(MessageRepository.readStatusRef(
-                roomId: attendingRoom.roomId,
-                readStatusId: userId,
-              ).set(const ReadStatus(), SetOptions(merge: true)));
+              unawaited(ref
+                  .read(messageRepositoryProvider)
+                  .readStatusRef(roomId: attendingRoom.roomId, readStatusId: userId)
+                  .set(const ReadStatus(), SetOptions(merge: true)));
               await Navigator.pushNamed(
                 context,
                 RoomPage.path,

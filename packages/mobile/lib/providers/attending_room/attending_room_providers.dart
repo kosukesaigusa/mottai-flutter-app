@@ -11,10 +11,10 @@ final attendingRoomsStreamProvider = StreamProvider.autoDispose<List<AttendingRo
   if (userId == null) {
     throw const SignInRequiredException();
   }
-  return MessageRepository.subscribeAttendingRooms(
-    userId: userId,
-    queryBuilder: (q) => q.orderBy('updatedAt', descending: true),
-  );
+  return ref.read(messageRepositoryProvider).subscribeAttendingRooms(
+        userId: userId,
+        queryBuilder: (q) => q.orderBy('updatedAt', descending: true),
+      );
 });
 
 /// 指定した roomId の messages サブコレクションに、指定した DateTime より
@@ -31,13 +31,16 @@ final unreadCountStreamProvider = StreamProvider.autoDispose.family<int, String>
   }
   final readStatus = ref.watch(readStatusStreamProvider(roomId)).value;
   final lastReadAt = readStatus?.lastReadAt;
-  return MessageRepository.subscribeMessages(
-    roomId: room.roomId,
-    queryBuilder: (q) => lastReadAt != null
-        ? q
-            .where('createdAt', isGreaterThan: lastReadAt)
-            .orderBy('createdAt', descending: true)
-            .limit(10)
-        : q.orderBy('createdAt', descending: true).limit(10),
-  ).map((messages) => messages.where((message) => message.senderId != userId).toList().length);
+  return ref
+      .read(messageRepositoryProvider)
+      .subscribeMessages(
+        roomId: room.roomId,
+        queryBuilder: (q) => lastReadAt != null
+            ? q
+                .where('createdAt', isGreaterThan: lastReadAt)
+                .orderBy('createdAt', descending: true)
+                .limit(10)
+            : q.orderBy('createdAt', descending: true).limit(10),
+      )
+      .map((messages) => messages.where((message) => message.senderId != userId).toList().length);
 });

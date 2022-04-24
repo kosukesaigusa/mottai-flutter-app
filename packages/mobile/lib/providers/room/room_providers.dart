@@ -14,7 +14,7 @@ import 'room_page_state.dart';
 
 /// 指定した roomId の Room ドキュメントを購読する StreamProvider
 final roomStreamProvider = StreamProvider.autoDispose.family<Room?, String>((ref, roomId) {
-  return MessageRepository.subscribeRoom(roomId: roomId);
+  return ref.read(messageRepositoryProvider).subscribeRoom(roomId: roomId);
 });
 
 /// ルームページのメッセージを読み書きする状態管理・操作を担当する
@@ -67,22 +67,26 @@ class RoomPageStateNotifierProvider extends StateNotifier<RoomPageState> {
   /// 読み取り開始時刻以降のメッセージを購読して
   /// 画面に表示する messages に反映させるリスナーを初期化する。
   void _initializeNewMessagesSubscription() {
-    _newMessagesSubscription = MessageRepository.subscribeMessages(
+    _newMessagesSubscription = _read(messageRepositoryProvider)
+        .subscribeMessages(
       roomId: _roomId,
       queryBuilder: (q) => q
           .orderBy('createdAt', descending: true)
           .where('createdAt', isGreaterThanOrEqualTo: DateTime.now()),
-    ).listen((messages) async {
+    )
+        .listen((messages) async {
       state = state.copyWith(newMessages: messages);
       _updateMessages();
       // ルームを開いている間にメッセージが届いた場合は
       // すぐに既読になるように lastReadAt も更新する。
       final userId = _read(userIdProvider).value;
       if (userId != null) {
-        await MessageRepository.readStatusRef(
-          roomId: _roomId,
-          readStatusId: userId,
-        ).set(const ReadStatus(), SetOptions(merge: true));
+        await _read(messageRepositoryProvider)
+            .readStatusRef(
+              roomId: _roomId,
+              readStatusId: userId,
+            )
+            .set(const ReadStatus(), SetOptions(merge: true));
       }
     });
   }
@@ -125,8 +129,9 @@ class RoomPageStateNotifierProvider extends StateNotifier<RoomPageState> {
 
   /// 無限スクロールのクエリ
   Query<Message> get _query {
-    var query =
-        MessageRepository.messagesRef(roomId: _roomId).orderBy('createdAt', descending: true);
+    var query = _read(messageRepositoryProvider)
+        .messagesRef(roomId: _roomId)
+        .orderBy('createdAt', descending: true);
     final qds = state.lastVisibleQds;
     if (qds != null) {
       query = query.startAfterDocument(qds);
@@ -161,10 +166,12 @@ class RoomPageStateNotifierProvider extends StateNotifier<RoomPageState> {
       body: body,
     );
     try {
-      await MessageRepository.messageRef(
-        roomId: _roomId,
-        messageId: message.messageId,
-      ).set(message);
+      await _read(messageRepositoryProvider)
+          .messageRef(
+            roomId: _roomId,
+            messageId: message.messageId,
+          )
+          .set(message);
     } on FirebaseException catch (e) {
       _read(scaffoldMessengerController).showSnackBarByFirebaseException(e);
     } finally {

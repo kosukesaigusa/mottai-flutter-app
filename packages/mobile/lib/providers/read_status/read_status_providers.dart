@@ -12,11 +12,11 @@ final readStatusStreamProvider =
   if (userId == null) {
     throw const SignInRequiredException();
   }
-  return MessageRepository.subscribeReadStatus(
-    roomId: roomId,
-    readStatusId: userId,
-    excludePendingWrites: true,
-  );
+  return ref.read(messageRepositoryProvider).subscribeReadStatus(
+        roomId: roomId,
+        readStatusId: userId,
+        excludePendingWrites: true,
+      );
 });
 
 /// 指定した roomId の相手が最後にメッセージ読んだ時間を購読する StreamProvider。
@@ -31,5 +31,7 @@ final partnerReadStatusStreamProvider =
     throw Exception('指定したルームが見つかりませんでした。');
   }
   final partnerId = [room.workerId, room.hostId].firstWhere((id) => id != userId);
-  return MessageRepository.subscribeReadStatus(roomId: roomId, readStatusId: partnerId);
+  return ref
+      .read(messageRepositoryProvider)
+      .subscribeReadStatus(roomId: roomId, readStatusId: partnerId);
 });

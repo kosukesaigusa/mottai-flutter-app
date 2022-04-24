@@ -16,14 +16,15 @@ final playgroundMessageStateNotifierProvider = StateNotifierProvider.autoDispose
     if (userId == null) {
       throw const SignInRequiredException();
     }
-    return PlaygroundMessageStateNotifierProvider()..initialize();
+    return PlaygroundMessageStateNotifierProvider(ref.read)..initialize();
   },
 );
 
 /// PlaygroundMessagePage の状態を管理・操作する StateNotifierProvider
 class PlaygroundMessageStateNotifierProvider extends StateNotifier<PlaygroundMessageState> {
-  PlaygroundMessageStateNotifierProvider() : super(const PlaygroundMessageState());
+  PlaygroundMessageStateNotifierProvider(this._read) : super(const PlaygroundMessageState());
 
+  final Reader _read;
   late StreamSubscription<List<PlaygroundMessage>> _newMessagesSubscription;
   late ScrollController scrollController;
 
@@ -49,11 +50,13 @@ class PlaygroundMessageStateNotifierProvider extends StateNotifier<PlaygroundMes
   /// 読み取り開始時刻以降のメッセージを購読して
   /// 画面に表示する messages に反映させるリスナーを初期化する。
   void _initializeNewMessagesSubscription() {
-    _newMessagesSubscription = PlaygroundMessageRepository.subscribePlaygroundMessages(
+    _newMessagesSubscription = _read(playgroundMessageRepositoryProvider)
+        .subscribePlaygroundMessages(
       queryBuilder: (q) => q
           .orderBy('createdAt', descending: true)
           .where('createdAt', isGreaterThanOrEqualTo: DateTime.now()),
-    ).listen((messages) {
+    )
+        .listen((messages) {
       state = state.copyWith(newMessages: messages);
       _updateMessages();
     });
@@ -95,8 +98,9 @@ class PlaygroundMessageStateNotifierProvider extends StateNotifier<PlaygroundMes
 
   /// 無限スクロールのクエリ
   Query<PlaygroundMessage> get _query {
-    var query =
-        PlaygroundMessageRepository.playgroundMessagesRef.orderBy('createdAt', descending: true);
+    var query = _read(playgroundMessageRepositoryProvider)
+        .playgroundMessagesRef
+        .orderBy('createdAt', descending: true);
     final qds = state.lastVisibleQds;
     if (qds != null) {
       query = query.startAfterDocument(qds);

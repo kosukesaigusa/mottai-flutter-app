@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:mottai_flutter_app/controllers/application/application_state.dart';
-import 'package:mottai_flutter_app/route/main_tabs.dart';
 
-final applicationController = StateNotifierProvider<ApplicationController, ApplicationState>(
-  (ref) => ApplicationController(),
+import '../../route/main_tabs.dart';
+import 'application_state.dart';
+
+final applicationStateNotifier = StateNotifierProvider<ApplicationStateNotifier, ApplicationState>(
+  (ref) => ApplicationStateNotifier(),
 );
 
-class ApplicationController extends StateNotifier<ApplicationState> {
-  ApplicationController() : super(const ApplicationState());
+class ApplicationStateNotifier extends StateNotifier<ApplicationState> {
+  ApplicationStateNotifier() : super(const ApplicationState());
 
   final navigatorKeys = {
     BottomTabEnum.home: GlobalKey<NavigatorState>(),

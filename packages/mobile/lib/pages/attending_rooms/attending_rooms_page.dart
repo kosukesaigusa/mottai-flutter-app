@@ -8,8 +8,11 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:ks_flutter_commons/ks_flutter_commons.dart';
 import 'package:mottai_flutter_app_models/models.dart';
 
-import '../../controllers/scaffold_messenger/scaffold_messenger_controller.dart';
-import '../../providers/providers.dart';
+import '../../providers/attending_room/attending_room_providers.dart';
+import '../../providers/auth/auth_providers.dart';
+import '../../providers/message/message_providers.dart';
+import '../../providers/public_user/public_user_providers.dart';
+import '../../providers/scaffold_messenger/scaffold_messenger_controller.dart';
 import '../../route/utils.dart';
 import '../../theme/theme.dart';
 import '../../utils/utils.dart';

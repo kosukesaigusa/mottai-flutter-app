@@ -6,7 +6,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mottai_flutter_app_models/models.dart';
 
 import '../../../constants/room.dart';
-import '../../providers.dart';
+import '../../auth/auth_providers.dart';
 import 'playground_message_state.dart';
 
 final playgroundMessageStateNotifierProvider = StateNotifierProvider.autoDispose<

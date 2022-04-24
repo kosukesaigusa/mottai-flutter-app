@@ -5,10 +5,10 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../providers/providers.dart';
 import '../../services/auth/auth_service.dart';
 import '../../theme/theme.dart';
 import '../../utils/enums.dart';
+import '../overlay_loading/overlay_loading.dart';
 import '../scaffold_messenger/scaffold_messenger_controller.dart';
 import 'account_page_state.dart';
 

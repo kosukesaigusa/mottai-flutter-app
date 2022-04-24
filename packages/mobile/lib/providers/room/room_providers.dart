@@ -112,12 +112,12 @@ class RoomPageStateNotifierProvider extends StateNotifier<RoomPageState> {
 
   /// SharedPreferences に roomId をキーとした下書きが存在すれば取得する
   Future<String> _getDraftMessageFromSharedPreferences() async {
-    return SharedPreferencesService.getDraftMessage(_roomId);
+    return _read(sharedPreferencesServiceProvider).getDraftMessage(roomId: _roomId);
   }
 
   /// SharedPreferences に roomId をキーとした下書きを保存する
   Future<void> _setDraftMessageFromSharedPreferences() async {
-    await SharedPreferencesService.setDraftMessage(
+    await _read(sharedPreferencesServiceProvider).setDraftMessage(
       roomId: _roomId,
       message: textEditingController.value.text,
     );
@@ -175,7 +175,7 @@ class RoomPageStateNotifierProvider extends StateNotifier<RoomPageState> {
         duration: const Duration(milliseconds: 100),
         curve: Curves.linear,
       );
-      await SharedPreferencesService.removeByStringKey(_roomId);
+      await _read(sharedPreferencesServiceProvider).removeByStringKey(_roomId);
     }
   }
 

@@ -14,7 +14,6 @@ void analyze() {
 /// Dev 版 ipa をビルドして TestFlight に提出する
 @Task('dev-ipa')
 void devIpa() {
-  // TODO: buildName はどこかから取得するか渡すかする
   _buildIos(flavor: Flavor.dev, buildName: '1.0.0');
 }
 

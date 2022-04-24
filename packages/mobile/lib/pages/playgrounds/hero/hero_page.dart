@@ -112,7 +112,7 @@ class GreenContainerPage extends StatelessWidget {
 
 /// ヒーローカードのウィジェット
 class HeroCardWidget extends HookConsumerWidget {
-  const HeroCardWidget({required this.item, this.onTap});
+  const HeroCardWidget({Key? key, required this.item, this.onTap}) : super(key: key);
   final HeroItem item;
   final void Function()? onTap;
 

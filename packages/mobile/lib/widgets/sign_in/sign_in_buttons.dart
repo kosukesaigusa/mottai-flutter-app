@@ -5,7 +5,7 @@ import '../../controllers/account/account_page_controller.dart';
 import '../../utils/enums.dart';
 
 class SocialSignInButton extends HookConsumerWidget {
-  const SocialSignInButton(this.method);
+  const SocialSignInButton({Key? key, required this.method}) : super(key: key);
 
   final SocialSignInMethod method;
 

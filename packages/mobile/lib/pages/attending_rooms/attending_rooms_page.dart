@@ -37,10 +37,10 @@ class _AttendingRoomsPageState extends ConsumerState<AttendingRoomsPage> {
       body: ref.watch(attendingRoomsStreamProvider).when<Widget>(
             loading: () => const PrimarySpinkitCircle(),
             error: (error, stackTrace) {
-              print('=============================');
-              print('⛔️ $error');
-              print(stackTrace);
-              print('=============================');
+              debugPrint('=============================');
+              debugPrint('⛔️ $error');
+              debugPrint(stackTrace.toString());
+              debugPrint('=============================');
               return Center(
                 child: SizedBox(
                   width: 280,
@@ -59,7 +59,8 @@ class _AttendingRoomsPageState extends ConsumerState<AttendingRoomsPage> {
                     ),
                   )
                 : ListView.builder(
-                    itemBuilder: (context, index) => AttendingRoomWidget(attendingRooms[index]),
+                    itemBuilder: (context, index) =>
+                        AttendingRoomWidget(attendingRoom: attendingRooms[index]),
                     itemCount: attendingRooms.length,
                   ),
           ),
@@ -104,7 +105,7 @@ class _AttendingRoomsPageState extends ConsumerState<AttendingRoomsPage> {
 
 /// AttendingRoom ページのひとつひとつのウィジェット
 class AttendingRoomWidget extends HookConsumerWidget {
-  const AttendingRoomWidget(this.attendingRoom);
+  const AttendingRoomWidget({Key? key, required this.attendingRoom}) : super(key: key);
   final AttendingRoom attendingRoom;
 
   @override
@@ -151,10 +152,10 @@ class AttendingRoomWidget extends HookConsumerWidget {
                         ref.watch(messagesStreamProvider(attendingRoom.roomId)).when<Widget>(
                               loading: () => const SizedBox(),
                               error: (error, stackTrace) {
-                                print('=============================');
-                                print('⛔️ $error');
-                                print(stackTrace);
-                                print('=============================');
+                                debugPrint('=============================');
+                                debugPrint('⛔️ $error');
+                                debugPrint(stackTrace.toString());
+                                debugPrint('=============================');
                                 return const SizedBox();
                               },
                               data: (messages) => Text(

@@ -10,7 +10,7 @@ final accountStreamProvider = StreamProvider.autoDispose<Account?>((ref) {
   if (userId == null) {
     return Stream.value(null);
   }
-  return AccountRepository.subscribeAccount(accountId: userId);
+  return ref.read(accountRepositoryProvider).subscribeAccount(accountId: userId);
 });
 
 /// サインイン中のユーザーの account ドキュメントを取得する FutureProvider
@@ -19,7 +19,7 @@ final accountFutureProvider = FutureProvider.autoDispose<Account?>((ref) async {
   if (userId == null) {
     return Future.value(null);
   }
-  final account = await AccountRepository.fetchAccount(accountId: userId);
+  final account = await ref.read(accountRepositoryProvider).fetchAccount(accountId: userId);
   return account;
 });
 
@@ -30,5 +30,5 @@ final accountRefProvider = Provider.autoDispose<DocumentReference<Account>>((ref
   if (userId == null) {
     throw const SignInRequiredException();
   }
-  return AccountRepository.accountRef(accountId: userId);
+  return ref.read(accountRepositoryProvider).accountRef(accountId: userId);
 });

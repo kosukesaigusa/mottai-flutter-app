@@ -37,8 +37,8 @@ class MapPage extends StatefulHookConsumerWidget {
 class _MapPageState extends ConsumerState<MapPage> {
   @override
   Widget build(BuildContext context) {
-    final state = ref.watch(mapPageController);
-    final controller = ref.read(mapPageController.notifier);
+    final state = ref.watch(mapPageStateNotifierProvider);
+    final controller = ref.read(mapPageStateNotifierProvider.notifier);
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
         // TODO: ライトモード・ダークモードの切り替えに対応する。
@@ -103,8 +103,8 @@ class _MapPageState extends ConsumerState<MapPage> {
 
   /// Stack で重ねているデバッグ用のズームレベル、半径のインジケータ
   Widget get _buildStackedTopIndicator {
-    final state = ref.watch(mapPageController);
-    final controller = ref.read(mapPageController.notifier);
+    final state = ref.watch(mapPageStateNotifierProvider);
+    final controller = ref.read(mapPageStateNotifierProvider.notifier);
     return Positioned(
       child: Align(
         alignment: Alignment.topCenter,
@@ -194,8 +194,8 @@ class _MapPageState extends ConsumerState<MapPage> {
 
   /// Stack で重ねている PageView と near_me アイコン部分
   Widget get _buildStackedPageViewWidget {
-    final state = ref.watch(mapPageController);
-    final controller = ref.read(mapPageController.notifier);
+    final state = ref.watch(mapPageStateNotifierProvider);
+    final controller = ref.read(mapPageStateNotifierProvider.notifier);
     return Positioned(
       child: Align(
         alignment: Alignment.bottomCenter,

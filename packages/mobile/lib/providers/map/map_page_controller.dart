@@ -10,14 +10,16 @@ import 'package:rxdart/rxdart.dart';
 import '../../utils/geo.dart';
 import 'map_page_state.dart';
 
-final mapPageController = StateNotifierProvider<MapPageController, MapPageState>(
-  (ref) => MapPageController(),
+final mapPageStateNotifierProvider = StateNotifierProvider<MapPageStateNotifier, MapPageState>(
+  (ref) => MapPageStateNotifier(ref.read),
 );
 
-class MapPageController extends StateNotifier<MapPageState> {
-  MapPageController() : super(const MapPageState()) {
+class MapPageStateNotifier extends StateNotifier<MapPageState> {
+  MapPageStateNotifier(this._read) : super(const MapPageState()) {
     initialize();
   }
+
+  final Reader _read;
 
   /// マップ・ページビュー関係のコントローラなど
   final pageController = PageController(viewportFraction: viewportFraction);
@@ -42,7 +44,7 @@ class MapPageController extends StateNotifier<MapPageState> {
       zoom: state.debugZoomLevel,
     );
     hostLocationsStream = radiusBehaviorSubject.switchMap((radius) {
-      final collectionReference = HostLocationRepository.hostLocationsRef;
+      final collectionReference = _read(hostLocationRepositoryProvider).hostLocationsRef;
       return geo.collectionWithConverter(collectionRef: collectionReference).within(
             center: GeoFirePoint(state.center.latitude, state.center.longitude),
             radius: radius,

@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mottai_flutter_app_models/models.dart';
 
-import '../providers.dart';
+import '../auth/auth_providers.dart';
 
 /// サインイン中のユーザーの account ドキュメントを購読する StreamProvider
 final accountStreamProvider = StreamProvider.autoDispose<Account?>((ref) {

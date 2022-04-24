@@ -7,9 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../controllers/application/application_controller.dart';
-import '../../controllers/bottom_navigation_bar/bottom_navigation_bar_controller.dart';
-import '../../controllers/navigation/navigation_controller.dart';
+import '../../providers/application/application_controller.dart';
+import '../../providers/bottom_navigation_bar/bottom_navigation_bar_controller.dart';
+import '../../providers/navigation/navigation_controller.dart';
 import '../../route/main_tabs.dart';
 import '../../services/firebase_messaging_service.dart';
 import '../../widgets/main/stacked_pages_navigator.dart';
@@ -85,9 +85,10 @@ class _MainPageState extends ConsumerState<MainPage> with WidgetsBindingObserver
                     onTap: (index) {
                       FocusScope.of(context).unfocus();
                       final tab = bottomTabs[index].tab;
-                      final state = ref.watch(bottomNavigationBarController);
-                      final tabNavigatorKey =
-                          ref.watch(applicationController.notifier).navigatorKeys[state.currentTab];
+                      final state = ref.watch(bottomNavigationBarStateNotifier);
+                      final tabNavigatorKey = ref
+                          .watch(applicationStateNotifier.notifier)
+                          .navigatorKeys[state.currentTab];
                       if (tabNavigatorKey == null) {
                         return;
                       }
@@ -96,11 +97,11 @@ class _MainPageState extends ConsumerState<MainPage> with WidgetsBindingObserver
                         return;
                       }
                       ref
-                          .read(bottomNavigationBarController.notifier)
+                          .read(bottomNavigationBarStateNotifier.notifier)
                           .changeTab(index: index, tab: tab);
                     },
                     currentIndex:
-                        ref.watch(bottomNavigationBarController.select((c) => c.currentIndex)),
+                        ref.watch(bottomNavigationBarStateNotifier.select((c) => c.currentIndex)),
                     items: [
                       for (final item in bottomTabs)
                         BottomNavigationBarItem(
@@ -117,7 +118,7 @@ class _MainPageState extends ConsumerState<MainPage> with WidgetsBindingObserver
 
   /// MainPage の BottomNavigationBar で切り替える 3 つの画面
   Widget _buildStackedPages(BottomTab tab) {
-    final currentIndex = ref.watch(bottomNavigationBarController).currentIndex;
+    final currentIndex = ref.watch(bottomNavigationBarStateNotifier).currentIndex;
     final currentTab = bottomTabs[currentIndex];
     return Offstage(
       offstage: tab != currentTab,

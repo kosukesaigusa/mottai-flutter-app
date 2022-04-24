@@ -6,10 +6,10 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mottai_flutter_app_models/models.dart';
 
 import '../../constants/room.dart';
-import '../../controllers/scaffold_messenger/scaffold_messenger_controller.dart';
 import '../../services/shared_preferences_service.dart';
 import '../../utils/utils.dart';
-import '../providers.dart';
+import '../auth/auth_providers.dart';
+import '../scaffold_messenger/scaffold_messenger_controller.dart';
 import 'room_page_state.dart';
 
 /// 指定した roomId の Room ドキュメントを購読する StreamProvider

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:mottai_flutter_app/controllers/application/application_controller.dart';
-import 'package:mottai_flutter_app/pages/main/main_page.dart';
-import 'package:mottai_flutter_app/pages/not_found/not_found_page.dart';
-import 'package:mottai_flutter_app/route/app_router.dart';
-import 'package:mottai_flutter_app/route/main_tabs.dart';
-import 'package:mottai_flutter_app/route/routes.dart';
+
+import '../../pages/main/main_page.dart';
+import '../../pages/not_found/not_found_page.dart';
+import '../../providers/application/application_controller.dart';
+import '../../route/app_router.dart';
+import '../../route/main_tabs.dart';
+import '../../route/routes.dart';
 
 final appRouter = AppRouter.create(routeBuilder);
 
@@ -20,7 +21,7 @@ class MainStackedPagesNavigator extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Navigator(
-      key: ref.watch(applicationController.notifier).navigatorKeys[tab.tab],
+      key: ref.watch(applicationStateNotifier.notifier).navigatorKeys[tab.tab],
       initialRoute: MainPage.path,
       observers: [
         HeroController(),

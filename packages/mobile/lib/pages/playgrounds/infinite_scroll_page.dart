@@ -5,7 +5,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:ks_flutter_commons/ks_flutter_commons.dart';
 import 'package:mottai_flutter_app_models/models.dart';
 
-import '../../providers/providers.dart';
+import '../../providers/playgrounds/playground_message/playground_message_providers.dart';
 import '../../theme/theme.dart';
 import '../../utils/utils.dart';
 

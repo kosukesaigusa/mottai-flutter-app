@@ -12,7 +12,7 @@ import 'package:mottai_flutter_app_models/models.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 import '../../constants/string.dart';
-import '../../controllers/firebase/firebase_task_result.dart';
+import '../../models/firebase/firebase_task_result.dart';
 
 final authRepository = Provider.autoDispose((ref) => AuthRepository());
 

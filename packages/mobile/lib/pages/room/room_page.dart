@@ -5,7 +5,10 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:ks_flutter_commons/ks_flutter_commons.dart';
 import 'package:mottai_flutter_app_models/models.dart';
 
-import '../../providers/providers.dart';
+import '../../providers/auth/auth_providers.dart';
+import '../../providers/public_user/public_user_providers.dart';
+import '../../providers/read_status/read_status_providers.dart';
+import '../../providers/room/room_providers.dart';
 import '../../route/utils.dart';
 import '../../theme/theme.dart';
 import '../../utils/enums.dart';
@@ -103,11 +106,12 @@ class _RoomPageState extends ConsumerState<RoomPage> {
 /// メッセージ、日付、相手のアイコン、送信日時のウィジェット
 class MessageWidget extends HookConsumerWidget {
   const MessageWidget({
+    Key? key,
     required this.roomId,
     required this.message,
     required this.showDate,
     required this.senderType,
-  });
+  }) : super(key: key);
 
   final String roomId;
   final Message message;
@@ -228,7 +232,7 @@ class MessageWidget extends HookConsumerWidget {
 
 /// ルームページのメッセージ入力欄のウィジェット
 class RoomMessageInputWidget extends HookConsumerWidget {
-  const RoomMessageInputWidget({required this.roomId});
+  const RoomMessageInputWidget({Key? key, required this.roomId}) : super(key: key);
   final String roomId;
 
   @override

@@ -20,8 +20,8 @@ class NavigationController {
     required String path,
     required Map<String, dynamic> data,
   }) async {
-    final currentTab = _read(bottomNavigationBarController).currentTab;
-    final navigatorKey = _read(applicationController.notifier).navigatorKeys[currentTab];
+    final currentTab = _read(bottomNavigationBarStateNotifier).currentTab;
+    final navigatorKey = _read(applicationStateNotifier.notifier).navigatorKeys[currentTab];
     await navigatorKey?.currentState?.pushNamed<void>(path, arguments: RouteArguments(data));
   }
 
@@ -32,23 +32,25 @@ class NavigationController {
     required String path,
     required Map<String, dynamic> data,
   }) async {
-    final currentTab = _read(bottomNavigationBarController).currentTab;
-    final currentNavigatorKey = _read(applicationController.notifier).navigatorKeys[currentTab];
+    final currentTab = _read(bottomNavigationBarStateNotifier).currentTab;
+    final currentNavigatorKey = _read(applicationStateNotifier.notifier).navigatorKeys[currentTab];
     final currentContext = currentNavigatorKey?.currentContext;
     if (currentContext == null) {
       return;
     }
     Navigator.popUntil(currentContext, (route) => route.isFirst);
-    // _read(bottomNavigationBarController.notifier).changeTab(index: getIndexByTab(tab), tab: tab);
-    // final navigatorKey = _read(applicationController.notifier).navigatorKeys[tab];
+    // _read(bottomNavigationBarStateNotifier.notifier).changeTab(index: getIndexByTab(tab), tab: tab);
+    // final navigatorKey = _read(applicationStateNotifier.notifier).navigatorKeys[tab];
     // await navigatorKey?.currentState?.pushNamed<void>(path, arguments: RouteArguments(data));
     if (bottomTabs.map((bottomTab) => bottomTab.path).toList().contains(path)) {
       // 指定されたパスが MainPage のいずれかのページのパスと一致する場合には新しい画面をプッシュせずに
       // アクティブなタブを変更だけして終わりにする。
-      _read(bottomNavigationBarController.notifier).changeTab(index: getIndexByTab(tab), tab: tab);
+      _read(bottomNavigationBarStateNotifier.notifier)
+          .changeTab(index: getIndexByTab(tab), tab: tab);
     } else {
-      _read(bottomNavigationBarController.notifier).changeTab(index: getIndexByTab(tab), tab: tab);
-      final navigatorKey = _read(applicationController.notifier).navigatorKeys[tab];
+      _read(bottomNavigationBarStateNotifier.notifier)
+          .changeTab(index: getIndexByTab(tab), tab: tab);
+      final navigatorKey = _read(applicationStateNotifier.notifier).navigatorKeys[tab];
       await navigatorKey?.currentState?.pushNamed<void>(path, arguments: RouteArguments(data));
     }
   }

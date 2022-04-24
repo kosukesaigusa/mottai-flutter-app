@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'constants/localization.dart';
+import 'constants/string.dart';
 import 'scaffold_messenger_navigator.dart';
 
 /// MaterialApp を返すウィジェット。
@@ -16,14 +17,14 @@ class App extends StatelessWidget {
       locale: locale,
       localizationsDelegates: localizationsDelegates,
       supportedLocales: const [locale],
-      title: 'NPO MOTTAI',
+      title: appTitle,
       theme: ThemeData(primarySwatch: Colors.blue).copyWith(
         sliderTheme: SliderThemeData(overlayShape: SliderComponentShape.noOverlay),
       ),
       home: const ScaffoldMessengerNavigator(),
       builder: (context, child) {
         return MediaQuery(
-          // 端末依存のフォントスケールを 1 に固定
+          // 端末依存のフォントスケールを 1 に固定する
           data: MediaQuery.of(context).copyWith(textScaleFactor: 1),
           child: child!,
         );

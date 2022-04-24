@@ -16,7 +16,7 @@ import '../../providers/scaffold_messenger/scaffold_messenger_controller.dart';
 import '../../route/utils.dart';
 import '../../theme/theme.dart';
 import '../../utils/utils.dart';
-import '../../widgets/common/loading.dart';
+import '../../widgets/loading/loading.dart';
 import '../room/room_page.dart';
 
 class AttendingRoomsPage extends StatefulHookConsumerWidget {

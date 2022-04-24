@@ -9,7 +9,7 @@ import 'package:mottai_flutter_app_models/models.dart';
 import '../../providers/map/map_page_controller.dart';
 import '../../theme/theme.dart';
 import '../../utils/geo.dart';
-import '../../widgets/common/loading.dart';
+import '../../widgets/loading/loading.dart';
 
 const double stackedGreyBackgroundHeight = 200;
 const double stackedGreyBackgroundBorderRadius = 36;

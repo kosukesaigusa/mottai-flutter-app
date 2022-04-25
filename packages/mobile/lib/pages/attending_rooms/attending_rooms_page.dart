@@ -13,7 +13,7 @@ import '../../providers/auth/auth.dart';
 import '../../providers/message/message.dart';
 import '../../providers/public_user/public_user_providers.dart';
 import '../../route/utils.dart';
-import '../../services/scaffold_messenger_controller.dart';
+import '../../services/scaffold_messenger_service.dart';
 import '../../theme/theme.dart';
 import '../../utils/utils.dart';
 import '../../widgets/loading/loading.dart';

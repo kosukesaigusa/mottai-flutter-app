@@ -6,7 +6,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:ks_flutter_commons/ks_flutter_commons.dart';
 import 'package:mottai_flutter_app_models/models.dart';
 
-import '../../providers/map/map_page_controller.dart';
+import '../../providers/map/map_page.dart';
 import '../../theme/theme.dart';
 import '../../utils/geo.dart';
 import '../../widgets/loading/loading.dart';

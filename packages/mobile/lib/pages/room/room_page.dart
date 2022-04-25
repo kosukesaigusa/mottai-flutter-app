@@ -5,7 +5,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:ks_flutter_commons/ks_flutter_commons.dart';
 import 'package:mottai_flutter_app_models/models.dart';
 
-import '../../providers/auth/auth_providers.dart';
+import '../../providers/auth/auth.dart';
 import '../../providers/public_user/public_user_providers.dart';
 import '../../providers/read_status/read_status_providers.dart';
 import '../../providers/room/room_providers.dart';

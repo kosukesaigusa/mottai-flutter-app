@@ -184,11 +184,9 @@ class AuthRepository {
         displayName: twitterAuthResult.user!.name,
         imageURL: twitterAuthResult.user!.thumbnailImage,
       );
-    } on PlatformException catch (e) {
-      print(e);
+    } on PlatformException {
       rethrow;
-    } on Exception catch (e) {
-      print(e);
+    } on Exception {
       rethrow;
     }
   }

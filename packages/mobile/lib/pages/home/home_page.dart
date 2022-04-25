@@ -4,9 +4,9 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:ks_flutter_commons/ks_flutter_commons.dart';
 
 import '../../hooks/package_info_state.dart';
-import '../../providers/scaffold_messenger/scaffold_messenger_controller.dart';
 import '../../route/utils.dart';
 import '../../services/firebase_messaging_service.dart';
+import '../../services/scaffold_messenger_controller.dart';
 import '../../theme/theme.dart';
 import '../../utils/utils.dart';
 import '../playgrounds/playground_page.dart';
@@ -49,7 +49,9 @@ class HomePageState extends ConsumerState<HomePage> {
                 await db.collection('testNotificationRequests').doc(uuid).set(<String, dynamic>{
                   'token': ref.read(fcmServiceProvider).getToken,
                 });
-                ref.read(scaffoldMessengerController).showSnackBar('テスト通知をリクエストしました。まもなく通知が送られます。');
+                ref
+                    .read(scaffoldMessengerServiceProvider)
+                    .showSnackBar('テスト通知をリクエストしました。まもなく通知が送られます。');
               },
               icon: const Icon(Icons.notifications),
               label: const Text('テスト通知を受け取る'),

@@ -4,9 +4,9 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'pages/not_found/not_found_page.dart';
 import 'providers/overlay_loading/overlay_loading.dart';
-import 'providers/scaffold_messenger/scaffold_messenger_controller.dart';
 import 'route/app_router.dart';
 import 'route/routes.dart';
+import 'services/scaffold_messenger_controller.dart';
 import 'widgets/loading/loading.dart';
 
 final appRouter = AppRouter.create(routeBuilder);
@@ -21,12 +21,12 @@ class ScaffoldMessengerNavigator extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return KeyboardVisibilityProvider(
       child: ScaffoldMessenger(
-        key: ref.watch(scaffoldMessengerController.select((c) => c.scaffoldMessengerKey)),
+        key: ref.watch(scaffoldMessengerServiceProvider.select((c) => c.scaffoldMessengerKey)),
         child: Scaffold(
           body: Stack(
             children: [
               Navigator(
-                key: ref.watch(scaffoldMessengerController.select((c) => c.navigatorKey)),
+                key: ref.watch(scaffoldMessengerServiceProvider.select((c) => c.navigatorKey)),
                 initialRoute: AppRouter.initialRoute,
                 onGenerateRoute: appRouter.generateRoute,
                 observers: const [],

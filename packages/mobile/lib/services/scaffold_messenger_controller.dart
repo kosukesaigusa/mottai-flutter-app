@@ -2,22 +2,24 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../constants/snack_bar.dart';
+import '../constants/snack_bar.dart';
 
-final scaffoldMessengerController = Provider.autoDispose((ref) => ScaffoldMessengerController());
+final scaffoldMessengerServiceProvider = Provider.autoDispose((ref) => ScaffoldMessengerService());
 
 /// ScaffoldMessenger 上でスナックバーやダイアログを表示するためのコントローラ
-class ScaffoldMessengerController {
+class ScaffoldMessengerService {
   final scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
   final navigatorKey = GlobalKey<NavigatorState>();
 
-  /// アラートダイアログを表示する
-  Future<void> showAlertDialog<T>({required AlertDialog alertDialog}) {
+  /// showDialog で指定したビルダー関数を返す。
+  Future<void> showDialogByBuilder<T>({
+    required Widget Function(BuildContext) builder,
+    bool barrierDismissible = true,
+  }) {
     return showDialog<T>(
       context: scaffoldMessengerKey.currentContext!,
-      builder: (context) {
-        return alertDialog;
-      },
+      barrierDismissible: barrierDismissible,
+      builder: builder,
     );
   }
 

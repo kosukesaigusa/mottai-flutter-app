@@ -1,7 +1,7 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mottai_flutter_app_models/models.dart';
 
-import '../auth/auth_providers.dart';
+import '../auth/auth.dart';
 import '../room/room_providers.dart';
 
 /// 指定した roomId の rooms/{roomId}/readStatus/{自分の userId}

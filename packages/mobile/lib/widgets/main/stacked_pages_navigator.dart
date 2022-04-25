@@ -3,7 +3,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../pages/main/main_page.dart';
 import '../../pages/not_found/not_found_page.dart';
-import '../../providers/application/application_controller.dart';
+import '../../providers/application/application.dart';
 import '../../route/app_router.dart';
 import '../../route/main_tabs.dart';
 import '../../route/routes.dart';
@@ -21,7 +21,7 @@ class MainStackedPagesNavigator extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Navigator(
-      key: ref.watch(applicationStateNotifier.notifier).navigatorKeys[tab.tab],
+      key: ref.watch(applicationStateNotifier.notifier).bottomTabKeys[tab.tab],
       initialRoute: MainPage.path,
       observers: [
         HeroController(),

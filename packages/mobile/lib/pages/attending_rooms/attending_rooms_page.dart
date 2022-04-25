@@ -36,11 +36,7 @@ class _AttendingRoomsPageState extends ConsumerState<AttendingRoomsPage> {
       appBar: AppBar(),
       body: ref.watch(attendingRoomsStreamProvider).when<Widget>(
             loading: () => const PrimarySpinkitCircle(),
-            error: (error, stackTrace) {
-              debugPrint('=============================');
-              debugPrint('⛔️ $error');
-              debugPrint(stackTrace.toString());
-              debugPrint('=============================');
+            error: (error, __) {
               return Center(
                 child: SizedBox(
                   width: 280,

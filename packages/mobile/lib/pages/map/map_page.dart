@@ -92,11 +92,6 @@ class _MapPageState extends ConsumerState<MapPage> {
                 ],
               )
             : const PrimarySpinkitCircle(),
-        // floatingActionButton: FloatingActionButton(
-        //   onPressed: () async {
-        //     await setSeedLocationData();
-        //   },
-        // ),
       ),
     );
   }

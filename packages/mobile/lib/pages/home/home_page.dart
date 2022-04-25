@@ -6,7 +6,7 @@ import 'package:ks_flutter_commons/ks_flutter_commons.dart';
 import '../../hooks/package_info_state.dart';
 import '../../route/utils.dart';
 import '../../services/firebase_messaging_service.dart';
-import '../../services/scaffold_messenger_controller.dart';
+import '../../services/scaffold_messenger_service.dart';
 import '../../theme/theme.dart';
 import '../../utils/utils.dart';
 import '../playgrounds/playground_page.dart';

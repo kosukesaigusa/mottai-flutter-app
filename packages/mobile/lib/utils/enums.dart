@@ -2,22 +2,45 @@
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
-/// Dart Define で定義する環境変数のキー名
-// enum EnvironmentVariable {
-//   FLAVOR,
-//   LINE_CHANNEL_ID,
-// }
+import 'package:gap/gap.dart';
 
 /// ソーシャルログインの種類
 enum SocialSignInMethod {
   Google,
   Apple,
   LINE,
+  Twitter,
 }
 
 /// ソーシャルログインごとのボタン・アイコンウィジェットの Extension
 extension SocialSignInMethodExtension on SocialSignInMethod {
+  IconData get iconData {
+    switch (this) {
+      case SocialSignInMethod.Google:
+        return FontAwesomeIcons.google;
+      case SocialSignInMethod.Apple:
+        return FontAwesomeIcons.apple;
+      case SocialSignInMethod.LINE:
+        return FontAwesomeIcons.line;
+      case SocialSignInMethod.Twitter:
+        return FontAwesomeIcons.twitter;
+    }
+  }
+
+  Color get iconColor {
+    switch (this) {
+      case SocialSignInMethod.Google:
+        return const Color(0xff3369E8);
+      case SocialSignInMethod.Apple:
+        return Colors.black;
+      case SocialSignInMethod.LINE:
+        return const Color(0xff00ba52);
+      case SocialSignInMethod.Twitter:
+        return const Color(0xff1da1f2);
+    }
+  }
+
+  /// それぞれのソーシャルログインをするボタンのアイコンウィジェット
   Widget get buttonIcon {
     switch (this) {
       case SocialSignInMethod.Google:
@@ -35,19 +58,24 @@ extension SocialSignInMethodExtension on SocialSignInMethod {
           ),
         );
       case SocialSignInMethod.Apple:
-        return const Icon(
-          FontAwesomeIcons.apple,
-          size: 20,
-          color: Colors.black,
-        );
       case SocialSignInMethod.LINE:
-        return const Icon(
-          FontAwesomeIcons.line,
-          size: 20,
-          color: Color(0xff00ba52),
-        );
+      case SocialSignInMethod.Twitter:
+        return Icon(iconData, size: 20, color: iconColor);
     }
   }
+
+  /// それぞれのソーシャルログイン連携済みのウィジェト
+  Widget get connectedSocialAccountWidget => Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          FaIcon(iconData, size: 12, color: iconColor),
+          const Gap(8),
+          Text(
+            '$name 連携済み',
+            style: const TextStyle(color: Color.fromRGBO(0, 0, 0, 0.54)),
+          ),
+        ],
+      );
 }
 
 /// メッセージの送信者（自分か相手か）

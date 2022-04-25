@@ -57,7 +57,7 @@ class AccountPageController extends StateNotifier<AccountPageState> {
       await _read(authService).signInWithSocialAccount(method);
       _read(scaffoldMessengerController).showSnackBar('サインインしました。');
     } on PlatformException catch (e) {
-      _read(scaffoldMessengerController).showSnackBar('[${e.code}] キャンセルしました。');
+      _read(scaffoldMessengerController).showSnackBar('[${e.code}] サインインに失敗しました。(${e.toString()})');
     } on FirebaseException catch (e) {
       _read(scaffoldMessengerController).showSnackBarByFirebaseException(e);
     } on Exception {

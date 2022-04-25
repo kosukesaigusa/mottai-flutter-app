@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:ks_flutter_commons/ks_flutter_commons.dart';
@@ -164,60 +163,14 @@ class AccountPage extends HookConsumerWidget {
                 }
                 final providers = account.providers;
                 return Column(
-                  children: [
-                    if (providers.contains(SocialSignInMethod.Google.name)) ...[
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: const [
-                          FaIcon(
-                            FontAwesomeIcons.google,
-                            size: 12,
-                            color: Color(0xff3369E8),
-                          ),
-                          Gap(8),
-                          Text(
-                            'Google 連携済み',
-                            style: TextStyle(color: Color.fromRGBO(0, 0, 0, 0.54)),
-                          ),
-                        ],
-                      ),
-                      const Gap(8),
-                    ],
-                    if (providers.contains(SocialSignInMethod.Apple.name)) ...[
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: const [
-                          FaIcon(
-                            FontAwesomeIcons.apple,
-                            size: 16,
-                            color: Colors.black,
-                          ),
-                          Gap(8),
-                          Text(
-                            'Apple 連携済み',
-                            style: TextStyle(color: Color.fromRGBO(0, 0, 0, 0.54)),
-                          ),
-                        ],
-                      ),
-                      const Gap(8),
-                    ],
-                    if (providers.contains(SocialSignInMethod.LINE.name))
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: const [
-                          FaIcon(
-                            FontAwesomeIcons.line,
-                            size: 16,
-                            color: Color(0xff00ba52),
-                          ),
-                          Gap(8),
-                          Text(
-                            'LINE 連携済み',
-                            style: TextStyle(color: Color.fromRGBO(0, 0, 0, 0.54)),
-                          ),
-                        ],
-                      ),
-                  ],
+                  children: SocialSignInMethod.values
+                      .map(
+                        (method) => providers.contains(method.name)
+                            ? [method.connectedSocialAccountWidget, const Gap(8)]
+                            : [const SizedBox()],
+                      )
+                      .expand((element) => element)
+                      .toList(),
                 );
               },
             );
@@ -235,17 +188,23 @@ class AccountPage extends HookConsumerWidget {
               data: (account) {
                 if (account == null) {
                   return Column(
-                    children: const [
-                      SocialSignInButton(method: SocialSignInMethod.Google),
-                      Gap(8),
-                      SocialSignInButton(method: SocialSignInMethod.Apple),
-                      Gap(8),
-                      SocialSignInButton(method: SocialSignInMethod.LINE),
+                    children: [
+                      for (final method in SocialSignInMethod.values) ...[
+                        SocialSignInButton(method: method),
+                        const Gap(8)
+                      ],
                     ],
                   );
                 }
                 final providers = account.providers;
                 final isHost = account.isHost;
+                final test = SocialSignInMethod.values
+                    .map(
+                      (method) => !providers.contains(method)
+                          ? SocialSignInButton(method: method)
+                          : const SizedBox(),
+                    )
+                    .toList();
                 return isHost
                     ? const SizedBox()
                     : Column(
@@ -264,12 +223,13 @@ class AccountPage extends HookConsumerWidget {
                                 const Expanded(child: Divider()),
                               ]),
                             ),
-                          if (!providers.contains(SocialSignInMethod.Google.name))
-                            const SocialSignInButton(method: SocialSignInMethod.Google),
-                          if (!providers.contains(SocialSignInMethod.Apple.name))
-                            const SocialSignInButton(method: SocialSignInMethod.Apple),
-                          if (!providers.contains(SocialSignInMethod.LINE.name))
-                            const SocialSignInButton(method: SocialSignInMethod.LINE),
+                          ...SocialSignInMethod.values
+                              .map(
+                                (method) => !providers.contains(method.name)
+                                    ? SocialSignInButton(method: method)
+                                    : const SizedBox(),
+                              )
+                              .toList(),
                         ],
                       );
               },

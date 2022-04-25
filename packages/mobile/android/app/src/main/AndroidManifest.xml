@@ -27,7 +27,13 @@
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
                 <data android:host="com.kosukesaigusa" android:scheme="https"/>
+                <!-- Twitter ログインのために追加 -->
+                <!-- https://pub.dev/packages/twitter_login -->
+                <!-- Accepts URIs that begin with "example://gizmos” -->
+                <!-- Registered Callback URLs in TwitterApp -->
+                <data android:host="" android:scheme="com.kosukesaigusa.mottaiFlutterApp.dev" />
             </intent-filter>
+            
         </activity>
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->

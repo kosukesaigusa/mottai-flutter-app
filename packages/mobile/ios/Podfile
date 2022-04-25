@@ -32,7 +32,7 @@ target 'Runner' do
   # tag で指定するバージョンは下記の 2 つのリンクも参照する
   # README.md: https://github.com/invertase/firestore-ios-sdk-frameworks
   # https://github.com/FirebaseExtended/flutterfire/blob/master/packages/firebase_core/firebase_core/ios/firebase_sdk_version.rb
-  pod 'FirebaseFirestore', :git => 'https://github.com/invertase/firestore-ios-sdk-frameworks.git', :tag => '8.11.0'
+  pod 'FirebaseFirestore', :git => 'https://github.com/invertase/firestore-ios-sdk-frameworks.git', :tag => '8.15.0'
   use_frameworks!
   use_modular_headers!
 

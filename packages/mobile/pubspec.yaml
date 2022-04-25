@@ -5,7 +5,7 @@ publish_to: 'none'
 version: 1.0.0+1
 
 environment:
-  sdk: '>=2.15.1 <3.0.0'
+  sdk: '>=2.16.0 <3.0.0'
 
 dependencies:
   cached_network_image:
@@ -14,7 +14,6 @@ dependencies:
   connectivity_plus:
   crypto:
   cupertino_icons:
-  dart_geohash:
   firebase_analytics:
   firebase_auth:
   firebase_core:
@@ -33,12 +32,10 @@ dependencies:
   flutter_signin_button:
   flutter_spinkit:
   flutter_state_notifier:
-  flutterfire_ui:
   font_awesome_flutter:
   freezed:
   freezed_annotation:
   gap:
-  # geoflutterfire: ^3.0.3
   geoflutterfire:
     path: ../geoflutterfire
   geolocator:
@@ -61,6 +58,8 @@ dependencies:
   shared_preferences:
   sign_in_with_apple:
   state_notifier:
+  twitter_login:
+    path: ../twitter_login
   url_launcher:
   uuid:
   wechat_assets_picker:

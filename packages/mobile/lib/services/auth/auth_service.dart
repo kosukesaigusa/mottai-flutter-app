@@ -19,7 +19,6 @@ final authService = Provider.autoDispose((ref) => AuthService(ref.read));
 /// このサービスクラスは AuthRepository とやり取りをしたり、
 /// 必要によっては SharedPreferencesService とやり取りをしたりして、
 /// 結果をコントローラに返す。
-/// クラス名はこれが最適かどうかは確信がない。
 class AuthService {
   AuthService(this._read);
   final Reader _read;
@@ -43,16 +42,10 @@ class AuthService {
     }
   }
 
+  /// 指定したソーシャルアカウントでログインする。
   Future<void> signInWithSocialAccount(SocialSignInMethod method) async {
     try {
-      AuthResult? result;
-      if (method == SocialSignInMethod.Google) {
-        result = await signInWithGoogle();
-      } else if (method == SocialSignInMethod.Apple) {
-        result = await signInWithApple();
-      } else if (method == SocialSignInMethod.LINE) {
-        result = await signInWithLINE();
-      }
+      final result = await _signInWithSocialAccount(method);
       final userCredential = result?.userCredential;
       if (userCredential == null) {
         throw Exception();
@@ -72,13 +65,35 @@ class AuthService {
     }
   }
 
+  /// 指定したソーシャルログインを実行する。
+  Future<AuthResult?> _signInWithSocialAccount(SocialSignInMethod method) async {
+    try {
+      switch (method) {
+        case SocialSignInMethod.Google:
+          return _read(authRepositoryProvider).signInWithGoogle();
+        case SocialSignInMethod.Apple:
+          return _read(authRepositoryProvider).signInWithApple();
+        case SocialSignInMethod.LINE:
+          return _read(authRepositoryProvider).signInWithLINE();
+        case SocialSignInMethod.Twitter:
+          return _read(authRepositoryProvider).signInWithTwitter();
+      }
+    } on PlatformException {
+      rethrow;
+    } on FirebaseException {
+      rethrow;
+    } on Exception {
+      rethrow;
+    }
+  }
+
   /// メールアドレスとパスワードでサインインする。
   Future<UserCredential?> _signInWithEmailAndPassword({
     required String email,
     required String password,
   }) async {
     try {
-      final result = await _read(authRepository).signInWithEmailAndPassword(
+      final result = await _read(authRepositoryProvider).signInWithEmailAndPassword(
         email: email,
         password: password,
       );
@@ -94,51 +109,11 @@ class AuthService {
     }
   }
 
-  /// Google でサインインする。
-  Future<AuthResult?> signInWithGoogle() async {
-    try {
-      final result = await _read(authRepository).signInWithGoogle();
-      return result;
-    } on PlatformException {
-      rethrow;
-    } on Exception {
-      rethrow;
-    }
-  }
-
-  // Apple でサインインする。
-  Future<AuthResult?> signInWithApple() async {
-    try {
-      final result = await _read(authRepository).signInWithApple();
-      return result;
-    } on PlatformException {
-      rethrow;
-    } on FirebaseException {
-      rethrow;
-    } on Exception {
-      rethrow;
-    }
-  }
-
-  // LINE でサインインする。
-  Future<AuthResult?> signInWithLINE() async {
-    try {
-      final result = await _read(authRepository).signInWithLINE();
-      return result;
-    } on PlatformException {
-      rethrow;
-    } on FirebaseException {
-      rethrow;
-    } on Exception {
-      rethrow;
-    }
-  }
-
   /// サインアウトする。
   Future<void> signOut() async {
     try {
       await _removeFcmToken();
-      await _read(authRepository).signOut();
+      await _read(authRepositoryProvider).signOut();
     } on PlatformException {
       rethrow;
     } on FirebaseException {

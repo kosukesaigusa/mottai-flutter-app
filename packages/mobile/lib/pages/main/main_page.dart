@@ -7,9 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../providers/application/application_controller.dart';
-import '../../providers/bottom_navigation_bar/bottom_navigation_bar_controller.dart';
-import '../../providers/navigation/navigation_controller.dart';
+import '../../providers/application/application.dart';
+import '../../providers/bottom_navigation_bar/bottom_navigation_bar.dart';
+import '../../providers/navigation/navigation.dart';
 import '../../route/main_tabs.dart';
 import '../../services/firebase_messaging_service.dart';
 import '../../widgets/main/stacked_pages_navigator.dart';
@@ -88,7 +88,7 @@ class _MainPageState extends ConsumerState<MainPage> with WidgetsBindingObserver
                       final state = ref.watch(bottomNavigationBarStateNotifier);
                       final tabNavigatorKey = ref
                           .watch(applicationStateNotifier.notifier)
-                          .navigatorKeys[state.currentTab];
+                          .bottomTabKeys[state.currentTab];
                       if (tabNavigatorKey == null) {
                         return;
                       }
@@ -146,7 +146,7 @@ class _MainPageState extends ConsumerState<MainPage> with WidgetsBindingObserver
       debugPrint('data: $data');
       debugPrint('*****************************');
       if (remoteMessage.data.containsKey('path')) {
-        await ref.read(navigationController).pushOnCurrentTab(path: path, data: data);
+        await ref.read(navigationServiceProvider).pushOnCurrentTab(path: path, data: data);
       }
     }
 
@@ -161,7 +161,7 @@ class _MainPageState extends ConsumerState<MainPage> with WidgetsBindingObserver
         debugPrint('path: $path');
         debugPrint('data: $data');
         debugPrint('*****************************');
-        await ref.read(navigationController).pushOnCurrentTab(path: path, data: data);
+        await ref.read(navigationServiceProvider).pushOnCurrentTab(path: path, data: data);
       }
     });
   }
@@ -173,8 +173,8 @@ class _MainPageState extends ConsumerState<MainPage> with WidgetsBindingObserver
       (pendingDynamicLinkData) async {
         debugPrint('🔗 Open app from Firebase Dynamic Links when background.');
         await ref
-            .read(navigationController)
-            .popUntilFirstRouteAndPushOnSpecifiedTabByDynamicLink(pendingDynamicLinkData.link);
+            .read(navigationServiceProvider)
+            .popUntilFirstRouteAndPushOnSpecifiedTabByUri(pendingDynamicLinkData.link);
       },
     );
 
@@ -183,8 +183,8 @@ class _MainPageState extends ConsumerState<MainPage> with WidgetsBindingObserver
     if (pendingDynamicLinkData != null) {
       debugPrint('🔗 Open app from Firebase Dynamic Links when terminated.');
       await ref
-          .read(navigationController)
-          .popUntilFirstRouteAndPushOnSpecifiedTabByDynamicLink(pendingDynamicLinkData.link);
+          .read(navigationServiceProvider)
+          .popUntilFirstRouteAndPushOnSpecifiedTabByUri(pendingDynamicLinkData.link);
     }
   }
 }

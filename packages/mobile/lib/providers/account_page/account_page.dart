@@ -5,11 +5,11 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../services/auth/auth_service.dart';
+import '../../services/auth_service.dart';
+import '../../services/scaffold_messenger_controller.dart';
 import '../../theme/theme.dart';
 import '../../utils/enums.dart';
 import '../overlay_loading/overlay_loading.dart';
-import '../scaffold_messenger/scaffold_messenger_controller.dart';
 import 'account_page_state.dart';
 
 final accountPageController = StateNotifierProvider<AccountPageController, AccountPageState>(
@@ -32,13 +32,13 @@ class AccountPageController extends StateNotifier<AccountPageState> {
     _read(overlayLoadingProvider.notifier).update((s) => true);
     try {
       await _read(authService).signInWithEmailAndPassword(email: email, password: password);
-      _read(scaffoldMessengerController).showSnackBar('サインインしました。');
+      _read(scaffoldMessengerServiceProvider).showSnackBar('サインインしました。');
     } on PlatformException catch (e) {
-      _read(scaffoldMessengerController).showSnackBar('[${e.code}] キャンセルしました。');
+      _read(scaffoldMessengerServiceProvider).showSnackBar('[${e.code}] キャンセルしました。');
     } on FirebaseException catch (e) {
-      _read(scaffoldMessengerController).showSnackBarByFirebaseException(e);
+      _read(scaffoldMessengerServiceProvider).showSnackBarByFirebaseException(e);
     } on Exception {
-      _read(scaffoldMessengerController).showSnackBar('サインインに失敗しました。');
+      _read(scaffoldMessengerServiceProvider).showSnackBar('サインインに失敗しました。');
     } finally {
       _read(overlayLoadingProvider.notifier).update((s) => false);
     }
@@ -55,13 +55,14 @@ class AccountPageController extends StateNotifier<AccountPageState> {
     _read(overlayLoadingProvider.notifier).update((s) => true);
     try {
       await _read(authService).signInWithSocialAccount(method);
-      _read(scaffoldMessengerController).showSnackBar('サインインしました。');
+      _read(scaffoldMessengerServiceProvider).showSnackBar('サインインしました。');
     } on PlatformException catch (e) {
-      _read(scaffoldMessengerController).showSnackBar('[${e.code}] サインインに失敗しました。(${e.toString()})');
+      _read(scaffoldMessengerServiceProvider)
+          .showSnackBar('[${e.code}] サインインに失敗しました。(${e.toString()})');
     } on FirebaseException catch (e) {
-      _read(scaffoldMessengerController).showSnackBarByFirebaseException(e);
+      _read(scaffoldMessengerServiceProvider).showSnackBarByFirebaseException(e);
     } on Exception {
-      _read(scaffoldMessengerController).showSnackBar('サインインに失敗しました。');
+      _read(scaffoldMessengerServiceProvider).showSnackBar('サインインに失敗しました。');
     } finally {
       _read(overlayLoadingProvider.notifier).update((s) => false);
     }
@@ -71,7 +72,7 @@ class AccountPageController extends StateNotifier<AccountPageState> {
   /// 同意するかどうか確認するためのダイアログを表示する
   Future<bool> get _agreeWithLINEEmailHandling async {
     final agreed = await showDialog<bool>(
-      context: _read(scaffoldMessengerController).scaffoldMessengerKey.currentContext!,
+      context: _read(scaffoldMessengerServiceProvider).scaffoldMessengerKey.currentContext!,
       builder: (context) {
         return AlertDialog(
           title: Row(
@@ -111,9 +112,9 @@ class AccountPageController extends StateNotifier<AccountPageState> {
     try {
       await _read(authService).signOut();
     } on FirebaseAuthException catch (e) {
-      _read(scaffoldMessengerController).showSnackBarByException(e);
+      _read(scaffoldMessengerServiceProvider).showSnackBarByException(e);
     } on Exception {
-      _read(scaffoldMessengerController).showSnackBar('サインアウトに失敗しました。');
+      _read(scaffoldMessengerServiceProvider).showSnackBar('サインアウトに失敗しました。');
     }
   }
 }

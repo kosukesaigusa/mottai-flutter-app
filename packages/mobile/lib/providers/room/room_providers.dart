@@ -6,10 +6,10 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mottai_flutter_app_models/models.dart';
 
 import '../../constants/room.dart';
+import '../../services/scaffold_messenger_controller.dart';
 import '../../services/shared_preferences_service.dart';
 import '../../utils/utils.dart';
-import '../auth/auth_providers.dart';
-import '../scaffold_messenger/scaffold_messenger_controller.dart';
+import '../auth/auth.dart';
 import 'room_page_state.dart';
 
 /// 指定した roomId の Room ドキュメントを購読する StreamProvider
@@ -151,13 +151,13 @@ class RoomPageStateNotifierProvider extends StateNotifier<RoomPageState> {
     }
     final userId = _read(userIdProvider).value;
     if (userId == null) {
-      _read(scaffoldMessengerController).showSnackBar('一度サインインしてから再度お試しください。');
+      _read(scaffoldMessengerServiceProvider).showSnackBar('一度サインインしてから再度お試しください。');
       return;
     }
     state = state.copyWith(sending: true);
     final body = textEditingController.value.text;
     if (body.isEmpty) {
-      _read(scaffoldMessengerController).showSnackBar('内容を入力してください。');
+      _read(scaffoldMessengerServiceProvider).showSnackBar('内容を入力してください。');
       return;
     }
     final message = Message(
@@ -173,7 +173,7 @@ class RoomPageStateNotifierProvider extends StateNotifier<RoomPageState> {
           )
           .set(message);
     } on FirebaseException catch (e) {
-      _read(scaffoldMessengerController).showSnackBarByFirebaseException(e);
+      _read(scaffoldMessengerServiceProvider).showSnackBarByFirebaseException(e);
     } finally {
       state = state.copyWith(sending: false);
       textEditingController.clear();

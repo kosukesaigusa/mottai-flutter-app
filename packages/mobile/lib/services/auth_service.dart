@@ -5,12 +5,12 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:ks_flutter_commons/ks_flutter_commons.dart';
 import 'package:mottai_flutter_app_models/models.dart';
 
-import '../../providers/account/account.dart';
-import '../../providers/auth/auth_providers.dart';
-import '../../repositories/auth/auth_repository.dart';
-import '../../utils/enums.dart';
-import '../../utils/utils.dart';
-import '../firebase_messaging_service.dart';
+import '../providers/account/account.dart';
+import '../providers/auth/auth.dart';
+import '../repositories/auth/auth_repository.dart';
+import '../utils/enums.dart';
+import '../utils/utils.dart';
+import 'firebase_messaging_service.dart';
 
 final authService = Provider.autoDispose((ref) => AuthService(ref.read));
 

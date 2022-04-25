@@ -5,8 +5,8 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:ks_flutter_commons/ks_flutter_commons.dart';
 
 import '../../providers/account/account.dart';
-import '../../providers/account_page/account_page_controller.dart';
-import '../../providers/auth/auth_providers.dart';
+import '../../providers/account_page/account_page.dart';
+import '../../providers/auth/auth.dart';
 import '../../theme/theme.dart';
 import '../../utils/enums.dart';
 import '../../utils/utils.dart';
@@ -198,13 +198,6 @@ class AccountPage extends HookConsumerWidget {
                 }
                 final providers = account.providers;
                 final isHost = account.isHost;
-                final test = SocialSignInMethod.values
-                    .map(
-                      (method) => !providers.contains(method)
-                          ? SocialSignInButton(method: method)
-                          : const SizedBox(),
-                    )
-                    .toList();
                 return isHost
                     ? const SizedBox()
                     : Column(

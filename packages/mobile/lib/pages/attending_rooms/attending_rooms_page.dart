@@ -8,12 +8,12 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:ks_flutter_commons/ks_flutter_commons.dart';
 import 'package:mottai_flutter_app_models/models.dart';
 
-import '../../providers/attending_room/attending_room_providers.dart';
-import '../../providers/auth/auth_providers.dart';
-import '../../providers/message/message_providers.dart';
+import '../../providers/attending_room/attending_room.dart';
+import '../../providers/auth/auth.dart';
+import '../../providers/message/message.dart';
 import '../../providers/public_user/public_user_providers.dart';
-import '../../providers/scaffold_messenger/scaffold_messenger_controller.dart';
 import '../../route/utils.dart';
+import '../../services/scaffold_messenger_controller.dart';
 import '../../theme/theme.dart';
 import '../../utils/utils.dart';
 import '../../widgets/loading/loading.dart';
@@ -95,7 +95,7 @@ class _AttendingRoomsPageState extends ConsumerState<AttendingRoomsPage> {
                 roomId: roomId,
                 partnerId: hostId,
               ));
-          ref.read(scaffoldMessengerController).showSnackBar('【テスト用】ホスト 1 とのルームを作成しました。');
+          ref.read(scaffoldMessengerServiceProvider).showSnackBar('【テスト用】ホスト 1 とのルームを作成しました。');
         },
       );
 }

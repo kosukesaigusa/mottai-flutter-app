@@ -10,3 +10,6 @@
 [submodule "mottai-flutter-app-firebase"]
 	path = mottai-flutter-app-firebase
 	url = https://github.com/KosukeSaigusa/mottai-flutter-app-firebase
+[submodule "packages/twitter_login"]
+	path = packages/twitter_login
+	url = https://github.com/KosukeSaigusa/twitter_login

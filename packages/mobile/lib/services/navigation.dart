@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../constants/dynamic_links.dart';
-import '../../route/main_tabs.dart';
-import '../../route/utils.dart';
-import '../../utils/utils.dart';
-import '../application/application.dart';
-import '../bottom_navigation_bar/bottom_navigation_bar.dart';
+import '../constants/dynamic_links.dart';
+import '../providers/application/application.dart';
+import '../providers/bottom_navigation_bar/bottom_navigation_bar.dart';
+import '../route/main_tabs.dart';
+import '../route/utils.dart';
+import '../utils/utils.dart';
 
 final navigationServiceProvider =
     Provider.autoDispose<NavigationService>((ref) => NavigationService(ref.read));

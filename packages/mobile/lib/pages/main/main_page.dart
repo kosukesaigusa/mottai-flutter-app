@@ -9,9 +9,9 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../providers/application/application.dart';
 import '../../providers/bottom_navigation_bar/bottom_navigation_bar.dart';
-import '../../providers/navigation/navigation.dart';
 import '../../route/main_tabs.dart';
 import '../../services/firebase_messaging_service.dart';
+import '../../services/navigation.dart';
 import '../../widgets/main/stacked_pages_navigator.dart';
 
 /// バックグラウンドから起動した際にFirebaseを有効化する。

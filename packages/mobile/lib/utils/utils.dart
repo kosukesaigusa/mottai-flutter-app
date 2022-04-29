@@ -1,10 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
-
-import '../constants/snack_bar.dart';
 
 /// FirebaseAuth のインスタンス
 FirebaseAuth get auth => FirebaseAuth.instance;
@@ -35,37 +32,4 @@ String normalizePathString(String path) {
     p = '$p/';
   }
   return p;
-}
-
-/// BuildContext を引数にして SnackBar を表示する
-ScaffoldFeatureController<SnackBar, SnackBarClosedReason> showFloatingSnackBar(
-  BuildContext context,
-  dynamic message, {
-  bool removeCurrentSnackBar = true,
-  Duration duration = defaultSnackBarDuration,
-}) {
-  final scaffoldMessengerState = ScaffoldMessenger.of(context);
-  if (removeCurrentSnackBar) {
-    scaffoldMessengerState.removeCurrentSnackBar();
-  }
-  // message が String 型ならそのまま、その他なら String 型に変換しつつ
-  // ユーザーに見せるべきでない文言は調整して SnackBar を表示する。ｓ
-  if (message is String) {
-    return scaffoldMessengerState.showSnackBar(SnackBar(
-      content: Text(message),
-      behavior: defaultSnackBarBehavior,
-      duration: duration,
-    ));
-  } else {
-    return scaffoldMessengerState.showSnackBar(SnackBar(
-      content: Text('$message'.replaceAll('Exception:', '')),
-      behavior: defaultSnackBarBehavior,
-      duration: duration,
-    ));
-  }
-}
-
-/// BuildContext を引数にして 現在表示している SnackBar を消す
-void removeCurrentSnackBar(BuildContext context) {
-  ScaffoldMessenger.of(context).removeCurrentSnackBar();
 }

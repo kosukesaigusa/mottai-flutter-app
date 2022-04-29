@@ -3,11 +3,11 @@ import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:ks_flutter_commons/ks_flutter_commons.dart';
 import 'package:mottai_flutter_app_models/models.dart';
 
 import '../../providers/map/map_page.dart';
 import '../../theme/theme.dart';
+import '../../utils/extensions/int.dart';
 import '../../utils/geo.dart';
 import '../../widgets/loading/loading.dart';
 
@@ -132,11 +132,11 @@ class _MapPageState extends ConsumerState<MapPage> {
                 style: white12,
               ),
               Text(
-                'Radius: ${addComma(state.debugRadius)} km',
+                'Radius: ${state.debugRadius.withComma} km',
                 style: white12,
               ),
               Text(
-                '検出件数：${addComma(state.markers.length)} 件',
+                '検出件数：${state.markers.length.withComma} 件',
                 style: white12,
               ),
               // Text(

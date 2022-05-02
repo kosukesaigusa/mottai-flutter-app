@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../providers/application/application.dart';
 import '../../providers/bottom_navigation_bar/bottom_navigation_bar.dart';
 import '../../route/main_tabs.dart';
 import '../../services/firebase_messaging_service.dart';
@@ -72,9 +71,7 @@ class _MainPageState extends ConsumerState<MainPage> with WidgetsBindingObserver
                       FocusScope.of(context).unfocus();
                       final tab = bottomTabs[index].tab;
                       final state = ref.watch(bottomNavigationBarStateNotifier);
-                      final tabNavigatorKey = ref
-                          .watch(applicationStateNotifier.notifier)
-                          .bottomTabKeys[state.currentTab];
+                      final tabNavigatorKey = bottomTabKeys[state.currentTab];
                       if (tabNavigatorKey == null) {
                         return;
                       }

@@ -10,16 +10,10 @@ final bottomNavigationBarStateNotifier =
 
 class BottomNavigationBarStateNotifier extends StateNotifier<BottomNavigationBarState> {
   BottomNavigationBarStateNotifier()
-      : super(BottomNavigationBarState(
-          currentIndex: 0,
-          currentTab: BottomTabEnum.home,
-        ));
+      : super(BottomNavigationBarState(currentBottomTab: bottomTabs[0]));
 
   /// 表示中の BottomNavigationBar を更新する。
-  void changeTab({
-    required int index,
-    required BottomTabEnum tab,
-  }) {
-    state = state.copyWith(currentIndex: index, currentTab: tab);
+  void changeTab(BottomTab bottomTab) {
+    state = state.copyWith(currentBottomTab: bottomTab);
   }
 }

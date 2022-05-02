@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../constants/dynamic_links.dart';
-import '../providers/application/application.dart';
 import '../providers/bottom_navigation_bar/bottom_navigation_bar.dart';
 import '../route/main_tabs.dart';
 import '../route/utils.dart';
@@ -21,9 +20,8 @@ class NavigationService {
     required String path,
     required Map<String, dynamic> data,
   }) async {
-    final currentTab = _read(bottomNavigationBarStateNotifier).currentTab;
-    final navigatorKey = _read(applicationStateNotifier.notifier).bottomTabKeys[currentTab];
-    await navigatorKey?.currentState?.pushNamed<void>(path, arguments: RouteArguments(data));
+    final currentBottomTab = _read(bottomNavigationBarStateNotifier).currentBottomTab;
+    await currentBottomTab.key.currentState?.pushNamed<void>(path, arguments: RouteArguments(data));
   }
 
   /// 一度 MainPage まで画面を pop した上で、
@@ -31,21 +29,19 @@ class NavigationService {
   /// 指定したパスが MainPage のいずれかのページのパスと一致する場合には push せず、
   /// そのタブをアクティブにするだけで終わりにする。
   Future<void> popUntilFirstRouteAndPushOnSpecifiedTab({
-    required BottomTabEnum tab,
+    required BottomTab bottomTab,
     required String path,
     required Map<String, dynamic> data,
   }) async {
-    final currentTab = _read(bottomNavigationBarStateNotifier).currentTab;
-    final currentNavigatorKey = _read(applicationStateNotifier.notifier).bottomTabKeys[currentTab];
-    final currentContext = currentNavigatorKey?.currentContext;
+    final currentContext =
+        _read(bottomNavigationBarStateNotifier).currentBottomTab.key.currentContext;
     if (currentContext == null) {
       return;
     }
     Navigator.popUntil(currentContext, (route) => route.isFirst);
-    _read(bottomNavigationBarStateNotifier.notifier).changeTab(index: getIndexByTab(tab), tab: tab);
+    _read(bottomNavigationBarStateNotifier.notifier).changeTab(bottomTab);
     if (!bottomTabs.map((bottomTab) => bottomTab.path).toList().contains(path)) {
-      final navigatorKey = _read(applicationStateNotifier.notifier).bottomTabKeys[tab];
-      await navigatorKey?.currentState?.pushNamed<void>(path, arguments: RouteArguments(data));
+      await bottomTab.key.currentState?.pushNamed<void>(path, arguments: RouteArguments(data));
     }
   }
 
@@ -68,12 +64,12 @@ class NavigationService {
     }
     final data = _getDataFromQueryParameters(uri);
     final tabName = (data['tab'] ?? BottomTabEnum.home.name) as String;
-    final tab = getTabByTabName(tabName);
+    final bottomTab = BottomTab.fromString(tabName);
     debugPrint('*****************************');
-    debugPrint('Dynamic Link (path, tab) = ($path, ${tab.name})');
+    debugPrint('Dynamic Link (path, tab) = ($path, $tabName)');
     debugPrint('*****************************');
     // TODO: DeepLink のクエリパラメータなどから data（画面の引数）を受け取れる仕組みを考える
-    await popUntilFirstRouteAndPushOnSpecifiedTab(tab: tab, path: path, data: data);
+    await popUntilFirstRouteAndPushOnSpecifiedTab(bottomTab: bottomTab, path: path, data: data);
   }
 
   /// 画面遷移のための Uri を検証して、ノーマライズした path (String) を返す。

@@ -15,67 +15,94 @@ enum BottomTabEnum {
 
 /// MainPage の BottomNavigationBar の内容
 class BottomTab {
-  const BottomTab({
+  /// プライベートなコンストラクタ
+  const BottomTab._({
     required this.index,
     required this.tab,
     required this.label,
     required this.path,
     required this.iconData,
+    required this.key,
   });
+
+  factory BottomTab.home() => BottomTab._(
+        index: 0,
+        tab: BottomTabEnum.home,
+        label: 'ホーム',
+        path: HomePage.path,
+        iconData: Icons.home,
+        key: GlobalKey<NavigatorState>(),
+      );
+
+  factory BottomTab.map() => BottomTab._(
+        index: 1,
+        tab: BottomTabEnum.map,
+        label: 'マップ',
+        path: MapPage.path,
+        iconData: Icons.map,
+        key: GlobalKey<NavigatorState>(),
+      );
+
+  factory BottomTab.message() => BottomTab._(
+        index: 2,
+        tab: BottomTabEnum.message,
+        label: 'メッセージ',
+        path: AttendingRoomsPage.path,
+        iconData: Icons.mail,
+        key: GlobalKey<NavigatorState>(),
+      );
+
+  factory BottomTab.account() => BottomTab._(
+        index: 3,
+        tab: BottomTabEnum.account,
+        label: 'アカウント',
+        path: AccountPage.path,
+        iconData: Icons.person,
+        key: GlobalKey<NavigatorState>(),
+      );
+
+  /// BottomTabEnum によるコンストラクタ
+  factory BottomTab.fromTab(BottomTabEnum tab) {
+    switch (tab) {
+      case BottomTabEnum.home:
+        return BottomTab.home();
+      case BottomTabEnum.map:
+        return BottomTab.map();
+      case BottomTabEnum.message:
+        return BottomTab.message();
+      case BottomTabEnum.account:
+        return BottomTab.account();
+    }
+  }
+
+  /// タブの名前によるコンストラクタ（FCM や Deep Link のパス文字列など）
+  factory BottomTab.fromString(String name) {
+    switch (name) {
+      case 'home':
+        return BottomTab.home();
+      case 'map':
+        return BottomTab.map();
+      case 'message':
+        return BottomTab.message();
+      case 'account':
+        return BottomTab.account();
+      default:
+        return BottomTab.fromTab(BottomTabEnum.home);
+    }
+  }
 
   final int index;
   final BottomTabEnum tab;
   final String label;
   final String path;
   final IconData iconData;
+  final GlobalKey<NavigatorState> key;
 }
 
 /// MainPage の BottomNavigationBarItem 一覧
-const bottomTabs = [
-  BottomTab(
-    index: 0,
-    tab: BottomTabEnum.home,
-    label: 'ホーム',
-    path: HomePage.path,
-    iconData: Icons.home,
-  ),
-  BottomTab(
-    index: 1,
-    tab: BottomTabEnum.map,
-    label: 'マップ',
-    path: MapPage.path,
-    iconData: Icons.map,
-  ),
-  BottomTab(
-    index: 1,
-    tab: BottomTabEnum.message,
-    label: 'メッセージ',
-    path: AttendingRoomsPage.path,
-    iconData: Icons.mail,
-  ),
-  BottomTab(
-    index: 2,
-    tab: BottomTabEnum.account,
-    label: 'アカウント',
-    path: AccountPage.path,
-    iconData: Icons.person,
-  ),
-];
+final bottomTabs = BottomTabEnum.values.map(BottomTab.fromTab).toList();
 
-/// BottomTabEnum から タブの index を取得する。
-int getIndexByTab(BottomTabEnum tab) {
-  return bottomTabs
-      .firstWhere(
-        (bottomTab) => bottomTab.tab == tab,
-        orElse: () => bottomTabs[0],
-      )
-      .index;
-}
-
-/// タブの名前からタブを取得する。
-BottomTabEnum getTabByTabName(String tabName) {
-  return BottomTabEnum.values.firstWhere(
-    (tab) => tab.name == tabName,
-    orElse: () => BottomTabEnum.home,
-  );
-}
+/// MainPage の各 BottomNavigationBarItem に対応する NavigatorKey 一覧
+final bottomTabKeys = <BottomTabEnum, GlobalKey<NavigatorState>>{
+  for (final e in bottomTabs) e.tab: e.key,
+};

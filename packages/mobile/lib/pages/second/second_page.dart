@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../../route/bottom_tabs.dart';
 import '../../route/utils.dart';
+import '../../services/navigation.dart';
+import '../account/account_page.dart';
 import '../map/map_page.dart';
 
-class SecondPage extends StatefulWidget {
+class SecondPage extends StatefulHookConsumerWidget {
   const SecondPage._({
     Key? key,
     required this.title,
@@ -19,10 +23,10 @@ class SecondPage extends StatefulWidget {
   final String title;
 
   @override
-  State<SecondPage> createState() => _SecondPageState();
+  ConsumerState<SecondPage> createState() => _SecondPageState();
 }
 
-class _SecondPageState extends State<SecondPage> {
+class _SecondPageState extends ConsumerState<SecondPage> {
   int _counter = 0;
 
   void _incrementCounter() {
@@ -53,6 +57,17 @@ class _SecondPageState extends State<SecondPage> {
                 await Navigator.pushNamed<void>(context, MapPage.path);
               },
               child: const Text('Go to Map Page'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                // AccountPage の上に SecondPage を push する
+                await ref.read(navigationServiceProvider).popUntilFirstRouteAndPushOnSpecifiedTab(
+                  bottomTab: BottomTab.getByPath(AccountPage.path),
+                  path: '/second/',
+                  data: <String, dynamic>{'title': 'タイトル'},
+                );
+              },
+              child: const Text('Push Second Page on Account Tab'),
             ),
           ],
         ),

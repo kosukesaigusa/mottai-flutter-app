@@ -12,34 +12,7 @@ part of 'playground_message_state.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more informations: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
-
-/// @nodoc
-class _$PlaygroundMessageStateTearOff {
-  const _$PlaygroundMessageStateTearOff();
-
-  _PlaygroundMessageState call(
-      {bool loading = true,
-      List<PlaygroundMessage> messages = const <PlaygroundMessage>[],
-      List<PlaygroundMessage> newMessages = const <PlaygroundMessage>[],
-      List<PlaygroundMessage> pastMessages = const <PlaygroundMessage>[],
-      bool fetching = false,
-      bool hasMore = true,
-      QueryDocumentSnapshot<PlaygroundMessage>? lastVisibleQds}) {
-    return _PlaygroundMessageState(
-      loading: loading,
-      messages: messages,
-      newMessages: newMessages,
-      pastMessages: pastMessages,
-      fetching: fetching,
-      hasMore: hasMore,
-      lastVisibleQds: lastVisibleQds,
-    );
-  }
-}
-
-/// @nodoc
-const $PlaygroundMessageState = _$PlaygroundMessageStateTearOff();
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
 
 /// @nodoc
 mixin _$PlaygroundMessageState {
@@ -201,30 +174,48 @@ class __$PlaygroundMessageStateCopyWithImpl<$Res>
 class _$_PlaygroundMessageState implements _PlaygroundMessageState {
   const _$_PlaygroundMessageState(
       {this.loading = true,
-      this.messages = const <PlaygroundMessage>[],
-      this.newMessages = const <PlaygroundMessage>[],
-      this.pastMessages = const <PlaygroundMessage>[],
+      final List<PlaygroundMessage> messages = const <PlaygroundMessage>[],
+      final List<PlaygroundMessage> newMessages = const <PlaygroundMessage>[],
+      final List<PlaygroundMessage> pastMessages = const <PlaygroundMessage>[],
       this.fetching = false,
       this.hasMore = true,
-      this.lastVisibleQds});
+      this.lastVisibleQds})
+      : _messages = messages,
+        _newMessages = newMessages,
+        _pastMessages = pastMessages;
 
-  @JsonKey()
   @override
+  @JsonKey()
   final bool loading;
-  @JsonKey()
+  final List<PlaygroundMessage> _messages;
   @override
-  final List<PlaygroundMessage> messages;
   @JsonKey()
+  List<PlaygroundMessage> get messages {
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_messages);
+  }
+
+  final List<PlaygroundMessage> _newMessages;
   @override
-  final List<PlaygroundMessage> newMessages;
   @JsonKey()
+  List<PlaygroundMessage> get newMessages {
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_newMessages);
+  }
+
+  final List<PlaygroundMessage> _pastMessages;
   @override
-  final List<PlaygroundMessage> pastMessages;
   @JsonKey()
+  List<PlaygroundMessage> get pastMessages {
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_pastMessages);
+  }
+
   @override
+  @JsonKey()
   final bool fetching;
-  @JsonKey()
   @override
+  @JsonKey()
   final bool hasMore;
   @override
   final QueryDocumentSnapshot<PlaygroundMessage>? lastVisibleQds;
@@ -271,29 +262,31 @@ class _$_PlaygroundMessageState implements _PlaygroundMessageState {
 
 abstract class _PlaygroundMessageState implements PlaygroundMessageState {
   const factory _PlaygroundMessageState(
-          {bool loading,
-          List<PlaygroundMessage> messages,
-          List<PlaygroundMessage> newMessages,
-          List<PlaygroundMessage> pastMessages,
-          bool fetching,
-          bool hasMore,
-          QueryDocumentSnapshot<PlaygroundMessage>? lastVisibleQds}) =
+          {final bool loading,
+          final List<PlaygroundMessage> messages,
+          final List<PlaygroundMessage> newMessages,
+          final List<PlaygroundMessage> pastMessages,
+          final bool fetching,
+          final bool hasMore,
+          final QueryDocumentSnapshot<PlaygroundMessage>? lastVisibleQds}) =
       _$_PlaygroundMessageState;
 
   @override
-  bool get loading;
+  bool get loading => throw _privateConstructorUsedError;
   @override
-  List<PlaygroundMessage> get messages;
+  List<PlaygroundMessage> get messages => throw _privateConstructorUsedError;
   @override
-  List<PlaygroundMessage> get newMessages;
+  List<PlaygroundMessage> get newMessages => throw _privateConstructorUsedError;
   @override
-  List<PlaygroundMessage> get pastMessages;
+  List<PlaygroundMessage> get pastMessages =>
+      throw _privateConstructorUsedError;
   @override
-  bool get fetching;
+  bool get fetching => throw _privateConstructorUsedError;
   @override
-  bool get hasMore;
+  bool get hasMore => throw _privateConstructorUsedError;
   @override
-  QueryDocumentSnapshot<PlaygroundMessage>? get lastVisibleQds;
+  QueryDocumentSnapshot<PlaygroundMessage>? get lastVisibleQds =>
+      throw _privateConstructorUsedError;
   @override
   @JsonKey(ignore: true)
   _$PlaygroundMessageStateCopyWith<_PlaygroundMessageState> get copyWith =>

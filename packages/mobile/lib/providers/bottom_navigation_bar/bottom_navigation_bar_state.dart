@@ -7,7 +7,6 @@ part 'bottom_navigation_bar_state.freezed.dart';
 @freezed
 class BottomNavigationBarState with _$BottomNavigationBarState {
   factory BottomNavigationBarState({
-    @Default(0) int currentIndex,
-    @Default(BottomTabEnum.home) BottomTabEnum currentTab,
+    required BottomTab currentBottomTab,
   }) = _TabState;
 }

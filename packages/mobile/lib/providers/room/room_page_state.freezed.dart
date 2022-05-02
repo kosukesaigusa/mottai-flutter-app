@@ -12,38 +12,7 @@ part of 'room_page_state.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more informations: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
-
-/// @nodoc
-class _$RoomPageStateTearOff {
-  const _$RoomPageStateTearOff();
-
-  _RoomPageState call(
-      {bool loading = true,
-      bool sending = false,
-      bool isValid = false,
-      List<Message> messages = const <Message>[],
-      List<Message> newMessages = const <Message>[],
-      List<Message> pastMessages = const <Message>[],
-      bool fetching = false,
-      bool hasMore = true,
-      QueryDocumentSnapshot<Message>? lastVisibleQds}) {
-    return _RoomPageState(
-      loading: loading,
-      sending: sending,
-      isValid: isValid,
-      messages: messages,
-      newMessages: newMessages,
-      pastMessages: pastMessages,
-      fetching: fetching,
-      hasMore: hasMore,
-      lastVisibleQds: lastVisibleQds,
-    );
-  }
-}
-
-/// @nodoc
-const $RoomPageState = _$RoomPageStateTearOff();
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
 
 /// @nodoc
 mixin _$RoomPageState {
@@ -232,36 +201,54 @@ class _$_RoomPageState implements _RoomPageState {
       {this.loading = true,
       this.sending = false,
       this.isValid = false,
-      this.messages = const <Message>[],
-      this.newMessages = const <Message>[],
-      this.pastMessages = const <Message>[],
+      final List<Message> messages = const <Message>[],
+      final List<Message> newMessages = const <Message>[],
+      final List<Message> pastMessages = const <Message>[],
       this.fetching = false,
       this.hasMore = true,
-      this.lastVisibleQds});
+      this.lastVisibleQds})
+      : _messages = messages,
+        _newMessages = newMessages,
+        _pastMessages = pastMessages;
 
-  @JsonKey()
   @override
+  @JsonKey()
   final bool loading;
-  @JsonKey()
   @override
+  @JsonKey()
   final bool sending;
-  @JsonKey()
   @override
+  @JsonKey()
   final bool isValid;
-  @JsonKey()
+  final List<Message> _messages;
   @override
-  final List<Message> messages;
   @JsonKey()
+  List<Message> get messages {
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_messages);
+  }
+
+  final List<Message> _newMessages;
   @override
-  final List<Message> newMessages;
   @JsonKey()
+  List<Message> get newMessages {
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_newMessages);
+  }
+
+  final List<Message> _pastMessages;
   @override
-  final List<Message> pastMessages;
   @JsonKey()
+  List<Message> get pastMessages {
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_pastMessages);
+  }
+
   @override
+  @JsonKey()
   final bool fetching;
-  @JsonKey()
   @override
+  @JsonKey()
   final bool hasMore;
   @override
   final QueryDocumentSnapshot<Message>? lastVisibleQds;
@@ -311,34 +298,35 @@ class _$_RoomPageState implements _RoomPageState {
 
 abstract class _RoomPageState implements RoomPageState {
   const factory _RoomPageState(
-      {bool loading,
-      bool sending,
-      bool isValid,
-      List<Message> messages,
-      List<Message> newMessages,
-      List<Message> pastMessages,
-      bool fetching,
-      bool hasMore,
-      QueryDocumentSnapshot<Message>? lastVisibleQds}) = _$_RoomPageState;
+      {final bool loading,
+      final bool sending,
+      final bool isValid,
+      final List<Message> messages,
+      final List<Message> newMessages,
+      final List<Message> pastMessages,
+      final bool fetching,
+      final bool hasMore,
+      final QueryDocumentSnapshot<Message>? lastVisibleQds}) = _$_RoomPageState;
 
   @override
-  bool get loading;
+  bool get loading => throw _privateConstructorUsedError;
   @override
-  bool get sending;
+  bool get sending => throw _privateConstructorUsedError;
   @override
-  bool get isValid;
+  bool get isValid => throw _privateConstructorUsedError;
   @override
-  List<Message> get messages;
+  List<Message> get messages => throw _privateConstructorUsedError;
   @override
-  List<Message> get newMessages;
+  List<Message> get newMessages => throw _privateConstructorUsedError;
   @override
-  List<Message> get pastMessages;
+  List<Message> get pastMessages => throw _privateConstructorUsedError;
   @override
-  bool get fetching;
+  bool get fetching => throw _privateConstructorUsedError;
   @override
-  bool get hasMore;
+  bool get hasMore => throw _privateConstructorUsedError;
   @override
-  QueryDocumentSnapshot<Message>? get lastVisibleQds;
+  QueryDocumentSnapshot<Message>? get lastVisibleQds =>
+      throw _privateConstructorUsedError;
   @override
   @JsonKey(ignore: true)
   _$RoomPageStateCopyWith<_RoomPageState> get copyWith =>

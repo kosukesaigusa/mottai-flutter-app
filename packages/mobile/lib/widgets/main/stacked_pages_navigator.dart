@@ -3,7 +3,6 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../pages/main/main_page.dart';
 import '../../pages/not_found/not_found_page.dart';
-import '../../providers/application/application.dart';
 import '../../route/app_router.dart';
 import '../../route/main_tabs.dart';
 import '../../route/routes.dart';
@@ -13,15 +12,15 @@ final appRouter = AppRouter.create(routeBuilder);
 class MainStackedPagesNavigator extends HookConsumerWidget {
   const MainStackedPagesNavigator({
     Key? key,
-    required this.tab,
+    required this.bottomTab,
   }) : super(key: key);
 
-  final BottomTab tab;
+  final BottomTab bottomTab;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Navigator(
-      key: ref.watch(applicationStateNotifier.notifier).bottomTabKeys[tab.tab],
+      key: bottomTab.key,
       initialRoute: MainPage.path,
       observers: [
         HeroController(),
@@ -30,7 +29,7 @@ class MainStackedPagesNavigator extends HookConsumerWidget {
       // tab.path を渡す
       onGenerateRoute: (routeSettings) => appRouter.generateRoute(
         routeSettings,
-        bottomNavigationPath: tab.path,
+        bottomNavigationPath: bottomTab.path,
       ),
       onUnknownRoute: (settings) {
         final route = MaterialPageRoute<void>(

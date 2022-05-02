@@ -12,21 +12,7 @@ part of 'application_state.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more informations: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
-
-/// @nodoc
-class _$ApplicationStateTearOff {
-  const _$ApplicationStateTearOff();
-
-  _ApplicationState call({bool loading = false}) {
-    return _ApplicationState(
-      loading: loading,
-    );
-  }
-}
-
-/// @nodoc
-const $ApplicationState = _$ApplicationStateTearOff();
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
 
 /// @nodoc
 mixin _$ApplicationState {
@@ -106,8 +92,8 @@ class __$ApplicationStateCopyWithImpl<$Res>
 class _$_ApplicationState implements _ApplicationState {
   const _$_ApplicationState({this.loading = false});
 
-  @JsonKey()
   @override
+  @JsonKey()
   final bool loading;
 
   @override
@@ -134,10 +120,10 @@ class _$_ApplicationState implements _ApplicationState {
 }
 
 abstract class _ApplicationState implements ApplicationState {
-  const factory _ApplicationState({bool loading}) = _$_ApplicationState;
+  const factory _ApplicationState({final bool loading}) = _$_ApplicationState;
 
   @override
-  bool get loading;
+  bool get loading => throw _privateConstructorUsedError;
   @override
   @JsonKey(ignore: true)
   _$ApplicationStateCopyWith<_ApplicationState> get copyWith =>

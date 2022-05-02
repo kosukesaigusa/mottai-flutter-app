@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../providers/application/application.dart';
 import '../../providers/bottom_navigation_bar/bottom_navigation_bar.dart';
 import '../../route/main_tabs.dart';
 import '../../services/firebase_messaging_service.dart';
@@ -84,31 +83,22 @@ class _MainPageState extends ConsumerState<MainPage> with WidgetsBindingObserver
                     // 現在表示している状態のタブをタップした場合は画面をすべて pop する。
                     onTap: (index) {
                       FocusScope.of(context).unfocus();
-                      final tab = bottomTabs[index].tab;
+                      final bottomTab = bottomTabs[index];
                       final state = ref.watch(bottomNavigationBarStateNotifier);
-                      final tabNavigatorKey = ref
-                          .watch(applicationStateNotifier.notifier)
-                          .bottomTabKeys[state.currentTab];
-                      if (tabNavigatorKey == null) {
+                      if (bottomTab == state.currentBottomTab) {
+                        bottomTab.key.currentState!.popUntil((route) => route.isFirst);
                         return;
                       }
-                      if (tab == state.currentTab) {
-                        tabNavigatorKey.currentState!.popUntil((route) => route.isFirst);
-                        return;
-                      }
-                      ref
-                          .read(bottomNavigationBarStateNotifier.notifier)
-                          .changeTab(index: index, tab: tab);
+                      ref.read(bottomNavigationBarStateNotifier.notifier).changeTab(bottomTab);
                     },
-                    currentIndex:
-                        ref.watch(bottomNavigationBarStateNotifier.select((c) => c.currentIndex)),
-                    items: [
-                      for (final item in bottomTabs)
-                        BottomNavigationBarItem(
-                          icon: Icon(item.iconData),
-                          label: item.label,
-                        ),
-                    ],
+                    currentIndex: ref.watch(bottomNavigationBarStateNotifier
+                        .select((state) => state.currentBottomTab.index)),
+                    items: bottomTabs
+                        .map((b) => BottomNavigationBarItem(
+                              icon: Icon(b.iconData),
+                              label: b.label,
+                            ))
+                        .toList(),
                   ),
           ),
         ],
@@ -117,14 +107,13 @@ class _MainPageState extends ConsumerState<MainPage> with WidgetsBindingObserver
   }
 
   /// MainPage の BottomNavigationBar で切り替える 3 つの画面
-  Widget _buildStackedPages(BottomTab tab) {
-    final currentIndex = ref.watch(bottomNavigationBarStateNotifier).currentIndex;
-    final currentTab = bottomTabs[currentIndex];
+  Widget _buildStackedPages(BottomTab bottomTab) {
+    final currentBottomTab = ref.watch(bottomNavigationBarStateNotifier).currentBottomTab;
     return Offstage(
-      offstage: tab != currentTab,
+      offstage: bottomTab != currentBottomTab,
       child: TickerMode(
-        enabled: tab == currentTab,
-        child: MainStackedPagesNavigator(tab: tab),
+        enabled: bottomTab == currentBottomTab,
+        child: MainStackedPagesNavigator(bottomTab: bottomTab),
       ),
     );
   }

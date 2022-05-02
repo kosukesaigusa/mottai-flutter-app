@@ -12,28 +12,11 @@ part of 'bottom_navigation_bar_state.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more informations: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
-
-/// @nodoc
-class _$BottomNavigationBarStateTearOff {
-  const _$BottomNavigationBarStateTearOff();
-
-  _TabState call(
-      {int currentIndex = 0, BottomTabEnum currentTab = BottomTabEnum.home}) {
-    return _TabState(
-      currentIndex: currentIndex,
-      currentTab: currentTab,
-    );
-  }
-}
-
-/// @nodoc
-const $BottomNavigationBarState = _$BottomNavigationBarStateTearOff();
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
 
 /// @nodoc
 mixin _$BottomNavigationBarState {
-  int get currentIndex => throw _privateConstructorUsedError;
-  BottomTabEnum get currentTab => throw _privateConstructorUsedError;
+  BottomTab get currentBottomTab => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $BottomNavigationBarStateCopyWith<BottomNavigationBarState> get copyWith =>
@@ -45,7 +28,7 @@ abstract class $BottomNavigationBarStateCopyWith<$Res> {
   factory $BottomNavigationBarStateCopyWith(BottomNavigationBarState value,
           $Res Function(BottomNavigationBarState) then) =
       _$BottomNavigationBarStateCopyWithImpl<$Res>;
-  $Res call({int currentIndex, BottomTabEnum currentTab});
+  $Res call({BottomTab currentBottomTab});
 }
 
 /// @nodoc
@@ -59,18 +42,13 @@ class _$BottomNavigationBarStateCopyWithImpl<$Res>
 
   @override
   $Res call({
-    Object? currentIndex = freezed,
-    Object? currentTab = freezed,
+    Object? currentBottomTab = freezed,
   }) {
     return _then(_value.copyWith(
-      currentIndex: currentIndex == freezed
-          ? _value.currentIndex
-          : currentIndex // ignore: cast_nullable_to_non_nullable
-              as int,
-      currentTab: currentTab == freezed
-          ? _value.currentTab
-          : currentTab // ignore: cast_nullable_to_non_nullable
-              as BottomTabEnum,
+      currentBottomTab: currentBottomTab == freezed
+          ? _value.currentBottomTab
+          : currentBottomTab // ignore: cast_nullable_to_non_nullable
+              as BottomTab,
     ));
   }
 }
@@ -81,7 +59,7 @@ abstract class _$TabStateCopyWith<$Res>
   factory _$TabStateCopyWith(_TabState value, $Res Function(_TabState) then) =
       __$TabStateCopyWithImpl<$Res>;
   @override
-  $Res call({int currentIndex, BottomTabEnum currentTab});
+  $Res call({BottomTab currentBottomTab});
 }
 
 /// @nodoc
@@ -96,18 +74,13 @@ class __$TabStateCopyWithImpl<$Res>
 
   @override
   $Res call({
-    Object? currentIndex = freezed,
-    Object? currentTab = freezed,
+    Object? currentBottomTab = freezed,
   }) {
     return _then(_TabState(
-      currentIndex: currentIndex == freezed
-          ? _value.currentIndex
-          : currentIndex // ignore: cast_nullable_to_non_nullable
-              as int,
-      currentTab: currentTab == freezed
-          ? _value.currentTab
-          : currentTab // ignore: cast_nullable_to_non_nullable
-              as BottomTabEnum,
+      currentBottomTab: currentBottomTab == freezed
+          ? _value.currentBottomTab
+          : currentBottomTab // ignore: cast_nullable_to_non_nullable
+              as BottomTab,
     ));
   }
 }
@@ -115,18 +88,14 @@ class __$TabStateCopyWithImpl<$Res>
 /// @nodoc
 
 class _$_TabState implements _TabState {
-  _$_TabState({this.currentIndex = 0, this.currentTab = BottomTabEnum.home});
+  _$_TabState({required this.currentBottomTab});
 
-  @JsonKey()
   @override
-  final int currentIndex;
-  @JsonKey()
-  @override
-  final BottomTabEnum currentTab;
+  final BottomTab currentBottomTab;
 
   @override
   String toString() {
-    return 'BottomNavigationBarState(currentIndex: $currentIndex, currentTab: $currentTab)';
+    return 'BottomNavigationBarState(currentBottomTab: $currentBottomTab)';
   }
 
   @override
@@ -135,16 +104,12 @@ class _$_TabState implements _TabState {
         (other.runtimeType == runtimeType &&
             other is _TabState &&
             const DeepCollectionEquality()
-                .equals(other.currentIndex, currentIndex) &&
-            const DeepCollectionEquality()
-                .equals(other.currentTab, currentTab));
+                .equals(other.currentBottomTab, currentBottomTab));
   }
 
   @override
   int get hashCode => Object.hash(
-      runtimeType,
-      const DeepCollectionEquality().hash(currentIndex),
-      const DeepCollectionEquality().hash(currentTab));
+      runtimeType, const DeepCollectionEquality().hash(currentBottomTab));
 
   @JsonKey(ignore: true)
   @override
@@ -153,12 +118,10 @@ class _$_TabState implements _TabState {
 }
 
 abstract class _TabState implements BottomNavigationBarState {
-  factory _TabState({int currentIndex, BottomTabEnum currentTab}) = _$_TabState;
+  factory _TabState({required final BottomTab currentBottomTab}) = _$_TabState;
 
   @override
-  int get currentIndex;
-  @override
-  BottomTabEnum get currentTab;
+  BottomTab get currentBottomTab => throw _privateConstructorUsedError;
   @override
   @JsonKey(ignore: true)
   _$TabStateCopyWith<_TabState> get copyWith =>

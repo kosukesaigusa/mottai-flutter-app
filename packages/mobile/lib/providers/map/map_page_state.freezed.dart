@@ -12,36 +12,7 @@ part of 'map_page_state.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more informations: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
-
-/// @nodoc
-class _$MapPageStateTearOff {
-  const _$MapPageStateTearOff();
-
-  _MapPageState call(
-      {bool ready = false,
-      int debugRadius = initialRadius,
-      double debugZoomLevel = initialZoomLevel,
-      bool resetDetection = true,
-      Map<MarkerId, Marker> markers = const <MarkerId, Marker>{},
-      List<HostLocation> hostLocationsOnMap = const <HostLocation>[],
-      LatLng center = initialLocation,
-      HostLocation? selectedHostLocation}) {
-    return _MapPageState(
-      ready: ready,
-      debugRadius: debugRadius,
-      debugZoomLevel: debugZoomLevel,
-      resetDetection: resetDetection,
-      markers: markers,
-      hostLocationsOnMap: hostLocationsOnMap,
-      center: center,
-      selectedHostLocation: selectedHostLocation,
-    );
-  }
-}
-
-/// @nodoc
-const $MapPageState = _$MapPageStateTearOff();
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
 
 /// @nodoc
 mixin _$MapPageState {
@@ -232,31 +203,43 @@ class _$_MapPageState implements _MapPageState {
       this.debugRadius = initialRadius,
       this.debugZoomLevel = initialZoomLevel,
       this.resetDetection = true,
-      this.markers = const <MarkerId, Marker>{},
-      this.hostLocationsOnMap = const <HostLocation>[],
+      final Map<MarkerId, Marker> markers = const <MarkerId, Marker>{},
+      final List<HostLocation> hostLocationsOnMap = const <HostLocation>[],
       this.center = initialLocation,
-      this.selectedHostLocation});
+      this.selectedHostLocation})
+      : _markers = markers,
+        _hostLocationsOnMap = hostLocationsOnMap;
 
-  @JsonKey()
   @override
+  @JsonKey()
   final bool ready;
-  @JsonKey()
   @override
+  @JsonKey()
   final int debugRadius;
-  @JsonKey()
   @override
+  @JsonKey()
   final double debugZoomLevel;
-  @JsonKey()
   @override
+  @JsonKey()
   final bool resetDetection;
-  @JsonKey()
+  final Map<MarkerId, Marker> _markers;
   @override
-  final Map<MarkerId, Marker> markers;
   @JsonKey()
+  Map<MarkerId, Marker> get markers {
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(_markers);
+  }
+
+  final List<HostLocation> _hostLocationsOnMap;
   @override
-  final List<HostLocation> hostLocationsOnMap;
   @JsonKey()
+  List<HostLocation> get hostLocationsOnMap {
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_hostLocationsOnMap);
+  }
+
   @override
+  @JsonKey()
   final LatLng center;
   @override
   final HostLocation? selectedHostLocation;
@@ -306,31 +289,32 @@ class _$_MapPageState implements _MapPageState {
 
 abstract class _MapPageState implements MapPageState {
   const factory _MapPageState(
-      {bool ready,
-      int debugRadius,
-      double debugZoomLevel,
-      bool resetDetection,
-      Map<MarkerId, Marker> markers,
-      List<HostLocation> hostLocationsOnMap,
-      LatLng center,
-      HostLocation? selectedHostLocation}) = _$_MapPageState;
+      {final bool ready,
+      final int debugRadius,
+      final double debugZoomLevel,
+      final bool resetDetection,
+      final Map<MarkerId, Marker> markers,
+      final List<HostLocation> hostLocationsOnMap,
+      final LatLng center,
+      final HostLocation? selectedHostLocation}) = _$_MapPageState;
 
   @override
-  bool get ready;
+  bool get ready => throw _privateConstructorUsedError;
   @override
-  int get debugRadius;
+  int get debugRadius => throw _privateConstructorUsedError;
   @override
-  double get debugZoomLevel;
+  double get debugZoomLevel => throw _privateConstructorUsedError;
   @override
-  bool get resetDetection;
+  bool get resetDetection => throw _privateConstructorUsedError;
   @override
-  Map<MarkerId, Marker> get markers;
+  Map<MarkerId, Marker> get markers => throw _privateConstructorUsedError;
   @override
-  List<HostLocation> get hostLocationsOnMap;
+  List<HostLocation> get hostLocationsOnMap =>
+      throw _privateConstructorUsedError;
   @override
-  LatLng get center;
+  LatLng get center => throw _privateConstructorUsedError;
   @override
-  HostLocation? get selectedHostLocation;
+  HostLocation? get selectedHostLocation => throw _privateConstructorUsedError;
   @override
   @JsonKey(ignore: true)
   _$MapPageStateCopyWith<_MapPageState> get copyWith =>

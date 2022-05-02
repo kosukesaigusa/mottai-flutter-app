@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../constants/dynamic_links.dart';
-import '../providers/bottom_navigation_bar/bottom_navigation_bar.dart';
+import '../providers/bottom_tab/bottom_tab.dart';
 import '../route/bottom_tabs.dart';
 import '../route/utils.dart';
 import '../utils/utils.dart';
@@ -19,10 +19,11 @@ class NavigationService {
   Future<void> pushOnCurrentTab({
     required String path,
     required Map<String, dynamic> data,
-  }) async {
-    final currentBottomTab = _read(bottomNavigationBarStateNotifier).currentBottomTab;
-    await currentBottomTab.key.currentState?.pushNamed<void>(path, arguments: RouteArguments(data));
-  }
+  }) async =>
+      _read(bottomTabStateProvider)
+          .key
+          .currentState
+          ?.pushNamed<void>(path, arguments: RouteArguments(data));
 
   /// 一度 MainPage まで画面を pop した上で、
   /// 指定したタブをアクティブにして、その上で指定したパスのページを push する。
@@ -33,13 +34,12 @@ class NavigationService {
     required String path,
     required Map<String, dynamic> data,
   }) async {
-    final currentContext =
-        _read(bottomNavigationBarStateNotifier).currentBottomTab.key.currentContext;
+    final currentContext = _read(bottomTabStateProvider).key.currentContext;
     if (currentContext == null) {
       return;
     }
     Navigator.popUntil(currentContext, (route) => route.isFirst);
-    _read(bottomNavigationBarStateNotifier.notifier).changeTab(bottomTab);
+    _read(bottomTabStateProvider.notifier).update((state) => bottomTab);
     if (!bottomTabs.map((bottomTab) => bottomTab.path).toList().contains(path)) {
       await bottomTab.key.currentState?.pushNamed<void>(path, arguments: RouteArguments(data));
     }

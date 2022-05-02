@@ -5,6 +5,10 @@ import '../pages/attending_rooms/attending_rooms_page.dart';
 import '../pages/home/home_page.dart';
 import '../pages/map/map_page.dart';
 
+/// MainPage の BottomNavigationBarItem 一覧。
+/// さすがに override することはないのでイミュータブルなグローバル変数にする。
+final bottomTabs = BottomTabEnum.values.map(BottomTab.fromTab).toList();
+
 /// MainPage の BottomNavigationBar の enum
 enum BottomTabEnum {
   home,
@@ -98,11 +102,3 @@ class BottomTab {
   final IconData iconData;
   final GlobalKey<NavigatorState> key;
 }
-
-/// MainPage の BottomNavigationBarItem 一覧
-final bottomTabs = BottomTabEnum.values.map(BottomTab.fromTab).toList();
-
-/// MainPage の各 BottomNavigationBarItem に対応する NavigatorKey 一覧
-final bottomTabKeys = <BottomTabEnum, GlobalKey<NavigatorState>>{
-  for (final e in bottomTabs) e.tab: e.key,
-};

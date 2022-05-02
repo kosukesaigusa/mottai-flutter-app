@@ -8,7 +8,7 @@ import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../providers/bottom_navigation_bar/bottom_navigation_bar.dart';
-import '../../route/main_tabs.dart';
+import '../../route/bottom_tabs.dart';
 import '../../services/firebase_messaging_service.dart';
 import '../../services/navigation.dart';
 import '../../widgets/main/stacked_pages_navigator.dart';

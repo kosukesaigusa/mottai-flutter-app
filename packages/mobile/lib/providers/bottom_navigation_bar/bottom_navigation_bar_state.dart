@@ -1,6 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-import '../../route/main_tabs.dart';
+import '../../route/bottom_tabs.dart';
 
 part 'bottom_navigation_bar_state.freezed.dart';
 

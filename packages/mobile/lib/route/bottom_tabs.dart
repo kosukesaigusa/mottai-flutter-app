@@ -6,7 +6,8 @@ import '../pages/home/home_page.dart';
 import '../pages/map/map_page.dart';
 
 /// MainPage の BottomNavigationBarItem に対応する内容一覧。
-/// さすがに override することはないのでイミュータブルなグローバル変数にする。
+/// さすがに override することはないと思われるので Provider は使用せず
+/// イミュータブルなグローバル変数にする。
 final bottomTabs = <BottomTab>[
   BottomTab._(
     index: 0,

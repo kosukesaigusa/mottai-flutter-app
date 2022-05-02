@@ -47,23 +47,9 @@ class _MainPageState extends ConsumerState<MainPage> with WidgetsBindingObserver
   /// アプリのライフサイクルを監視する
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) {
-      debugPrint('==========================================');
-      debugPrint('AppLifecycleState: resumed');
-      debugPrint('==========================================');
-    } else if (state == AppLifecycleState.paused) {
-      debugPrint('==========================================');
-      debugPrint('AppLifecycleState: paused');
-      debugPrint('==========================================');
-    } else if (state == AppLifecycleState.detached) {
-      debugPrint('==========================================');
-      debugPrint('AppLifecycleState: detached');
-      debugPrint('==========================================');
-    } else if (state == AppLifecycleState.inactive) {
-      debugPrint('==========================================');
-      debugPrint('AppLifecycleState: inactive');
-      debugPrint('==========================================');
-    }
+    debugPrint('***');
+    debugPrint('AppLifecycleState: ${state.name}');
+    debugPrint('***');
   }
 
   @override

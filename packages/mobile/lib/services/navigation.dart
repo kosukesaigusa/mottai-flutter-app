@@ -65,9 +65,9 @@ class NavigationService {
     final data = _getDataFromQueryParameters(uri);
     final tabName = (data['tab'] ?? BottomTabEnum.home.name) as String;
     final bottomTab = BottomTab.fromString(tabName);
-    debugPrint('*****************************');
+    debugPrint('***');
     debugPrint('Dynamic Link (path, tab) = ($path, $tabName)');
-    debugPrint('*****************************');
+    debugPrint('***');
     // TODO: DeepLink のクエリパラメータなどから data（画面の引数）を受け取れる仕組みを考える
     await popUntilFirstRouteAndPushOnSpecifiedTab(bottomTab: bottomTab, path: path, data: data);
   }

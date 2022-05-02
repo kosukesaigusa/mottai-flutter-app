@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ks_flutter_commons/ks_flutter_commons.dart';
 
+import '../constants/map.dart';
 import '../pages/not_found/not_found_page.dart';
 import '../pages/playgrounds/hero/hero_detail_page.dart';
 import '../utils/types.dart';
@@ -36,14 +37,14 @@ class _AppRouterImpl implements AppRouter {
     // 分割して `queryParams` というマップに追加する。
     // path は ? 以前の文字列で上書きしておく。
     // 現状 fullScreenDialog=true くらいしか使いみちはない。
-    var queryParams = <String, dynamic>{};
+    var queryParams = emptyMap;
     if (path.contains('?')) {
       queryParams = Uri.parse(path).queryParameters;
       path = path.split('?').first;
     }
 
     // ページに渡す引数の Map<String, dynamic>
-    final data = (settings.arguments as RouteArguments?)?.data ?? <String, dynamic>{};
+    final data = (settings.arguments as RouteArguments?)?.data ?? emptyMap;
 
     try {
       // appRoutes の各要素のパスに一致する AppRoute を見つけて

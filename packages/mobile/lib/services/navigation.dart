@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../constants/dynamic_links.dart';
+import '../constants/map.dart';
 import '../providers/bottom_tab/bottom_tab.dart';
 import '../route/bottom_tabs.dart';
 import '../route/utils.dart';
@@ -40,9 +41,10 @@ class NavigationService {
     }
     Navigator.popUntil(currentContext, (route) => route.isFirst);
     _read(bottomTabStateProvider.notifier).update((state) => bottomTab);
-    if (!bottomTabs.map((bottomTab) => bottomTab.path).toList().contains(path)) {
-      await bottomTab.key.currentState?.pushNamed<void>(path, arguments: RouteArguments(data));
-    }
+    return _read(bottomTabStateProvider)
+        .key
+        .currentState
+        ?.pushNamed<void>(path, arguments: RouteArguments(data));
   }
 
   /// Dynamic Links などで Uri を指定して現在のタブ上で画面遷移する。
@@ -51,7 +53,7 @@ class NavigationService {
     if (path.isEmpty) {
       return;
     }
-    await pushOnCurrentTab(path: path, data: <String, dynamic>{});
+    await pushOnCurrentTab(path: path, data: emptyMap);
   }
 
   /// Dynamic Links によって（Uri を指定して）、
@@ -63,13 +65,16 @@ class NavigationService {
       return;
     }
     final data = _getDataFromQueryParameters(uri);
-    final tabName = (data['tab'] ?? BottomTabEnum.home.name) as String;
-    final bottomTab = BottomTab.fromString(tabName);
+    final bottomTab = BottomTab.getByPath((data['tab'] ?? '') as String);
     debugPrint('***');
-    debugPrint('Dynamic Link (path, tab) = ($path, $tabName)');
+    debugPrint('Dynamic Link: ${uri.path}');
     debugPrint('***');
     // TODO: DeepLink のクエリパラメータなどから data（画面の引数）を受け取れる仕組みを考える
-    await popUntilFirstRouteAndPushOnSpecifiedTab(bottomTab: bottomTab, path: path, data: data);
+    return popUntilFirstRouteAndPushOnSpecifiedTab(
+      bottomTab: bottomTab,
+      path: path,
+      data: data,
+    );
   }
 
   /// 画面遷移のための Uri を検証して、ノーマライズした path (String) を返す。

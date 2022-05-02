@@ -69,7 +69,7 @@ class _MainPageState extends ConsumerState<MainPage> with WidgetsBindingObserver
                     // 現在表示している状態のタブをタップした場合は画面をすべて pop する。
                     onTap: (index) {
                       FocusScope.of(context).unfocus();
-                      final bottomTab = bottomTabs[index];
+                      final bottomTab = BottomTab.getByIndex(index);
                       final currentBottomTab = ref.watch(bottomTabStateProvider);
                       if (bottomTab == currentBottomTab) {
                         bottomTab.key.currentState!.popUntil((route) => route.isFirst);
@@ -115,10 +115,10 @@ class _MainPageState extends ConsumerState<MainPage> with WidgetsBindingObserver
       debugPrint('🔥 Open app from FCM when terminated.');
       final path = remoteMessage.data['path'] as String;
       final data = remoteMessage.data;
-      debugPrint('*****************************');
+      debugPrint('***');
       debugPrint('path: $path');
       debugPrint('data: $data');
-      debugPrint('*****************************');
+      debugPrint('***');
       if (remoteMessage.data.containsKey('path')) {
         await ref.read(navigationServiceProvider).pushOnCurrentTab(path: path, data: data);
       }
@@ -131,10 +131,10 @@ class _MainPageState extends ConsumerState<MainPage> with WidgetsBindingObserver
       if (remoteMessage.data.containsKey('path')) {
         final path = remoteMessage.data['path'] as String;
         final data = remoteMessage.data;
-        debugPrint('*****************************');
+        debugPrint('***');
         debugPrint('path: $path');
         debugPrint('data: $data');
-        debugPrint('*****************************');
+        debugPrint('***');
         await ref.read(navigationServiceProvider).pushOnCurrentTab(path: path, data: data);
       }
     });

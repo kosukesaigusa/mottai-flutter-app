@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../constants/dynamic_links.dart';
-import '../providers/application/application.dart';
 import '../providers/bottom_navigation_bar/bottom_navigation_bar.dart';
 import '../route/main_tabs.dart';
 import '../route/utils.dart';
@@ -22,7 +21,7 @@ class NavigationService {
     required Map<String, dynamic> data,
   }) async {
     final currentTab = _read(bottomNavigationBarStateNotifier).currentTab;
-    final navigatorKey = _read(applicationStateNotifier.notifier).bottomTabKeys[currentTab];
+    final navigatorKey = bottomTabKeys[currentTab];
     await navigatorKey?.currentState?.pushNamed<void>(path, arguments: RouteArguments(data));
   }
 
@@ -36,7 +35,7 @@ class NavigationService {
     required Map<String, dynamic> data,
   }) async {
     final currentTab = _read(bottomNavigationBarStateNotifier).currentTab;
-    final currentNavigatorKey = _read(applicationStateNotifier.notifier).bottomTabKeys[currentTab];
+    final currentNavigatorKey = bottomTabKeys[currentTab];
     final currentContext = currentNavigatorKey?.currentContext;
     if (currentContext == null) {
       return;
@@ -44,7 +43,7 @@ class NavigationService {
     Navigator.popUntil(currentContext, (route) => route.isFirst);
     _read(bottomNavigationBarStateNotifier.notifier).changeTab(index: getIndexByTab(tab), tab: tab);
     if (!bottomTabs.map((bottomTab) => bottomTab.path).toList().contains(path)) {
-      final navigatorKey = _read(applicationStateNotifier.notifier).bottomTabKeys[tab];
+      final navigatorKey = bottomTabKeys[tab];
       await navigatorKey?.currentState?.pushNamed<void>(path, arguments: RouteArguments(data));
     }
   }

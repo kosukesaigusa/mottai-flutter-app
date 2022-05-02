@@ -13,6 +13,47 @@ enum BottomTabEnum {
   account,
 }
 
+/// BottomTabEnum の Extension
+extension BottomTabEnumExtension on BottomTabEnum {
+  /// それぞれの BottomTab の設定内容
+  BottomTab get bottomTab {
+    switch (this) {
+      case BottomTabEnum.home:
+        return const BottomTab(
+          index: 0,
+          tab: BottomTabEnum.home,
+          label: 'ホーム',
+          path: HomePage.path,
+          iconData: Icons.home,
+        );
+      case BottomTabEnum.map:
+        return const BottomTab(
+          index: 1,
+          tab: BottomTabEnum.map,
+          label: 'マップ',
+          path: MapPage.path,
+          iconData: Icons.map,
+        );
+      case BottomTabEnum.message:
+        return const BottomTab(
+          index: 2,
+          tab: BottomTabEnum.message,
+          label: 'メッセージ',
+          path: AttendingRoomsPage.path,
+          iconData: Icons.mail,
+        );
+      case BottomTabEnum.account:
+        return const BottomTab(
+          index: 3,
+          tab: BottomTabEnum.account,
+          label: 'アカウント',
+          path: AccountPage.path,
+          iconData: Icons.person,
+        );
+    }
+  }
+}
+
 /// MainPage の BottomNavigationBar の内容
 class BottomTab {
   const BottomTab({
@@ -31,36 +72,12 @@ class BottomTab {
 }
 
 /// MainPage の BottomNavigationBarItem 一覧
-const bottomTabs = [
-  BottomTab(
-    index: 0,
-    tab: BottomTabEnum.home,
-    label: 'ホーム',
-    path: HomePage.path,
-    iconData: Icons.home,
-  ),
-  BottomTab(
-    index: 1,
-    tab: BottomTabEnum.map,
-    label: 'マップ',
-    path: MapPage.path,
-    iconData: Icons.map,
-  ),
-  BottomTab(
-    index: 1,
-    tab: BottomTabEnum.message,
-    label: 'メッセージ',
-    path: AttendingRoomsPage.path,
-    iconData: Icons.mail,
-  ),
-  BottomTab(
-    index: 2,
-    tab: BottomTabEnum.account,
-    label: 'アカウント',
-    path: AccountPage.path,
-    iconData: Icons.person,
-  ),
-];
+final bottomTabs = BottomTabEnum.values.map((e) => e.bottomTab).toList();
+
+/// MainPage の各 BottomNavigationBarItem に対応する NavigatorKey 一覧
+final bottomTabKeys = <BottomTabEnum, GlobalKey<NavigatorState>>{
+  for (final e in BottomTabEnum.values) e: GlobalKey<NavigatorState>(),
+};
 
 /// BottomTabEnum から タブの index を取得する。
 int getIndexByTab(BottomTabEnum tab) {

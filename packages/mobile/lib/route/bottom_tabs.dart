@@ -87,7 +87,7 @@ class BottomTab {
       case 'account':
         return BottomTab.account();
       default:
-        return BottomTab.fromTab(BottomTabEnum.home);
+        return BottomTab.home();
     }
   }
 

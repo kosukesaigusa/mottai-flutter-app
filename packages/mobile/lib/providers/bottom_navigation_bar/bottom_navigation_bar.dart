@@ -1,6 +1,6 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../route/main_tabs.dart';
+import '../../route/bottom_tabs.dart';
 import 'bottom_navigation_bar_state.dart';
 
 final bottomNavigationBarStateNotifier =

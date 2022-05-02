@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../providers/bottom_navigation_bar/bottom_navigation_bar.dart';
+import '../../providers/bottom_tab/bottom_tab.dart';
 import '../../route/bottom_tabs.dart';
 import '../../services/firebase_messaging_service.dart';
 import '../../services/navigation.dart';
@@ -70,15 +70,14 @@ class _MainPageState extends ConsumerState<MainPage> with WidgetsBindingObserver
                     onTap: (index) {
                       FocusScope.of(context).unfocus();
                       final bottomTab = bottomTabs[index];
-                      final state = ref.watch(bottomNavigationBarStateNotifier);
-                      if (bottomTab == state.currentBottomTab) {
+                      final currentBottomTab = ref.watch(bottomTabStateProvider);
+                      if (bottomTab == currentBottomTab) {
                         bottomTab.key.currentState!.popUntil((route) => route.isFirst);
                         return;
                       }
-                      ref.read(bottomNavigationBarStateNotifier.notifier).changeTab(bottomTab);
+                      ref.read(bottomTabStateProvider.notifier).update((state) => bottomTab);
                     },
-                    currentIndex: ref.watch(bottomNavigationBarStateNotifier
-                        .select((state) => state.currentBottomTab.index)),
+                    currentIndex: ref.watch(bottomTabStateProvider).index,
                     items: bottomTabs
                         .map((b) => BottomNavigationBarItem(
                               icon: Icon(b.iconData),
@@ -94,7 +93,7 @@ class _MainPageState extends ConsumerState<MainPage> with WidgetsBindingObserver
 
   /// MainPage の BottomNavigationBar で切り替える 3 つの画面
   Widget _buildStackedPages(BottomTab bottomTab) {
-    final currentBottomTab = ref.watch(bottomNavigationBarStateNotifier).currentBottomTab;
+    final currentBottomTab = ref.watch(bottomTabStateProvider);
     return Offstage(
       offstage: bottomTab != currentBottomTab,
       child: TickerMode(

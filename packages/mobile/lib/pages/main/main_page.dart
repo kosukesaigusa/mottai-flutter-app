@@ -67,16 +67,7 @@ class _MainPageState extends ConsumerState<MainPage> with WidgetsBindingObserver
                     selectedItemColor: Theme.of(context).colorScheme.primary,
                     // BottomTab の画面を切り替える。
                     // 現在表示している状態のタブをタップした場合は画面をすべて pop する。
-                    onTap: (index) {
-                      FocusScope.of(context).unfocus();
-                      final bottomTab = BottomTab.getByIndex(index);
-                      final currentBottomTab = ref.watch(bottomTabStateProvider);
-                      if (bottomTab == currentBottomTab) {
-                        bottomTab.key.currentState!.popUntil((route) => route.isFirst);
-                        return;
-                      }
-                      ref.read(bottomTabStateProvider.notifier).update((state) => bottomTab);
-                    },
+                    onTap: _onTap,
                     currentIndex: ref.watch(bottomTabStateProvider).index,
                     items: bottomTabs
                         .map((b) => BottomNavigationBarItem(
@@ -91,7 +82,19 @@ class _MainPageState extends ConsumerState<MainPage> with WidgetsBindingObserver
     );
   }
 
-  /// MainPage の BottomNavigationBar で切り替える 3 つの画面
+  /// BottomNavigationBarItem をタップしたときの挙動
+  void _onTap(int index) {
+    FocusScope.of(context).unfocus();
+    final bottomTab = BottomTab.getByIndex(index);
+    final currentBottomTab = ref.watch(bottomTabStateProvider);
+    if (bottomTab == currentBottomTab) {
+      bottomTab.key.currentState!.popUntil((route) => route.isFirst);
+      return;
+    }
+    ref.read(bottomTabStateProvider.notifier).update((state) => bottomTab);
+  }
+
+  /// MainPage の BottomNavigationBar で切り替える各画面
   Widget _buildStackedPages(BottomTab bottomTab) {
     final currentBottomTab = ref.watch(bottomTabStateProvider);
     return Offstage(

@@ -11,7 +11,7 @@ import '../../providers/bottom_tab/bottom_tab.dart';
 import '../../route/bottom_tabs.dart';
 import '../../services/firebase_messaging_service.dart';
 import '../../services/navigation.dart';
-import '../../widgets/main/stacked_pages_navigator.dart';
+import '../../widgets/main/main_stacked_pages_navigator.dart';
 
 /// バックグラウンドから起動した際にFirebaseを有効化する。
 /// グローバルに記述する必要がある

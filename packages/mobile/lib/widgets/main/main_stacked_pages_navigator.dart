@@ -3,8 +3,8 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../pages/main/main_page.dart';
 import '../../pages/not_found/not_found_page.dart';
-import '../../route/app_router.dart';
 import '../../route/bottom_tabs.dart';
+import '../../route/router.dart';
 import '../../route/routes.dart';
 
 class MainStackedPagesNavigator extends HookConsumerWidget {

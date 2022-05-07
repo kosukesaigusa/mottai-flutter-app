@@ -68,6 +68,7 @@ class Router {
     }
   }
 
+  /// onGenerateRoute と同じ引数を受けてパスを決定する。
   String _path(RouteSettings routeSettings, {String? bottomNavigationPath}) {
     final path = routeSettings.name;
     if (path == null) {

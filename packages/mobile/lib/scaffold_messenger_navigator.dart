@@ -4,7 +4,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'pages/not_found/not_found_page.dart';
 import 'providers/overlay_loading/overlay_loading.dart';
-import 'route/app_router.dart';
+import 'route/router.dart';
 import 'route/routes.dart';
 import 'services/scaffold_messenger_service.dart';
 import 'widgets/loading/loading.dart';

@@ -9,8 +9,6 @@ import 'route/routes.dart';
 import 'services/scaffold_messenger_service.dart';
 import 'widgets/loading/loading.dart';
 
-final appRouter = AppRouter.create(routeBuilder);
-
 /// Widget Tree の最上部で ScaffoldMessenger を含めるための Navigator ウィジェット。
 /// 目には見えないが、アプリケーション上の全てのページがこの Scaffold の上に載るので
 /// ScaffoldMessengerController でどこからでもスナックバーが表示できるようになっている。
@@ -27,8 +25,8 @@ class ScaffoldMessengerNavigator extends HookConsumerWidget {
             children: [
               Navigator(
                 key: ref.watch(scaffoldMessengerServiceProvider.select((c) => c.navigatorKey)),
-                initialRoute: AppRouter.initialRoute,
-                onGenerateRoute: appRouter.generateRoute,
+                initialRoute: ref.watch(routerProvider(appRoutes)).initialRoute,
+                onGenerateRoute: ref.watch(routerProvider(appRoutes)).onGenerateRoute,
                 observers: const [],
                 onUnknownRoute: (settings) {
                   final route = MaterialPageRoute<void>(

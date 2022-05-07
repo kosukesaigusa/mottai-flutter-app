@@ -7,8 +7,6 @@ import '../../route/app_router.dart';
 import '../../route/bottom_tabs.dart';
 import '../../route/routes.dart';
 
-final appRouter = AppRouter.create(routeBuilder);
-
 class MainStackedPagesNavigator extends HookConsumerWidget {
   const MainStackedPagesNavigator({
     Key? key,
@@ -25,12 +23,10 @@ class MainStackedPagesNavigator extends HookConsumerWidget {
       observers: [
         HeroController(),
       ],
-      // MainPage の StackedPages 上での Navigation なので
-      // tab.path を渡す
-      onGenerateRoute: (routeSettings) => appRouter.generateRoute(
-        routeSettings,
-        bottomNavigationPath: bottomTab.path,
-      ),
+      // MainPage の StackedPages 上での Navigation の設定
+      onGenerateRoute: (routeSettings) => ref
+          .watch(routerProvider(appRoutes))
+          .onGenerateRoute(routeSettings, bottomNavigationPath: bottomTab.path),
       onUnknownRoute: (settings) {
         final route = MaterialPageRoute<void>(
           settings: settings,

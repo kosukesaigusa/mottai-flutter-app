@@ -1,37 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:ks_flutter_commons/ks_flutter_commons.dart';
 
 import '../constants/map.dart';
 import '../pages/not_found/not_found_page.dart';
 import '../pages/playgrounds/hero/hero_detail_page.dart';
-import '../utils/types.dart';
 import 'custom_hero_router.dart';
 import 'utils.dart';
 
-abstract class AppRouter {
-  factory AppRouter.create(Map<String, PageBuilder> routeMap) => _AppRouterImpl(routeMap);
+final routerProvider = Provider.family<Router, List<AppRoute>>(
+  (_, appRoutes) => Router(appRoutes),
+);
 
-  static const initialRoute = '/';
-  Route<dynamic> generateRoute(RouteSettings settings, {String bottomNavigationPath});
-}
-
-class _AppRouterImpl implements AppRouter {
-  _AppRouterImpl(Map<String, PageBuilder> routeMap)
-      : appRoutes = <AppRoute>[for (final key in routeMap.keys) AppRoute(key, routeMap[key]!)];
+class Router {
+  Router(this.appRoutes);
 
   final List<AppRoute> appRoutes;
+  final initialRoute = '/';
 
-  @override
-  Route<dynamic> generateRoute(RouteSettings settings, {String? bottomNavigationPath}) {
-    var path = settings.name!;
-    if (bottomNavigationPath?.isEmpty ?? true) {
-      path = settings.name!;
-    } else {
-      path = (settings.name == AppRouter.initialRoute ? bottomNavigationPath : settings.name)!;
-    }
-    debugPrint('*****************************');
+  Route<dynamic> onGenerateRoute(RouteSettings routeSettings, {String? bottomNavigationPath}) {
+    var path = _path(routeSettings, bottomNavigationPath: bottomNavigationPath);
+    debugPrint('***');
     debugPrint('path: $path');
-    debugPrint('*****************************');
 
     // path に ? がついている場合は、それ以降をクエリストリングとみなし、
     // 分割して `queryParams` というマップに追加する。
@@ -44,7 +34,7 @@ class _AppRouterImpl implements AppRouter {
     }
 
     // ページに渡す引数の Map<String, dynamic>
-    final data = (settings.arguments as RouteArguments?)?.data ?? emptyMap;
+    final data = (routeSettings.arguments as RouteArguments?)?.data ?? emptyMap;
 
     try {
       // appRoutes の各要素のパスに一致する AppRoute を見つけて
@@ -63,7 +53,7 @@ class _AppRouterImpl implements AppRouter {
         return customRoute;
       } else {
         final route = MaterialPageRoute<dynamic>(
-          settings: settings,
+          settings: routeSettings,
           builder: (context) => appRoute.pageBuilder(context, RouteArguments(data)),
           fullscreenDialog: toBool(queryParams['fullScreenDialog'] ?? false),
         );
@@ -71,10 +61,24 @@ class _AppRouterImpl implements AppRouter {
       }
     } on RouteNotFoundException {
       final route = MaterialPageRoute<void>(
-        settings: settings,
+        settings: routeSettings,
         builder: (context) => const NotFoundPage(),
       );
       return route;
     }
+  }
+
+  String _path(RouteSettings routeSettings, {String? bottomNavigationPath}) {
+    final path = routeSettings.name;
+    if (path == null) {
+      return '';
+    }
+    if (bottomNavigationPath?.isEmpty ?? true) {
+      return path;
+    }
+    if (path == initialRoute) {
+      return bottomNavigationPath!;
+    }
+    return path;
   }
 }

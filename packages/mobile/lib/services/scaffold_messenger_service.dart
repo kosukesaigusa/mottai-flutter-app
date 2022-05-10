@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../constants/snack_bar.dart';
+import '../constants/string.dart';
+import '../utils/extensions/string.dart';
 
 final scaffoldMessengerServiceProvider = Provider.autoDispose((ref) => ScaffoldMessengerService());
 
@@ -25,7 +27,7 @@ class ScaffoldMessengerService {
 
   /// スナックバーを表示する
   ScaffoldFeatureController<SnackBar, SnackBarClosedReason> showSnackBar(
-    dynamic message, {
+    String message, {
     bool removeCurrentSnackBar = true,
     Duration duration = defaultSnackBarDuration,
   }) {
@@ -33,21 +35,11 @@ class ScaffoldMessengerService {
     if (removeCurrentSnackBar) {
       scaffoldMessengerState.removeCurrentSnackBar();
     }
-    // message が String 型ならそのまま、その他なら String 型に変換しつつ
-    // ユーザーに見せるべきでない文言は調整して SnackBar を表示する。ｓ
-    if (message is String) {
-      return scaffoldMessengerState.showSnackBar(SnackBar(
-        content: Text(message),
-        behavior: defaultSnackBarBehavior,
-        duration: duration,
-      ));
-    } else {
-      return scaffoldMessengerState.showSnackBar(SnackBar(
-        content: Text('$message'.replaceAll('Exception:', '')),
-        behavior: defaultSnackBarBehavior,
-        duration: duration,
-      ));
-    }
+    return scaffoldMessengerState.showSnackBar(SnackBar(
+      content: Text(message),
+      behavior: defaultSnackBarBehavior,
+      duration: duration,
+    ));
   }
 
   /// FirebaseException 起点でスナックバーを表示する
@@ -56,9 +48,11 @@ class ScaffoldMessengerService {
     return showSnackBar('[${e.code}]: ${e.message ?? 'FirebaseException が発生しました。'}');
   }
 
-  /// その他の Exception 起点でスナックバーを表示する
+  /// Exception 起点でスナックバーを表示するｌ
+  /// Dart の Exception 型の場合は toString() 冒頭を取り除いて差し支えのないメッセージに置換しておく。
   ScaffoldFeatureController<SnackBar, SnackBarClosedReason> showSnackBarByException(Exception e) {
-    return showSnackBar('[${e.toString()}]: エラーが発生しました。');
+    final message = e.toString().replaceAll('Exception: ', '').replaceAll('Exception', '');
+    return showSnackBar(message.ifIsEmpty(generalExceptionMessage));
   }
 
   /// フォーカスを外す

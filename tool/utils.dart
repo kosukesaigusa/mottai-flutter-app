@@ -5,6 +5,7 @@ import 'package:path/path.dart';
 ///
 enum Flavor { local, dev, prod }
 
+// ignore: avoid_classes_with_only_static_members
 /// モバイルアプリ
 class MobileAppTool {
   static const relativeRootDir = 'packages/mobile/';
@@ -28,7 +29,7 @@ Future<String> get buildNumber async {
     ['rev-list', '--all', '--count'],
     runInShell: true,
   );
-  return (int.parse(result.stdout) + 10000).toString();
+  return (int.parse(result.stdout.toString()) + 10000).toString();
 }
 
 ///

@@ -3,7 +3,7 @@ import 'package:grinder/grinder.dart';
 import 'environments.dart';
 import 'utils.dart';
 
-main(List<String> args) => grind(args);
+void main(List<String> args) => grind(args);
 
 /// モバイルアプリに対して静的解析を実行する
 @Task('analyzeMobile')
@@ -15,13 +15,6 @@ void analyze() {
 @Task('dev-ipa')
 void devIpa() {
   _buildIos(flavor: Flavor.dev, buildName: '1.0.0');
-}
-
-/// Dev 版 ipa をビルドして TestFlight に提出する
-@Task('test')
-Future<void> test() async {
-  final a = await buildNumber;
-  print(a);
 }
 
 ///
@@ -37,11 +30,11 @@ Future<void> _buildIos({
       '--release',
       '--dart-define=FLAVOR=${flavor.name}',
       '-t',
-      '${MobileAppTool.entryPointPath}',
+      (MobileAppTool.entryPointPath),
       '--build-name',
-      '$buildName',
+      buildName,
       '--build-number',
-      '${await buildNumber}',
+      (await buildNumber),
       '--export-options-plist=${MobileAppTool.exportOptionsPath}',
     ],
   );
@@ -61,8 +54,7 @@ Future<void> _buildIos({
     arguments: [
       'altool',
       '--upload-app',
-      '-f "${MobileAppTool.ipaPath(flavor)}"'
-          '-t ios',
+      '-f "${MobileAppTool.ipaPath(flavor)}" -t ios',
       '--apiKey ${DevEnv.apiKeyId}',
       '--apiIssuer ${DevEnv.apiIssuerId}',
     ],

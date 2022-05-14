@@ -2,8 +2,10 @@ include: package:flutter_lints/flutter.yaml
 
 analyzer:
   exclude:
-    - lib/**/**.freezed.dart'
-    - lib/**/**.g.dart'
+    - lib/**/**.freezed.dart
+    - lib/**/**.g.dart
+    - packages/twitter_login/**
+
   errors:
     missing_required_param: warning
     missing_return: warning
@@ -11,6 +13,7 @@ analyzer:
     # https://github.com/dart-lang/sdk/issues/46844
     # freezed モデルの invalid_annotation_target の警告を消す目的
     invalid_annotation_target: ignore
+
   strong-mode:
     implicit-casts: false
     implicit-dynamic: false

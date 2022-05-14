@@ -55,3 +55,4 @@ app.*.map.json
 # fabfile
 fabfile/
 tool/environments.dart
+.fvm/flutter_sdk

@@ -34,7 +34,7 @@ class _MainPageState extends ConsumerState<MainPage> with WidgetsBindingObserver
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance!.addObserver(this);
+    WidgetsBinding.instance.addObserver(this);
 
     // 必要な初期化処理を行う
     Future.wait([

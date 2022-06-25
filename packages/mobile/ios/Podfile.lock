@@ -5,11 +5,11 @@ PODS:
   - AppAuth/Core (1.5.0)
   - AppAuth/ExternalUserAgent (1.5.0):
     - AppAuth/Core
-  - cloud_firestore (3.1.13):
+  - cloud_firestore (3.1.18):
     - Firebase/Firestore (= 8.15.0)
     - firebase_core
     - Flutter
-  - cloud_functions (3.2.13):
+  - cloud_functions (3.2.17):
     - Firebase/Functions (= 8.15.0)
     - firebase_core
     - Flutter
@@ -44,30 +44,30 @@ PODS:
   - Firebase/Storage (8.15.0):
     - Firebase/CoreOnly
     - FirebaseStorage (~> 8.15.0)
-  - firebase_analytics (9.1.6):
+  - firebase_analytics (9.1.10):
     - Firebase/Analytics (= 8.15.0)
     - firebase_core
     - Flutter
-  - firebase_auth (3.3.15):
+  - firebase_auth (3.3.20):
     - Firebase/Auth (= 8.15.0)
     - firebase_core
     - Flutter
-  - firebase_core (1.15.0):
+  - firebase_core (1.18.0):
     - Firebase/CoreOnly (= 8.15.0)
     - Flutter
-  - firebase_crashlytics (2.6.3):
+  - firebase_crashlytics (2.8.2):
     - Firebase/Crashlytics (= 8.15.0)
     - firebase_core
     - Flutter
-  - firebase_dynamic_links (4.2.0):
+  - firebase_dynamic_links (4.2.6):
     - Firebase/DynamicLinks (= 8.15.0)
     - firebase_core
     - Flutter
-  - firebase_messaging (11.2.14):
+  - firebase_messaging (11.4.2):
     - Firebase/Messaging (= 8.15.0)
     - firebase_core
     - Flutter
-  - firebase_storage (10.2.13):
+  - firebase_storage (10.2.18):
     - Firebase/Storage (= 8.15.0)
     - firebase_core
     - Flutter
@@ -143,7 +143,7 @@ PODS:
   - Flutter (1.0.0)
   - flutter_keyboard_visibility (0.0.1):
     - Flutter
-  - flutter_line_sdk (2.1.0):
+  - flutter_line_sdk (2.2.0):
     - Flutter
     - LineSDKSwift (~> 5.3)
   - flutter_native_image (0.0.1):
@@ -158,7 +158,7 @@ PODS:
     - GoogleMaps
   - google_sign_in_ios (0.0.1):
     - Flutter
-    - GoogleSignIn (~> 5.0)
+    - GoogleSignIn (~> 6.2)
   - GoogleAppMeasurement (8.15.0):
     - GoogleAppMeasurement/AdIdSupport (= 8.15.0)
     - GoogleUtilities/AppDelegateSwizzler (~> 7.7)
@@ -179,18 +179,18 @@ PODS:
     - GoogleUtilities/Network (~> 7.7)
     - "GoogleUtilities/NSData+zlib (~> 7.7)"
     - nanopb (~> 2.30908.0)
-  - GoogleDataTransport (9.1.2):
-    - GoogleUtilities/Environment (~> 7.2)
-    - nanopb (~> 2.30908.0)
+  - GoogleDataTransport (9.1.4):
+    - GoogleUtilities/Environment (~> 7.7)
+    - nanopb (< 2.30910.0, >= 2.30908.0)
     - PromisesObjC (< 3.0, >= 1.2)
-  - GoogleMaps (6.1.1):
-    - GoogleMaps/Maps (= 6.1.1)
-  - GoogleMaps/Base (6.1.1)
-  - GoogleMaps/Maps (6.1.1):
+  - GoogleMaps (6.2.1):
+    - GoogleMaps/Maps (= 6.2.1)
+  - GoogleMaps/Base (6.2.1)
+  - GoogleMaps/Maps (6.2.1):
     - GoogleMaps/Base
-  - GoogleSignIn (5.0.2):
-    - AppAuth (~> 1.2)
-    - GTMAppAuth (~> 1.0)
+  - GoogleSignIn (6.2.2):
+    - AppAuth (~> 1.5)
+    - GTMAppAuth (~> 1.3)
     - GTMSessionFetcher/Core (~> 1.1)
   - GoogleUtilities/AppDelegateSwizzler (7.7.0):
     - GoogleUtilities/Environment
@@ -211,18 +211,18 @@ PODS:
     - GoogleUtilities/Logger
   - GoogleUtilities/UserDefaults (7.7.0):
     - GoogleUtilities/Logger
-  - GTMAppAuth (1.2.3):
+  - GTMAppAuth (1.3.0):
     - AppAuth/Core (~> 1.4)
     - GTMSessionFetcher/Core (~> 1.5)
-  - GTMSessionFetcher/Core (1.7.1)
+  - GTMSessionFetcher/Core (1.7.2)
   - image_cropper (0.0.4):
     - Flutter
     - TOCropViewController (~> 2.6.1)
   - image_picker_ios (0.0.1):
     - Flutter
-  - LineSDKSwift (5.8.1):
-    - LineSDKSwift/Core (= 5.8.1)
-  - LineSDKSwift/Core (5.8.1)
+  - LineSDKSwift (5.8.2):
+    - LineSDKSwift/Core (= 5.8.2)
+  - LineSDKSwift/Core (5.8.2)
   - nanopb (2.30908.0):
     - nanopb/decode (= 2.30908.0)
     - nanopb/encode (= 2.30908.0)
@@ -379,17 +379,17 @@ CHECKOUT OPTIONS:
 
 SPEC CHECKSUMS:
   AppAuth: 80317d99ac7ff2801a2f18ff86b48cd315ed465d
-  cloud_firestore: a7a94d8f25b77b84533eb8bd5627437a0cdb49f0
-  cloud_functions: 4cfa97288036d49850a3e45c52f651bc2e509c80
+  cloud_firestore: 06275c927c4a8ccbb67ce6523c9c2848c512d602
+  cloud_functions: ed41de736d1d7fccec2d6581a8c1037bfa8d2807
   connectivity_plus: 413a8857dd5d9f1c399a39130850d02fe0feaf7e
   Firebase: 5f8193dff4b5b7c5d5ef72ae54bb76c08e2b841d
-  firebase_analytics: 79e91b70c5698a941bdc8b813f40d3c444a58034
-  firebase_auth: 0624c0e2e1c0732209286f99cdacfe2b985a3c61
-  firebase_core: fa19947d8db1c0a62d8872c45039b3113829cd2e
-  firebase_crashlytics: bf47208bdd39b16c90a0beed3fed09786081bcba
-  firebase_dynamic_links: eae3c93e6fe9e5a3bf9ab0f074dd1d71cc356179
-  firebase_messaging: 16a1bcf72818ff3cb9d77c1bbfabb67997fbda47
-  firebase_storage: e66af08f2f440d0582731c800d93065092edc517
+  firebase_analytics: 9029d8bd4cd488a3dd7ff32ec4fccd3160bf7200
+  firebase_auth: 0c31e02a522f6ece632f9f6d623441898c4dd679
+  firebase_core: b14c1cfa29b9eb316345f74d1489328283825d6d
+  firebase_crashlytics: 248f810b9b21421d3e4d102cc1871ca4296e6753
+  firebase_dynamic_links: 007ad1d6eb991a53b4baacf215adb4de62df11e2
+  firebase_messaging: 5374d57b2ca7a5efe1a150500b9a2451ca9ff5af
+  firebase_storage: a41b8aebf817b5c798069d8251111063907d7d70
   FirebaseAnalytics: 7761cbadb00a717d8d0939363eb46041526474fa
   FirebaseAuth: 3e73bf8abf4fbb40f8b421f361f4cc48ee57388c
   FirebaseCore: 5743c5785c074a794d35f2fff7ecc254a91e08b1
@@ -403,22 +403,22 @@ SPEC CHECKSUMS:
   FirebaseStorage: 8019af461599b2c3bc61c6a5dbdfa3d2de66a4d9
   Flutter: 50d75fe2f02b26cc09d224853bb45737f8b3214a
   flutter_keyboard_visibility: 0339d06371254c3eb25eeb90ba8d17dca8f9c069
-  flutter_line_sdk: b4936acf03e5db45a412d79276f3483e4f27f0c7
+  flutter_line_sdk: d944c3907ef53be11ac5bf2484f87df93eb5b39c
   flutter_native_image: 9c0b7451838484458e5b0fae007b86a4c2d4bdfe
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
   geolocator_apple: cc556e6844d508c95df1e87e3ea6fa4e58c50401
   google_maps_flutter: c59fc576c0d0c7f4dc4bd63832c862d22d5a7c6d
-  google_sign_in_ios: ed71c0dbddfba8b1ea9aa210dbda695f46bf51bd
+  google_sign_in_ios: 90eec6616c4c2105b9f9fe5c774773d13565b504
   GoogleAppMeasurement: 4c19f031220c72464d460c9daa1fb5d1acce958e
-  GoogleDataTransport: 629c20a4d363167143f30ea78320d5a7eb8bd940
-  GoogleMaps: 94e6e0851beece6678af9f508f4918b7a7c61722
-  GoogleSignIn: 7137d297ddc022a7e0aa4619c86d72c909fa7213
+  GoogleDataTransport: 5fffe35792f8b96ec8d6775f5eccd83c998d5a3b
+  GoogleMaps: 20d7b12be49a14287f797e88e0e31bc4156aaeb4
+  GoogleSignIn: 3c68388ac221f379676e8f1cb115df3aaf73b93f
   GoogleUtilities: e0913149f6b0625b553d70dae12b49fc62914fd1
-  GTMAppAuth: 987526d41b07efb1bedda5e936fe0cb718a03113
-  GTMSessionFetcher: 4577a4cc914a5a07c40a8a0ad0acc22080418c2d
+  GTMAppAuth: 4d8f864896f3646f0c33baf38a28362f4c601e15
+  GTMSessionFetcher: 5595ec75acf5be50814f81e9189490412bad82ba
   image_cropper: 60c2789d1f1a78c873235d4319ca0c34a69f2d98
   image_picker_ios: b786a5dcf033a8336a657191401bfdf12017dabb
-  LineSDKSwift: 55ea1486ad3b2802b7e00f80aeb5844e3ed3faa3
+  LineSDKSwift: 52bce568988f61f4a529b0ee629525a0cb85b9fe
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
   package_info_plus: 6c92f08e1f853dc01228d6f553146438dafcd14e
   path_provider_ios: 14f3d2fd28c4fdb42f44e0f751d12861c43cee02
@@ -435,4 +435,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: e356012b87187017dca100a027e38e2a2501ede1
 
-COCOAPODS: 1.11.2
+COCOAPODS: 1.11.3

@@ -5,8 +5,8 @@ publish_to: 'none'
 version: 1.0.0+1
 
 environment:
-  sdk: '>=2.17.0 <3.0.0'
-  flutter: '>=3.0.0'
+  sdk: '>=2.17.5 <3.0.0'
+  flutter: '>=3.0.3'
 
 dependencies:
   cached_network_image:
@@ -43,7 +43,7 @@ dependencies:
   google_fonts:
   google_maps_flutter:
   google_sign_in:
-  hooks_riverpod: ^2.0.0-dev.5
+  hooks_riverpod: ^2.0.0-dev.9
   image_cropper:
   image_picker:
   intl:
@@ -53,7 +53,7 @@ dependencies:
     path: ../ks_flutter_commons
   mottai_flutter_app_models:
     path: ../models
-  package_info_plus:
+  package_info_plus: ^1.4.2
   photo_view:
   rxdart:
   shared_preferences:

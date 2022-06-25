@@ -6,6 +6,8 @@ packages:
   - packages/**
   - '*'
 
+sdkPath: .fvm/flutter_sdk
+
 scripts:
   clean:
     run: melos exec -- "fvm flutter clean"

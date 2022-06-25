@@ -7,6 +7,20 @@ targets:
       freezed:
         generate_for:
           include:
-            - lib/controllers/**/*state.dart
-            - lib/controllers/**/firebase_task_result.dart
             - lib/providers/**/*state.dart
+            - lib/models/**/*.dart
+      json_serializable:
+        options:
+          checked: true
+      # 自動生成ファイルの冒頭に ignore_for_file コメントを付加するための設定。
+      # これをすることで analyzer の exclude に lib/**/**.g.dart などを書かなくて良くなる。
+      # https://twitter.com/_mono/status/1536907416864169987
+      source_gen|combining_builder:
+        options:
+          ignore_for_file:
+            - type=lint
+            - implicit_dynamic_parameter
+            - implicit_dynamic_type
+            - implicit_dynamic_method
+            - strict_raw_type
+            - todo

@@ -117,11 +117,11 @@ class _$MapPageStateCopyWithImpl<$Res> implements $MapPageStateCopyWith<$Res> {
 }
 
 /// @nodoc
-abstract class _$MapPageStateCopyWith<$Res>
+abstract class _$$_MapPageStateCopyWith<$Res>
     implements $MapPageStateCopyWith<$Res> {
-  factory _$MapPageStateCopyWith(
-          _MapPageState value, $Res Function(_MapPageState) then) =
-      __$MapPageStateCopyWithImpl<$Res>;
+  factory _$$_MapPageStateCopyWith(
+          _$_MapPageState value, $Res Function(_$_MapPageState) then) =
+      __$$_MapPageStateCopyWithImpl<$Res>;
   @override
   $Res call(
       {bool ready,
@@ -138,14 +138,15 @@ abstract class _$MapPageStateCopyWith<$Res>
 }
 
 /// @nodoc
-class __$MapPageStateCopyWithImpl<$Res> extends _$MapPageStateCopyWithImpl<$Res>
-    implements _$MapPageStateCopyWith<$Res> {
-  __$MapPageStateCopyWithImpl(
-      _MapPageState _value, $Res Function(_MapPageState) _then)
-      : super(_value, (v) => _then(v as _MapPageState));
+class __$$_MapPageStateCopyWithImpl<$Res>
+    extends _$MapPageStateCopyWithImpl<$Res>
+    implements _$$_MapPageStateCopyWith<$Res> {
+  __$$_MapPageStateCopyWithImpl(
+      _$_MapPageState _value, $Res Function(_$_MapPageState) _then)
+      : super(_value, (v) => _then(v as _$_MapPageState));
 
   @override
-  _MapPageState get _value => super._value as _MapPageState;
+  _$_MapPageState get _value => super._value as _$_MapPageState;
 
   @override
   $Res call({
@@ -158,7 +159,7 @@ class __$MapPageStateCopyWithImpl<$Res> extends _$MapPageStateCopyWithImpl<$Res>
     Object? center = freezed,
     Object? selectedHostLocation = freezed,
   }) {
-    return _then(_MapPageState(
+    return _then(_$_MapPageState(
       ready: ready == freezed
           ? _value.ready
           : ready // ignore: cast_nullable_to_non_nullable
@@ -176,11 +177,11 @@ class __$MapPageStateCopyWithImpl<$Res> extends _$MapPageStateCopyWithImpl<$Res>
           : resetDetection // ignore: cast_nullable_to_non_nullable
               as bool,
       markers: markers == freezed
-          ? _value.markers
+          ? _value._markers
           : markers // ignore: cast_nullable_to_non_nullable
               as Map<MarkerId, Marker>,
       hostLocationsOnMap: hostLocationsOnMap == freezed
-          ? _value.hostLocationsOnMap
+          ? _value._hostLocationsOnMap
           : hostLocationsOnMap // ignore: cast_nullable_to_non_nullable
               as List<HostLocation>,
       center: center == freezed
@@ -253,7 +254,7 @@ class _$_MapPageState implements _MapPageState {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _MapPageState &&
+            other is _$_MapPageState &&
             const DeepCollectionEquality().equals(other.ready, ready) &&
             const DeepCollectionEquality()
                 .equals(other.debugRadius, debugRadius) &&
@@ -261,9 +262,9 @@ class _$_MapPageState implements _MapPageState {
                 .equals(other.debugZoomLevel, debugZoomLevel) &&
             const DeepCollectionEquality()
                 .equals(other.resetDetection, resetDetection) &&
-            const DeepCollectionEquality().equals(other.markers, markers) &&
+            const DeepCollectionEquality().equals(other._markers, _markers) &&
             const DeepCollectionEquality()
-                .equals(other.hostLocationsOnMap, hostLocationsOnMap) &&
+                .equals(other._hostLocationsOnMap, _hostLocationsOnMap) &&
             const DeepCollectionEquality().equals(other.center, center) &&
             const DeepCollectionEquality()
                 .equals(other.selectedHostLocation, selectedHostLocation));
@@ -276,15 +277,15 @@ class _$_MapPageState implements _MapPageState {
       const DeepCollectionEquality().hash(debugRadius),
       const DeepCollectionEquality().hash(debugZoomLevel),
       const DeepCollectionEquality().hash(resetDetection),
-      const DeepCollectionEquality().hash(markers),
-      const DeepCollectionEquality().hash(hostLocationsOnMap),
+      const DeepCollectionEquality().hash(_markers),
+      const DeepCollectionEquality().hash(_hostLocationsOnMap),
       const DeepCollectionEquality().hash(center),
       const DeepCollectionEquality().hash(selectedHostLocation));
 
   @JsonKey(ignore: true)
   @override
-  _$MapPageStateCopyWith<_MapPageState> get copyWith =>
-      __$MapPageStateCopyWithImpl<_MapPageState>(this, _$identity);
+  _$$_MapPageStateCopyWith<_$_MapPageState> get copyWith =>
+      __$$_MapPageStateCopyWithImpl<_$_MapPageState>(this, _$identity);
 }
 
 abstract class _MapPageState implements MapPageState {
@@ -317,6 +318,6 @@ abstract class _MapPageState implements MapPageState {
   HostLocation? get selectedHostLocation => throw _privateConstructorUsedError;
   @override
   @JsonKey(ignore: true)
-  _$MapPageStateCopyWith<_MapPageState> get copyWith =>
+  _$$_MapPageStateCopyWith<_$_MapPageState> get copyWith =>
       throw _privateConstructorUsedError;
 }

@@ -54,31 +54,31 @@ class _$AccountPageStateCopyWithImpl<$Res>
 }
 
 /// @nodoc
-abstract class _$AccountPageStateCopyWith<$Res>
+abstract class _$$_AccountPageStateCopyWith<$Res>
     implements $AccountPageStateCopyWith<$Res> {
-  factory _$AccountPageStateCopyWith(
-          _AccountPageState value, $Res Function(_AccountPageState) then) =
-      __$AccountPageStateCopyWithImpl<$Res>;
+  factory _$$_AccountPageStateCopyWith(
+          _$_AccountPageState value, $Res Function(_$_AccountPageState) then) =
+      __$$_AccountPageStateCopyWithImpl<$Res>;
   @override
   $Res call({bool loading});
 }
 
 /// @nodoc
-class __$AccountPageStateCopyWithImpl<$Res>
+class __$$_AccountPageStateCopyWithImpl<$Res>
     extends _$AccountPageStateCopyWithImpl<$Res>
-    implements _$AccountPageStateCopyWith<$Res> {
-  __$AccountPageStateCopyWithImpl(
-      _AccountPageState _value, $Res Function(_AccountPageState) _then)
-      : super(_value, (v) => _then(v as _AccountPageState));
+    implements _$$_AccountPageStateCopyWith<$Res> {
+  __$$_AccountPageStateCopyWithImpl(
+      _$_AccountPageState _value, $Res Function(_$_AccountPageState) _then)
+      : super(_value, (v) => _then(v as _$_AccountPageState));
 
   @override
-  _AccountPageState get _value => super._value as _AccountPageState;
+  _$_AccountPageState get _value => super._value as _$_AccountPageState;
 
   @override
   $Res call({
     Object? loading = freezed,
   }) {
-    return _then(_AccountPageState(
+    return _then(_$_AccountPageState(
       loading: loading == freezed
           ? _value.loading
           : loading // ignore: cast_nullable_to_non_nullable
@@ -105,7 +105,7 @@ class _$_AccountPageState implements _AccountPageState {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _AccountPageState &&
+            other is _$_AccountPageState &&
             const DeepCollectionEquality().equals(other.loading, loading));
   }
 
@@ -115,8 +115,8 @@ class _$_AccountPageState implements _AccountPageState {
 
   @JsonKey(ignore: true)
   @override
-  _$AccountPageStateCopyWith<_AccountPageState> get copyWith =>
-      __$AccountPageStateCopyWithImpl<_AccountPageState>(this, _$identity);
+  _$$_AccountPageStateCopyWith<_$_AccountPageState> get copyWith =>
+      __$$_AccountPageStateCopyWithImpl<_$_AccountPageState>(this, _$identity);
 }
 
 abstract class _AccountPageState implements AccountPageState {
@@ -126,6 +126,6 @@ abstract class _AccountPageState implements AccountPageState {
   bool get loading => throw _privateConstructorUsedError;
   @override
   @JsonKey(ignore: true)
-  _$AccountPageStateCopyWith<_AccountPageState> get copyWith =>
+  _$$_AccountPageStateCopyWith<_$_AccountPageState> get copyWith =>
       throw _privateConstructorUsedError;
 }

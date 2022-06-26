@@ -3,9 +3,8 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../pages/main/main_page.dart';
 import '../../pages/not_found/not_found_page.dart';
+import '../../route/app_router.dart';
 import '../../route/bottom_tabs.dart';
-import '../../route/router.dart';
-import '../../route/routes.dart';
 
 class MainStackedPagesNavigator extends HookConsumerWidget {
   const MainStackedPagesNavigator({
@@ -25,8 +24,8 @@ class MainStackedPagesNavigator extends HookConsumerWidget {
       ],
       // MainPage の StackedPages 上での Navigation の設定
       onGenerateRoute: (routeSettings) => ref
-          .watch(routerProvider(appRoutes))
-          .onGenerateRoute(routeSettings, bottomNavigationPath: bottomTab.path),
+          .watch(appRouterProvider)
+          .onGenerateRoute(routeSettings, bottomNavigationPath: bottomTab.bottomTabEnum.location),
       onUnknownRoute: (settings) {
         final route = MaterialPageRoute<void>(
           settings: settings,

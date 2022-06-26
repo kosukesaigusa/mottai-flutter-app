@@ -34,7 +34,7 @@ class _RoomsPageState extends ConsumerState<RoomsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(title: const Text('メッセージ')),
       body: ref.watch(attendingRoomsStreamProvider).when<Widget>(
             loading: () => const PrimarySpinkitCircle(),
             error: (error, __) {
@@ -92,10 +92,12 @@ class _RoomsPageState extends ConsumerState<RoomsPage> {
           await ref
               .read(messageRepositoryProvider)
               .attendingRoomRef(userId: userId, roomId: roomId)
-              .set(AttendingRoom(
-                roomId: roomId,
-                partnerId: hostId,
-              ),);
+              .set(
+                AttendingRoom(
+                  roomId: roomId,
+                  partnerId: hostId,
+                ),
+              );
           ref.read(scaffoldMessengerServiceProvider).showSnackBar('【テスト用】ホスト 1 とのルームを作成しました。');
         },
       );
@@ -113,10 +115,12 @@ class AttendingRoomWidget extends HookConsumerWidget {
         ? InkWell(
             onTap: () async {
               // 非同期的に lastReadAt を更新する
-              unawaited(ref
-                  .read(messageRepositoryProvider)
-                  .readStatusRef(roomId: attendingRoom.roomId, readStatusId: userId)
-                  .set(const ReadStatus(), SetOptions(merge: true)),);
+              unawaited(
+                ref
+                    .read(messageRepositoryProvider)
+                    .readStatusRef(roomId: attendingRoom.roomId, readStatusId: userId)
+                    .set(const ReadStatus(), SetOptions(merge: true)),
+              );
               await Navigator.pushNamed<void>(
                 context,
                 RoomPage.location(roomId: attendingRoom.roomId),

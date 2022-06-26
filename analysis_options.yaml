@@ -124,6 +124,7 @@ linter:
     - prefer_typing_uninitialized_variables
     - prefer_void_to_null
     - recursive_getters
+    - require_trailing_commas
     - sized_box_for_whitespace
     - slash_for_doc_comments
     - sort_constructors_first
@@ -156,6 +157,7 @@ linter:
     - use_rethrow_when_possible
     - use_setters_to_change_properties
     - use_string_buffers
+    - use_super_parameters
     - use_to_and_as_if_applicable
     - valid_regexps
     - void_checks

@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../pages/account/account_page.dart';
-import '../pages/attending_rooms/attending_rooms_page.dart';
 import '../pages/home/home_page.dart';
 import '../pages/main/main_page.dart';
 import '../pages/map/map_page.dart';
 import '../pages/notification/notification_page.dart';
 import '../pages/room/room_page.dart';
+import '../pages/rooms/rooms_page.dart';
 import '../pages/second/second_page.dart';
 import 'app_route.dart';
 import 'app_router_state.dart';

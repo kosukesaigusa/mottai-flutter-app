@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:ks_flutter_commons/ks_flutter_commons.dart';
 
 import '../../hooks/package_info_state.dart';
-import '../../route/utils.dart';
 import '../../services/firebase_messaging_service.dart';
 import '../../services/scaffold_messenger_service.dart';
 import '../../theme/theme.dart';
+import '../../utils/restart_app.dart';
 import '../../utils/utils.dart';
 import '../playgrounds/playground_page.dart';
 import '../second/second_page.dart';
@@ -15,8 +14,9 @@ import '../second/second_page.dart';
 class HomePage extends StatefulHookConsumerWidget {
   const HomePage({Key? key}) : super(key: key);
 
-  static const path = '/home/';
+  static const path = '/home';
   static const name = 'HomePage';
+  static const location = path;
 
   @override
   HomePageState createState() => HomePageState();
@@ -37,8 +37,8 @@ class HomePageState extends ConsumerState<HomePage> {
               onPressed: () async {
                 await Navigator.pushNamed<void>(
                   context,
-                  SecondPage.path,
-                  arguments: RouteArguments(<String, dynamic>{'title': '2 番目のページ'}),
+                  SecondPage.location,
+                  arguments: '2 番目のページ',
                 );
               },
               child: const Text('Go to SecondPage'),
@@ -142,7 +142,7 @@ class HomePageState extends ConsumerState<HomePage> {
     return ListTile(
       title: const Text('プレイグランド'),
       onTap: () async {
-        await Navigator.pushNamed<void>(context, PlaygroundPage.path);
+        await Navigator.pushNamed<void>(context, PlaygroundPage.location);
       },
     );
   }
@@ -153,7 +153,7 @@ class HomePageState extends ConsumerState<HomePage> {
       title: const Text('サインアウト'),
       onTap: () async {
         await auth.signOut();
-        RootWidget.restart(context);
+        await ref.read(restartAppProvider)();
       },
     );
   }

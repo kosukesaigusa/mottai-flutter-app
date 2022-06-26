@@ -27,7 +27,7 @@ class AccountPage extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(title: const Text('アカウント')),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 32),
         child: Center(
@@ -87,25 +87,27 @@ class AccountPage extends HookConsumerWidget {
 
   /// ログイン済みのウィジェット
   Widget get _signedInWidget {
-    return HookConsumer(builder: (context, ref, child) {
-      return Column(
-        children: [
-          _buildProfileImageWidget,
-          const Gap(16),
-          _buildDisplayNameWidget,
-          const Gap(8),
-          ElevatedButton.icon(
-            icon: const Icon(Icons.exit_to_app),
-            onPressed: () async {
-              await auth.signOut();
-              await ref.read(restartAppProvider)();
-            },
-            label: const Text('サインアウトする'),
-          ),
-          _buildSocialLoginButtons,
-        ],
-      );
-    },);
+    return HookConsumer(
+      builder: (context, ref, child) {
+        return Column(
+          children: [
+            _buildProfileImageWidget,
+            const Gap(16),
+            _buildDisplayNameWidget,
+            const Gap(8),
+            ElevatedButton.icon(
+              icon: const Icon(Icons.exit_to_app),
+              onPressed: () async {
+                await auth.signOut();
+                await ref.read(restartAppProvider)();
+              },
+              label: const Text('サインアウトする'),
+            ),
+            _buildSocialLoginButtons,
+          ],
+        );
+      },
+    );
   }
 
   /// プロフィール画像のウィジェット
@@ -210,13 +212,15 @@ class AccountPage extends HookConsumerWidget {
                           ))
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 16),
-                              child: Row(children: [
-                                const Expanded(child: Divider()),
-                                const Gap(16),
-                                Text('他のログイン方法と連携する', style: grey12),
-                                const Gap(16),
-                                const Expanded(child: Divider()),
-                              ],),
+                              child: Row(
+                                children: [
+                                  const Expanded(child: Divider()),
+                                  const Gap(16),
+                                  Text('他のログイン方法と連携する', style: grey12),
+                                  const Gap(16),
+                                  const Expanded(child: Divider()),
+                                ],
+                              ),
                             ),
                           ...SocialSignInMethod.values
                               .map(

@@ -11,6 +11,7 @@ import '../../providers/bottom_tab/bottom_tab.dart';
 import '../../route/bottom_tabs.dart';
 import '../../services/firebase_messaging_service.dart';
 import '../../services/navigation.dart';
+import '../../utils/extensions/build_context.dart';
 import '../../widgets/main/main_stacked_pages_navigator.dart';
 
 /// バックグラウンドから起動した際にFirebaseを有効化する。
@@ -64,7 +65,7 @@ class _MainPageState extends ConsumerState<MainPage> with WidgetsBindingObserver
                 ? null
                 : BottomNavigationBar(
                     type: BottomNavigationBarType.fixed,
-                    selectedItemColor: Theme.of(context).colorScheme.primary,
+                    selectedItemColor: context.theme.primaryColor,
                     selectedFontSize: 12,
                     unselectedFontSize: 12,
                     onTap: _onTap,

@@ -6,7 +6,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mottai_flutter_app_models/models.dart';
 
 import '../../providers/map/map_page.dart';
-import '../../theme/theme.dart';
+import '../../utils/extensions/build_context.dart';
 import '../../utils/extensions/int.dart';
 import '../../utils/geo.dart';
 import '../../widgets/loading/loading.dart';
@@ -116,33 +116,33 @@ class _MapPageState extends ConsumerState<MapPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text('デバッグウィンドウ', style: whiteBold12),
+              Text('デバッグウィンドウ', style: context.titleSmall),
               const Gap(8),
-              const Text(
+              Text(
                 '検出範囲は、画面中央を中心とする薄灰色の円の内側です。',
-                style: white12,
+                style: context.bodySmall,
               ),
               Text(
                 'Center: (lat, lng) = ('
                 '${(state.center.latitude * 1000).round() / 1000}, '
                 '${(state.center.longitude * 1000).round() / 1000})',
-                style: white12,
+                style: context.bodySmall,
               ),
               Text(
                 'Zoom level: ${(state.debugZoomLevel * 100).round() / 100}',
-                style: white12,
+                style: context.bodySmall,
               ),
               Text(
                 'Radius: ${state.debugRadius.withComma} km',
-                style: white12,
+                style: context.bodySmall,
               ),
               Text(
                 '検出件数：${state.markers.length.withComma} 件',
-                style: white12,
+                style: context.bodySmall,
               ),
               // Text(
               //   '選択中: ${selectedHostLocation?.hostLocationId ?? ''}',
-              //   style: white12,
+              //   style: context.bodySmall,
               // ),
               const Gap(8),
               Slider(
@@ -205,7 +205,7 @@ class _MapPageState extends ConsumerState<MapPage> {
               height: nearMeCircleSize,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Theme.of(context).colorScheme.primary,
+                color: context.theme.primaryColor,
               ),
               child: GestureDetector(
                 onTap: controller.backToOriginalPosition,
@@ -279,7 +279,7 @@ class _MapPageState extends ConsumerState<MapPage> {
               children: [
                 Text(
                   hostLocation.hostLocationId,
-                  style: bold14,
+                  style: context.titleMedium,
                   overflow: TextOverflow.ellipsis,
                   maxLines: 1,
                 ),
@@ -288,7 +288,7 @@ class _MapPageState extends ConsumerState<MapPage> {
                   '神奈川県小田原市でみかんを育てています！'
                   'みかん収穫のお手伝いをしてくださる方募集中です🍊'
                   'ぜひお気軽にマッチングリクエストお願いします！',
-                  style: grey12,
+                  style: context.bodySmall,
                   overflow: TextOverflow.ellipsis,
                   maxLines: 3,
                 ),
@@ -298,11 +298,11 @@ class _MapPageState extends ConsumerState<MapPage> {
                     Icon(
                       Icons.location_on,
                       size: 18,
-                      color: Theme.of(context).colorScheme.primary,
+                      color: context.theme.primaryColor,
                     ),
                     Text(
                       '神奈川県小田原市247番3',
-                      style: grey12,
+                      style: context.bodySmall,
                       overflow: TextOverflow.ellipsis,
                       maxLines: 1,
                     ),
@@ -322,7 +322,7 @@ class _MapPageState extends ConsumerState<MapPage> {
       child: Center(
         child: Text(
           '周辺にデータが見つかりません。',
-          style: grey12,
+          style: context.bodySmall,
         ),
       ),
     );

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
+import '../../utils/extensions/build_context.dart';
+
 /// プライマリカラーの SpinkitCircle を表示する
 class PrimarySpinkitCircle extends StatelessWidget {
   const PrimarySpinkitCircle({super.key, this.size = 48});
@@ -10,7 +12,7 @@ class PrimarySpinkitCircle extends StatelessWidget {
   Widget build(BuildContext context) {
     return SpinKitCircle(
       size: size,
-      color: Theme.of(context).colorScheme.primary,
+      color: context.theme.primaryColor,
     );
   }
 }

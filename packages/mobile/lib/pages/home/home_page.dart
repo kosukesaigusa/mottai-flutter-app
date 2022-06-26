@@ -5,7 +5,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../hooks/package_info_state.dart';
 import '../../services/firebase_messaging_service.dart';
 import '../../services/scaffold_messenger_service.dart';
-import '../../theme/theme.dart';
+import '../../utils/extensions/build_context.dart';
 import '../../utils/restart_app.dart';
 import '../../utils/utils.dart';
 import '../playgrounds/playground_page.dart';
@@ -90,7 +90,7 @@ class HomePageState extends ConsumerState<HomePage> {
                 ? ''
                 : '${packageInfo.appName}: '
                     '${packageInfo.version} (${packageInfo.buildNumber})',
-            style: grey10,
+            style: context.bodySmall,
           ),
         ],
       ),
@@ -116,7 +116,7 @@ class HomePageState extends ConsumerState<HomePage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text('この端末の FCM トークンは次の文字列です。', style: grey12),
+                  Text('この端末の FCM トークンは次の文字列です。', style: context.bodySmall),
                   const Gap(8),
                   SelectableText(token ?? 'トークンの取得に失敗しました。'),
                 ],
@@ -125,7 +125,7 @@ class HomePageState extends ConsumerState<HomePage> {
                 TextButton(
                   child: Text(
                     'OK',
-                    style: TextStyle(color: Theme.of(context).disabledColor),
+                    style: TextStyle(color: context.theme.disabledColor),
                   ),
                   onPressed: () => Navigator.pop<void>(context),
                 ),

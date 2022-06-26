@@ -32,7 +32,7 @@ const _heroItems = <HeroItem>[
 
 /// タップしてヒーローアニメーションで画面遷移したい ListView のページ
 class HeroImagesPage extends StatelessWidget {
-  const HeroImagesPage({Key? key}) : super(key: key);
+  const HeroImagesPage({super.key});
 
   static const path = '/hero-images/';
   static const name = 'HeroImagesPage';
@@ -67,7 +67,7 @@ class HeroImagesPage extends StatelessWidget {
 }
 
 class GreenContainerPage extends StatelessWidget {
-  const GreenContainerPage({Key? key}) : super(key: key);
+  const GreenContainerPage({super.key});
 
   static const path = '/green-container/';
   static const name = 'GreenContainerPage';
@@ -152,7 +152,7 @@ class HeroCardWidget extends HookConsumerWidget {
 /// タップして押し込むとそのウィジェットサイズが縮小する
 /// アニメーションを子に付加するウィジェット
 class TapToScaleDownAnimationWidget extends StatefulWidget {
-  const TapToScaleDownAnimationWidget({Key? key, required this.child}) : super(key: key);
+  const TapToScaleDownAnimationWidget({super.key, required this.child});
   final Widget child;
 
   @override

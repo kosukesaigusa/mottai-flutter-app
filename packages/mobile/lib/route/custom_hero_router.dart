@@ -5,14 +5,13 @@ import 'package:flutter/material.dart';
 class CustomHeroPageRouter extends PageRouteBuilder<dynamic> {
   CustomHeroPageRouter({
     this.builder,
-    required RouteTransitionsBuilder transitionsBuilder,
+    required super.transitionsBuilder,
   }) : super(
           pageBuilder: (context, animation, secondaryAnimation) => Semantics(
             scopesRoute: true,
             explicitChildNodes: true,
             child: builder!(context),
           ),
-          transitionsBuilder: transitionsBuilder,
         );
 
   final WidgetBuilder? builder;
@@ -62,7 +61,7 @@ class CustomHeroPageTransitionsBuilder extends PageTransitionsBuilder {
     Widget child,
   ) =>
       CustomHeroPageRouter.buildPageTransitions<T>(
-          route, context, animation, secondaryAnimation, child);
+          route, context, animation, secondaryAnimation, child,);
 }
 
 final Animatable<double> _scaleTween = Tween<double>(begin: 0.5, end: 1);
@@ -74,12 +73,11 @@ final Animatable<Offset> _kBottomUpTween = Tween<Offset>(
 
 class CustomHeroFullScreenDialogTransition extends StatelessWidget {
   CustomHeroFullScreenDialogTransition({
-    Key? key,
+    super.key,
     required Animation<double> animation,
     required this.child,
   })  : _positionAnimation =
-            animation.drive(CurveTween(curve: Curves.easeInOut)).drive(_kBottomUpTween),
-        super(key: key);
+            animation.drive(CurveTween(curve: Curves.easeInOut)).drive(_kBottomUpTween);
 
   final Animation<Offset> _positionAnimation;
   final Widget child;
@@ -93,7 +91,7 @@ class CustomHeroFullScreenDialogTransition extends StatelessWidget {
 
 class CustomHeroPageTransition extends StatelessWidget {
   CustomHeroPageTransition({
-    Key? key,
+    super.key,
     required Animation<double> primaryRouteAnimation,
     required Animation<double> secondaryRouteAnimation,
     this.route,
@@ -107,8 +105,7 @@ class CustomHeroPageTransition extends StatelessWidget {
           parent: secondaryRouteAnimation,
           curve: Curves.linearToEaseOut,
           reverseCurve: Curves.easeInToLinear,
-        ).drive(_constTween),
-        super(key: key);
+        ).drive(_constTween);
 
   final Animation<double> _primaryPositionAnimation;
   final Animation<double> _secondaryPositionAnimation;

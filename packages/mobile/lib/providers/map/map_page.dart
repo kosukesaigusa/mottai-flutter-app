@@ -113,7 +113,7 @@ class MapPageStateNotifier extends StateNotifier<MapPageState> {
               : _getMarkerIdFromLatLng(LatLng(
                   state.selectedHostLocation!.position.geopoint.latitude,
                   state.selectedHostLocation!.position.geopoint.longitude,
-                )),
+                ),),
           oldHostLocation: state.selectedHostLocation,
           newMarkerId: markerId,
           newHostLocation: hostLocation,
@@ -154,7 +154,7 @@ class MapPageStateNotifier extends StateNotifier<MapPageState> {
   }) async {
     await googleMapController.animateCamera(CameraUpdate.newCameraPosition(
       CameraPosition(target: latLng, zoom: zoom),
-    ));
+    ),);
   }
 
   ///
@@ -176,12 +176,12 @@ class MapPageStateNotifier extends StateNotifier<MapPageState> {
           : _getMarkerIdFromLatLng(LatLng(
               state.selectedHostLocation!.position.geopoint.latitude,
               state.selectedHostLocation!.position.geopoint.longitude,
-            )),
+            ),),
       oldHostLocation: state.selectedHostLocation,
       newMarkerId: _getMarkerIdFromLatLng(LatLng(
         hostLocation.position.geopoint.latitude,
         hostLocation.position.geopoint.longitude,
-      )),
+      ),),
       newHostLocation: hostLocation,
     );
   }

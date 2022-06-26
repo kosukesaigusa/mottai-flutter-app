@@ -4,15 +4,16 @@ import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mottai_flutter_app_models/models.dart';
 
+import '../../constants/style.dart';
 import '../../providers/auth/auth.dart';
 import '../../providers/public_user/public_user_providers.dart';
 import '../../providers/read_status/read_status_providers.dart';
 import '../../providers/room/room_providers.dart';
 import '../../route/app_router_state.dart';
-import '../../theme/theme.dart';
 import '../../utils/date_time.dart';
 import '../../utils/enums.dart';
 import '../../utils/exceptions/base.dart';
+import '../../utils/extensions/build_context.dart';
 import '../../widgets/common/image.dart';
 
 final _roomIdProvider = Provider.autoDispose<String>(
@@ -135,7 +136,7 @@ class MessageWidget extends HookConsumerWidget {
       crossAxisAlignment:
           senderType == SenderType.myself ? CrossAxisAlignment.end : CrossAxisAlignment.start,
       children: [
-        if (showDate) ..._dateWidget(message),
+        if (showDate) DateOnChatRoomWidget(dateTime: message.createdAt),
         Row(
           mainAxisAlignment:
               senderType == SenderType.myself ? MainAxisAlignment.end : MainAxisAlignment.start,
@@ -164,7 +165,7 @@ class MessageWidget extends HookConsumerWidget {
                         topRight: Radius.circular(8),
                         bottomLeft: Radius.circular(8),
                       ),
-                      color: Theme.of(context).colorScheme.primary,
+                      color: context.theme.primaryColor,
                     )
                   : const BoxDecoration(
                       borderRadius: BorderRadius.only(
@@ -176,7 +177,7 @@ class MessageWidget extends HookConsumerWidget {
                     ),
               child: Text(
                 message.body,
-                style: senderType == SenderType.myself ? white12 : regular12,
+                style: senderType == SenderType.myself ? context.bodySmall : context.bodySmall,
               ),
             ),
           ],
@@ -191,14 +192,14 @@ class MessageWidget extends HookConsumerWidget {
             crossAxisAlignment:
                 senderType == SenderType.myself ? CrossAxisAlignment.end : CrossAxisAlignment.start,
             children: [
-              Text(to24HourNotationString(message.createdAt), style: grey10),
+              Text(to24HourNotationString(message.createdAt), style: context.bodySmall),
               if (senderType == SenderType.myself)
                 SizedBox(
                   height: 14,
                   child: ref.watch(partnerReadStatusStreamProvider(roomId)).when(
                         data: (readStatus) => Text(
                           _read(message: message, lastReadAt: readStatus?.lastReadAt) ? '既読' : '未読',
-                          style: grey10,
+                          style: context.bodySmall,
                         ),
                         error: (_, __) => const SizedBox(),
                         loading: () => const SizedBox(),
@@ -211,27 +212,6 @@ class MessageWidget extends HookConsumerWidget {
     );
   }
 
-  /// 表示する日付
-  List<Widget> _dateWidget(Message message) {
-    return [
-      const Gap(24),
-      Center(
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-          decoration: const BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(8)),
-            color: messageBackgroundColor,
-          ),
-          child: Text(
-            toIsoStringDateWithWeekDay(message.createdAt),
-            style: grey10,
-          ),
-        ),
-      ),
-      const Gap(24),
-    ];
-  }
-
   /// Message.createdAt と 最後に読んだ日を比較して既読かどうかを返す
   bool _read({required Message message, required DateTime? lastReadAt}) {
     final createdAt = message.createdAt;
@@ -239,6 +219,36 @@ class MessageWidget extends HookConsumerWidget {
       return false;
     }
     return lastReadAt.isAfter(createdAt);
+  }
+}
+
+/// チャットメッセージの日付
+class DateOnChatRoomWidget extends StatelessWidget {
+  const DateOnChatRoomWidget({
+    super.key,
+    this.dateTime,
+  });
+
+  final DateTime? dateTime;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 24),
+      child: Center(
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+          decoration: const BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(8)),
+            color: messageBackgroundColor,
+          ),
+          child: Text(
+            toIsoStringDateWithWeekDay(dateTime),
+            style: context.bodySmall,
+          ),
+        ),
+      ),
+    );
   }
 }
 
@@ -263,9 +273,8 @@ class RoomMessageInputWidget extends HookConsumerWidget {
                   ref.watch(roomPageStateNotifierProvider(roomId).notifier).textEditingController,
               minLines: 1,
               maxLines: 5,
-              style: regular14,
-              decoration: const InputDecoration(
-                contentPadding: EdgeInsets.only(
+              decoration: InputDecoration(
+                contentPadding: const EdgeInsets.only(
                   left: 16,
                   right: 36,
                   top: 8,
@@ -276,7 +285,7 @@ class RoomMessageInputWidget extends HookConsumerWidget {
                 errorBorder: InputBorder.none,
                 disabledBorder: InputBorder.none,
                 hintText: 'メッセージを入力',
-                hintStyle: regular12,
+                hintStyle: context.bodySmall,
               ),
             ),
           ),
@@ -295,8 +304,8 @@ class RoomMessageInputWidget extends HookConsumerWidget {
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: ref.watch(roomPageStateNotifierProvider(roomId)).isValid
-                  ? Theme.of(context).colorScheme.primary
-                  : grey400,
+                  ? context.theme.primaryColor
+                  : context.theme.disabledColor,
             ),
             child: const Icon(
               Icons.send,

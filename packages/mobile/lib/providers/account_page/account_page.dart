@@ -7,8 +7,8 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../services/auth_service.dart';
 import '../../services/scaffold_messenger_service.dart';
-import '../../theme/theme.dart';
 import '../../utils/enums.dart';
+import '../../utils/extensions/build_context.dart';
 import '../overlay_loading/overlay_loading.dart';
 import 'account_page_state.dart';
 
@@ -76,10 +76,10 @@ class AccountPageController extends StateNotifier<AccountPageState> {
       builder: (context) {
         return AlertDialog(
           title: Row(
-            children: const [
-              FaIcon(FontAwesomeIcons.line, color: Color(0xff00ba52)),
-              Gap(8),
-              Text('LINE ログインについて', style: bold12),
+            children: <Widget>[
+              const FaIcon(FontAwesomeIcons.line, color: Color(0xff00ba52)),
+              const Gap(8),
+              Text('LINE ログインについて', style: context.titleSmall),
             ],
           ),
           content: Column(
@@ -91,7 +91,7 @@ class AccountPageController extends StateNotifier<AccountPageState> {
                 '取得したメールアドレスは、ユーザー管理および、他のソーシャルログインと'
                 '連携する目的以外では使用しません。'
                 'また、法令に定められた場合を除き、第三者へ提供することはありません。',
-                style: grey12,
+                style: context.bodySmall,
               ),
             ],
           ),

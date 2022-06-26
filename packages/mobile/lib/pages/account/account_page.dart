@@ -18,7 +18,7 @@ const double buttonHeight = 48;
 const double buttonWidth = 240;
 
 class AccountPage extends HookConsumerWidget {
-  const AccountPage({Key? key}) : super(key: key);
+  const AccountPage({super.key});
 
   static const path = '/account';
   static const name = 'AccountPage';
@@ -105,7 +105,7 @@ class AccountPage extends HookConsumerWidget {
           _buildSocialLoginButtons,
         ],
       );
-    });
+    },);
   }
 
   /// プロフィール画像のウィジェット
@@ -216,7 +216,7 @@ class AccountPage extends HookConsumerWidget {
                                 Text('他のログイン方法と連携する', style: grey12),
                                 const Gap(16),
                                 const Expanded(child: Divider()),
-                              ]),
+                              ],),
                             ),
                           ...SocialSignInMethod.values
                               .map(

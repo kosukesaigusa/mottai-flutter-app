@@ -3,7 +3,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 /// プライマリカラーの SpinkitCircle を表示する
 class PrimarySpinkitCircle extends StatelessWidget {
-  const PrimarySpinkitCircle({Key? key, this.size = 48}) : super(key: key);
+  const PrimarySpinkitCircle({super.key, this.size = 48});
 
   final double size;
   @override
@@ -18,9 +18,9 @@ class PrimarySpinkitCircle extends StatelessWidget {
 /// 二度押しを防止したいときなどの重ねるローディングウィジェット
 class OverlayLoadingWidget extends StatelessWidget {
   const OverlayLoadingWidget({
-    Key? key,
+    super.key,
     this.backgroundColor = Colors.black26,
-  }) : super(key: key);
+  });
 
   final Color backgroundColor;
 

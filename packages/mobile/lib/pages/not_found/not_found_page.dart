@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class NotFoundPage extends StatelessWidget {
-  const NotFoundPage({Key? key}) : super(key: key);
+  const NotFoundPage({super.key});
   static const path = '/not-found';
   static const name = 'NotFoundPage';
   static const location = path;

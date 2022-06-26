@@ -15,7 +15,7 @@ const double partnerImageSize = 36;
 
 /// 無限スクロールの練習ページ
 class InfiniteScrollPage extends StatefulHookConsumerWidget {
-  const InfiniteScrollPage({Key? key}) : super(key: key);
+  const InfiniteScrollPage({super.key});
 
   static const path = '/infinite-scroll';
   static const name = 'InfiniteScrollPage';
@@ -111,7 +111,7 @@ class _InfiniteScrollPageState extends ConsumerState<InfiniteScrollPage> {
               .set(PlaygroundMessage(
                 playgroundMessageId: playgroundMessageId,
                 body: '$uuid-$uuid',
-              ));
+              ),);
         },
         child: const FaIcon(FontAwesomeIcons.solidComment),
       ),

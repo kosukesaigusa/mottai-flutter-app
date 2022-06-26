@@ -7,16 +7,16 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 /// FirebaseMessaging のインスタンスを返す。
 /// ProviderScope の overrides で使用して fcmProvider.value を上書きする。
 Future<FirebaseMessaging> get getFirebaseMessagingInstance async {
-  final _messaging = FirebaseMessaging.instance;
+  final messaging = FirebaseMessaging.instance;
   if (Platform.isIOS) {
     // Push 通知をフォアグラウンドでも受け取るよう設定する。
-    await _messaging.setForegroundNotificationPresentationOptions(
+    await messaging.setForegroundNotificationPresentationOptions(
       alert: true,
       badge: true,
       sound: true,
     );
   }
-  return _messaging;
+  return messaging;
 }
 
 /// FirebaseMessaging のインスタンスを提供するプロバイダ。

@@ -20,7 +20,7 @@ import '../../widgets/loading/loading.dart';
 import '../room/room_page.dart';
 
 class RoomsPage extends StatefulHookConsumerWidget {
-  const RoomsPage({Key? key}) : super(key: key);
+  const RoomsPage({super.key});
 
   static const path = '/rooms';
   static const name = 'RoomsPage';
@@ -95,7 +95,7 @@ class _RoomsPageState extends ConsumerState<RoomsPage> {
               .set(AttendingRoom(
                 roomId: roomId,
                 partnerId: hostId,
-              ));
+              ),);
           ref.read(scaffoldMessengerServiceProvider).showSnackBar('【テスト用】ホスト 1 とのルームを作成しました。');
         },
       );
@@ -103,7 +103,7 @@ class _RoomsPageState extends ConsumerState<RoomsPage> {
 
 /// AttendingRoom ページのひとつひとつのウィジェット
 class AttendingRoomWidget extends HookConsumerWidget {
-  const AttendingRoomWidget({Key? key, required this.attendingRoom}) : super(key: key);
+  const AttendingRoomWidget({super.key, required this.attendingRoom});
   final AttendingRoom attendingRoom;
 
   @override
@@ -116,7 +116,7 @@ class AttendingRoomWidget extends HookConsumerWidget {
               unawaited(ref
                   .read(messageRepositoryProvider)
                   .readStatusRef(roomId: attendingRoom.roomId, readStatusId: userId)
-                  .set(const ReadStatus(), SetOptions(merge: true)));
+                  .set(const ReadStatus(), SetOptions(merge: true)),);
               await Navigator.pushNamed<void>(
                 context,
                 RoomPage.location(roomId: attendingRoom.roomId),

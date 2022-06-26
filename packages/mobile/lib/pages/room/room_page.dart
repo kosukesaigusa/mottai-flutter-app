@@ -34,7 +34,7 @@ const double horizontalPadding = 8;
 const double partnerImageSize = 36;
 
 class RoomPage extends StatefulHookConsumerWidget {
-  const RoomPage({Key? key}) : super(key: key);
+  const RoomPage({super.key});
 
   static const path = '/room/:roomId';
   static const name = 'RoomPage';
@@ -117,12 +117,12 @@ class _RoomPageState extends ConsumerState<RoomPage> {
 /// メッセージ、日付、相手のアイコン、送信日時のウィジェット
 class MessageWidget extends HookConsumerWidget {
   const MessageWidget({
-    Key? key,
+    super.key,
     required this.roomId,
     required this.message,
     required this.showDate,
     required this.senderType,
-  }) : super(key: key);
+  });
 
   final String roomId;
   final Message message;
@@ -244,7 +244,7 @@ class MessageWidget extends HookConsumerWidget {
 
 /// ルームページのメッセージ入力欄のウィジェット
 class RoomMessageInputWidget extends HookConsumerWidget {
-  const RoomMessageInputWidget({Key? key, required this.roomId}) : super(key: key);
+  const RoomMessageInputWidget({super.key, required this.roomId});
   final String roomId;
 
   @override

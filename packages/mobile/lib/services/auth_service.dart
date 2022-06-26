@@ -155,7 +155,7 @@ class AuthService {
           displayName: displayName,
           imageURL: imageURL,
           providers: <String>[method.name],
-        ));
+        ),);
       }
     } on FirebaseException {
       rethrow;

@@ -12,8 +12,8 @@ import '../../providers/auth/auth.dart';
 import '../../providers/message/message.dart';
 import '../../providers/public_user/public_user_providers.dart';
 import '../../services/scaffold_messenger_service.dart';
-import '../../theme/theme.dart';
 import '../../utils/date_time.dart';
+import '../../utils/extensions/build_context.dart';
 import '../../utils/utils.dart';
 import '../../widgets/common/image.dart';
 import '../../widgets/loading/loading.dart';
@@ -43,7 +43,7 @@ class _RoomsPageState extends ConsumerState<RoomsPage> {
                   width: 280,
                   child: Text(
                     error.toString(),
-                    style: grey12,
+                    style: context.bodySmall,
                   ),
                 ),
               );
@@ -52,7 +52,7 @@ class _RoomsPageState extends ConsumerState<RoomsPage> {
                 ? Center(
                     child: Text(
                       'まだメッセージしている相手がいません。',
-                      style: grey12,
+                      style: context.bodySmall,
                     ),
                   )
                 : ListView.builder(
@@ -147,8 +147,8 @@ class AttendingRoomWidget extends HookConsumerWidget {
                               loading: () => const SizedBox(),
                               error: (error, stackTrace) => const SizedBox(),
                               data: (publicUser) => publicUser == null
-                                  ? const Text('-', style: bold12)
-                                  : Text(publicUser.displayName, style: bold12),
+                                  ? Text('-', style: context.titleSmall)
+                                  : Text(publicUser.displayName, style: context.titleSmall),
                             ),
                         ref.watch(messagesStreamProvider(attendingRoom.roomId)).when<Widget>(
                               loading: () => const SizedBox(),
@@ -161,7 +161,7 @@ class AttendingRoomWidget extends HookConsumerWidget {
                               },
                               data: (messages) => Text(
                                 messages.isEmpty ? 'ルームが作成されました。' : messages.first.body,
-                                style: grey12,
+                                style: context.bodySmall,
                                 overflow: TextOverflow.ellipsis,
                                 maxLines: 2,
                               ),
@@ -180,7 +180,7 @@ class AttendingRoomWidget extends HookConsumerWidget {
                               messages.isEmpty
                                   ? ''
                                   : humanReadableDateTimeString(messages.first.createdAt),
-                              style: grey10,
+                              style: context.bodySmall,
                             ),
                           ),
                       const Gap(4),
@@ -193,12 +193,12 @@ class AttendingRoomWidget extends HookConsumerWidget {
                                     height: 20,
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
-                                      color: Theme.of(context).colorScheme.primary,
+                                      color: context.theme.primaryColor,
                                     ),
                                     child: Center(
                                       child: Text(
                                         count > 9 ? '9+' : count.toString(),
-                                        style: whiteBold10,
+                                        style: context.titleSmall,
                                       ),
                                     ),
                                   )

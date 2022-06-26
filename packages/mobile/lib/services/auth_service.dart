@@ -2,13 +2,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:ks_flutter_commons/ks_flutter_commons.dart';
 import 'package:mottai_flutter_app_models/models.dart';
 
 import '../providers/account/account.dart';
 import '../providers/auth/auth.dart';
 import '../repositories/auth/auth_repository.dart';
 import '../utils/enums.dart';
+import '../utils/extensions/map.dart';
 import '../utils/utils.dart';
 import 'firebase_messaging_service.dart';
 
@@ -142,12 +142,12 @@ class AuthService {
         // displayName, imageURL のフィールドについては現在保存されている値が
         // null の場合のみ更新する（意味のある値が保存されいてる場合は上書きしない）
         await _read(accountRefProvider).update(
-          processMapToUpdateFirestoreDoc(<String, dynamic>{
+          <String, dynamic>{
             if (displayName == null) 'displayName': displayName,
             if (account.imageURL == null) 'imageURL': imageURL,
             if (fcmToken != null) 'fcmTokens': FieldValue.arrayUnion(<String>[fcmToken]),
             'providers': FieldValue.arrayUnion(<String>[method.name]),
-          }),
+          }.toFirestore(),
         );
       } else {
         await _read(accountRefProvider).set(Account(

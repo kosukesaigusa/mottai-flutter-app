@@ -2,23 +2,37 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../../route/utils.dart';
+import '../../../models/playground/hero_item.dart';
 import 'hero_detail_page.dart';
 
-class HeroItem {
-  const HeroItem({
-    required this.tag,
-    required this.imageURL,
-    required this.description,
-  });
-  final String tag;
-  final String imageURL;
-  final String description;
-}
+const _heroItems = <HeroItem>[
+  HeroItem(
+    tag: '大谷 翔平',
+    imageURL:
+        'https://the-ans.jp/wp-content/uploads/2022/03/22163207/20220322_Shohei-Ohtani2_AP-650x433.jpg',
+    description: '大谷 翔平（おおたに しょうへい、1994年7月5日 - ）は、'
+        '岩手県奥州市出身のプロ野球選手。右投左打。MLBのロサンゼルス・エンゼルス所属。',
+  ),
+  HeroItem(
+    tag: '鈴木 誠也',
+    imageURL: 'https://portal.st-img.jp/detail/485e11cb02be9007e4d50bc54cc3e60b_1648723133_2.jpg',
+    description: '鈴木 誠也（すずき せいや、1994年8月18日 - ）は、'
+        '東京都荒川区出身のプロ野球選手（外野手）。右投右打。MLBのシカゴ・カブス所属。',
+  ),
+  HeroItem(
+    tag: 'ダルビッシュ 有',
+    imageURL:
+        'https://static.chunichi.co.jp/image/article/size1/3/e/d/2/3ed287d5dcdd2c49e50f7eeffffe4833_1.jpg',
+    description: 'ダルビッシュ 有（ダルビッシュ ゆう、英語: Yu Darvish、本名：ダルビッシュ・'
+        'セファット・ファリード・有〈ダルビッシュ セファット ファリード ゆう、'
+        '英語: Sefat Farid Yu Darvish[4]〉、1986年8月16日 - ）は、大阪府羽曳野市出身のプロ野球選手'
+        '（投手・右投右打）。MLBのサンディエゴ・パドレス所属。',
+  ),
+];
 
 /// タップしてヒーローアニメーションで画面遷移したい ListView のページ
 class HeroImagesPage extends StatelessWidget {
-  HeroImagesPage({Key? key}) : super(key: key);
+  const HeroImagesPage({Key? key}) : super(key: key);
 
   static const path = '/hero-images/';
   static const name = 'HeroImagesPage';
@@ -28,21 +42,19 @@ class HeroImagesPage extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(8),
       child: ListView.builder(
-        itemCount: _items.length,
+        itemCount: _heroItems.length,
         itemBuilder: (context, index) {
-          final item = _items[index];
+          final heroItem = _heroItems[index];
           return TapToScaleDownAnimationWidget(
             child: Hero(
-              tag: item.tag,
+              tag: heroItem.tag,
               child: HeroCardWidget(
-                item: item,
+                heroItem: heroItem,
                 onTap: () async {
-                  await Navigator.pushNamed(
+                  await Navigator.pushNamed<void>(
                     context,
-                    HeroImageDetailPage.path,
-                    arguments: RouteArguments(
-                      <String, dynamic>{'item': item, 'tag': item.tag},
-                    ),
+                    HeroImageDetailPage.location,
+                    arguments: heroItem,
                   );
                 },
               ),
@@ -52,31 +64,6 @@ class HeroImagesPage extends StatelessWidget {
       ),
     );
   }
-
-  final _items = <HeroItem>[
-    const HeroItem(
-      tag: '大谷 翔平',
-      imageURL:
-          'https://the-ans.jp/wp-content/uploads/2022/03/22163207/20220322_Shohei-Ohtani2_AP-650x433.jpg',
-      description: '大谷 翔平（おおたに しょうへい、1994年7月5日 - ）は、'
-          '岩手県奥州市出身のプロ野球選手。右投左打。MLBのロサンゼルス・エンゼルス所属。',
-    ),
-    const HeroItem(
-      tag: '鈴木 誠也',
-      imageURL: 'https://portal.st-img.jp/detail/485e11cb02be9007e4d50bc54cc3e60b_1648723133_2.jpg',
-      description: '鈴木 誠也（すずき せいや、1994年8月18日 - ）は、'
-          '東京都荒川区出身のプロ野球選手（外野手）。右投右打。MLBのシカゴ・カブス所属。',
-    ),
-    const HeroItem(
-      tag: 'ダルビッシュ 有',
-      imageURL:
-          'https://static.chunichi.co.jp/image/article/size1/3/e/d/2/3ed287d5dcdd2c49e50f7eeffffe4833_1.jpg',
-      description: 'ダルビッシュ 有（ダルビッシュ ゆう、英語: Yu Darvish、本名：ダルビッシュ・'
-          'セファット・ファリード・有〈ダルビッシュ セファット ファリード ゆう、'
-          '英語: Sefat Farid Yu Darvish[4]〉、1986年8月16日 - ）は、大阪府羽曳野市出身のプロ野球選手'
-          '（投手・右投右打）。MLBのサンディエゴ・パドレス所属。',
-    ),
-  ];
 }
 
 class GreenContainerPage extends StatelessWidget {
@@ -112,8 +99,13 @@ class GreenContainerPage extends StatelessWidget {
 
 /// ヒーローカードのウィジェット
 class HeroCardWidget extends HookConsumerWidget {
-  const HeroCardWidget({Key? key, required this.item, this.onTap}) : super(key: key);
-  final HeroItem item;
+  const HeroCardWidget({
+    super.key,
+    required this.heroItem,
+    this.onTap,
+  });
+
+  final HeroItem heroItem;
   final void Function()? onTap;
 
   @override
@@ -126,7 +118,7 @@ class HeroCardWidget extends HookConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               CachedNetworkImage(
-                imageUrl: item.imageURL,
+                imageUrl: heroItem.imageURL,
                 imageBuilder: (context, imageProvider) => Image(
                   image: imageProvider,
                   width: double.infinity,
@@ -138,7 +130,7 @@ class HeroCardWidget extends HookConsumerWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
                 child: Text(
-                  item.description,
+                  heroItem.description,
                   style: const TextStyle(color: Colors.black54),
                 ),
               ),

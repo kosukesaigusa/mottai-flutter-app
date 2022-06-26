@@ -1,72 +1,70 @@
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../pages/account/account_page.dart';
-import '../pages/attending_rooms/attending_rooms_page.dart';
 import '../pages/home/home_page.dart';
 import '../pages/map/map_page.dart';
+import '../pages/rooms/rooms_page.dart';
 
-/// MainPage の BottomNavigationBarItem に対応する内容一覧。
-/// さすがに override することはないと思われるので Provider は使用せず
-/// イミュータブルなグローバル変数にする。
+/// BottomTab の種別。
+enum BottomTabEnum {
+  home(label: 'ホーム', location: HomePage.location),
+  map(label: 'マップ', location: MapPage.location),
+  rooms(label: 'メッセージ', location: RoomsPage.location),
+  account(label: 'アカウント', location: AccountPage.location);
+
+  const BottomTabEnum({required this.label, required this.location});
+
+  final String label;
+  final String location;
+}
+
+/// BottomNavigationBarItem.icon に表示するウィジェットを提供するプロバイダ。
+final bottomTabIconProvider = Provider.family<Widget, BottomTabEnum>((ref, bottomTabEnum) {
+  switch (bottomTabEnum) {
+    case BottomTabEnum.home:
+      return const Icon(Icons.home);
+    case BottomTabEnum.map:
+      return const Icon(Icons.map);
+    case BottomTabEnum.rooms:
+      return const Icon(Icons.mail);
+    case BottomTabEnum.account:
+      return const Icon(Icons.person);
+  }
+});
+
 final bottomTabs = <BottomTab>[
   BottomTab._(
     index: 0,
-    label: 'ホーム',
-    path: HomePage.path,
-    iconData: Icons.home,
     key: GlobalKey<NavigatorState>(),
+    bottomTabEnum: BottomTabEnum.home,
   ),
   BottomTab._(
     index: 1,
-    label: 'マップ',
-    path: MapPage.path,
-    iconData: Icons.map,
     key: GlobalKey<NavigatorState>(),
+    bottomTabEnum: BottomTabEnum.map,
   ),
   BottomTab._(
     index: 2,
-    label: 'メッセージ',
-    path: AttendingRoomsPage.path,
-    iconData: Icons.mail,
     key: GlobalKey<NavigatorState>(),
+    bottomTabEnum: BottomTabEnum.rooms,
   ),
   BottomTab._(
     index: 3,
-    label: 'アカウント',
-    path: AccountPage.path,
-    iconData: Icons.person,
     key: GlobalKey<NavigatorState>(),
+    bottomTabEnum: BottomTabEnum.account,
   ),
 ];
 
-/// MainPage の BottomNavigationBar の内容
+/// MainPage の BottomNavigationBar の内容。
 class BottomTab {
-  /// プライベートなコンストラクタ。このファイルの外ではインスタンス化しない。
   const BottomTab._({
     required this.index,
-    required this.label,
-    required this.path,
-    required this.iconData,
     required this.key,
+    required this.bottomTabEnum,
   });
 
   final int index;
-  final String label;
-  final String path;
-  final IconData iconData;
   final GlobalKey<NavigatorState> key;
-
-  /// インデックス番号を指定して対応する BottomTab を取得する。
-  /// BottomTab は外でインスタンス化するつもりがないので static メソッドでよい。
-  static BottomTab getByIndex(int index) => bottomTabs.firstWhere(
-        (b) => b.index == index,
-        orElse: () => bottomTabs.first,
-      );
-
-  /// パス名 (e.g. /home/)を指定して対応する BottomTab を取得する。
-  /// BottomTab は外でインスタンス化するつもりがないので static メソッドでよい。
-  static BottomTab getByPath(String bottomTabPath) => bottomTabs.firstWhere(
-        (b) => b.path == bottomTabPath,
-        orElse: () => bottomTabs.first,
-      );
+  final BottomTabEnum bottomTabEnum;
 }

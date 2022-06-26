@@ -12,37 +12,7 @@ part of 'firebase_task_result.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more informations: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
-
-/// @nodoc
-class _$FirebaseTaskResultTearOff {
-  const _$FirebaseTaskResultTearOff();
-
-  Success<T> success<T>(
-      {required T contents, String? message, bool success = true}) {
-    return Success<T>(
-      contents: contents,
-      message: message,
-      success: success,
-    );
-  }
-
-  Failure<T> failure<T>({required String message, String? code}) {
-    return Failure<T>(
-      message: message,
-      code: code,
-    );
-  }
-
-  Error<T> error<T>(Exception e) {
-    return Error<T>(
-      e,
-    );
-  }
-}
-
-/// @nodoc
-const $FirebaseTaskResult = _$FirebaseTaskResultTearOff();
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
 
 /// @nodoc
 mixin _$FirebaseTaskResult<T> {
@@ -111,21 +81,23 @@ class _$FirebaseTaskResultCopyWithImpl<T, $Res>
 }
 
 /// @nodoc
-abstract class $SuccessCopyWith<T, $Res> {
-  factory $SuccessCopyWith(Success<T> value, $Res Function(Success<T>) then) =
-      _$SuccessCopyWithImpl<T, $Res>;
+abstract class _$$SuccessCopyWith<T, $Res> {
+  factory _$$SuccessCopyWith(
+          _$Success<T> value, $Res Function(_$Success<T>) then) =
+      __$$SuccessCopyWithImpl<T, $Res>;
   $Res call({T contents, String? message, bool success});
 }
 
 /// @nodoc
-class _$SuccessCopyWithImpl<T, $Res>
+class __$$SuccessCopyWithImpl<T, $Res>
     extends _$FirebaseTaskResultCopyWithImpl<T, $Res>
-    implements $SuccessCopyWith<T, $Res> {
-  _$SuccessCopyWithImpl(Success<T> _value, $Res Function(Success<T>) _then)
-      : super(_value, (v) => _then(v as Success<T>));
+    implements _$$SuccessCopyWith<T, $Res> {
+  __$$SuccessCopyWithImpl(
+      _$Success<T> _value, $Res Function(_$Success<T>) _then)
+      : super(_value, (v) => _then(v as _$Success<T>));
 
   @override
-  Success<T> get _value => super._value as Success<T>;
+  _$Success<T> get _value => super._value as _$Success<T>;
 
   @override
   $Res call({
@@ -133,7 +105,7 @@ class _$SuccessCopyWithImpl<T, $Res>
     Object? message = freezed,
     Object? success = freezed,
   }) {
-    return _then(Success<T>(
+    return _then(_$Success<T>(
       contents: contents == freezed
           ? _value.contents
           : contents // ignore: cast_nullable_to_non_nullable
@@ -159,8 +131,8 @@ class _$Success<T> implements Success<T> {
   final T contents;
   @override
   final String? message;
-  @JsonKey()
   @override
+  @JsonKey()
   final bool success;
 
   @override
@@ -172,7 +144,7 @@ class _$Success<T> implements Success<T> {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is Success<T> &&
+            other is _$Success<T> &&
             const DeepCollectionEquality().equals(other.contents, contents) &&
             const DeepCollectionEquality().equals(other.message, message) &&
             const DeepCollectionEquality().equals(other.success, success));
@@ -187,8 +159,8 @@ class _$Success<T> implements Success<T> {
 
   @JsonKey(ignore: true)
   @override
-  $SuccessCopyWith<T, Success<T>> get copyWith =>
-      _$SuccessCopyWithImpl<T, Success<T>>(this, _$identity);
+  _$$SuccessCopyWith<T, _$Success<T>> get copyWith =>
+      __$$SuccessCopyWithImpl<T, _$Success<T>>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -261,40 +233,44 @@ class _$Success<T> implements Success<T> {
 }
 
 abstract class Success<T> implements FirebaseTaskResult<T> {
-  const factory Success({required T contents, String? message, bool success}) =
-      _$Success<T>;
+  const factory Success(
+      {required final T contents,
+      final String? message,
+      final bool success}) = _$Success<T>;
 
-  T get contents;
-  String? get message;
-  bool get success;
+  T get contents => throw _privateConstructorUsedError;
+  String? get message => throw _privateConstructorUsedError;
+  bool get success => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
-  $SuccessCopyWith<T, Success<T>> get copyWith =>
+  _$$SuccessCopyWith<T, _$Success<T>> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $FailureCopyWith<T, $Res> {
-  factory $FailureCopyWith(Failure<T> value, $Res Function(Failure<T>) then) =
-      _$FailureCopyWithImpl<T, $Res>;
+abstract class _$$FailureCopyWith<T, $Res> {
+  factory _$$FailureCopyWith(
+          _$Failure<T> value, $Res Function(_$Failure<T>) then) =
+      __$$FailureCopyWithImpl<T, $Res>;
   $Res call({String message, String? code});
 }
 
 /// @nodoc
-class _$FailureCopyWithImpl<T, $Res>
+class __$$FailureCopyWithImpl<T, $Res>
     extends _$FirebaseTaskResultCopyWithImpl<T, $Res>
-    implements $FailureCopyWith<T, $Res> {
-  _$FailureCopyWithImpl(Failure<T> _value, $Res Function(Failure<T>) _then)
-      : super(_value, (v) => _then(v as Failure<T>));
+    implements _$$FailureCopyWith<T, $Res> {
+  __$$FailureCopyWithImpl(
+      _$Failure<T> _value, $Res Function(_$Failure<T>) _then)
+      : super(_value, (v) => _then(v as _$Failure<T>));
 
   @override
-  Failure<T> get _value => super._value as Failure<T>;
+  _$Failure<T> get _value => super._value as _$Failure<T>;
 
   @override
   $Res call({
     Object? message = freezed,
     Object? code = freezed,
   }) {
-    return _then(Failure<T>(
+    return _then(_$Failure<T>(
       message: message == freezed
           ? _value.message
           : message // ignore: cast_nullable_to_non_nullable
@@ -326,7 +302,7 @@ class _$Failure<T> implements Failure<T> {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is Failure<T> &&
+            other is _$Failure<T> &&
             const DeepCollectionEquality().equals(other.message, message) &&
             const DeepCollectionEquality().equals(other.code, code));
   }
@@ -339,8 +315,8 @@ class _$Failure<T> implements Failure<T> {
 
   @JsonKey(ignore: true)
   @override
-  $FailureCopyWith<T, Failure<T>> get copyWith =>
-      _$FailureCopyWithImpl<T, Failure<T>>(this, _$identity);
+  _$$FailureCopyWith<T, _$Failure<T>> get copyWith =>
+      __$$FailureCopyWithImpl<T, _$Failure<T>>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -413,37 +389,38 @@ class _$Failure<T> implements Failure<T> {
 }
 
 abstract class Failure<T> implements FirebaseTaskResult<T> {
-  const factory Failure({required String message, String? code}) = _$Failure<T>;
+  const factory Failure({required final String message, final String? code}) =
+      _$Failure<T>;
 
-  String get message;
-  String? get code;
+  String get message => throw _privateConstructorUsedError;
+  String? get code => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
-  $FailureCopyWith<T, Failure<T>> get copyWith =>
+  _$$FailureCopyWith<T, _$Failure<T>> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $ErrorCopyWith<T, $Res> {
-  factory $ErrorCopyWith(Error<T> value, $Res Function(Error<T>) then) =
-      _$ErrorCopyWithImpl<T, $Res>;
+abstract class _$$ErrorCopyWith<T, $Res> {
+  factory _$$ErrorCopyWith(_$Error<T> value, $Res Function(_$Error<T>) then) =
+      __$$ErrorCopyWithImpl<T, $Res>;
   $Res call({Exception e});
 }
 
 /// @nodoc
-class _$ErrorCopyWithImpl<T, $Res>
+class __$$ErrorCopyWithImpl<T, $Res>
     extends _$FirebaseTaskResultCopyWithImpl<T, $Res>
-    implements $ErrorCopyWith<T, $Res> {
-  _$ErrorCopyWithImpl(Error<T> _value, $Res Function(Error<T>) _then)
-      : super(_value, (v) => _then(v as Error<T>));
+    implements _$$ErrorCopyWith<T, $Res> {
+  __$$ErrorCopyWithImpl(_$Error<T> _value, $Res Function(_$Error<T>) _then)
+      : super(_value, (v) => _then(v as _$Error<T>));
 
   @override
-  Error<T> get _value => super._value as Error<T>;
+  _$Error<T> get _value => super._value as _$Error<T>;
 
   @override
   $Res call({
     Object? e = freezed,
   }) {
-    return _then(Error<T>(
+    return _then(_$Error<T>(
       e == freezed
           ? _value.e
           : e // ignore: cast_nullable_to_non_nullable
@@ -469,7 +446,7 @@ class _$Error<T> implements Error<T> {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is Error<T> &&
+            other is _$Error<T> &&
             const DeepCollectionEquality().equals(other.e, e));
   }
 
@@ -479,8 +456,8 @@ class _$Error<T> implements Error<T> {
 
   @JsonKey(ignore: true)
   @override
-  $ErrorCopyWith<T, Error<T>> get copyWith =>
-      _$ErrorCopyWithImpl<T, Error<T>>(this, _$identity);
+  _$$ErrorCopyWith<T, _$Error<T>> get copyWith =>
+      __$$ErrorCopyWithImpl<T, _$Error<T>>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -553,10 +530,10 @@ class _$Error<T> implements Error<T> {
 }
 
 abstract class Error<T> implements FirebaseTaskResult<T> {
-  const factory Error(Exception e) = _$Error<T>;
+  const factory Error(final Exception e) = _$Error<T>;
 
-  Exception get e;
+  Exception get e => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
-  $ErrorCopyWith<T, Error<T>> get copyWith =>
+  _$$ErrorCopyWith<T, _$Error<T>> get copyWith =>
       throw _privateConstructorUsedError;
 }

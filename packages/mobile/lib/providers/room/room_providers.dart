@@ -182,7 +182,7 @@ class RoomPageStateNotifierProvider extends StateNotifier<RoomPageState> {
         duration: const Duration(milliseconds: 100),
         curve: Curves.linear,
       );
-      await _read(sharedPreferencesServiceProvider).removeByStringKey(_roomId);
+      await _read(sharedPreferencesServiceProvider).removeDraftByRoomId(_roomId);
     }
   }
 

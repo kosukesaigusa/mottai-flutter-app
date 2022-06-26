@@ -5,8 +5,9 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 class NotificationPage extends HookConsumerWidget {
   const NotificationPage({Key? key}) : super(key: key);
 
-  static const path = '/notification/';
+  static const path = '/notification';
   static const name = 'NotificationPage';
+  static const location = path;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

@@ -2,14 +2,15 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:ks_flutter_commons/ks_flutter_commons.dart';
 
 import '../../providers/account/account.dart';
 import '../../providers/account_page/account_page.dart';
 import '../../providers/auth/auth.dart';
 import '../../theme/theme.dart';
 import '../../utils/enums.dart';
+import '../../utils/restart_app.dart';
 import '../../utils/utils.dart';
+import '../../widgets/common/image.dart';
 import '../../widgets/loading/loading.dart';
 import '../../widgets/sign_in/sign_in_buttons.dart';
 
@@ -19,8 +20,9 @@ const double buttonWidth = 240;
 class AccountPage extends HookConsumerWidget {
   const AccountPage({Key? key}) : super(key: key);
 
-  static const path = '/account/';
+  static const path = '/account';
   static const name = 'AccountPage';
+  static const location = path;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -96,7 +98,7 @@ class AccountPage extends HookConsumerWidget {
             icon: const Icon(Icons.exit_to_app),
             onPressed: () async {
               await auth.signOut();
-              RootWidget.restart(context);
+              await ref.read(restartAppProvider)();
             },
             label: const Text('サインアウトする'),
           ),
@@ -114,8 +116,8 @@ class AccountPage extends HookConsumerWidget {
               loading: () => const SizedBox(),
               error: (error, stackTrace) => const SizedBox(),
               data: (account) {
-                return CircleImage(
-                  size: 64,
+                return CircleImageWidget(
+                  diameter: 64,
                   imageURL: account?.imageURL,
                 );
               },

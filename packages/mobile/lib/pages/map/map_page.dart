@@ -27,8 +27,9 @@ const double nearMeIconSize = 20;
 class MapPage extends StatefulHookConsumerWidget {
   const MapPage({Key? key}) : super(key: key);
 
-  static const path = '/map/';
+  static const path = '/map';
   static const name = 'MapPage';
+  static const location = path;
 
   @override
   ConsumerState<MapPage> createState() => _MapPageState();

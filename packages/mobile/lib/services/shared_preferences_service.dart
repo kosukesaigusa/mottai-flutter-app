@@ -1,10 +1,18 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../route/bottom_tabs.dart';
+
 /// SharedPreferencesKey で管理するデータの列挙
 enum SharedPreferencesKey {
+  /// 運営ユーザーかどうか
   isAdmin,
+
+  /// ホストかどうか
   isHost,
+
+  /// 最後にアクティブだった下タブのインデックス番号
+  lastActiveBottomTab,
 }
 
 /// SharedPreferences のインスタンスを提供するプロバイダ。
@@ -29,6 +37,22 @@ class SharedPreferencesService {
   /// ルーム ID をキーにして、下書き中のメッセージを保存する。
   Future<bool> setDraftMessage({required String roomId, required String message}) =>
       _setStringByStringKey(roomId, message);
+
+  /// RootWidget.restart(context) で再起動した後などに、
+  /// 直前に有効だったタブを復帰できるように記録する。
+  Future<void> saveLastActiveBottomTab(BottomTab bottomTab) async {
+    await _setInt(SharedPreferencesKey.lastActiveBottomTab, bottomTab.index);
+  }
+
+  /// チャットルームの下書きを削除する
+  Future<bool> removeDraftByRoomId(String roomId) async {
+    return _removeByKeyName(roomId);
+  }
+
+  /// 直前に有効だったタブの記録を削除する
+  Future<bool> removeLastActiveBottomTab() async {
+    return _removeByKey(SharedPreferencesKey.lastActiveBottomTab);
+  }
 
   /// アドミンユーザーかどうか取得する。
   Future<bool> getIsAdmin() => _getBool(SharedPreferencesKey.isAdmin);
@@ -79,9 +103,14 @@ class SharedPreferencesService {
     return _read(sharedPreferencesProvider).setBool(key.name, value);
   }
 
-  /// SharedPreferences に保存している特定のキーを消す
-  Future<bool> removeByStringKey(String stringKey) async {
-    return _read(sharedPreferencesProvider).remove(stringKey);
+  /// SharedPreferences に保存している特定のキー・バリューペアを削除する
+  Future<bool> _removeByKey(SharedPreferencesKey key) async {
+    return _read(sharedPreferencesProvider).remove(key.name);
+  }
+
+  /// SharedPreferences に保存している特定のキー・バリューペアを削除する
+  Future<bool> _removeByKeyName(String keyName) async {
+    return _read(sharedPreferencesProvider).remove(keyName);
   }
 
   /// SharedPreferences に保存している値をすべて消す

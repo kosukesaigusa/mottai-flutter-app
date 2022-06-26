@@ -54,31 +54,31 @@ class _$ApplicationStateCopyWithImpl<$Res>
 }
 
 /// @nodoc
-abstract class _$ApplicationStateCopyWith<$Res>
+abstract class _$$_ApplicationStateCopyWith<$Res>
     implements $ApplicationStateCopyWith<$Res> {
-  factory _$ApplicationStateCopyWith(
-          _ApplicationState value, $Res Function(_ApplicationState) then) =
-      __$ApplicationStateCopyWithImpl<$Res>;
+  factory _$$_ApplicationStateCopyWith(
+          _$_ApplicationState value, $Res Function(_$_ApplicationState) then) =
+      __$$_ApplicationStateCopyWithImpl<$Res>;
   @override
   $Res call({bool loading});
 }
 
 /// @nodoc
-class __$ApplicationStateCopyWithImpl<$Res>
+class __$$_ApplicationStateCopyWithImpl<$Res>
     extends _$ApplicationStateCopyWithImpl<$Res>
-    implements _$ApplicationStateCopyWith<$Res> {
-  __$ApplicationStateCopyWithImpl(
-      _ApplicationState _value, $Res Function(_ApplicationState) _then)
-      : super(_value, (v) => _then(v as _ApplicationState));
+    implements _$$_ApplicationStateCopyWith<$Res> {
+  __$$_ApplicationStateCopyWithImpl(
+      _$_ApplicationState _value, $Res Function(_$_ApplicationState) _then)
+      : super(_value, (v) => _then(v as _$_ApplicationState));
 
   @override
-  _ApplicationState get _value => super._value as _ApplicationState;
+  _$_ApplicationState get _value => super._value as _$_ApplicationState;
 
   @override
   $Res call({
     Object? loading = freezed,
   }) {
-    return _then(_ApplicationState(
+    return _then(_$_ApplicationState(
       loading: loading == freezed
           ? _value.loading
           : loading // ignore: cast_nullable_to_non_nullable
@@ -105,7 +105,7 @@ class _$_ApplicationState implements _ApplicationState {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _ApplicationState &&
+            other is _$_ApplicationState &&
             const DeepCollectionEquality().equals(other.loading, loading));
   }
 
@@ -115,8 +115,8 @@ class _$_ApplicationState implements _ApplicationState {
 
   @JsonKey(ignore: true)
   @override
-  _$ApplicationStateCopyWith<_ApplicationState> get copyWith =>
-      __$ApplicationStateCopyWithImpl<_ApplicationState>(this, _$identity);
+  _$$_ApplicationStateCopyWith<_$_ApplicationState> get copyWith =>
+      __$$_ApplicationStateCopyWithImpl<_$_ApplicationState>(this, _$identity);
 }
 
 abstract class _ApplicationState implements ApplicationState {
@@ -126,6 +126,6 @@ abstract class _ApplicationState implements ApplicationState {
   bool get loading => throw _privateConstructorUsedError;
   @override
   @JsonKey(ignore: true)
-  _$ApplicationStateCopyWith<_ApplicationState> get copyWith =>
+  _$$_ApplicationStateCopyWith<_$_ApplicationState> get copyWith =>
       throw _privateConstructorUsedError;
 }

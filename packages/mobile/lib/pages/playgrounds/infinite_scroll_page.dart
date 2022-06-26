@@ -4,9 +4,10 @@ import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mottai_flutter_app_models/models.dart';
 
+import '../../constants/style.dart';
 import '../../providers/playgrounds/playground_message/playground_message_providers.dart';
-import '../../theme/theme.dart';
 import '../../utils/date_time.dart';
+import '../../utils/extensions/build_context.dart';
 import '../../utils/utils.dart';
 import '../../widgets/common/image.dart';
 
@@ -80,7 +81,7 @@ class _InfiniteScrollPageState extends ConsumerState<InfiniteScrollPage> {
                               ),
                               color: messageBackgroundColor,
                             ),
-                            child: Text(message.body, style: regular12),
+                            child: Text(message.body, style: context.bodySmall),
                           ),
                         ],
                       ),
@@ -92,7 +93,7 @@ class _InfiniteScrollPageState extends ConsumerState<InfiniteScrollPage> {
                         ),
                         child: Text(
                           to24HourNotationString(message.createdAt),
-                          style: grey12,
+                          style: context.bodySmall,
                         ),
                       ),
                     ],
@@ -108,10 +109,12 @@ class _InfiniteScrollPageState extends ConsumerState<InfiniteScrollPage> {
           await ref
               .read(playgroundMessageRepositoryProvider)
               .playgroundMessageRef(playgroundMessageId: playgroundMessageId)
-              .set(PlaygroundMessage(
-                playgroundMessageId: playgroundMessageId,
-                body: '$uuid-$uuid',
-              ),);
+              .set(
+                PlaygroundMessage(
+                  playgroundMessageId: playgroundMessageId,
+                  body: '$uuid-$uuid',
+                ),
+              );
         },
         child: const FaIcon(FontAwesomeIcons.solidComment),
       ),
@@ -158,7 +161,7 @@ class _InfiniteScrollPageState extends ConsumerState<InfiniteScrollPage> {
           ),
           child: Text(
             toIsoStringDateWithWeekDay(message.createdAt),
-            style: grey10,
+            style: context.bodySmall,
           ),
         ),
       ),

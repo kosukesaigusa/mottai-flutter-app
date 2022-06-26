@@ -6,8 +6,8 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../providers/account/account.dart';
 import '../../providers/account_page/account_page.dart';
 import '../../providers/auth/auth.dart';
-import '../../theme/theme.dart';
 import '../../utils/enums.dart';
+import '../../utils/extensions/build_context.dart';
 import '../../utils/restart_app.dart';
 import '../../utils/utils.dart';
 import '../../widgets/common/image.dart';
@@ -63,7 +63,7 @@ class AccountPage extends HookConsumerWidget {
               '上記のソーシャルアカウントでログインすることができます。'
               'または、以下のボタンを押してテスト用ホストアカウントとして'
               'ログインすることができます。',
-              style: grey12,
+              style: context.bodySmall,
             ),
             const Gap(16),
             SizedBox(
@@ -216,7 +216,7 @@ class AccountPage extends HookConsumerWidget {
                                 children: [
                                   const Expanded(child: Divider()),
                                   const Gap(16),
-                                  Text('他のログイン方法と連携する', style: grey12),
+                                  Text('他のログイン方法と連携する', style: context.bodySmall),
                                   const Gap(16),
                                   const Expanded(child: Divider()),
                                 ],

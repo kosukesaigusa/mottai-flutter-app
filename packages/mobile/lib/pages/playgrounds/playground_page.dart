@@ -7,8 +7,9 @@ import 'infinite_scroll_page.dart';
 class PlaygroundPage extends StatefulHookConsumerWidget {
   const PlaygroundPage({Key? key}) : super(key: key);
 
-  static const path = '/playground/';
+  static const path = '/playground';
   static const name = 'PlaygroundPage';
+  static const location = path;
 
   @override
   ConsumerState<PlaygroundPage> createState() => _PlaygroundPageState();

@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:ks_flutter_commons/ks_flutter_commons.dart';
 import 'package:mottai_flutter_app_models/models.dart';
 
 import '../../providers/playgrounds/playground_message/playground_message_providers.dart';
 import '../../theme/theme.dart';
+import '../../utils/date_time.dart';
 import '../../utils/utils.dart';
+import '../../widgets/common/image.dart';
 
 const double horizontalPadding = 8;
 const double partnerImageSize = 36;
@@ -16,8 +17,9 @@ const double partnerImageSize = 36;
 class InfiniteScrollPage extends StatefulHookConsumerWidget {
   const InfiniteScrollPage({Key? key}) : super(key: key);
 
-  static const path = '/infinite-scroll/';
+  static const path = '/infinite-scroll';
   static const name = 'InfiniteScrollPage';
+  static const location = path;
 
   @override
   ConsumerState<InfiniteScrollPage> createState() => _InfiniteScrollPageState();
@@ -56,8 +58,8 @@ class _InfiniteScrollPageState extends ConsumerState<InfiniteScrollPage> {
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          const CircleImage(
-                            size: 36,
+                          const CircleImageWidget(
+                            diameter: 36,
                             imageURL: 'https://full-count.jp/wp-content/uploads/'
                                 '2022/03/22062924/20220322_ohtani4_ap-560x373.jpg',
                           ),

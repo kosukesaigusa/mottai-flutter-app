@@ -5,31 +5,32 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:ks_flutter_commons/ks_flutter_commons.dart';
 import 'package:mottai_flutter_app_models/models.dart';
 
 import '../../providers/attending_room/attending_room.dart';
 import '../../providers/auth/auth.dart';
 import '../../providers/message/message.dart';
 import '../../providers/public_user/public_user_providers.dart';
-import '../../route/utils.dart';
 import '../../services/scaffold_messenger_service.dart';
 import '../../theme/theme.dart';
+import '../../utils/date_time.dart';
 import '../../utils/utils.dart';
+import '../../widgets/common/image.dart';
 import '../../widgets/loading/loading.dart';
 import '../room/room_page.dart';
 
-class AttendingRoomsPage extends StatefulHookConsumerWidget {
-  const AttendingRoomsPage({Key? key}) : super(key: key);
+class RoomsPage extends StatefulHookConsumerWidget {
+  const RoomsPage({Key? key}) : super(key: key);
 
-  static const path = '/attending-rooms/';
-  static const name = 'AttendingRoomsPage';
+  static const path = '/rooms';
+  static const name = 'RoomsPage';
+  static const location = path;
 
   @override
-  ConsumerState<AttendingRoomsPage> createState() => _AttendingRoomsPageState();
+  ConsumerState<RoomsPage> createState() => _RoomsPageState();
 }
 
-class _AttendingRoomsPageState extends ConsumerState<AttendingRoomsPage> {
+class _RoomsPageState extends ConsumerState<RoomsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -116,10 +117,9 @@ class AttendingRoomWidget extends HookConsumerWidget {
                   .read(messageRepositoryProvider)
                   .readStatusRef(roomId: attendingRoom.roomId, readStatusId: userId)
                   .set(const ReadStatus(), SetOptions(merge: true)));
-              await Navigator.pushNamed(
+              await Navigator.pushNamed<void>(
                 context,
-                RoomPage.path,
-                arguments: RouteArguments(<String, dynamic>{'roomId': attendingRoom.roomId}),
+                RoomPage.location(roomId: attendingRoom.roomId),
               );
             },
             child: Padding(
@@ -128,11 +128,11 @@ class AttendingRoomWidget extends HookConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   ref.watch(publicUserStreamProvider(attendingRoom.partnerId)).when<Widget>(
-                        loading: () => const CirclePlaceHolder(size: 48),
-                        error: (error, stackTrace) => const CirclePlaceHolder(size: 48),
+                        loading: () => const CircleImagePlaceholder(diameter: 48),
+                        error: (error, stackTrace) => const CircleImagePlaceholder(diameter: 48),
                         data: (publicUser) => publicUser == null
-                            ? const CirclePlaceHolder(size: 48)
-                            : CircleImage(size: 48, imageURL: publicUser.imageURL),
+                            ? const CircleImagePlaceholder(diameter: 48)
+                            : CircleImageWidget(diameter: 48, imageURL: publicUser.imageURL),
                       ),
                   const Gap(8),
                   Expanded(

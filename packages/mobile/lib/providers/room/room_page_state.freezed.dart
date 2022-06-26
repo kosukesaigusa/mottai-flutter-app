@@ -112,11 +112,11 @@ class _$RoomPageStateCopyWithImpl<$Res>
 }
 
 /// @nodoc
-abstract class _$RoomPageStateCopyWith<$Res>
+abstract class _$$_RoomPageStateCopyWith<$Res>
     implements $RoomPageStateCopyWith<$Res> {
-  factory _$RoomPageStateCopyWith(
-          _RoomPageState value, $Res Function(_RoomPageState) then) =
-      __$RoomPageStateCopyWithImpl<$Res>;
+  factory _$$_RoomPageStateCopyWith(
+          _$_RoomPageState value, $Res Function(_$_RoomPageState) then) =
+      __$$_RoomPageStateCopyWithImpl<$Res>;
   @override
   $Res call(
       {bool loading,
@@ -131,15 +131,15 @@ abstract class _$RoomPageStateCopyWith<$Res>
 }
 
 /// @nodoc
-class __$RoomPageStateCopyWithImpl<$Res>
+class __$$_RoomPageStateCopyWithImpl<$Res>
     extends _$RoomPageStateCopyWithImpl<$Res>
-    implements _$RoomPageStateCopyWith<$Res> {
-  __$RoomPageStateCopyWithImpl(
-      _RoomPageState _value, $Res Function(_RoomPageState) _then)
-      : super(_value, (v) => _then(v as _RoomPageState));
+    implements _$$_RoomPageStateCopyWith<$Res> {
+  __$$_RoomPageStateCopyWithImpl(
+      _$_RoomPageState _value, $Res Function(_$_RoomPageState) _then)
+      : super(_value, (v) => _then(v as _$_RoomPageState));
 
   @override
-  _RoomPageState get _value => super._value as _RoomPageState;
+  _$_RoomPageState get _value => super._value as _$_RoomPageState;
 
   @override
   $Res call({
@@ -153,7 +153,7 @@ class __$RoomPageStateCopyWithImpl<$Res>
     Object? hasMore = freezed,
     Object? lastVisibleQds = freezed,
   }) {
-    return _then(_RoomPageState(
+    return _then(_$_RoomPageState(
       loading: loading == freezed
           ? _value.loading
           : loading // ignore: cast_nullable_to_non_nullable
@@ -167,15 +167,15 @@ class __$RoomPageStateCopyWithImpl<$Res>
           : isValid // ignore: cast_nullable_to_non_nullable
               as bool,
       messages: messages == freezed
-          ? _value.messages
+          ? _value._messages
           : messages // ignore: cast_nullable_to_non_nullable
               as List<Message>,
       newMessages: newMessages == freezed
-          ? _value.newMessages
+          ? _value._newMessages
           : newMessages // ignore: cast_nullable_to_non_nullable
               as List<Message>,
       pastMessages: pastMessages == freezed
-          ? _value.pastMessages
+          ? _value._pastMessages
           : pastMessages // ignore: cast_nullable_to_non_nullable
               as List<Message>,
       fetching: fetching == freezed
@@ -262,15 +262,15 @@ class _$_RoomPageState implements _RoomPageState {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _RoomPageState &&
+            other is _$_RoomPageState &&
             const DeepCollectionEquality().equals(other.loading, loading) &&
             const DeepCollectionEquality().equals(other.sending, sending) &&
             const DeepCollectionEquality().equals(other.isValid, isValid) &&
-            const DeepCollectionEquality().equals(other.messages, messages) &&
+            const DeepCollectionEquality().equals(other._messages, _messages) &&
             const DeepCollectionEquality()
-                .equals(other.newMessages, newMessages) &&
+                .equals(other._newMessages, _newMessages) &&
             const DeepCollectionEquality()
-                .equals(other.pastMessages, pastMessages) &&
+                .equals(other._pastMessages, _pastMessages) &&
             const DeepCollectionEquality().equals(other.fetching, fetching) &&
             const DeepCollectionEquality().equals(other.hasMore, hasMore) &&
             const DeepCollectionEquality()
@@ -283,17 +283,17 @@ class _$_RoomPageState implements _RoomPageState {
       const DeepCollectionEquality().hash(loading),
       const DeepCollectionEquality().hash(sending),
       const DeepCollectionEquality().hash(isValid),
-      const DeepCollectionEquality().hash(messages),
-      const DeepCollectionEquality().hash(newMessages),
-      const DeepCollectionEquality().hash(pastMessages),
+      const DeepCollectionEquality().hash(_messages),
+      const DeepCollectionEquality().hash(_newMessages),
+      const DeepCollectionEquality().hash(_pastMessages),
       const DeepCollectionEquality().hash(fetching),
       const DeepCollectionEquality().hash(hasMore),
       const DeepCollectionEquality().hash(lastVisibleQds));
 
   @JsonKey(ignore: true)
   @override
-  _$RoomPageStateCopyWith<_RoomPageState> get copyWith =>
-      __$RoomPageStateCopyWithImpl<_RoomPageState>(this, _$identity);
+  _$$_RoomPageStateCopyWith<_$_RoomPageState> get copyWith =>
+      __$$_RoomPageStateCopyWithImpl<_$_RoomPageState>(this, _$identity);
 }
 
 abstract class _RoomPageState implements RoomPageState {
@@ -329,6 +329,6 @@ abstract class _RoomPageState implements RoomPageState {
       throw _privateConstructorUsedError;
   @override
   @JsonKey(ignore: true)
-  _$RoomPageStateCopyWith<_RoomPageState> get copyWith =>
+  _$$_RoomPageStateCopyWith<_$_RoomPageState> get copyWith =>
       throw _privateConstructorUsedError;
 }

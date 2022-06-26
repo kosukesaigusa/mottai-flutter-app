@@ -2,16 +2,33 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:ks_flutter_commons/ks_flutter_commons.dart';
 import 'package:mottai_flutter_app_models/models.dart';
 
 import '../../providers/auth/auth.dart';
 import '../../providers/public_user/public_user_providers.dart';
 import '../../providers/read_status/read_status_providers.dart';
 import '../../providers/room/room_providers.dart';
-import '../../route/utils.dart';
+import '../../route/app_router_state.dart';
 import '../../theme/theme.dart';
+import '../../utils/date_time.dart';
 import '../../utils/enums.dart';
+import '../../utils/exceptions/base.dart';
+import '../../widgets/common/image.dart';
+
+final _roomIdProvider = Provider.autoDispose<String>(
+  (ref) {
+    final state = ref.watch(appRouterStateProvider);
+    final roomId = state.params['roomId'];
+    if (roomId == null) {
+      throw const AppException(message: 'チャットルームが見つかりませんでした。');
+    }
+    return roomId;
+  },
+  dependencies: [
+    extractExtraDataProvider,
+    appRouterStateProvider,
+  ],
+);
 
 const double horizontalPadding = 8;
 const double partnerImageSize = 36;
@@ -19,8 +36,9 @@ const double partnerImageSize = 36;
 class RoomPage extends StatefulHookConsumerWidget {
   const RoomPage({Key? key}) : super(key: key);
 
-  static const path = '/room/';
+  static const path = '/room/:roomId';
   static const name = 'RoomPage';
+  static String location({required String roomId}) => '/room/$roomId';
 
   @override
   ConsumerState<RoomPage> createState() => _RoomPageState();
@@ -29,57 +47,50 @@ class RoomPage extends StatefulHookConsumerWidget {
 class _RoomPageState extends ConsumerState<RoomPage> {
   @override
   Widget build(BuildContext context) {
-    final roomId =
-        (ModalRoute.of(context)!.settings.arguments! as RouteArguments)['roomId'] as String;
-    final userId = ref.watch(userIdProvider).value;
-    // TODO: 他の画面を表示するべき？
-    if (userId == null) {
-      return const SizedBox();
-    }
+    final roomId = ref.watch(_roomIdProvider);
     final messages = ref.watch(roomPageStateNotifierProvider(roomId).select((s) => s.messages));
-    return TapToUnfocusWidget(
-      child: Scaffold(
-        appBar: AppBar(),
-        body: ref.watch(roomPageStateNotifierProvider(roomId)).loading
-            ? const Center(
-                child: FaIcon(
-                  FontAwesomeIcons.solidComment,
-                  size: 72,
-                  color: Colors.black12,
-                ),
-              )
-            : Column(
-                children: [
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
-                      child: ListView.builder(
-                        controller: ref
-                            .watch(roomPageStateNotifierProvider(roomId).notifier)
-                            .scrollController,
-                        itemBuilder: (context, index) {
-                          final message = messages[index];
-                          return MessageWidget(
-                            roomId: roomId,
-                            message: message,
-                            showDate: _showDate(
-                              itemCount: messages.length,
-                              index: index,
-                              messages: messages,
-                            ),
-                            senderType:
-                                message.senderId == userId ? SenderType.myself : SenderType.partner,
-                          );
-                        },
-                        itemCount: messages.length,
-                        reverse: true,
-                      ),
+    final userId = ref.watch(userIdProvider).value;
+    return Scaffold(
+      appBar: AppBar(),
+      body: ref.watch(roomPageStateNotifierProvider(roomId)).loading
+          ? const Center(
+              child: FaIcon(
+                FontAwesomeIcons.solidComment,
+                size: 72,
+                color: Colors.black12,
+              ),
+            )
+          : Column(
+              children: [
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: ListView.builder(
+                      controller: ref
+                          .watch(roomPageStateNotifierProvider(roomId).notifier)
+                          .scrollController,
+                      itemBuilder: (context, index) {
+                        final message = messages[index];
+                        return MessageWidget(
+                          roomId: roomId,
+                          message: message,
+                          showDate: _showDate(
+                            itemCount: messages.length,
+                            index: index,
+                            messages: messages,
+                          ),
+                          senderType:
+                              message.senderId == userId ? SenderType.myself : SenderType.partner,
+                        );
+                      },
+                      itemCount: messages.length,
+                      reverse: true,
                     ),
                   ),
-                  RoomMessageInputWidget(roomId: roomId),
-                ],
-              ),
-      ),
+                ),
+                RoomMessageInputWidget(roomId: roomId),
+              ],
+            ),
     );
   }
 
@@ -134,7 +145,8 @@ class MessageWidget extends HookConsumerWidget {
               ref.watch(publicUserStreamProvider(message.senderId)).when<Widget>(
                     loading: () => const SizedBox(),
                     error: (error, stackTrace) => const SizedBox(),
-                    data: (publicUser) => CircleImage(size: 36, imageURL: publicUser?.imageURL),
+                    data: (publicUser) =>
+                        CircleImageWidget(diameter: 36, imageURL: publicUser?.imageURL),
                   ),
               const Gap(8),
             ],

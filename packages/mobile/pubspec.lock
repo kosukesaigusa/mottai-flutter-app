@@ -890,7 +890,7 @@ packages:
     source: hosted
     version: "4.0.1"
   ks_flutter_commons:
-    dependency: "direct main"
+    dependency: transitive
     description:
       path: "../ks_flutter_commons"
       relative: true
@@ -1071,6 +1071,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.7"
+  path_to_regexp:
+    dependency: "direct main"
+    description:
+      name: path_to_regexp
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.4.0"
   pedantic:
     dependency: transitive
     description:
@@ -1239,6 +1246,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.2"
+  shimmer:
+    dependency: "direct main"
+    description:
+      name: shimmer
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.0"
   sign_in_with_apple:
     dependency: "direct main"
     description:
@@ -1356,6 +1370,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.0"
+  tuple:
+    dependency: "direct main"
+    description:
+      name: tuple
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.0"
   twitter_login:
     dependency: "direct main"
     description:

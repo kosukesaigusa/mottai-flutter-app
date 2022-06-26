@@ -1,34 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../../route/utils.dart';
+import '../../../models/playground/hero_item.dart';
+import '../../../route/app_router_state.dart';
+import '../../../utils/exceptions/base.dart';
 import 'hero_page.dart';
+
+final _heroItemProvider = Provider.autoDispose<HeroItem>(
+  (ref) {
+    final heroItem = ref.read(extractExtraDataProvider)<HeroItem>();
+    if (heroItem == null) {
+      throw const AppException(message: 'データが見つかりませんでした。');
+    }
+    return heroItem;
+  },
+  dependencies: [
+    extractExtraDataProvider,
+    appRouterStateProvider,
+  ],
+);
 
 /// タップしてヒーローアニメーションで画面遷移してくる詳細ページ
 class HeroImageDetailPage extends HookConsumerWidget {
-  const HeroImageDetailPage._({
-    Key? key,
-    required this.item,
-    required this.tag,
-  }) : super(key: key);
+  const HeroImageDetailPage({super.key});
 
-  HeroImageDetailPage.withArguments({
-    Key? key,
-    required RouteArguments args,
-  }) : this._(
-          key: key,
-          item: args['item'] as HeroItem,
-          tag: args['tag'] as String,
-        );
-
-  static const path = '/hero-detail/';
+  static const path = '/hero-detail';
   static const name = 'HeroImageDetailPage';
-
-  final HeroItem item;
-  final String tag;
+  static const location = path;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final heroItem = ref.watch(_heroItemProvider);
     final size = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -41,8 +43,8 @@ class HeroImageDetailPage extends HookConsumerWidget {
                 minHeight: size.height,
               ),
               child: Hero(
-                tag: tag,
-                child: HeroCardWidget(item: item),
+                tag: heroItem.tag,
+                child: HeroCardWidget(heroItem: heroItem),
               ),
             ),
           ),

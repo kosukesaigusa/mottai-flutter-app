@@ -99,11 +99,11 @@ class _$PlaygroundMessageStateCopyWithImpl<$Res>
 }
 
 /// @nodoc
-abstract class _$PlaygroundMessageStateCopyWith<$Res>
+abstract class _$$_PlaygroundMessageStateCopyWith<$Res>
     implements $PlaygroundMessageStateCopyWith<$Res> {
-  factory _$PlaygroundMessageStateCopyWith(_PlaygroundMessageState value,
-          $Res Function(_PlaygroundMessageState) then) =
-      __$PlaygroundMessageStateCopyWithImpl<$Res>;
+  factory _$$_PlaygroundMessageStateCopyWith(_$_PlaygroundMessageState value,
+          $Res Function(_$_PlaygroundMessageState) then) =
+      __$$_PlaygroundMessageStateCopyWithImpl<$Res>;
   @override
   $Res call(
       {bool loading,
@@ -116,15 +116,16 @@ abstract class _$PlaygroundMessageStateCopyWith<$Res>
 }
 
 /// @nodoc
-class __$PlaygroundMessageStateCopyWithImpl<$Res>
+class __$$_PlaygroundMessageStateCopyWithImpl<$Res>
     extends _$PlaygroundMessageStateCopyWithImpl<$Res>
-    implements _$PlaygroundMessageStateCopyWith<$Res> {
-  __$PlaygroundMessageStateCopyWithImpl(_PlaygroundMessageState _value,
-      $Res Function(_PlaygroundMessageState) _then)
-      : super(_value, (v) => _then(v as _PlaygroundMessageState));
+    implements _$$_PlaygroundMessageStateCopyWith<$Res> {
+  __$$_PlaygroundMessageStateCopyWithImpl(_$_PlaygroundMessageState _value,
+      $Res Function(_$_PlaygroundMessageState) _then)
+      : super(_value, (v) => _then(v as _$_PlaygroundMessageState));
 
   @override
-  _PlaygroundMessageState get _value => super._value as _PlaygroundMessageState;
+  _$_PlaygroundMessageState get _value =>
+      super._value as _$_PlaygroundMessageState;
 
   @override
   $Res call({
@@ -136,21 +137,21 @@ class __$PlaygroundMessageStateCopyWithImpl<$Res>
     Object? hasMore = freezed,
     Object? lastVisibleQds = freezed,
   }) {
-    return _then(_PlaygroundMessageState(
+    return _then(_$_PlaygroundMessageState(
       loading: loading == freezed
           ? _value.loading
           : loading // ignore: cast_nullable_to_non_nullable
               as bool,
       messages: messages == freezed
-          ? _value.messages
+          ? _value._messages
           : messages // ignore: cast_nullable_to_non_nullable
               as List<PlaygroundMessage>,
       newMessages: newMessages == freezed
-          ? _value.newMessages
+          ? _value._newMessages
           : newMessages // ignore: cast_nullable_to_non_nullable
               as List<PlaygroundMessage>,
       pastMessages: pastMessages == freezed
-          ? _value.pastMessages
+          ? _value._pastMessages
           : pastMessages // ignore: cast_nullable_to_non_nullable
               as List<PlaygroundMessage>,
       fetching: fetching == freezed
@@ -229,13 +230,13 @@ class _$_PlaygroundMessageState implements _PlaygroundMessageState {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _PlaygroundMessageState &&
+            other is _$_PlaygroundMessageState &&
             const DeepCollectionEquality().equals(other.loading, loading) &&
-            const DeepCollectionEquality().equals(other.messages, messages) &&
+            const DeepCollectionEquality().equals(other._messages, _messages) &&
             const DeepCollectionEquality()
-                .equals(other.newMessages, newMessages) &&
+                .equals(other._newMessages, _newMessages) &&
             const DeepCollectionEquality()
-                .equals(other.pastMessages, pastMessages) &&
+                .equals(other._pastMessages, _pastMessages) &&
             const DeepCollectionEquality().equals(other.fetching, fetching) &&
             const DeepCollectionEquality().equals(other.hasMore, hasMore) &&
             const DeepCollectionEquality()
@@ -246,17 +247,17 @@ class _$_PlaygroundMessageState implements _PlaygroundMessageState {
   int get hashCode => Object.hash(
       runtimeType,
       const DeepCollectionEquality().hash(loading),
-      const DeepCollectionEquality().hash(messages),
-      const DeepCollectionEquality().hash(newMessages),
-      const DeepCollectionEquality().hash(pastMessages),
+      const DeepCollectionEquality().hash(_messages),
+      const DeepCollectionEquality().hash(_newMessages),
+      const DeepCollectionEquality().hash(_pastMessages),
       const DeepCollectionEquality().hash(fetching),
       const DeepCollectionEquality().hash(hasMore),
       const DeepCollectionEquality().hash(lastVisibleQds));
 
   @JsonKey(ignore: true)
   @override
-  _$PlaygroundMessageStateCopyWith<_PlaygroundMessageState> get copyWith =>
-      __$PlaygroundMessageStateCopyWithImpl<_PlaygroundMessageState>(
+  _$$_PlaygroundMessageStateCopyWith<_$_PlaygroundMessageState> get copyWith =>
+      __$$_PlaygroundMessageStateCopyWithImpl<_$_PlaygroundMessageState>(
           this, _$identity);
 }
 
@@ -289,6 +290,6 @@ abstract class _PlaygroundMessageState implements PlaygroundMessageState {
       throw _privateConstructorUsedError;
   @override
   @JsonKey(ignore: true)
-  _$PlaygroundMessageStateCopyWith<_PlaygroundMessageState> get copyWith =>
+  _$$_PlaygroundMessageStateCopyWith<_$_PlaygroundMessageState> get copyWith =>
       throw _privateConstructorUsedError;
 }

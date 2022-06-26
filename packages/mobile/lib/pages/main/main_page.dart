@@ -25,6 +25,7 @@ class MainPage extends StatefulHookConsumerWidget {
 
   static const path = '/';
   static const name = 'MainPage';
+  static const location = path;
 
   @override
   ConsumerState<MainPage> createState() => _MainPageState();
@@ -48,7 +49,6 @@ class _MainPageState extends ConsumerState<MainPage> with WidgetsBindingObserver
   void didChangeAppLifecycleState(AppLifecycleState state) {
     debugPrint('***');
     debugPrint('AppLifecycleState: ${state.name}');
-    debugPrint('***');
   }
 
   @override
@@ -60,18 +60,22 @@ class _MainPageState extends ConsumerState<MainPage> with WidgetsBindingObserver
             body: Stack(
               children: [for (final tab in bottomTabs) _buildStackedPages(tab)],
             ),
-            bottomNavigationBar: KeyboardVisibilityProvider.isKeyboardVisible(context)
+            bottomNavigationBar: _isKeyboardVisible
                 ? null
                 : BottomNavigationBar(
                     type: BottomNavigationBarType.fixed,
                     selectedItemColor: Theme.of(context).colorScheme.primary,
+                    selectedFontSize: 12,
+                    unselectedFontSize: 12,
                     onTap: _onTap,
                     currentIndex: ref.watch(bottomTabStateProvider).index,
                     items: bottomTabs
-                        .map((b) => BottomNavigationBarItem(
-                              icon: Icon(b.iconData),
-                              label: b.label,
-                            ))
+                        .map(
+                          (b) => BottomNavigationBarItem(
+                            icon: ref.watch(bottomTabIconProvider(b.bottomTabEnum)),
+                            label: b.bottomTabEnum.label,
+                          ),
+                        )
                         .toList(),
                   ),
           ),
@@ -80,11 +84,16 @@ class _MainPageState extends ConsumerState<MainPage> with WidgetsBindingObserver
     );
   }
 
+  /// キーボードが見えているかどうか。
+  /// キーボードが見えているときは BottomNavigationBar と FloatingActionButton は
+  /// 表示しない。
+  bool get _isKeyboardVisible => KeyboardVisibilityProvider.isKeyboardVisible(context);
+
   /// BottomNavigationBarItem をタップしたときの挙動
   /// 現在表示している状態のタブをタップした場合は画面をすべて pop する。
   void _onTap(int index) {
     FocusScope.of(context).unfocus();
-    final bottomTab = BottomTab.getByIndex(index);
+    final bottomTab = bottomTabs[index];
     final currentBottomTab = ref.watch(bottomTabStateProvider);
     if (bottomTab == currentBottomTab) {
       bottomTab.key.currentState!.popUntil((route) => route.isFirst);
@@ -122,7 +131,7 @@ class _MainPageState extends ConsumerState<MainPage> with WidgetsBindingObserver
       debugPrint('data: $data');
       debugPrint('***');
       if (remoteMessage.data.containsKey('path')) {
-        await ref.read(navigationServiceProvider).pushOnCurrentTab(path: path, data: data);
+        await ref.read(navigationServiceProvider).pushOnCurrentTab(path: path, arguments: data);
       }
     }
 
@@ -137,7 +146,7 @@ class _MainPageState extends ConsumerState<MainPage> with WidgetsBindingObserver
         debugPrint('path: $path');
         debugPrint('data: $data');
         debugPrint('***');
-        await ref.read(navigationServiceProvider).pushOnCurrentTab(path: path, data: data);
+        await ref.read(navigationServiceProvider).pushOnCurrentTab(path: path, arguments: data);
       }
     });
   }
@@ -148,9 +157,9 @@ class _MainPageState extends ConsumerState<MainPage> with WidgetsBindingObserver
     FirebaseDynamicLinks.instance.onLink.listen(
       (pendingDynamicLinkData) async {
         debugPrint('🔗 Open app from Firebase Dynamic Links when background.');
-        await ref
-            .read(navigationServiceProvider)
-            .popUntilFirstRouteAndPushOnSpecifiedTabByUri(pendingDynamicLinkData.link);
+        // await ref
+        //     .read(navigationServiceProvider)
+        //     .popUntilFirstRouteAndPushOnSpecifiedTabByUri(pendingDynamicLinkData.link);
       },
     );
 
@@ -158,9 +167,9 @@ class _MainPageState extends ConsumerState<MainPage> with WidgetsBindingObserver
     final pendingDynamicLinkData = await FirebaseDynamicLinks.instance.getInitialLink();
     if (pendingDynamicLinkData != null) {
       debugPrint('🔗 Open app from Firebase Dynamic Links when terminated.');
-      await ref
-          .read(navigationServiceProvider)
-          .popUntilFirstRouteAndPushOnSpecifiedTabByUri(pendingDynamicLinkData.link);
+      // await ref
+      //     .read(navigationServiceProvider)
+      //     .popUntilFirstRouteAndPushOnSpecifiedTabByUri(pendingDynamicLinkData.link);
     }
   }
 }

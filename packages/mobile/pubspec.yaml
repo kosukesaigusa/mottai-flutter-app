@@ -49,16 +49,17 @@ dependencies:
   intl:
   json_annotation:
   keyboard_actions:
-  ks_flutter_commons:
-    path: ../ks_flutter_commons
   mottai_flutter_app_models:
     path: ../models
   package_info_plus: ^1.4.2
+  path_to_regexp: ^0.4.0
   photo_view:
   rxdart:
   shared_preferences:
+  shimmer: ^2.0.0
   sign_in_with_apple:
   state_notifier:
+  tuple: ^2.0.0
   twitter_login:
     path: ../twitter_login
   url_launcher:

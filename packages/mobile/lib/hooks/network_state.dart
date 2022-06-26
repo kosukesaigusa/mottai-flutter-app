@@ -5,7 +5,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 NetworkState useNetworkState() {
   final objectRef = useRef<NetworkState>(const NetworkState(fetched: false));
   final connectivityChanged = useStream<ConnectivityResult>(
-      useMemoized<Stream<ConnectivityResult>>(() => Connectivity().onConnectivityChanged));
+      useMemoized<Stream<ConnectivityResult>>(() => Connectivity().onConnectivityChanged),);
   // ignore: join_return_with_assignment
   objectRef.value =
       NetworkState(fetched: connectivityChanged.hasData, connectivity: connectivityChanged.data);
@@ -15,7 +15,7 @@ NetworkState useNetworkState() {
 bool useNetworkConnected() {
   final objectRef = useRef<NetworkState>(const NetworkState(fetched: false));
   final connectivityChanged = useStream<ConnectivityResult>(
-      useMemoized<Stream<ConnectivityResult>>(() => Connectivity().onConnectivityChanged));
+      useMemoized<Stream<ConnectivityResult>>(() => Connectivity().onConnectivityChanged),);
   objectRef.value =
       NetworkState(fetched: connectivityChanged.hasData, connectivity: connectivityChanged.data);
   return objectRef.value.connected;

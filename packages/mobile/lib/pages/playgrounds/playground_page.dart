@@ -5,7 +5,7 @@ import 'hero/hero_page.dart';
 import 'infinite_scroll_page.dart';
 
 class PlaygroundPage extends StatefulHookConsumerWidget {
-  const PlaygroundPage({Key? key}) : super(key: key);
+  const PlaygroundPage({super.key});
 
   static const path = '/playground';
   static const name = 'PlaygroundPage';

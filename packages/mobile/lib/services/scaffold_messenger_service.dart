@@ -91,7 +91,7 @@ class ScaffoldMessengerService {
 
   /// FirebaseException 起点でスナックバーを表示する
   ScaffoldFeatureController<SnackBar, SnackBarClosedReason> showSnackBarByFirebaseException(
-      FirebaseException e) {
+      FirebaseException e,) {
     return showSnackBar('[${e.code}]: ${e.message ?? 'FirebaseException が発生しました。'}');
   }
 

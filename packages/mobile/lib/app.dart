@@ -8,7 +8,7 @@ import 'scaffold_messenger_navigator.dart';
 /// ここではルートは制御せず、home プロパティに
 /// ScaffoldMessengerNavigator を指定するだけとする。
 class App extends StatelessWidget {
-  const App({Key? key}) : super(key: key);
+  const App({super.key});
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

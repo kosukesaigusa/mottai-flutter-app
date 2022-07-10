@@ -1,6 +1,7 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../providers/map/map.dart';
 import '../services/firebase_messaging_service.dart';
 import '../services/shared_preferences_service.dart';
 
@@ -13,5 +14,6 @@ Future<List<Override>> get providerScopeOverrides async {
     fcmProvider.overrideWithValue(
       await getFirebaseMessagingInstance,
     ),
+    initialCenterLatLngProvider.overrideWithValue(await initialCenterLatLng),
   ];
 }

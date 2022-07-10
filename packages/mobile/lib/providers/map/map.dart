@@ -195,7 +195,7 @@ Future<Position?> get currentPosition async {
 
 /// デフォルトのマップ中心位置を決めるためのメソッド。
 /// ProviderScope.overrides に指定してアプリの起動時にコールされる。
-Future<LatLng> get defaultCenterLatLng async {
+Future<LatLng> get initialCenterLatLng async {
   final p = await currentPosition;
   return p == null ? _defaultLatLng : LatLng(p.latitude, p.longitude);
 }

@@ -150,12 +150,14 @@ class AuthService {
           }.toFirestore(),
         );
       } else {
-        await _read(accountRefProvider).set(Account(
-          accountId: nonNullUid,
-          displayName: displayName,
-          imageURL: imageURL,
-          providers: <String>[method.name],
-        ),);
+        await _read(accountRefProvider).set(
+          Account(
+            accountId: nonNullUid,
+            displayName: displayName ?? '',
+            imageURL: imageURL ?? '',
+            providers: <String>[method.name],
+          ),
+        );
       }
     } on FirebaseException {
       rethrow;

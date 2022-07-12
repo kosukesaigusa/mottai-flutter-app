@@ -1,0 +1,39 @@
+h1 {
+  font-size: 3rem !important;
+}
+
+h2 {
+  font-size: 1.4rem !important;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  padding-bottom: 0.125rem;
+  border-bottom: #ffffff solid 2px;
+}
+
+ul {
+  margin-bottom: 0.75rem;
+  list-style-type: disc !important;
+}
+
+li {
+  font-size: 1rem;
+}
+
+p {
+  font-size: 1rem;
+  color: #ffffff;
+  margin-bottom: 0.75rem !important;
+}
+
+strong {
+  color: yellow;
+}
+
+code::before,
+code::after {
+  display: none;
+}
+
+code {
+  padding: 0 0.25rem;
+}

@@ -35,7 +35,7 @@ Flutter/Dart と比べると習熟度が低く恐縮ですが、Cloud (Firebase)
 
 - Cloud (Firebase) Functions って何？いつ使う？なぜ必要？
 - tsconfig.json について
-- eslint.js, editorconfig について
+- eslint, editorconfig について
 - package.json, package-lock.json について
 - types ディレクトリについて
 - Firebase Functions について（概要）
@@ -70,8 +70,102 @@ Firebase との連携も容易で、たとえば Firestore のドキュメント
 
 ## Cloud (Firebase) Functions いつ使う？なぜ必要？
 
-たとえばバックエンドを Firebase で代替する場合のサーバサイドアプリとして使用します。
+バックエンドを Firebase で代替するサービスのサーバサイドアプリケートションとして使用します（Firebase を多様せずとも「サーバレスな関数単位のサーバサイドアプリケーションの実行環境」として使用を検討するケースも多くあります）。
 
-Firestore を主な DB として使用するアプリケーションでは Cloud (Firebase) Functions は必須です。
+たとえば Firestore を主な DB として使用するアプリケーションでは Cloud (Firebase) Functions は必須です。
 
--
+- Firestore はクエリが貧弱で Write-heavy な設計になるので、クライアントが単純な読み込みで済むような実装をするために必須なイベントトリガー関数
+- Security Rules で制限されたクライアント SDK とは異なる Admin SDK を用いた処理の実行
+- プッシュ通知や決済プロバイダ、認証プロバイダなどの外部 API との連携に必要なサーバサイドアプリケーションや HTTP 関数 (Callable Functions) の実装
+- Cloud Pub/Sub, Cloud Scheduler を用いた Schedule Functions による定期実行タスクのスケジューリング・実行
+
+その他にも、Firebase Auth や Firebase Storage のイベントなどをトリガーにした関数も簡単に定義することができます。
+
+---
+
+## Cloud (Firebase) Functions の始め方
+
+```sh
+# Firebase CLI（firebase コマンド）の導入
+npm install -g firebase-tools
+
+# firebase プロジェクトのイニシャライズ
+firebase init
+```
+
+ちなみに個人的には npm や node の環境構築には最近は [VOLTA](https://volta.sh/) をおすすめしています。
+
+また Dart を普段から取り扱うであろう皆さんには、JavaScript ではなく TypeScript での開発を推奨し、その前提で話を進めます。
+
+---
+
+## tsconfig.json について
+
+`tsconfig.json` とは、すべての TypeScript プロジェクトのルートに必ず設置され、
+
+- どのファイルをコンパイル（トランスパイル）対象とすべきか
+- コンパイル（トランスパイル）結果をどのディレクトリに格納すべきか
+- どのバージョンの JavaScript を出力するか
+- ...
+
+などを TypeScript プロジェクトが定義するためのファイル。
+
+---
+
+## tsconfig.json の例
+
+```json
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "outDir": "lib",
+    "sourceMap": true,
+    "strict": true,
+    "target": "es2020",
+    "baseUrl": "./",
+    "paths": {
+      "~/*": ["./*"],
+      "@/*": ["./*"]
+    },
+    "types": ["@types/node"]
+  },
+  "compileOnSave": true,
+  "exclude": ["node_modules", "lib"]
+}
+```
+
+---
+
+## eslint について
+
+ESLint とは JavaScript (EcmaScript) のための静的解析ツール。
+
+<https://eslint.org/>
+
+...
+
+## editorconfig について
+
+EditorConfig とは、同一プロジェクトを異なるエディタや IDE の複数の開発者で開発する再にコードのスタイルの一貫性を維持するための設定を行うファイルです。
+
+<https://editorconfig.org/>
+
+<https://stackoverflow.com/questions/48363647/editorconfig-vs-eslint-vs-prettier-is-it-worthwhile-to-use-them-all>
+
+## package.json, package-lock.json について
+
+`package.json` とは JavaScript や Node.js プロジェクト（パッケージ）のルートに設置し、プロジェクトに関する様々なメタデータや設定を記述するファイルです。
+
+たとえば、プロジェクトが依存する外部パッケージを記述したり、`npm run something` で実行したいスクリプトを定義したりすることができます。
+
+`package-lock.json` とは、`package.json` を元に解決したすべての依存性が記述され、固定化して使用するためのファイルです。
+
+Dart のプロジェクトにとっての `pubspec.yaml`, `pubspec-lock.yaml` と同じものだと捉えて問題ありません。
+
+## 参考
+
+- [OREILLY プログラミング TypeScript]()

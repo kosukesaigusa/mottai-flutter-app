@@ -38,9 +38,9 @@ Flutter/Dart と比べると習熟度が低く恐縮ですが、Cloud (Firebase)
 - eslint, editorconfig について
 - package.json, package-lock.json について
 - types ディレクトリについて
-- Firebase Functions について（概要）
+- Firebase Functions の概要
 - withConverter について
-- Firebase Functions を見てみる（リポジトリ構成、実装例）
+- Firebase Functions の実装例、リポジトリ構成
 - Callable Functions について（概要）
 - Callable Functions について（実装例）
 - Firebase Local Emulator によるデバッグについて
@@ -97,6 +97,8 @@ firebase init
 
 また Dart を普段から取り扱うであろう皆さんには、JavaScript ではなく TypeScript での開発を推奨し、その前提で話を進めます。
 
+詳細は ... を参考にしてください。
+
 ---
 
 ## tsconfig.json について
@@ -148,6 +150,8 @@ ESLint とは JavaScript (EcmaScript) のための静的解析ツール。
 
 ...
 
+---
+
 ## editorconfig について
 
 EditorConfig とは、同一プロジェクトを異なるエディタや IDE の複数の開発者で開発する再にコードのスタイルの一貫性を維持するための設定を行うファイルです。
@@ -155,6 +159,8 @@ EditorConfig とは、同一プロジェクトを異なるエディタや IDE �
 <https://editorconfig.org/>
 
 <https://stackoverflow.com/questions/48363647/editorconfig-vs-eslint-vs-prettier-is-it-worthwhile-to-use-them-all>
+
+---
 
 ## package.json, package-lock.json について
 
@@ -165,6 +171,165 @@ EditorConfig とは、同一プロジェクトを異なるエディタや IDE �
 `package-lock.json` とは、`package.json` を元に解決したすべての依存性が記述され、固定化して使用するためのファイルです。
 
 Dart のプロジェクトにとっての `pubspec.yaml`, `pubspec-lock.yaml` と同じものだと捉えて問題ありません。
+
+---
+
+## types ディレクトリについて
+
+...
+
+---
+
+## Firebase Functions の概要 1
+
+Firebase Functions (Cloud Functions for Firebase) で最もよく使うもののひとつは、Firestore のイベントの作成・更新・削除などをトリガーにした関数 (Cloud Firestore triggers) です。
+
+`firebase-functions` パッケージは `as functions` としてインポートするのが通例で、下記のような記述を行うことで `accounts` コレクションの任意のドキュメント (`accountId`) が作成されたときに発火する関数を定義することができます。
+
+```ts
+import * as functions from 'firebase-functions'
+
+export const onCreateAccount = functions
+    .region(`asia-northeast1`)
+    .firestore.document(`/accounts/{accountId}`)
+    .onCreate(async (snapshot) => {
+      // ...
+    })
+```
+
+---
+
+## Firebase Functions の概要 2
+
+下記の `onCreate` は第 1 引数に `QueryDocumentSnapshot (snapshot)` を、第 2 引数に `EventContext (context)` をとることができます。
+
+```ts
+export const onCreateAccount = functions
+    .region(`asia-northeast1`)
+    .firestore.document(`/accounts/{accountId}`)
+    .onCreate(async (snapshot, context) => {
+      // ...
+    })
+```
+
+`snapshot` には、この関数の onCreate の引き金となったドキュメントの `QueryDocumentSnapshot` が入っています。`snapshot.data()` とすることでドキュメントのデータにアクセスすることができます。
+
+`context` には、このトリガーされたイベントに関する認証情報やその他のメタデータのようなものが入っています。たとえば `context.params.accountId` とすると、onCreate の引き金となったドキュメントのドキュメント ID を得ることができます。
+
+---
+
+## withConverter について 1
+
+FlutterFire でもお馴染みですが `withConverter` を用いると、Firestore の `CollectionReference<T>`, `DocumentReference<T>`, `DocumentSnapshot<T>` `DocumentData<T>` に型をつけることができます。
+
+JS (TS) の Firestore でも同様です。
+
+まず、型定義ファイルにドキュメントの内容に合う型を定義してください。TypeScript の（いわゆる）型定義（みたいなもの）には複数の方法がありますが、ここでは `interface` を用いることにします。
+
+```ts
+/** Firestore の account コレクションのドキュメントデータの型。 */
+interface AppAccount {
+  accountId: string
+  createdAt?: FirebaseFirestore.Timestamp | null
+  updatedAt?: FirebaseFirestore.Timestamp | null
+  displayName: string
+  imageURL: string
+  providers: string[]
+  fcmTokens: string[]
+}
+```
+
+---
+
+## withConverter について 2
+
+`withConverter` の引数にわたす `FirestoreDataConverter<T>` を定義します。
+
+```ts
+import { FieldValue, FirestoreDataConverter } from "@google-cloud/firestore"
+
+export const accountConverter: FirestoreDataConverter<AppAccount> = {
+    fromFirestore(qds: FirebaseFirestore.QueryDocumentSnapshot): AppAccount {
+        const data = qds.data()
+        return {
+            accountId: qds.id,
+            createdAt: data.createdAt ?? null,
+            updatedAt: data.updatedAt ?? null,
+            displayName: data.displayName ?? ``,
+            imageURL: data.imageURL ?? ``,
+            providers: data.providers ?? [],
+            fcmTokens: data.fcmTokens ?? []
+        }
+    },
+    // ... toFirestore 省略
+}
+```
+
+---
+
+## withConverter について 3
+
+`withConverter` の引数にわたす `FirestoreDataConverter<T>` を定義します。
+
+```ts
+import { FieldValue, FirestoreDataConverter } from "@google-cloud/firestore"
+
+export const accountConverter: FirestoreDataConverter<AppAccount> = {
+    // ... fromFirestore 省略
+    toFirestore(account: AppAccount): FirebaseFirestore.DocumentData {
+        return {
+            accountId: account.accountId,
+            createdAt: FieldValue.serverTimestamp(),
+            updatedAt: FieldValue.serverTimestamp(),
+            displayName: account.displayName ?? ``,
+            imageURL: account.imageURL ?? ``,
+            providers: account.providers ?? [],
+            fcmTokens: account.fcmTokens ?? []
+        }
+    }
+}
+```
+
+---
+
+## withConverter について 4
+
+たとえば `withConverter` を用いて account コレクションの型付き `CollectionReference<AppAccount>` を返す変数や、account ドキュメントの ID を渡すと型付き `DocumentReference<AppAccount>` を返すメソッドを作っておいたりすると便利です。
+
+```ts
+import * as admin from 'firebase-admin'
+import { CollectionReference, DocumentReference, Query } from '@google-cloud/firestore'
+import { accountConverter } from '../converters/accountConverter'
+
+/** accounts コレクションの参照 */
+const accountsRef: CollectionReference<AppAccount> = admin.firestore()
+    .collection(`accounts`)
+    .withConverter<AppAccount>(accountConverter)
+
+/** 指定した account ドキュメントの参照 */
+const accountRef = (
+    { accountId }: { accountId: string }
+): DocumentReference<AppAccount> => {
+    return accountsRef.doc(accountId).withConverter<AppAccount>(accountConverter)
+}
+```
+
+---
+
+## withConverter について 5
+
+あとは `onCreate` の第 1 引数から得られる `DocumentSnapshot (snapshot)` を `accountConverter.fromFirestore` に渡すとそれだけで変数 `account` には `AppAccount` の型が付いています。
+
+```ts {5}
+export const onCreateAccount = functions
+    .region(`asia-northeast1`)
+    .firestore.document(`/accounts/{accountId}`)
+    .onCreate(async (snapshot) => {
+        const account = accountConverter.fromFirestore(snapshot)
+    })
+```
+
+---
 
 ## 参考
 

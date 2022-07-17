@@ -331,6 +331,43 @@ export const onCreateAccount = functions
 
 ---
 
+## Firebase Functions の実装例
+
+`accounts` コレクションの任意のドキュメントが新規作成されたときに、`publicUsers` コレクションに対応するドキュメントを作成する関数。
+
+```ts
+export const onCreateAccount = functions
+    .region(`asia-northeast1`)
+    .firestore.document(`/accounts/{accountId}`)
+    .onCreate(async (snapshot) => {
+        const account = accountConverter.fromFirestore(snapshot)
+        const publicUser: PublicUser = {
+            userId: account.accountId,
+            displayName: account.displayName,
+            imageURL: account.imageURL
+        }
+        try {
+            await publicUserRef({ publicUserId: account.accountId }).set(publicUser)
+        } catch (e) {
+            functions.logger.error(`onCreateAccount に失敗しました: ${e}`)
+        }
+    })
+```
+
+また、`accounts` ドキュメントから Firebase Functions 経由で `publicUsers` ドキュメントを作る理由に思いを馳せると、Firestore のデータモデリング、Security Rules や読み書きの分離について考えるきっかけになります。
+
+---
+
+## Firebase Functions のリポジトリ構成の例
+
+プロダクションレベルで運用・開発したことはない前提ですが、...
+
+```plain
+
+```
+
+---
+
 ## 参考
 
 - [OREILLY プログラミング TypeScript]()

@@ -63,15 +63,15 @@ class SharedPreferencesService {
   /// 指定したルーム ID の下書き中のメッセージを取得する。
   Future<String> getDraftMessage({required String roomId}) => _getStringByStringKey(roomId);
 
-  /// int 型のキー・バリューを保存する
-  Future<int> _getInt(SharedPreferencesKey key) async {
-    return _read(sharedPreferencesProvider).getInt(key.name) ?? 0;
-  }
+  // /// int 型のキー・バリューを保存する
+  // Future<int> _getInt(SharedPreferencesKey key) async {
+  //   return _read(sharedPreferencesProvider).getInt(key.name) ?? 0;
+  // }
 
-  /// String 型のキー・バリューを保存する
-  Future<String> _getString(SharedPreferencesKey key) async {
-    return _read(sharedPreferencesProvider).getString(key.name) ?? '';
-  }
+  // /// String 型のキー・バリューを保存する
+  // Future<String> _getString(SharedPreferencesKey key) async {
+  //   return _read(sharedPreferencesProvider).getString(key.name) ?? '';
+  // }
 
   /// String 型のキー・バリューを取得する
   Future<String> _getStringByStringKey(String stringKey) async {
@@ -88,10 +88,10 @@ class SharedPreferencesService {
     return _read(sharedPreferencesProvider).setInt(key.name, value);
   }
 
-  /// String 型のキー・バリューペアを保存する
-  Future<bool> _setString(SharedPreferencesKey key, String value) async {
-    return _read(sharedPreferencesProvider).setString(key.name, value);
-  }
+  // /// String 型のキー・バリューペアを保存する
+  // Future<bool> _setString(SharedPreferencesKey key, String value) async {
+  //   return _read(sharedPreferencesProvider).setString(key.name, value);
+  // }
 
   /// String 型のキー・バリューペアを保存する
   Future<bool> _setStringByStringKey(String stringKey, String value) async {

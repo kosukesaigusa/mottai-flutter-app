@@ -253,8 +253,8 @@ export const accountConverter: FirestoreDataConverter<AppAccount> = {
         const data = qds.data()
         return {
             accountId: qds.id,
-            createdAt: data.createdAt ?? null,
-            updatedAt: data.updatedAt ?? null,
+            createdAt: data.createdAt,
+            updatedAt: data.updatedAt,
             displayName: data.displayName ?? ``,
             imageURL: data.imageURL ?? ``,
             providers: data.providers ?? [],
@@ -360,11 +360,36 @@ export const onCreateAccount = functions
 
 ## Firebase Functions のリポジトリ構成の例
 
-プロダクションレベルで運用・開発したことはない前提ですが、...
+プロダクションレベルで運用・開発したことはない前提ですが...
 
-```plain
-
+```txt
+index.ts
+/callable-functions
+/converters
+/firebase-functions
+/firestore-refs
+/repositories
+/type
+/utils
 ```
+
+---
+
+## Callable Functions の概要
+
+Callable Functions の概要...
+
+---
+
+## Callable Functions の実装例
+
+Callable Functions の実装例...
+
+## Firebase Local Emulator によるデバッグ
+
+Firebase Local Emulator によるデバッグ
+
+## Cloud Functions のテスト
 
 ---
 

@@ -19,6 +19,7 @@ import '../../widgets/common/image.dart';
 import '../../widgets/loading/loading.dart';
 import '../room/room_page.dart';
 
+/// メッセージタブの参加中のチャットルーム一覧ページ。
 class AttendingRoomsPage extends StatefulHookConsumerWidget {
   const AttendingRoomsPage({super.key});
 
@@ -36,18 +37,6 @@ class _AttendingRoomsPageState extends ConsumerState<AttendingRoomsPage> {
     return Scaffold(
       appBar: AppBar(title: const Text('メッセージ')),
       body: ref.watch(attendingRoomsStreamProvider).when<Widget>(
-            loading: () => const PrimarySpinkitCircle(),
-            error: (error, __) {
-              return Center(
-                child: SizedBox(
-                  width: 280,
-                  child: Text(
-                    error.toString(),
-                    style: context.bodySmall,
-                  ),
-                ),
-              );
-            },
             data: (attendingRooms) => attendingRooms.isEmpty
                 ? Center(
                     child: Text(
@@ -60,6 +49,16 @@ class _AttendingRoomsPageState extends ConsumerState<AttendingRoomsPage> {
                         AttendingRoomWidget(attendingRoom: attendingRooms[index]),
                     itemCount: attendingRooms.length,
                   ),
+            error: (errorObject, __) => Center(
+              child: SizedBox(
+                width: 280,
+                child: Text(
+                  errorObject.toString(),
+                  style: context.bodySmall,
+                ),
+              ),
+            ),
+            loading: () => const PrimarySpinkitCircle(),
           ),
       floatingActionButton: _showFloatingActionButton ? _fab : null,
     );
@@ -76,6 +75,7 @@ class _AttendingRoomsPageState extends ConsumerState<AttendingRoomsPage> {
     }
   }
 
+  // TODO: 開発中のみ。後で消す。
   Widget get _fab => FloatingActionButton(
         child: const FaIcon(FontAwesomeIcons.solidComment),
         onPressed: () async {
@@ -105,7 +105,11 @@ class _AttendingRoomsPageState extends ConsumerState<AttendingRoomsPage> {
 
 /// AttendingRoom ページのひとつひとつのウィジェット
 class AttendingRoomWidget extends HookConsumerWidget {
-  const AttendingRoomWidget({super.key, required this.attendingRoom});
+  const AttendingRoomWidget({
+    super.key,
+    required this.attendingRoom,
+  });
+
   final AttendingRoom attendingRoom;
 
   @override
@@ -131,41 +135,14 @@ class AttendingRoomWidget extends HookConsumerWidget {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  ref.watch(publicUserStreamProvider(attendingRoom.partnerId)).when<Widget>(
-                        loading: () => const CircleImagePlaceholder(diameter: 48),
-                        error: (error, stackTrace) => const CircleImagePlaceholder(diameter: 48),
-                        data: (publicUser) => publicUser == null
-                            ? const CircleImagePlaceholder(diameter: 48)
-                            : CircleImageWidget(diameter: 48, imageURL: publicUser.imageURL),
-                      ),
+                  AttendingRoomPartnerImageWidget(partnerId: attendingRoom.partnerId),
                   const Gap(8),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        ref.watch(publicUserStreamProvider(attendingRoom.partnerId)).when<Widget>(
-                              loading: () => const SizedBox(),
-                              error: (error, stackTrace) => const SizedBox(),
-                              data: (publicUser) => publicUser == null
-                                  ? Text('-', style: context.titleSmall)
-                                  : Text(publicUser.displayName, style: context.titleSmall),
-                            ),
-                        ref.watch(messagesStreamProvider(attendingRoom.roomId)).when<Widget>(
-                              loading: () => const SizedBox(),
-                              error: (error, stackTrace) {
-                                debugPrint('=============================');
-                                debugPrint('⛔️ $error');
-                                debugPrint(stackTrace.toString());
-                                debugPrint('=============================');
-                                return const SizedBox();
-                              },
-                              data: (messages) => Text(
-                                messages.isEmpty ? 'ルームが作成されました。' : messages.first.body,
-                                style: context.bodySmall,
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 2,
-                              ),
-                            ),
+                        AttendingRoomPartnerNameWidget(partnerId: attendingRoom.partnerId),
+                        AttendingRoomLatestMessageWidget(roomId: attendingRoom.roomId),
                       ],
                     ),
                   ),
@@ -173,37 +150,9 @@ class AttendingRoomWidget extends HookConsumerWidget {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      ref.watch(messagesStreamProvider(attendingRoom.roomId)).when<Widget>(
-                            loading: () => const SizedBox(),
-                            error: (_, __) => const SizedBox(),
-                            data: (messages) => Text(
-                              messages.isEmpty
-                                  ? ''
-                                  : humanReadableDateTimeString(messages.first.createdAt),
-                              style: context.bodySmall,
-                            ),
-                          ),
+                      LatestMessageCreatedAtWidget(roomId: attendingRoom.roomId),
                       const Gap(4),
-                      ref.watch(unreadCountStreamProvider(attendingRoom.roomId)).when<Widget>(
-                            loading: () => const SizedBox(width: 20, height: 20),
-                            error: (_, __) => const SizedBox(width: 20, height: 20),
-                            data: (count) => count > 0
-                                ? Container(
-                                    width: 20,
-                                    height: 20,
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: context.theme.primaryColor,
-                                    ),
-                                    child: Center(
-                                      child: Text(
-                                        count > 9 ? '9+' : count.toString(),
-                                        style: context.titleSmall!.copyWith(color: Colors.white),
-                                      ),
-                                    ),
-                                  )
-                                : const SizedBox(width: 20, height: 20),
-                          ),
+                      UnreadCountBadgeWidget(roomId: attendingRoom.roomId),
                     ],
                   ),
                 ],
@@ -211,5 +160,127 @@ class AttendingRoomWidget extends HookConsumerWidget {
             ),
           )
         : const SizedBox();
+  }
+}
+
+/// 参加中のチャットルームの相手の画像を表示するウィジェット。
+class AttendingRoomPartnerImageWidget extends HookConsumerWidget {
+  const AttendingRoomPartnerImageWidget({
+    super.key,
+    required this.partnerId,
+  });
+
+  final String partnerId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return ref.watch(publicUserStreamProvider(partnerId)).when<Widget>(
+          data: (publicUser) => publicUser == null
+              ? const CircleImagePlaceholder(diameter: 48)
+              : CircleImageWidget(diameter: 48, imageURL: publicUser.imageURL),
+          error: (_, __) => const CircleImagePlaceholder(diameter: 48),
+          loading: () => const CircleImagePlaceholder(diameter: 48),
+        );
+  }
+}
+
+/// 参加中のチャットルームの相手の名前を表示するウィジェット。
+class AttendingRoomPartnerNameWidget extends HookConsumerWidget {
+  const AttendingRoomPartnerNameWidget({
+    super.key,
+    required this.partnerId,
+  });
+
+  final String partnerId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return ref.watch(publicUserStreamProvider(partnerId)).when(
+          data: (publicUser) => publicUser == null
+              ? Text('-', style: context.titleSmall)
+              : Text(publicUser.displayName, style: context.titleSmall),
+          error: (error, stackTrace) => const SizedBox(),
+          loading: () => const SizedBox(),
+        );
+  }
+}
+
+/// 参加中のチャットルームの直近のメッセージを表示するウィジェット。
+class AttendingRoomLatestMessageWidget extends HookConsumerWidget {
+  const AttendingRoomLatestMessageWidget({
+    super.key,
+    required this.roomId,
+  });
+
+  final String roomId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return ref.watch(messagesStreamProvider(roomId)).when(
+          data: (messages) => Text(
+            messages.isEmpty ? 'ルームが作成されました。' : messages.first.body,
+            style: context.bodySmall,
+            overflow: TextOverflow.ellipsis,
+            maxLines: 2,
+          ),
+          error: (_, __) => const SizedBox(),
+          loading: () => const SizedBox(),
+        );
+  }
+}
+
+/// 直近のメッセージの日時を表示するウィジェット。
+class LatestMessageCreatedAtWidget extends HookConsumerWidget {
+  const LatestMessageCreatedAtWidget({
+    super.key,
+    required this.roomId,
+  });
+
+  final String roomId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return ref.watch(messagesStreamProvider(roomId)).when(
+          data: (messages) => Text(
+            messages.isEmpty ? '' : humanReadableDateTimeString(messages.first.createdAt),
+            style: context.bodySmall,
+          ),
+          error: (_, __) => const SizedBox(),
+          loading: () => const SizedBox(),
+        );
+  }
+}
+
+/// 未読数カウントのバッジウィジェット。
+class UnreadCountBadgeWidget extends HookConsumerWidget {
+  const UnreadCountBadgeWidget({
+    super.key,
+    required this.roomId,
+  });
+
+  final String roomId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return ref.watch(unreadCountStreamProvider(roomId)).when(
+          data: (count) => count > 0
+              ? Container(
+                  width: 20,
+                  height: 20,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: context.theme.primaryColor,
+                  ),
+                  child: Center(
+                    child: Text(
+                      count > 9 ? '9+' : count.toString(),
+                      style: context.titleSmall!.copyWith(color: Colors.white),
+                    ),
+                  ),
+                )
+              : const SizedBox(width: 20, height: 20),
+          error: (_, __) => const SizedBox(width: 20, height: 20),
+          loading: () => const SizedBox(width: 20, height: 20),
+        );
   }
 }

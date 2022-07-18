@@ -16,6 +16,13 @@
         "--dart-define=HOST_1_EMAIL=...",
         "--dart-define=HOST_1_PASSWORD=..."
       ]
+    },
+    {
+      "name": "Debug Functions (local)",
+      "type": "node",
+      "request": "attach",
+      "restart": true,
+      "port": 9229
     }
   ]
 }

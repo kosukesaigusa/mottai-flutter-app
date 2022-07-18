@@ -11,7 +11,6 @@ import '../../providers/read_status/read_status_providers.dart';
 import '../../providers/room/room_providers.dart';
 import '../../route/app_router_state.dart';
 import '../../utils/date_time.dart';
-import '../../utils/enums.dart';
 import '../../utils/exceptions/base.dart';
 import '../../utils/extensions/build_context.dart';
 import '../../widgets/common/image.dart';
@@ -34,6 +33,7 @@ final _roomIdProvider = Provider.autoDispose<String>(
 const double horizontalPadding = 8;
 const double partnerImageSize = 36;
 
+/// チャットルームページ
 class RoomPage extends StatefulHookConsumerWidget {
   const RoomPage({super.key});
 
@@ -72,7 +72,7 @@ class _RoomPageState extends ConsumerState<RoomPage> {
                           .scrollController,
                       itemBuilder: (context, index) {
                         final message = messages[index];
-                        return MessageWidget(
+                        return MessageItemWidget(
                           roomId: roomId,
                           message: message,
                           showDate: _showDate(
@@ -80,8 +80,7 @@ class _RoomPageState extends ConsumerState<RoomPage> {
                             index: index,
                             messages: messages,
                           ),
-                          senderType:
-                              message.senderId == userId ? SenderType.myself : SenderType.partner,
+                          isMyMessage: message.senderId == userId,
                         );
                       },
                       itemCount: messages.length,
@@ -96,7 +95,11 @@ class _RoomPageState extends ConsumerState<RoomPage> {
   }
 
   /// 日付を表示するかどうか
-  bool _showDate({required int itemCount, required int index, required List<Message> messages}) {
+  bool _showDate({
+    required int itemCount,
+    required int index,
+    required List<Message> messages,
+  }) {
     if (itemCount == 1) {
       return true;
     }
@@ -116,109 +119,40 @@ class _RoomPageState extends ConsumerState<RoomPage> {
 }
 
 /// メッセージ、日付、相手のアイコン、送信日時のウィジェット
-class MessageWidget extends HookConsumerWidget {
-  const MessageWidget({
+class MessageItemWidget extends HookConsumerWidget {
+  const MessageItemWidget({
     super.key,
     required this.roomId,
     required this.message,
     required this.showDate,
-    required this.senderType,
+    required this.isMyMessage,
   });
 
   final String roomId;
   final Message message;
   final bool showDate;
-  final SenderType senderType;
+  final bool isMyMessage;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Column(
-      crossAxisAlignment:
-          senderType == SenderType.myself ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+      crossAxisAlignment: isMyMessage ? CrossAxisAlignment.end : CrossAxisAlignment.start,
       children: [
         if (showDate) DateOnChatRoomWidget(dateTime: message.createdAt),
         Row(
-          mainAxisAlignment:
-              senderType == SenderType.myself ? MainAxisAlignment.end : MainAxisAlignment.start,
+          mainAxisAlignment: isMyMessage ? MainAxisAlignment.end : MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            if (senderType == SenderType.partner) ...[
-              ref.watch(publicUserStreamProvider(message.senderId)).when<Widget>(
-                    loading: () => const SizedBox(),
-                    error: (error, stackTrace) => const SizedBox(),
-                    data: (publicUser) =>
-                        CircleImageWidget(diameter: 36, imageURL: publicUser?.imageURL),
-                  ),
+            if (!isMyMessage) ...[
+              SenderImageWidget(senderId: message.senderId),
               const Gap(8),
             ],
-            Container(
-              constraints: BoxConstraints(
-                maxWidth:
-                    (MediaQuery.of(context).size.width - partnerImageSize - horizontalPadding * 3) *
-                        0.9,
-              ),
-              padding: const EdgeInsets.all(12),
-              decoration: senderType == SenderType.myself
-                  ? BoxDecoration(
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(8),
-                        topRight: Radius.circular(8),
-                        bottomLeft: Radius.circular(8),
-                      ),
-                      color: context.theme.primaryColor,
-                    )
-                  : const BoxDecoration(
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(8),
-                        topRight: Radius.circular(8),
-                        bottomRight: Radius.circular(8),
-                      ),
-                      color: messageBackgroundColor,
-                    ),
-              child: Text(
-                message.body,
-                style: senderType == SenderType.myself ? context.bodySmall : context.bodySmall,
-              ),
-            ),
+            MessageContentWidget(message: message, isMyMessage: isMyMessage),
           ],
         ),
-        Padding(
-          padding: EdgeInsets.only(
-            top: 4,
-            left: senderType == SenderType.myself ? 0 : partnerImageSize + horizontalPadding,
-            bottom: 16,
-          ),
-          child: Column(
-            crossAxisAlignment:
-                senderType == SenderType.myself ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-            children: [
-              Text(to24HourNotationString(message.createdAt), style: context.bodySmall),
-              if (senderType == SenderType.myself)
-                SizedBox(
-                  height: 14,
-                  child: ref.watch(partnerReadStatusStreamProvider(roomId)).when(
-                        data: (readStatus) => Text(
-                          _read(message: message, lastReadAt: readStatus?.lastReadAt) ? '既読' : '未読',
-                          style: context.bodySmall,
-                        ),
-                        error: (_, __) => const SizedBox(),
-                        loading: () => const SizedBox(),
-                      ),
-                ),
-            ],
-          ),
-        ),
+        MessageAdditionalInfoWidget(message: message, roomId: roomId, isMyMessage: isMyMessage),
       ],
     );
-  }
-
-  /// Message.createdAt と 最後に読んだ日を比較して既読かどうかを返す
-  bool _read({required Message message, required DateTime? lastReadAt}) {
-    final createdAt = message.createdAt;
-    if (createdAt == null || lastReadAt == null) {
-      return false;
-    }
-    return lastReadAt.isAfter(createdAt);
   }
 }
 
@@ -254,7 +188,11 @@ class DateOnChatRoomWidget extends StatelessWidget {
 
 /// ルームページのメッセージ入力欄のウィジェット
 class RoomMessageInputWidget extends HookConsumerWidget {
-  const RoomMessageInputWidget({super.key, required this.roomId});
+  const RoomMessageInputWidget({
+    super.key,
+    required this.roomId,
+  });
+
   final String roomId;
 
   @override
@@ -307,14 +245,120 @@ class RoomMessageInputWidget extends HookConsumerWidget {
                   ? context.theme.primaryColor
                   : context.theme.disabledColor,
             ),
-            child: const Icon(
-              Icons.send,
-              size: 20,
-              color: Colors.white,
-            ),
+            child: const Icon(Icons.send, size: 20, color: Colors.white),
           ),
         ),
       ],
     );
+  }
+}
+
+/// メッセージの送り主（相手）の画像を表示するウィジェット。
+class SenderImageWidget extends HookConsumerWidget {
+  const SenderImageWidget({
+    super.key,
+    required this.senderId,
+  });
+
+  final String senderId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return ref.watch(publicUserStreamProvider(senderId)).when(
+          data: (publicUser) => CircleImageWidget(diameter: 36, imageURL: publicUser?.imageURL),
+          error: (error, stackTrace) => const SizedBox(),
+          loading: () => const SizedBox(),
+        );
+  }
+}
+
+/// メッセージの本文を表示するウィジェット。
+class MessageContentWidget extends HookConsumerWidget {
+  const MessageContentWidget({
+    super.key,
+    required this.message,
+    required this.isMyMessage,
+  });
+
+  final Message message;
+  final bool isMyMessage;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Container(
+      constraints: BoxConstraints(
+        maxWidth:
+            (MediaQuery.of(context).size.width - partnerImageSize - horizontalPadding * 3) * 0.9,
+      ),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.only(
+          topLeft: const Radius.circular(8),
+          topRight: const Radius.circular(8),
+          bottomLeft: Radius.circular(isMyMessage ? 8 : 0),
+          bottomRight: Radius.circular(isMyMessage ? 0 : 8),
+        ),
+        color: isMyMessage ? context.theme.primaryColor : messageBackgroundColor,
+      ),
+      child: Text(
+        message.body,
+        style: isMyMessage ? context.bodySmall!.copyWith(color: Colors.white) : context.bodySmall,
+      ),
+    );
+  }
+}
+
+/// 送信日時と未既読などを表示するウィジェット。
+class MessageAdditionalInfoWidget extends HookConsumerWidget {
+  const MessageAdditionalInfoWidget({
+    super.key,
+    required this.message,
+    required this.roomId,
+    required this.isMyMessage,
+  });
+
+  final Message message;
+  final String roomId;
+  final bool isMyMessage;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Padding(
+      padding: EdgeInsets.only(
+        top: 4,
+        left: isMyMessage ? 0 : partnerImageSize + horizontalPadding,
+        bottom: 16,
+      ),
+      child: Column(
+        crossAxisAlignment: isMyMessage ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+        children: [
+          Text(to24HourNotationString(message.createdAt), style: context.bodySmall),
+          if (isMyMessage)
+            SizedBox(
+              height: 14,
+              child: ref.watch(partnerReadStatusStreamProvider(roomId)).when(
+                    data: (readStatus) => Text(
+                      _isRead(message: message, lastReadAt: readStatus?.lastReadAt) ? '既読' : '未読',
+                      style: context.bodySmall,
+                    ),
+                    error: (_, __) => const SizedBox(),
+                    loading: () => const SizedBox(),
+                  ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  /// Message.createdAt と 最後に読んだ日を比較して既読かどうかを返す
+  bool _isRead({
+    required Message message,
+    required DateTime? lastReadAt,
+  }) {
+    final createdAt = message.createdAt;
+    if (createdAt == null || lastReadAt == null) {
+      return false;
+    }
+    return lastReadAt.isAfter(createdAt);
   }
 }

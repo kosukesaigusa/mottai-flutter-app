@@ -58,9 +58,7 @@ class App extends StatelessWidget {
           labelMedium: context.textTheme.labelMedium!.copyWith(color: Colors.black54, fontSize: 14),
           labelSmall: context.textTheme.labelSmall!.copyWith(color: Colors.black54, fontSize: 12),
         ),
-        cardTheme: const CardTheme(
-          margin: EdgeInsets.all(0),
-        ),
+        cardTheme: const CardTheme(margin: EdgeInsets.all(0)),
         scaffoldBackgroundColor: Colors.white,
         sliderTheme: SliderThemeData(overlayShape: SliderComponentShape.noOverlay),
       ),

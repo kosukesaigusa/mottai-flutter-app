@@ -129,7 +129,6 @@ class AuthService {
     String? displayName,
     String? imageURL,
   }) async {
-    // final account = _read(accountFutureProvider).value;
     final userId = _read(userIdProvider).value;
     if (userId == null) {
       return;
@@ -144,7 +143,7 @@ class AuthService {
         await _read(accountRefProvider).update(
           <String, dynamic>{
             if (displayName == null) 'displayName': displayName,
-            if (account.imageURL == null) 'imageURL': imageURL,
+            if (account.imageURL.isNotEmpty) 'imageURL': imageURL,
             if (fcmToken != null) 'fcmTokens': FieldValue.arrayUnion(<String>[fcmToken]),
             'providers': FieldValue.arrayUnion(<String>[method.name]),
           }.toFirestore(),

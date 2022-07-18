@@ -123,26 +123,25 @@ class MessageWidget extends HookConsumerWidget {
     required this.message,
     required this.showDate,
     required this.senderType,
-  });
+  }) : isMyself = senderType == SenderType.myself;
 
   final String roomId;
   final Message message;
   final bool showDate;
   final SenderType senderType;
+  final bool isMyself;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Column(
-      crossAxisAlignment:
-          senderType == SenderType.myself ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+      crossAxisAlignment: isMyself ? CrossAxisAlignment.end : CrossAxisAlignment.start,
       children: [
         if (showDate) DateOnChatRoomWidget(dateTime: message.createdAt),
         Row(
-          mainAxisAlignment:
-              senderType == SenderType.myself ? MainAxisAlignment.end : MainAxisAlignment.start,
+          mainAxisAlignment: isMyself ? MainAxisAlignment.end : MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            if (senderType == SenderType.partner) ...[
+            if (!isMyself) ...[
               ref.watch(publicUserStreamProvider(message.senderId)).when<Widget>(
                     loading: () => const SizedBox(),
                     error: (error, stackTrace) => const SizedBox(),
@@ -158,26 +157,19 @@ class MessageWidget extends HookConsumerWidget {
                         0.9,
               ),
               padding: const EdgeInsets.all(12),
-              decoration: senderType == SenderType.myself
-                  ? BoxDecoration(
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(8),
-                        topRight: Radius.circular(8),
-                        bottomLeft: Radius.circular(8),
-                      ),
-                      color: context.theme.primaryColor,
-                    )
-                  : const BoxDecoration(
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(8),
-                        topRight: Radius.circular(8),
-                        bottomRight: Radius.circular(8),
-                      ),
-                      color: messageBackgroundColor,
-                    ),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(
+                  topLeft: const Radius.circular(8),
+                  topRight: const Radius.circular(8),
+                  bottomLeft: Radius.circular(isMyself ? 8 : 0),
+                  bottomRight: Radius.circular(isMyself ? 0 : 8),
+                ),
+                color: isMyself ? context.theme.primaryColor : messageBackgroundColor,
+              ),
               child: Text(
                 message.body,
-                style: senderType == SenderType.myself ? context.bodySmall : context.bodySmall,
+                style:
+                    isMyself ? context.bodySmall!.copyWith(color: Colors.white) : context.bodySmall,
               ),
             ),
           ],
@@ -185,15 +177,14 @@ class MessageWidget extends HookConsumerWidget {
         Padding(
           padding: EdgeInsets.only(
             top: 4,
-            left: senderType == SenderType.myself ? 0 : partnerImageSize + horizontalPadding,
+            left: isMyself ? 0 : partnerImageSize + horizontalPadding,
             bottom: 16,
           ),
           child: Column(
-            crossAxisAlignment:
-                senderType == SenderType.myself ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+            crossAxisAlignment: isMyself ? CrossAxisAlignment.end : CrossAxisAlignment.start,
             children: [
               Text(to24HourNotationString(message.createdAt), style: context.bodySmall),
-              if (senderType == SenderType.myself)
+              if (isMyself)
                 SizedBox(
                   height: 14,
                   child: ref.watch(partnerReadStatusStreamProvider(roomId)).when(

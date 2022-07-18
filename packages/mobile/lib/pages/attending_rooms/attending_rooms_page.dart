@@ -19,18 +19,18 @@ import '../../widgets/common/image.dart';
 import '../../widgets/loading/loading.dart';
 import '../room/room_page.dart';
 
-class RoomsPage extends StatefulHookConsumerWidget {
-  const RoomsPage({super.key});
+class AttendingRoomsPage extends StatefulHookConsumerWidget {
+  const AttendingRoomsPage({super.key});
 
   static const path = '/rooms';
-  static const name = 'RoomsPage';
+  static const name = 'AttendingRoomsPage';
   static const location = path;
 
   @override
-  ConsumerState<RoomsPage> createState() => _RoomsPageState();
+  ConsumerState<AttendingRoomsPage> createState() => _AttendingRoomsPageState();
 }
 
-class _RoomsPageState extends ConsumerState<RoomsPage> {
+class _AttendingRoomsPageState extends ConsumerState<AttendingRoomsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -198,7 +198,7 @@ class AttendingRoomWidget extends HookConsumerWidget {
                                     child: Center(
                                       child: Text(
                                         count > 9 ? '9+' : count.toString(),
-                                        style: context.titleSmall,
+                                        style: context.titleSmall!.copyWith(color: Colors.white),
                                       ),
                                     ),
                                   )

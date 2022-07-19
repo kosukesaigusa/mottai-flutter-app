@@ -29,9 +29,7 @@ fonts:
 
 ## 概要
 
-Flutter/Dart と比べると習熟度が低く恐縮ですが、Cloud (Firebase) Functions に関する話をしてみます。
-
-下記のような話題に触れて今までよりも少しでも TypeScript に関する知識が深まったり、Cloud (Firebase) Functions を楽しく快適に書けるようになったりする方が増えたら良いなと思っています。
+Flutter/Dart と比べると習熟度が低く恐縮ですが、下記のような話題に触れて今までよりも少しでも TypeScript に関する知識が深まったり、Cloud (Firebase) Functions を楽しく快適に書けるようになったりする方が増えたら良いなと思っています。
 
 - Cloud (Firebase) Functions って何？いつ使う？なぜ必要？
 - tsconfig.json について
@@ -44,6 +42,7 @@ Flutter/Dart と比べると習熟度が低く恐縮ですが、Cloud (Firebase)
 - Callable Functions について（概要）
 - Callable Functions について（実装例）
 - Firebase Local Emulator によるデバッグについて
+- Jest を用いた Cloud (Firebase) Functions のテストについて
 
 ---
 
@@ -136,12 +135,11 @@ firebase init
         "paths": {
             "~/*": ["./*"]
         },
-        "types": ["@types/node"]
+        "types": ["@types/node", "jest"]
     },
     "compileOnSave": true,
     "exclude": ["node_modules", "lib"]
 }
-
 ```
 
 ---
@@ -213,7 +211,6 @@ module.exports = {
         }
     }
 }
-
 ```
 
 ---
@@ -562,7 +559,7 @@ export const onCreateAccount = functions
 
 ## Firebase Functions のリポジトリ構成の例
 
-プロダクションレベルで Cloud (Firebase) Functions を中心とした大きなアプリケーションを運用・開発したことはない前提ですが、今日見せた例に沿った規模感小さめのものであれば次のような構成でそれなりにすっきり書けそうです。
+プロダクションレベルで Cloud (Firebase) Functions を中心とした大きなアプリケーションを運用・開発したことはない前提ですが、今日見せた例に沿った規模感小さめのものであれば次のような構成（src 以下）でそれなりにすっきり書けそうです。
 
 ```txt
 - index.ts
@@ -669,4 +666,192 @@ firebase emulators:start --inspect-functions --import data --export-on-exit
 
 ---
 
-## Cloud Functions のテスト
+## Cloud Functions のテスト 1
+
+Jest を使用するのが一般的な選択肢のひとつです（公式ドキュメントでは Mocha を使用している）。
+
+まずは、`package.json` に必要なパッケージを追加します。また、`npm run test` で実行するスクリプトも定義します。
+
+```json
+{
+    "scripts": {
+        "test": "jest --watchAll"
+    },
+    "devDependencies": {
+        "@types/jest": "^28.1.6",
+        "jest": "^28.1.3",
+        "ts-jest": "^28.0.7",
+    }
+}
+```
+
+---
+
+## Cloud Functions のテスト 2
+
+Jest の設定ファイルである `jest.config.js` を定義します。
+
+```js
+module.exports = {
+    preset: `ts-jest`,
+    testEnvironment: `node`,
+    moduleFileExtensions: [`js`, `ts`, `json`, `node`],
+    testMatch: [`**/*.test.ts`],
+    moduleNameMapper: {
+        '^~/(.*)$': `<rootDir>/$1`
+    },
+    setupFiles: [`<rootDir>/test/setup.ts`]
+}
+```
+
+また、Jest の型定義ファイルが認識されるように、`tsconfig.json` の `types` の項目に `jest` を追加する必要があります。
+
+```json
+{
+    "compilerOptions": {
+        "types": ["@types/node", "jest"]
+    },
+}
+```
+
+---
+
+## Cloud Functions のテスト 3
+
+`src` ディレクトリと同階層に `test` ディレクトリを作成して、次のようにディレクトリ・ファイルを配置します。
+
+```txt
+test
+  - setUp.ts
+  - firebase-functions
+    - account
+      - onCreateAccount.test.ts
+```
+
+ルールではありませんが、`src` ディレクトリと同じ構造にすると、テストの数が増えたときにも理解しやすいかもしれません。
+
+また、`jest.config.js` に `testMatch: [`**/*.test.ts`]` と記述したので、テストファイルはそれに合うように命名します。
+
+---
+
+## Cloud Functions のテスト 4
+
+`jest.config.js` の `setupFiles` に指定した `setup.ts` の内容が各テストが実行される前に必ず実行されるので、Admin SDK の初期化や、`firebase-functions-test` オブジェクトの設定を行うと良いです。
+
+```ts
+import * as admin from 'firebase-admin'
+import * as functions from 'firebase-functions-test'
+import * as serviceAccountKey from 'path/to/service_account_key.json'
+
+const serviceAccount = {
+    projectId: serviceAccountKey.project_id,
+    // ... 省略
+}
+
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+    databaseURL: `https://${serviceAccount.projectId}.firebaseio.com`
+})
+
+export const testEnv = functions({
+    databaseURL: `https://${serviceAccount.projectId}.firebaseio.com`,
+    projectId: serviceAccount.projectId
+})
+```
+
+---
+
+## Cloud Functions のテスト 5
+
+`onCreateAccount` 関数のテストを書いてみます。
+
+`testEnv.wrap(onCreateAccount)` として、onCreateAccount 関数をラップした模擬的な関数を作成するのがミソです。
+
+`beforeAll` は一連のテストの最初に一度だけ呼ばれます。
+
+```ts
+import 'jest'
+import { WrappedFunction, WrappedScheduledFunction } from 'firebase-functions-test/lib/main'
+import { QueryDocumentSnapshot } from '@google-cloud/firestore'
+import { onCreateAccount } from '~/src/firebase-functions/account/onCreateAccount'
+import { AppAccount } from '~/src/models/account'
+import { PublicUserRepository } from '~/src/repositories/publicUser'
+import { testEnv } from '../../setup'
+
+describe(`onCrateAccount のテスト`, () => {
+    let wrappedOnCreateAccount: WrappedScheduledFunction | WrappedFunction<QueryDocumentSnapshot>
+    beforeAll(() => {
+        wrappedOnCreateAccount = testEnv.wrap(onCreateAccount)
+    })
+    // ... 省略
+})
+```
+
+---
+
+## Cloud Functions のテスト 6
+
+`test("テスト文言", async () => {})` の中にテストを書いていきます。
+
+`testEnv.firestore.makeDocumentSnapshot(data, path)` を用いて、`onCreate` トリガーが第 1 引数に受けるべき `DocumentSnapshot` を作成することができます（めちゃくちゃ便利）。
+
+```ts {12}
+// ... 省略
+describe(`onCrateAccount のテスト`, () => {
+    // ... 省略
+    beforeAll(() => {
+        // ... 省略
+    })
+    
+    test(`新しい account ドキュメントが作成されると、publicUser ドキュメントが作成される。`, async () => {
+        const accountId = `test-account-id`
+        const path = `accounts/${accountId}`
+        const account = new AppAccount({ accountId, displayName: `山田太郎`, imageURL: `https://google.com` })
+        const snapshot = testEnv.firestore.makeDocumentSnapshot(account, path)
+        // ... 省略
+    })
+})
+```
+
+---
+
+## Cloud Functions のテスト 7
+
+ラップした onCreateAccount 関数を模擬的に実行して、`expect` 文で検証したらテスト完了です。
+
+```ts {10-18}
+// ... 省略
+describe(`onCrateAccount のテスト`, () => {
+    // ... 省略
+    beforeAll(() => {
+        // ... 省略
+    })
+    
+    test(`新しい account ドキュメントが作成されると、publicUser ドキュメントが作成される。`, async () => {
+        // ... 省略
+        // ラップした onCreateAccount 関数を模擬的に実行する
+        await wrappedOnCreateAccount(snapshot)
+        // 結果を検証する（publicUsers/:accountId ドキュメントが作成されているはず）
+        const repository = new PublicUserRepository()
+        const publicUser = await repository.fetchPublicUser({ publicUserId: accountId })
+        expect(publicUser).toBeDefined()
+        expect(publicUser?.userId).toBe(accountId)
+        expect(publicUser?.displayName).toBe(`山田太郎`)
+        expect(publicUser?.imageURL).toBe(`https://google.com`)
+    })
+})
+```
+
+---
+
+## Google Forms でもらっていた質問
+
+話せそうなことと、いまは知識や経験が足りず勉強していきたいことがあります。
+
+- 共通処理の書き方、適切なフォルダ構成、アーキテクチャ
+- Eslint, Prettierのルールについて、自身の秘伝のタレのルールを多く使うか？その理由は？何処かにある推奨設定を使うのが良いか？
+- Firebase Local Emulatorを使ったテストコードの書き方
+- CloudFunctionsの継続的開発（運用）について、意識していること
+  - 無限ループ、破壊的変更を実行後の既存アプリへの影響など
+  - エラー監視はFirebaseコンソールで十分？（GCP ログエクスプローラのエラー検知してSlack連携してたりしますか？）
+  - 課金がスパイクしていないかの監視（AppCheck も検討？）

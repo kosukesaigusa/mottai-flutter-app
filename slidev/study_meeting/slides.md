@@ -27,6 +27,20 @@ fonts:
 
 ---
 
+## 軽く自己紹介
+
+- Kosuke といいます
+- 福岡出身で、いまは東京に住んでいます
+- 普段は漫画を販売している会社で Flutter エンジニアをやっています
+- Django/Python の Web サーバサイドも書きます
+- Nuxt.js/Vue.js/TypeScript の Web クライアントサイドも時々書きます
+- 個人開発では Firebase も好んで使います
+- Flutter 大学では土曜日の講師をしています
+- 個人でも時々開発案件を受けたり、CodeBoy で相談を受けたりしています
+- 9 月から教育系のビジネスをやっている会社で Web のサーバ・クライアントサイドのエンジニアとして働きます
+
+---
+
 ## 概要
 
 Flutter/Dart と比べると習熟度が低く恐縮ですが、下記のような話題に触れて今までよりも少しでも TypeScript に関する知識が深まったり、Cloud (Firebase) Functions を楽しく快適に書けるようになったりする方が増えたら良いなと思っています。
@@ -96,7 +110,7 @@ firebase init
 
 また Dart を普段から取り扱うであろう皆さんには、JavaScript ではなく TypeScript での開発を推奨し、その前提で話を進めます。
 
-詳細は ... を参考にしてください。
+詳細は <https://firebase.google.com/docs/functions/get-started> を参考にしてください。
 
 ---
 
@@ -410,7 +424,7 @@ FlutterFire でもお馴染みですが `withConverter` を用いると、Firest
 
 JS (TS) の Firestore でも同様です。
 
-まず、型定義ファイルにドキュメントの内容に合う型を定義してください。TypeScript の（いわゆる）型定義（みたいなもの）には複数の方法がありますが、ここでは `interface` を用いることにします。
+まず、型定義ファイルにドキュメントの内容に合う型を定義してください。TypeScript の（いわゆる）型定義（みたいなもの）には複数の方法がありますが、ここでは `interface` での定義を載せます。
 
 ```ts
 /** Firestore の account コレクションのドキュメントデータの型。 */
@@ -487,17 +501,17 @@ import * as admin from 'firebase-admin'
 import { CollectionReference, DocumentReference, Query } from '@google-cloud/firestore'
 import { accountConverter } from '../converters/accountConverter'
 
+const db = admin.firestore()
+
 /** accounts コレクションの参照 */
-const accountsRef: CollectionReference<AppAccount> = admin.firestore()
+export const accountsRef: CollectionReference<AppAccount> = db
     .collection(`accounts`)
     .withConverter<AppAccount>(accountConverter)
 
-/** 指定した account ドキュメントの参照 */
-const accountRef = (
+/** account ドキュメントの参照 */
+export const accountRef = (
     { accountId }: { accountId: string }
-): DocumentReference<AppAccount> => {
-    return accountsRef.doc(accountId).withConverter<AppAccount>(accountConverter)
-}
+): DocumentReference<AppAccount> => accountsRef.doc(accountId)
 ```
 
 ---
@@ -562,7 +576,7 @@ export const onCreateAccount = functions
 プロダクションレベルで Cloud (Firebase) Functions を中心とした大きなアプリケーションを運用・開発したことはない前提ですが、今日見せた例に沿った規模感小さめのものであれば次のような構成（src 以下）でそれなりにすっきり書けそうです。
 
 ```txt
-- index.ts
+index.ts
 - batch
 - callable-functions
 - converters
@@ -610,7 +624,6 @@ export const onCreateAccount = functions
 import * as functions from 'firebase-functions'
 
 export const yourCallableFunctionName = functions.region(`asia-northeast1`).https.onCall(async (data) => {
-    // ...省略
     const foo = 'foo'
     const bar = 'bar'
     try {

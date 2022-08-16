@@ -61,7 +61,12 @@ class CustomHeroPageTransitionsBuilder extends PageTransitionsBuilder {
     Widget child,
   ) =>
       CustomHeroPageRouter.buildPageTransitions<T>(
-          route, context, animation, secondaryAnimation, child,);
+        route,
+        context,
+        animation,
+        secondaryAnimation,
+        child,
+      );
 }
 
 final Animatable<double> _scaleTween = Tween<double>(begin: 0.5, end: 1);
@@ -76,7 +81,7 @@ class CustomHeroFullScreenDialogTransition extends StatelessWidget {
     super.key,
     required Animation<double> animation,
     required this.child,
-  })  : _positionAnimation =
+  }) : _positionAnimation =
             animation.drive(CurveTween(curve: Curves.easeInOut)).drive(_kBottomUpTween);
 
   final Animation<Offset> _positionAnimation;
@@ -110,24 +115,20 @@ class CustomHeroPageTransition extends StatelessWidget {
   final Animation<double> _primaryPositionAnimation;
   final Animation<double> _secondaryPositionAnimation;
 
-  final Route? route;
+  final Route<dynamic>? route;
   final Widget child;
 
   @override
   Widget build(BuildContext context) => Stack(
         fit: StackFit.passthrough,
         children: <Widget>[
-          SizedBox(
-            width: double.infinity,
-            height: double.infinity,
+          SizedBox.expand(
             child: BackdropFilter(
               filter: ui.ImageFilter.blur(
                 sigmaX: (1 - _secondaryPositionAnimation.value) * 5,
                 sigmaY: (1 - _secondaryPositionAnimation.value) * 5,
               ),
-              child: Container(
-                decoration: const BoxDecoration(color: Colors.transparent),
-              ),
+              child: const DecoratedBox(decoration: BoxDecoration(color: Colors.transparent)),
             ),
           ),
           ScaleTransition(

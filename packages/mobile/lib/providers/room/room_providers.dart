@@ -94,12 +94,13 @@ class RoomPageStateNotifierProvider extends StateNotifier<RoomPageState> {
   /// TextEditingController を初期化してリスナーを設定する
   Future<void> _initializeTextEditingController() async {
     textEditingController = TextEditingController();
-    textEditingController.addListener(() {
-      final text = textEditingController.text;
-      state = state.copyWith(isValid: text.isNotEmpty);
-    });
-    // 以前の下書きが残っていれば予め入力しておく
-    textEditingController.text = await _getDraftMessageFromSharedPreferences();
+    textEditingController
+      ..addListener(() {
+        final text = textEditingController.text;
+        state = state.copyWith(isValid: text.isNotEmpty);
+      })
+      // 以前の下書きが残っていれば予め入力しておく
+      ..text = await _getDraftMessageFromSharedPreferences();
   }
 
   /// ListView の ScrollController を初期化して、

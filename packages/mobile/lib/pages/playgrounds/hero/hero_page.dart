@@ -113,7 +113,7 @@ class HeroCardWidget extends HookConsumerWidget {
     return Stack(
       children: [
         Card(
-          margin: const EdgeInsets.all(0),
+          margin: EdgeInsets.zero,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -182,16 +182,19 @@ class TapToScaleDownAnimationWidgetState extends State<TapToScaleDownAnimationWi
   @override
   Widget build(BuildContext context) => GestureDetector(
         onTapDown: (_) {
-          _controller.stop();
-          _controller.forward(from: 0);
+          _controller
+            ..stop()
+            ..forward(from: 0);
         },
         onTapUp: (_) {
-          _controller.stop();
-          _controller.reverse(from: 1);
+          _controller
+            ..stop()
+            ..reverse(from: 1);
         },
         onTapCancel: () {
-          _controller.stop();
-          _controller.reverse(from: 1);
+          _controller
+            ..stop()
+            ..reverse(from: 1);
         },
         child: ScaleTransition(scale: _scaleDownAnimation, child: widget.child),
       );

@@ -67,7 +67,6 @@ class _MainPageState extends ConsumerState<MainPage> with WidgetsBindingObserver
                     type: BottomNavigationBarType.fixed,
                     selectedItemColor: context.theme.primaryColor,
                     selectedFontSize: 12,
-                    unselectedFontSize: 12,
                     onTap: _onTap,
                     currentIndex: ref.watch(bottomTabStateProvider).index,
                     items: bottomTabs

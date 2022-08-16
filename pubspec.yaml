@@ -17,3 +17,4 @@ dependencies:
 
 dev_dependencies:
   flutter_lints:
+  pedantic_mono:

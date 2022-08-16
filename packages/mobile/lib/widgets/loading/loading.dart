@@ -30,10 +30,8 @@ class OverlayLoadingWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return ColoredBox(
       color: backgroundColor,
-      child: const SizedBox(
-        width: double.infinity,
-        height: double.infinity,
-        child: Center(child: PrimarySpinkitCircle(size: 48)),
+      child: const SizedBox.expand(
+        child: Center(child: PrimarySpinkitCircle()),
       ),
     );
   }

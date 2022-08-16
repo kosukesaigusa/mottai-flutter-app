@@ -35,13 +35,7 @@ class FirebaseMessagingService {
   Future<void> requestPermission() async {
     try {
       await _read(fcmProvider).requestPermission(
-        alert: true,
-        announcement: false,
-        badge: true,
-        carPlay: false,
-        criticalAlert: false,
-        provisional: false,
-        sound: true,
+        
       );
     } on Exception {
       return;

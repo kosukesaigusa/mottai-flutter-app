@@ -133,7 +133,6 @@ class AttendingRoomWidget extends HookConsumerWidget {
             child: Padding(
               padding: const EdgeInsets.all(8),
               child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   AttendingRoomPartnerImageWidget(partnerId: attendingRoom.partnerId),
                   const Gap(8),

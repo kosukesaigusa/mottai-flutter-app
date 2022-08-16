@@ -10,18 +10,18 @@ environment:
 
 dependencies:
   cached_network_image:
-  cloud_firestore:
-  cloud_functions:
+  cloud_firestore: ^3.4.3
+  cloud_functions: ^3.3.3
   connectivity_plus:
   crypto:
   cupertino_icons:
-  firebase_analytics:
-  firebase_auth:
-  firebase_core:
-  firebase_crashlytics:
-  firebase_dynamic_links:
-  firebase_messaging:
-  firebase_storage:
+  firebase_analytics: ^9.3.0
+  firebase_auth: ^3.6.2
+  firebase_core: ^1.20.0
+  firebase_crashlytics: ^2.8.6
+  firebase_dynamic_links: ^4.3.3
+  firebase_messaging: ^12.0.1
+  firebase_storage: ^10.3.4
   flutter:
     sdk: flutter
   flutter_hooks:
@@ -43,7 +43,7 @@ dependencies:
   google_fonts:
   google_maps_flutter:
   google_sign_in:
-  hooks_riverpod: ^2.0.0-dev.9
+  hooks_riverpod:
   image_cropper:
   image_picker:
   intl:
@@ -51,7 +51,7 @@ dependencies:
   keyboard_actions:
   mottai_flutter_app_models:
     path: ../models
-  package_info_plus: ^1.4.2
+  package_info_plus: ^1.4.3
   path_to_regexp: ^0.4.0
   photo_view:
   rxdart:
@@ -60,8 +60,6 @@ dependencies:
   sign_in_with_apple:
   state_notifier:
   tuple: ^2.0.0
-  twitter_login:
-    path: ../twitter_login
   url_launcher:
   uuid:
   wechat_assets_picker:
@@ -72,6 +70,10 @@ dev_dependencies:
   flutter_lints:
   flutter_test:
     sdk: flutter
+  pedantic_mono:
+
+dependency_overrides:
+  hooks_riverpod: '>=2.0.0-0'
 
 flutter:
   uses-material-design: true

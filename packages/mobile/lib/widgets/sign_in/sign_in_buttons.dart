@@ -15,7 +15,7 @@ class SocialSignInButton extends HookConsumerWidget {
       key: ValueKey(method.name),
       height: 36,
       elevation: 2,
-      padding: const EdgeInsets.all(0),
+      padding: EdgeInsets.zero,
       color: const Color(0xFFFFFFFF),
       splashColor: Colors.white30,
       highlightColor: Colors.white30,
@@ -28,7 +28,6 @@ class SocialSignInButton extends HookConsumerWidget {
         ),
         child: Center(
           child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               Padding(
                 padding: _innerPadding(ref),
@@ -52,7 +51,7 @@ class SocialSignInButton extends HookConsumerWidget {
   /// サインイン方法ごとのボタン押下時の処理 innerPadding
   EdgeInsets _innerPadding(WidgetRef ref) {
     if (method == SocialSignInMethod.Google) {
-      return const EdgeInsets.only(left: 5, right: 0, top: 0, bottom: 0);
+      return const EdgeInsets.only(left: 5);
     } else {
       return const EdgeInsets.only(left: 13, right: 18);
     }

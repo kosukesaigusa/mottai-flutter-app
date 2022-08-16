@@ -17,7 +17,7 @@ final accountStreamProvider = StreamProvider.autoDispose<Account?>((ref) {
 final accountFutureProvider = FutureProvider.autoDispose<Account?>((ref) async {
   final userId = ref.watch(userIdProvider).value;
   if (userId == null) {
-    return Future.value(null);
+    return Future.value();
   }
   final account = await ref.read(accountRepositoryProvider).fetchAccount(accountId: userId);
   return account;

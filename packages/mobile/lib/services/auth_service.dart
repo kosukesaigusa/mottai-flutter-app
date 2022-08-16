@@ -75,8 +75,8 @@ class AuthService {
           return _read(authRepositoryProvider).signInWithApple();
         case SocialSignInMethod.LINE:
           return _read(authRepositoryProvider).signInWithLINE();
-        case SocialSignInMethod.Twitter:
-          return _read(authRepositoryProvider).signInWithTwitter();
+        // case SocialSignInMethod.Twitter:
+        //   return _read(authRepositoryProvider).signInWithTwitter();
       }
     } on PlatformException {
       rethrow;

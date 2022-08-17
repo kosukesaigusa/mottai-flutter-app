@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../providers/account_page/account_page.dart';
+import '../features/account/account.dart';
 import '../utils/enums.dart';
 
 class SocialSignInButton extends HookConsumerWidget {
@@ -20,7 +20,7 @@ class SocialSignInButton extends HookConsumerWidget {
       splashColor: Colors.white30,
       highlightColor: Colors.white30,
       onPressed: () async {
-        await ref.read(accountPageController.notifier).signInWithSocialAccount(method);
+        await ref.read(signInWithSocialAccountProvider)(method);
       },
       child: Container(
         constraints: const BoxConstraints(

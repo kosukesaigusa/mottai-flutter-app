@@ -4,7 +4,6 @@ import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../features/account/account.dart';
-import '../providers/account_page/account_page.dart';
 import '../providers/auth/auth.dart';
 import '../utils/enums.dart';
 import '../utils/extensions/build_context.dart';
@@ -62,10 +61,10 @@ class GuestInWidget extends HookConsumerWidget {
           height: 36,
           width: 220,
           child: ElevatedButton(
-            onPressed: () => ref.read(accountPageController.notifier).signInWithEmailAndPassword(
-                  email: const String.fromEnvironment('HOST_1_EMAIL'),
-                  password: const String.fromEnvironment('HOST_1_PASSWORD'),
-                ),
+            onPressed: () => ref.read(signInWithEmailAndPasswordProvider)(
+              email: const String.fromEnvironment('HOST_1_EMAIL'),
+              password: const String.fromEnvironment('HOST_1_PASSWORD'),
+            ),
             child: const Text('ホスト 1'),
           ),
         ),

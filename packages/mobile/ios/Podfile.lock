@@ -161,11 +161,11 @@ PODS:
     - FirebaseCore (~> 9.0)
     - GTMSessionFetcher/Core (< 3.0, >= 1.7)
   - Flutter (1.0.0)
-  - flutter_keyboard_visibility (0.0.1):
-    - Flutter
   - flutter_line_sdk (2.2.0):
     - Flutter
     - LineSDKSwift (~> 5.3)
+  - flutter_local_notifications (0.0.1):
+    - Flutter
   - flutter_native_image (0.0.1):
     - Flutter
   - FMDB (2.7.5):
@@ -283,8 +283,8 @@ DEPENDENCIES:
   - firebase_storage (from `.symlinks/plugins/firebase_storage/ios`)
   - FirebaseFirestore (from `https://github.com/invertase/firestore-ios-sdk-frameworks.git`, tag `9.3.0`)
   - Flutter (from `Flutter`)
-  - flutter_keyboard_visibility (from `.symlinks/plugins/flutter_keyboard_visibility/ios`)
   - flutter_line_sdk (from `.symlinks/plugins/flutter_line_sdk/ios`)
+  - flutter_local_notifications (from `.symlinks/plugins/flutter_local_notifications/ios`)
   - flutter_native_image (from `.symlinks/plugins/flutter_native_image/ios`)
   - geolocator_apple (from `.symlinks/plugins/geolocator_apple/ios`)
   - google_maps_flutter (from `.symlinks/plugins/google_maps_flutter/ios`)
@@ -361,10 +361,10 @@ EXTERNAL SOURCES:
     :tag: 9.3.0
   Flutter:
     :path: Flutter
-  flutter_keyboard_visibility:
-    :path: ".symlinks/plugins/flutter_keyboard_visibility/ios"
   flutter_line_sdk:
     :path: ".symlinks/plugins/flutter_line_sdk/ios"
+  flutter_local_notifications:
+    :path: ".symlinks/plugins/flutter_local_notifications/ios"
   flutter_native_image:
     :path: ".symlinks/plugins/flutter_native_image/ios"
   geolocator_apple:
@@ -431,8 +431,8 @@ SPEC CHECKSUMS:
   FirebaseStorage: 1414d27e15fa04f6350ef6602accef0e951c8bca
   FirebaseStorageInternal: 425c7dc7de44d9b7e07a9f8d6515bab0f1266b87
   Flutter: 50d75fe2f02b26cc09d224853bb45737f8b3214a
-  flutter_keyboard_visibility: 0339d06371254c3eb25eeb90ba8d17dca8f9c069
   flutter_line_sdk: d944c3907ef53be11ac5bf2484f87df93eb5b39c
+  flutter_local_notifications: 0c0b1ae97e741e1521e4c1629a459d04b9aec743
   flutter_native_image: 9c0b7451838484458e5b0fae007b86a4c2d4bdfe
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
   geolocator_apple: cc556e6844d508c95df1e87e3ea6fa4e58c50401
@@ -461,6 +461,6 @@ SPEC CHECKSUMS:
   url_launcher_ios: 839c58cdb4279282219f5e248c3321761ff3c4de
   video_player_avfoundation: e489aac24ef5cf7af82702979ed16f2a5ef84cff
 
-PODFILE CHECKSUM: 78b1d8d41efb69fe17a6c704b18d4eb847a9a45c
+PODFILE CHECKSUM: 7ef44b111c1b33f762c03caae333bb643cdfadff
 
 COCOAPODS: 1.11.3

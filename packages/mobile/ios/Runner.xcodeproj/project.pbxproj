@@ -145,7 +145,7 @@
 			buildConfigurationList = 97C147051CF9000F007C117D /* Build configuration list for PBXNativeTarget "Runner" */;
 			buildPhases = (
 				38953195D5A65316084CA37C /* [CP] Check Pods Manifest.lock */,
-				34A4079E27CB27B100EC9A18 /* Run Script(Select GoogleService-Info.plist) */,
+				34A4079E27CB27B100EC9A18 /* Select GoogleService-Info.plist */,
 				9740EEB61CF901F6004384FC /* Run Script */,
 				97C146EA1CF9000F007C117D /* Sources */,
 				97C146EB1CF9000F007C117D /* Frameworks */,
@@ -213,7 +213,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		34A4079E27CB27B100EC9A18 /* Run Script(Select GoogleService-Info.plist) */ = {
+		34A4079E27CB27B100EC9A18 /* Select GoogleService-Info.plist */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -222,7 +222,7 @@
 			);
 			inputPaths = (
 			);
-			name = "Run Script(Select GoogleService-Info.plist)";
+			name = "Select GoogleService-Info.plist";
 			outputFileListPaths = (
 			);
 			outputPaths = (
@@ -230,7 +230,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\\cp -f ${SRCROOT}/${FLAVOR}/GoogleService-Info.plist ${SRCROOT}/Runner/GoogleService-Info.plist\n";
+			shellScript = "\\cp -f ${SRCROOT}/${FLAVOR}/GoogleService-Info.plist ${SRCROOT}/GoogleService-Info.plist\n";
 		};
 		38953195D5A65316084CA37C /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;

@@ -9,7 +9,7 @@ import '../../providers/playgrounds/playground_message/playground_message_provid
 import '../../utils/date_time.dart';
 import '../../utils/extensions/build_context.dart';
 import '../../utils/utils.dart';
-import '../../widgets/common/image.dart';
+import '../../widgets/image.dart';
 
 const double horizontalPadding = 8;
 const double partnerImageSize = 36;

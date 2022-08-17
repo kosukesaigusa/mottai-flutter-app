@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../app.dart';
-import '../../utils/provider_scope.dart';
+import '../app.dart';
+import '../utils/provider_scope.dart';
 
 /// runApp() の引数にするべき
 /// アプリケーションのルートのウィジェット

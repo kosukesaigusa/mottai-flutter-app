@@ -10,9 +10,9 @@ import '../utils/enums.dart';
 import '../utils/extensions/build_context.dart';
 import '../utils/extensions/string.dart';
 import '../utils/utils.dart';
-import '../widgets/common/image.dart';
-import '../widgets/loading/loading.dart';
-import '../widgets/sign_in/sign_in_buttons.dart';
+import '../widgets/image.dart';
+import '../widgets/loading.dart';
+import '../widgets/sign_in_buttons.dart';
 
 /// アカウントページ
 class AccountPage extends HookConsumerWidget {

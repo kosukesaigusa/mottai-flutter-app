@@ -7,20 +7,19 @@ import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mottai_flutter_app_models/models.dart';
 
-import '../providers/attending_room/attending_room.dart';
+import '../features/message/attending_room.dart';
 import '../providers/auth/auth.dart';
 import '../providers/message/message.dart';
 import '../providers/public_user/public_user_providers.dart';
 import '../utils/date_time.dart';
 import '../utils/extensions/build_context.dart';
-import '../utils/scaffold_messenger_service.dart';
-import '../utils/utils.dart';
-import '../widgets/common/image.dart';
-import '../widgets/loading/loading.dart';
+import '../widgets/empty_placeholder.dart';
+import '../widgets/image.dart';
+import '../widgets/loading.dart';
 import 'room_page.dart';
 
 /// メッセージタブの参加中のチャットルーム一覧ページ。
-class AttendingRoomsPage extends StatefulHookConsumerWidget {
+class AttendingRoomsPage extends HookConsumerWidget {
   const AttendingRoomsPage({super.key});
 
   static const path = '/rooms';
@@ -28,82 +27,42 @@ class AttendingRoomsPage extends StatefulHookConsumerWidget {
   static const location = path;
 
   @override
-  ConsumerState<AttendingRoomsPage> createState() => _AttendingRoomsPageState();
-}
-
-class _AttendingRoomsPageState extends ConsumerState<AttendingRoomsPage> {
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(title: const Text('メッセージ')),
-      body: ref.watch(attendingRoomsStreamProvider).when(
+      body: ref.watch(attendingRoomsProvider).when(
             data: (attendingRooms) => attendingRooms.isEmpty
-                ? Center(
-                    child: Text(
-                      'まだメッセージしている相手がいません。',
-                      style: context.bodySmall,
+                ? const EmptyPlaceholderWidget(
+                    widget: FaIcon(
+                      FontAwesomeIcons.solidComment,
+                      size: 48,
+                      color: Colors.black45,
                     ),
+                    message: 'まだメッセージしている相手がいません。',
                   )
                 : ListView.builder(
                     itemBuilder: (context, index) =>
                         AttendingRoomWidget(attendingRoom: attendingRooms[index]),
                     itemCount: attendingRooms.length,
                   ),
-            error: (errorObject, __) => Center(
-              child: SizedBox(
-                width: 280,
-                child: Text(
-                  errorObject.toString(),
-                  style: context.bodySmall,
-                ),
-              ),
-            ),
+            error: (e, __) => EmptyPlaceholderWidget(message: e.toString()),
             loading: () => const PrimarySpinkitCircle(),
           ),
-      floatingActionButton: _showFloatingActionButton ? _fab : null,
+      floatingActionButton: ref.watch(attendingRoomsProvider).when(
+            data: (attendingRooms) => attendingRooms.isEmpty
+                ? FloatingActionButton(
+                    child: const FaIcon(FontAwesomeIcons.solidComment),
+                    onPressed: () => ref.read(createChatRoomWithHost1Provider)(),
+                  )
+                : null,
+            error: (_, __) => null,
+            loading: () => null,
+          ),
     );
   }
-
-  // TODO: 開発中のみ。後で消す。
-  bool get _showFloatingActionButton {
-    try {
-      return (ref.watch(attendingRoomsStreamProvider).value ?? <AttendingRoom>[]).isEmpty;
-    } on SignInRequiredException {
-      return false;
-    } on Exception {
-      return false;
-    }
-  }
-
-  // TODO: 開発中のみ。後で消す。
-  Widget get _fab => FloatingActionButton(
-        child: const FaIcon(FontAwesomeIcons.solidComment),
-        onPressed: () async {
-          final userId = ref.watch(userIdProvider).value;
-          if (userId == null) {
-            return;
-          }
-          final roomId = uuid;
-          const hostId = String.fromEnvironment('HOST_1_ID');
-          await ref
-              .read(messageRepositoryProvider)
-              .roomRef(roomId: roomId)
-              .set(Room(roomId: roomId, hostId: hostId, workerId: userId));
-          await ref
-              .read(messageRepositoryProvider)
-              .attendingRoomRef(userId: userId, roomId: roomId)
-              .set(
-                AttendingRoom(
-                  roomId: roomId,
-                  partnerId: hostId,
-                ),
-              );
-          ref.read(scaffoldMessengerServiceProvider).showSnackBar('【テスト用】ホスト 1 とのルームを作成しました。');
-        },
-      );
 }
 
-/// AttendingRoom ページのひとつひとつのウィジェット
+/// AttendingRoom ページのひとつひとつのウィジェット。
 class AttendingRoomWidget extends HookConsumerWidget {
   const AttendingRoomWidget({
     super.key,
@@ -263,7 +222,7 @@ class UnreadCountBadgeWidget extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return ref.watch(unreadCountStreamProvider(roomId)).when(
+    return ref.watch(unreadCountProvider(roomId)).when(
           data: (count) => count > 0
               ? Container(
                   width: 20,

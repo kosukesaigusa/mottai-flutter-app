@@ -7,17 +7,17 @@ import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mottai_flutter_app_models/models.dart';
 
-import '../../providers/attending_room/attending_room.dart';
-import '../../providers/auth/auth.dart';
-import '../../providers/message/message.dart';
-import '../../providers/public_user/public_user_providers.dart';
-import '../../services/scaffold_messenger_service.dart';
-import '../../utils/date_time.dart';
-import '../../utils/extensions/build_context.dart';
-import '../../utils/utils.dart';
-import '../../widgets/common/image.dart';
-import '../../widgets/loading/loading.dart';
-import '../room/room_page.dart';
+import '../providers/attending_room/attending_room.dart';
+import '../providers/auth/auth.dart';
+import '../providers/message/message.dart';
+import '../providers/public_user/public_user_providers.dart';
+import '../services/scaffold_messenger_service.dart';
+import '../utils/date_time.dart';
+import '../utils/extensions/build_context.dart';
+import '../utils/utils.dart';
+import '../widgets/common/image.dart';
+import '../widgets/loading/loading.dart';
+import 'room_page.dart';
 
 /// メッセージタブの参加中のチャットルーム一覧ページ。
 class AttendingRoomsPage extends StatefulHookConsumerWidget {
@@ -36,7 +36,7 @@ class _AttendingRoomsPageState extends ConsumerState<AttendingRoomsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('メッセージ')),
-      body: ref.watch(attendingRoomsStreamProvider).when<Widget>(
+      body: ref.watch(attendingRoomsStreamProvider).when(
             data: (attendingRooms) => attendingRooms.isEmpty
                 ? Center(
                     child: Text(
@@ -173,7 +173,7 @@ class AttendingRoomPartnerImageWidget extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return ref.watch(publicUserStreamProvider(partnerId)).when<Widget>(
+    return ref.watch(publicUserStreamProvider(partnerId)).when(
           data: (publicUser) => publicUser == null
               ? const CircleImagePlaceholder(diameter: 48)
               : CircleImageWidget(diameter: 48, imageURL: publicUser.imageURL),

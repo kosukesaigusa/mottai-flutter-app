@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../pages/account/account_page.dart';
-import '../pages/attending_rooms/attending_rooms_page.dart';
-import '../pages/home/home_page.dart';
-import '../pages/map/map_page.dart';
+import '../pages/account_page.dart';
+import '../pages/attending_rooms_page.dart';
+import '../pages/home_page.dart';
+import '../pages/map_page.dart';
 
 /// BottomTab の種別。
 enum BottomTabEnum {

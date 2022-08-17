@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../hooks/package_info_state.dart';
-import '../../services/firebase_messaging_service.dart';
-import '../../services/scaffold_messenger_service.dart';
-import '../../utils/extensions/build_context.dart';
-import '../../utils/restart_app.dart';
-import '../../utils/utils.dart';
-import '../playgrounds/playground_page.dart';
-import '../second/second_page.dart';
+import '../services/firebase_messaging_service.dart';
+import '../services/scaffold_messenger_service.dart';
+import '../utils/extensions/build_context.dart';
+import '../utils/hooks/package_info_state.dart';
+import '../utils/restart_app.dart';
+import '../utils/utils.dart';
+import 'playgrounds/playground_page.dart';
+import 'second_page.dart';
 
 class HomePage extends StatefulHookConsumerWidget {
   const HomePage({super.key});

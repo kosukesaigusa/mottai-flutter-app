@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../pages/main/main_page.dart';
-import '../../pages/not_found/not_found_page.dart';
+import '../../pages/main_page.dart';
+import '../../pages/not_found_page.dart';
 import '../../route/app_router.dart';
 import '../../route/bottom_tabs.dart';
 

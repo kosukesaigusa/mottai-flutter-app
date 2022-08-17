@@ -53,11 +53,10 @@ dependencies:
     path: ../models
   package_info_plus: ^1.4.3
   path_to_regexp: ^0.4.0
-  photo_view:
-  rxdart:
   shared_preferences:
   shimmer: ^2.0.0
   sign_in_with_apple:
+  simple_logger:
   state_notifier:
   tuple: ^2.0.0
   url_launcher:

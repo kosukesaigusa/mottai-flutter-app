@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../route/app_router_state.dart';
-import '../../route/bottom_tabs.dart';
-import '../../services/navigation.dart';
-import '../../utils/exceptions/base.dart';
-import '../map/map_page.dart';
+import '../route/app_router_state.dart';
+import '../route/bottom_tabs.dart';
+import '../services/navigation.dart';
+import '../utils/exceptions/base.dart';
+import 'map_page.dart';
 
 final _titleProvider = Provider.autoDispose<String>(
   (ref) {

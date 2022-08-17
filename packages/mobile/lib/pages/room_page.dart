@@ -4,16 +4,16 @@ import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mottai_flutter_app_models/models.dart';
 
-import '../../constants/style.dart';
-import '../../providers/auth/auth.dart';
-import '../../providers/public_user/public_user_providers.dart';
-import '../../providers/read_status/read_status_providers.dart';
-import '../../providers/room/room_providers.dart';
-import '../../route/app_router_state.dart';
-import '../../utils/date_time.dart';
-import '../../utils/exceptions/base.dart';
-import '../../utils/extensions/build_context.dart';
-import '../../widgets/common/image.dart';
+import '../constants/style.dart';
+import '../providers/auth/auth.dart';
+import '../providers/public_user/public_user_providers.dart';
+import '../providers/read_status/read_status_providers.dart';
+import '../providers/room/room_providers.dart';
+import '../route/app_router_state.dart';
+import '../utils/date_time.dart';
+import '../utils/exceptions/base.dart';
+import '../utils/extensions/build_context.dart';
+import '../widgets/common/image.dart';
 
 final _roomIdProvider = Provider.autoDispose<String>(
   (ref) {

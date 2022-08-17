@@ -106,8 +106,8 @@ class _RoomPageState extends ConsumerState<RoomPage> {
     if (index == itemCount - 1) {
       return true;
     }
-    final lastCreatedAt = messages[index].createdAt;
-    final previouslyCreatedAt = messages[index + 1].createdAt;
+    final lastCreatedAt = messages[index].createdAt.dateTime;
+    final previouslyCreatedAt = messages[index + 1].createdAt.dateTime;
     if (lastCreatedAt == null || previouslyCreatedAt == null) {
       return false;
     }
@@ -138,7 +138,7 @@ class MessageItemWidget extends HookConsumerWidget {
     return Column(
       crossAxisAlignment: isMyMessage ? CrossAxisAlignment.end : CrossAxisAlignment.start,
       children: [
-        if (showDate) DateOnChatRoomWidget(dateTime: message.createdAt),
+        if (showDate) DateOnChatRoomWidget(dateTime: message.createdAt.dateTime),
         Row(
           mainAxisAlignment: isMyMessage ? MainAxisAlignment.end : MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.end,
@@ -332,13 +332,15 @@ class MessageAdditionalInfoWidget extends HookConsumerWidget {
       child: Column(
         crossAxisAlignment: isMyMessage ? CrossAxisAlignment.end : CrossAxisAlignment.start,
         children: [
-          Text(to24HourNotationString(message.createdAt), style: context.bodySmall),
+          Text(to24HourNotationString(message.createdAt.dateTime), style: context.bodySmall),
           if (isMyMessage)
             SizedBox(
               height: 14,
               child: ref.watch(partnerReadStatusStreamProvider(roomId)).when(
                     data: (readStatus) => Text(
-                      _isRead(message: message, lastReadAt: readStatus?.lastReadAt) ? '既読' : '未読',
+                      _isRead(message: message, lastReadAt: readStatus?.lastReadAt.dateTime)
+                          ? '既読'
+                          : '未読',
                       style: context.bodySmall,
                     ),
                     error: (_, __) => const SizedBox(),
@@ -355,8 +357,8 @@ class MessageAdditionalInfoWidget extends HookConsumerWidget {
     required Message message,
     required DateTime? lastReadAt,
   }) {
-    final createdAt = message.createdAt;
-    if (createdAt == null || lastReadAt == null) {
+    final createdAt = message.createdAt.dateTime;
+    if (lastReadAt == null || createdAt == null) {
       return false;
     }
     return lastReadAt.isAfter(createdAt);

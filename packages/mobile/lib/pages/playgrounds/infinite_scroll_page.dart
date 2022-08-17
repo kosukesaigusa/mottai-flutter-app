@@ -92,7 +92,7 @@ class _InfiniteScrollPageState extends ConsumerState<InfiniteScrollPage> {
                           bottom: 16,
                         ),
                         child: Text(
-                          to24HourNotationString(message.createdAt),
+                          to24HourNotationString(message.createdAt.dateTime),
                           style: context.bodySmall,
                         ),
                       ),
@@ -137,8 +137,8 @@ class _InfiniteScrollPageState extends ConsumerState<InfiniteScrollPage> {
     if (index == itemCount - 1) {
       return true;
     }
-    final lastCreatedAt = messages[index].createdAt;
-    final previouslyCreatedAt = messages[index + 1].createdAt;
+    final lastCreatedAt = messages[index].createdAt.dateTime;
+    final previouslyCreatedAt = messages[index + 1].createdAt.dateTime;
     if (lastCreatedAt == null || previouslyCreatedAt == null) {
       return false;
     }
@@ -160,7 +160,7 @@ class _InfiniteScrollPageState extends ConsumerState<InfiniteScrollPage> {
             color: messageBackgroundColor,
           ),
           child: Text(
-            toIsoStringDateWithWeekDay(message.createdAt),
+            toIsoStringDateWithWeekDay(message.createdAt.dateTime),
             style: context.bodySmall,
           ),
         ),

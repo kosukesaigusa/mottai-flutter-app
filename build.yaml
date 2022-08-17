@@ -20,4 +20,5 @@ targets:
             - implicit_dynamic_type
             - implicit_dynamic_method
             - strict_raw_type
+            - unnecessary_cast
             - todo

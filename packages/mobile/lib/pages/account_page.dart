@@ -3,16 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../providers/account/account.dart';
-import '../../providers/account_page/account_page.dart';
-import '../../providers/auth/auth.dart';
-import '../../utils/enums.dart';
-import '../../utils/extensions/build_context.dart';
-import '../../utils/extensions/string.dart';
-import '../../utils/utils.dart';
-import '../../widgets/common/image.dart';
-import '../../widgets/loading/loading.dart';
-import '../../widgets/sign_in/sign_in_buttons.dart';
+import '../providers/account/account.dart';
+import '../providers/account_page/account_page.dart';
+import '../providers/auth/auth.dart';
+import '../utils/enums.dart';
+import '../utils/extensions/build_context.dart';
+import '../utils/extensions/string.dart';
+import '../utils/utils.dart';
+import '../widgets/common/image.dart';
+import '../widgets/loading/loading.dart';
+import '../widgets/sign_in/sign_in_buttons.dart';
 
 /// アカウントページ
 class AccountPage extends HookConsumerWidget {
@@ -29,7 +29,7 @@ class AccountPage extends HookConsumerWidget {
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 32),
         child: Center(
-          child: ref.watch(accountStreamProvider).when<Widget>(
+          child: ref.watch(accountStreamProvider).when(
                 data: (account) =>
                     account == null ? const NotSignedInWidget() : const SignedInWidget(),
                 error: (_, __) => const SizedBox(),
@@ -84,13 +84,13 @@ class SignedInWidget extends HookConsumerWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        ref.watch(accountStreamProvider).when<Widget>(
+        ref.watch(accountStreamProvider).when(
               data: (account) => CircleImageWidget(diameter: 64, imageURL: account?.imageURL),
               error: (_, __) => const SizedBox(),
               loading: () => const SizedBox(),
             ),
         const Gap(16),
-        ref.watch(accountStreamProvider).when<Widget>(
+        ref.watch(accountStreamProvider).when(
               data: (account) {
                 if (account == null) {
                   return const SizedBox();
@@ -132,7 +132,7 @@ class SocialLoginButtons extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return ref.watch(accountStreamProvider).when<Widget>(
+    return ref.watch(accountStreamProvider).when(
           data: (account) {
             if (account == null) {
               return Column(
@@ -189,7 +189,7 @@ class ConnectedSocialAccountsWidget extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return ref.watch(accountStreamProvider).when<Widget>(
+    return ref.watch(accountStreamProvider).when(
           data: (account) {
             if (account == null) {
               return const SizedBox();

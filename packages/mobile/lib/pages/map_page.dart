@@ -5,10 +5,10 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mottai_flutter_app_models/models.dart';
 
-import '../../providers/map/map.dart';
-import '../../utils/extensions/build_context.dart';
-import '../../utils/extensions/int.dart';
-import '../../utils/geo.dart';
+import '../providers/map/map.dart';
+import '../utils/extensions/build_context.dart';
+import '../utils/extensions/int.dart';
+import '../utils/geo.dart';
 
 const double _stackedGreyBackgroundHeight = 200;
 const double _stackedGreyBackgroundBorderRadius = 36;

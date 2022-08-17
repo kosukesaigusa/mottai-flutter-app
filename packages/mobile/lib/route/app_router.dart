@@ -3,8 +3,8 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:path_to_regexp/path_to_regexp.dart';
 import 'package:tuple/tuple.dart';
 
-import '../pages/not_found/not_found_page.dart';
-import '../utils/exceptions/common_exceptions.dart';
+import '../pages/not_found_page.dart';
+import '../utils/exceptions/common.dart';
 import '../utils/extensions/bool.dart';
 import 'app_route.dart';
 import 'app_router_state.dart';

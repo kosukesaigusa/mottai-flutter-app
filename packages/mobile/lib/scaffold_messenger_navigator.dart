@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import 'pages/not_found/not_found_page.dart';
+import 'pages/not_found_page.dart';
 import 'providers/overlay_loading/overlay_loading.dart';
 import 'route/app_router.dart';
 import 'services/navigation.dart';

@@ -240,10 +240,12 @@ class LatestMessageCreatedAtWidget extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return ref.watch(messagesStreamProvider(roomId)).when(
-          data: (messages) => Text(
-            messages.isEmpty ? '' : humanReadableDateTimeString(messages.first.createdAt),
-            style: context.bodySmall,
-          ),
+          data: (messages) => messages.isEmpty
+              ? const SizedBox()
+              : Text(
+                  humanReadableDateTimeString(messages.first.createdAt.dateTime),
+                  style: context.bodySmall,
+                ),
           error: (_, __) => const SizedBox(),
           loading: () => const SizedBox(),
         );

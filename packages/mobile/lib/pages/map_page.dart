@@ -5,7 +5,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mottai_flutter_app_models/models.dart';
 
-import '../providers/map/map.dart';
+import '../features/map/map.dart';
 import '../utils/extensions/build_context.dart';
 import '../utils/extensions/int.dart';
 import '../utils/geo.dart';
@@ -26,7 +26,7 @@ class MapPage extends HookConsumerWidget {
   const MapPage({super.key});
 
   static const path = '/map';
-  static const name = 'MapPage2';
+  static const name = 'MapPage';
   static const location = path;
 
   @override

@@ -2,13 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../utils/extensions/build_context.dart';
 import '../utils/firebase_messaging.dart';
-import '../utils/hooks/package_info_state.dart';
-import '../utils/restart_app.dart';
 import '../utils/scaffold_messenger_service.dart';
 import '../utils/utils.dart';
-import 'playgrounds/playground_page.dart';
 import 'second_page.dart';
 
 class HomePage extends StatefulHookConsumerWidget {
@@ -26,21 +22,18 @@ class HomePageState extends ConsumerState<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
-      drawer: _buildDrawer,
+      appBar: AppBar(title: const Text('ホーム')),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             const Text('HomePage'),
             ElevatedButton(
-              onPressed: () async {
-                await Navigator.pushNamed<void>(
-                  context,
-                  SecondPage.location,
-                  arguments: '2 番目のページ',
-                );
-              },
+              onPressed: () => Navigator.pushNamed<void>(
+                context,
+                SecondPage.location,
+                arguments: '2 番目のページ',
+              ),
               child: const Text('Go to SecondPage'),
             ),
             const Gap(16),
@@ -63,99 +56,6 @@ class HomePageState extends ConsumerState<HomePage> {
           ],
         ),
       ),
-    );
-  }
-
-  /// ドロワー全体
-  Drawer get _buildDrawer {
-    return Drawer(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildDrawerHeader,
-          _buildFcmTokenDrawerItem,
-          _buildPlaygroundMenuDrawerItem,
-          _buildSignOutDrawerItem,
-        ],
-      ),
-    );
-  }
-
-  /// ドロワーヘッダー
-  Widget get _buildDrawerHeader {
-    final packageInfoState = usePackageInfoState();
-    final packageInfo = packageInfoState.packageInfo;
-    return DrawerHeader(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            packageInfo == null
-                ? ''
-                : '${packageInfo.appName}: '
-                    '${packageInfo.version} (${packageInfo.buildNumber})',
-            style: context.bodySmall,
-          ),
-        ],
-      ),
-    );
-  }
-
-  /// FCM トークンの確認アイテム
-  Widget get _buildFcmTokenDrawerItem {
-    return ListTile(
-      title: const Text('FCM トークンの確認'),
-      onTap: () async {
-        final token = await ref.read(getFcmTokenProvider)();
-        await showDialog<void>(
-          context: context,
-          barrierDismissible: false,
-          builder: (context) {
-            return AlertDialog(
-              title: const Text('FCM トークン'),
-              content: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text('この端末の FCM トークンは次の文字列です。', style: context.bodySmall),
-                  const Gap(8),
-                  SelectableText(token ?? 'トークンの取得に失敗しました。'),
-                ],
-              ),
-              actions: <Widget>[
-                TextButton(
-                  child: Text(
-                    'OK',
-                    style: TextStyle(color: context.theme.disabledColor),
-                  ),
-                  onPressed: () => Navigator.pop<void>(context),
-                ),
-              ],
-            );
-          },
-        );
-      },
-    );
-  }
-
-  /// プレイグラウンドへ遷移するためのアイテム
-  Widget get _buildPlaygroundMenuDrawerItem {
-    return ListTile(
-      title: const Text('プレイグランド'),
-      onTap: () async {
-        await Navigator.pushNamed<void>(context, PlaygroundPage.location);
-      },
-    );
-  }
-
-  /// サインアウトボタン
-  Widget get _buildSignOutDrawerItem {
-    return ListTile(
-      title: const Text('サインアウト'),
-      onTap: () async {
-        await auth.signOut();
-        await ref.read(restartAppProvider)();
-      },
     );
   }
 }

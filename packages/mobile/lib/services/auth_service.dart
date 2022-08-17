@@ -9,8 +9,8 @@ import '../providers/auth/auth.dart';
 import '../repositories/auth/auth_repository.dart';
 import '../utils/enums.dart';
 import '../utils/extensions/map.dart';
+import '../utils/firebase_messaging.dart';
 import '../utils/utils.dart';
-import 'firebase_messaging_service.dart';
 
 final authService = Provider.autoDispose((ref) => AuthService(ref.read));
 
@@ -134,7 +134,7 @@ class AuthService {
       return;
     }
     final account = await _read(accountRepositoryProvider).fetchAccount(accountId: userId);
-    final fcmToken = await _read(fcmServiceProvider).getToken;
+    final fcmToken = await _read(getFcmTokenProvider)();
     try {
       if (account != null) {
         // すでにドキュメントが存在しているので update する
@@ -172,18 +172,11 @@ class AuthService {
     if (userId == null) {
       return;
     }
-    String? fcmToken;
     try {
-      await _read(fcmServiceProvider).getToken;
-    } on FirebaseException {
-      rethrow;
-    } on Exception {
-      rethrow;
-    }
-    if (fcmToken == null) {
-      return;
-    }
-    try {
+      final fcmToken = await _read(getFcmTokenProvider)();
+      if (fcmToken == null) {
+        return;
+      }
       await _read(accountRefProvider).update(<String, dynamic>{
         'fcmTokens': FieldValue.arrayRemove(<String>[fcmToken])
       });

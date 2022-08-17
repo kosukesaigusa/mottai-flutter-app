@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../services/firebase_messaging_service.dart';
-import '../services/scaffold_messenger_service.dart';
 import '../utils/extensions/build_context.dart';
+import '../utils/firebase_messaging.dart';
 import '../utils/hooks/package_info_state.dart';
 import '../utils/restart_app.dart';
+import '../utils/scaffold_messenger_service.dart';
 import '../utils/utils.dart';
 import 'playgrounds/playground_page.dart';
 import 'second_page.dart';
@@ -46,8 +46,12 @@ class HomePageState extends ConsumerState<HomePage> {
             const Gap(16),
             ElevatedButton.icon(
               onPressed: () async {
+                final fcmToken = await ref.read(getFcmTokenProvider)();
+                if (fcmToken == null) {
+                  return;
+                }
                 await db.collection('testNotificationRequests').doc(uuid).set(<String, dynamic>{
-                  'token': ref.read(fcmServiceProvider).getToken,
+                  'token': fcmToken,
                 });
                 ref
                     .read(scaffoldMessengerServiceProvider)
@@ -102,10 +106,7 @@ class HomePageState extends ConsumerState<HomePage> {
     return ListTile(
       title: const Text('FCM トークンの確認'),
       onTap: () async {
-        final token = await ref.read(fcmServiceProvider).getToken;
-        debugPrint('*** FCM token ***************');
-        debugPrint(token);
-        debugPrint('*****************************');
+        final token = await ref.read(getFcmTokenProvider)();
         await showDialog<void>(
           context: context,
           barrierDismissible: false,

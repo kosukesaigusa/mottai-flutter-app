@@ -1,4 +1,4 @@
-import '../utils/types.dart';
+import 'types.dart';
 
 /// go_router パッケージに GoRoute を参考に、簡易にしたクラス。
 class AppRoute {

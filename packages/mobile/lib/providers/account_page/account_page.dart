@@ -6,9 +6,9 @@ import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../services/auth_service.dart';
-import '../../services/scaffold_messenger_service.dart';
 import '../../utils/enums.dart';
 import '../../utils/extensions/build_context.dart';
+import '../../utils/scaffold_messenger_service.dart';
 import '../overlay_loading/overlay_loading.dart';
 import 'account_page_state.dart';
 

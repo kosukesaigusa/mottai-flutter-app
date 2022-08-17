@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../utils/exceptions/base.dart';
+import '../exceptions/base.dart';
 
 /// go_router パッケージの GoRouterState を参考にした RouterState クラスのインスタンスを
 /// 提供するプロバイダ。

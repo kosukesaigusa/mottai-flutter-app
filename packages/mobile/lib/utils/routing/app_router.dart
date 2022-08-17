@@ -3,9 +3,9 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:path_to_regexp/path_to_regexp.dart';
 import 'package:tuple/tuple.dart';
 
-import '../pages/not_found_page.dart';
-import '../utils/exceptions/common.dart';
-import '../utils/extensions/bool.dart';
+import '../../pages/not_found_page.dart';
+import '../exceptions/common.dart';
+import '../extensions/dynamic.dart';
 import 'app_route.dart';
 import 'app_router_state.dart';
 import 'app_routes.dart';
@@ -32,7 +32,10 @@ class AppRouter {
     String? bottomNavigationPath,
   }) {
     try {
-      final tuple2 = _analyzeRoute(routeSettings, bottomNavigationPath: bottomNavigationPath);
+      final tuple2 = _analyzeRoute(
+        routeSettings,
+        bottomNavigationPath: bottomNavigationPath,
+      );
       final appRoute = tuple2.item1;
       final appRouteState = tuple2.item2;
       final pageRoute = appRoute.pageRoute;
@@ -92,7 +95,10 @@ class AppRouter {
   }
 
   /// onGenerateRoute と同じ引数を受けてパスを決定する。
-  String _location(RouteSettings routeSettings, {String? bottomNavigationPath}) {
+  String _location(
+    RouteSettings routeSettings, {
+    String? bottomNavigationPath,
+  }) {
     final location = routeSettings.name;
     if (location == null) {
       return '';
@@ -108,6 +114,6 @@ class AppRouter {
 
   /// AppRouterState.queryParams から Hero アニメーションをするかどうか決定する
   bool _showHeroAnimation(Map<String, String> queryParams) {
-    return toBool(queryParams['hero']);
+    return queryParams['hero'].toBool;
   }
 }

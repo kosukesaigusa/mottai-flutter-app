@@ -1,0 +1,77 @@
+import 'dart:async';
+
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:mottai_flutter_app_models/models.dart';
+
+import '../../providers/auth/auth.dart';
+import '../../providers/read_status/read_status_providers.dart';
+import '../../providers/room/room_providers.dart';
+import '../../utils/exceptions/common.dart';
+import '../../utils/scaffold_messenger_service.dart';
+import '../../utils/utils.dart';
+
+/// ユーザーの attendingRoom コレクションを購読する StreamProvider。
+/// ユーザーがログインしていない場合は例外をスローする。
+final attendingRoomsProvider = StreamProvider.autoDispose<List<AttendingRoom>>((ref) {
+  final userId = ref.watch(userIdProvider).value;
+  if (userId == null) {
+    throw const SignInRequiredException();
+  }
+  final attendingRooms = ref.read(messageRepositoryProvider).subscribeAttendingRooms(
+        userId: userId,
+        queryBuilder: (q) => q.orderBy('updatedAt', descending: true),
+      );
+  return attendingRooms;
+});
+
+/// 指定した roomId の messages サブコレクションに、message.createdAt が指定した DateTime より
+/// 未来かつ送信者が相手である（自分ではない）ドキュメントの個数（最大 10 個）を購読する
+/// StreamProvider。
+final unreadCountProvider = StreamProvider.autoDispose.family<int, String>((ref, roomId) {
+  final userId = ref.watch(userIdProvider).value;
+  if (userId == null) {
+    return Stream.value(0);
+  }
+  final room = ref.watch(roomStreamProvider(roomId)).value;
+  if (room == null) {
+    return Stream.value(0);
+  }
+  final readStatus = ref.watch(readStatusStreamProvider(roomId)).value;
+  final lastReadAt = readStatus?.lastReadAt;
+  return ref
+      .read(messageRepositoryProvider)
+      .subscribeMessages(
+        roomId: room.roomId,
+        queryBuilder: (q) => lastReadAt != null
+            ? q
+                .where('createdAt', isGreaterThan: lastReadAt)
+                .orderBy('createdAt', descending: true)
+                .limit(10)
+            : q.orderBy('createdAt', descending: true).limit(10),
+      )
+      .map((messages) => messages.where((message) => message.senderId != userId).toList().length);
+});
+
+// TODO: 開発中のみ。後です。
+/// HOST 1 とのチャットルームを作成する作成するメソッドを提供する Provider。
+final createChatRoomWithHost1Provider = Provider.autoDispose(
+  (ref) => () async {
+    final userId = ref.watch(userIdProvider).value;
+    if (userId == null) {
+      return;
+    }
+    final roomId = uuid;
+    const hostId = String.fromEnvironment('HOST_1_ID');
+    await ref
+        .read(messageRepositoryProvider)
+        .roomRef(roomId: roomId)
+        .set(Room(roomId: roomId, hostId: hostId, workerId: userId));
+    await ref.read(messageRepositoryProvider).attendingRoomRef(userId: userId, roomId: roomId).set(
+          AttendingRoom(
+            roomId: roomId,
+            partnerId: hostId,
+          ),
+        );
+    ref.read(scaffoldMessengerServiceProvider).showSnackBar('【テスト用】ホスト 1 とのルームを作成しました。');
+  },
+);

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../providers/account_page/account_page.dart';
-import '../../utils/enums.dart';
+import '../providers/account_page/account_page.dart';
+import '../utils/enums.dart';
 
 class SocialSignInButton extends HookConsumerWidget {
   const SocialSignInButton({super.key, required this.method});

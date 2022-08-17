@@ -13,7 +13,7 @@ import '../utils/date_time.dart';
 import '../utils/exceptions/base.dart';
 import '../utils/extensions/build_context.dart';
 import '../utils/routing/app_router_state.dart';
-import '../widgets/common/image.dart';
+import '../widgets/image.dart';
 
 final _roomIdProvider = Provider.autoDispose<String>(
   (ref) {

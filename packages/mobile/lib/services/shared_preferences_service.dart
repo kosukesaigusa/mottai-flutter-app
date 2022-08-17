@@ -1,7 +1,7 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../route/bottom_tabs.dart';
+import '../features/bottom_tab/bottom_tab.dart';
 
 /// SharedPreferencesKey で管理するデータの列挙
 enum SharedPreferencesKey {

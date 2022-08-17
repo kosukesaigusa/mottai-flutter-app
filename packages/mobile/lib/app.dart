@@ -3,12 +3,12 @@ import 'package:flutter/services.dart';
 
 import 'constants/localization.dart';
 import 'constants/string.dart';
-import 'scaffold_messenger_navigator.dart';
+import 'pages/root_navigator.dart';
 import 'utils/extensions/build_context.dart';
 
 /// MaterialApp を返すウィジェット。
 /// ここではルートは制御せず、home プロパティに
-/// ScaffoldMessengerNavigator を指定するだけとする。
+/// RootNavigator を指定するだけとする。
 class App extends StatelessWidget {
   const App({super.key});
 
@@ -62,7 +62,7 @@ class App extends StatelessWidget {
         scaffoldBackgroundColor: Colors.white,
         sliderTheme: SliderThemeData(overlayShape: SliderComponentShape.noOverlay),
       ),
-      home: const ScaffoldMessengerNavigator(),
+      home: const RootNavigator(),
       builder: (context, child) {
         return MediaQuery(
           // 端末依存のフォントスケールを 1 に固定する

@@ -25,8 +25,8 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_hooks:
-  flutter_keyboard_visibility:
   flutter_line_sdk:
+  flutter_local_notifications:
   flutter_localizations:
     sdk: flutter
   flutter_native_image:

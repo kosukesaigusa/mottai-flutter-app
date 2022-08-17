@@ -2,18 +2,22 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../constants/snack_bar.dart';
-import '../../constants/string.dart';
 import '../../utils/extensions/string.dart';
+import '../constants/snack_bar.dart';
+import '../constants/string.dart';
 
-/// ツリー上部の ScaffoldMessenger 上でスナックバーやダイアログの表示を操作する
-/// コントーラクラスを提供するプロバイダ。
-final scaffoldMessengerServiceProvider = Provider.autoDispose((ref) => ScaffoldMessengerService());
+final scaffoldMessengerKeyProvider = Provider((_) => GlobalKey<ScaffoldMessengerState>());
+
+final scaffoldMessengerServiceProvider = Provider.autoDispose(ScaffoldMessengerService.new);
 
 /// ツリー上部の ScaffoldMessenger 上でスナックバーやダイアログの表示を操作する。
 class ScaffoldMessengerService {
-  final scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
-  final navigatorKey = GlobalKey<NavigatorState>();
+  ScaffoldMessengerService(this._ref);
+
+  final AutoDisposeProviderRef<ScaffoldMessengerService> _ref;
+
+  GlobalKey<ScaffoldMessengerState> get scaffoldMessengerKey =>
+      _ref.read(scaffoldMessengerKeyProvider);
 
   /// showDialog で指定したビルダー関数を返す。
   Future<T?> showDialogByBuilder<T>({
@@ -62,28 +66,9 @@ class ScaffoldMessengerService {
     );
   }
 
-  // /// マテリアルバナーを表示する。
-  // ScaffoldFeatureController<MaterialBanner, MaterialBannerClosedReason> showMaterialBanner({
-  //   required Widget content,
-  //   required List<Widget> actions,
-  //   bool removeCurrentMaterialBanner = true,
-  // }) {
-  //   final scaffoldMessengerState = scaffoldMessengerKey.currentState!;
-  //   if (removeCurrentMaterialBanner) {
-  //     scaffoldMessengerState.removeCurrentMaterialBanner();
-  //   }
-  //   return scaffoldMessengerState.showMaterialBanner(
-  //     MaterialBanner(content: content, actions: actions),
-  //   );
-  // }
-
-  // /// 現在のマテリアルバナーをアニメーション付きで隠す。
-  // void hideCurrentMaterialBanner() {
-  //   scaffoldMessengerKey.currentState!.hideCurrentMaterialBanner();
-  // }
-
   /// Exception 起点でスナックバーを表示する。
-  /// Dart の Exception 型の場合は toString() 冒頭を取り除いて差し支えのないメッセージに置換しておく。
+  /// Dart の Exception 型の場合は toString() 冒頭を取り除いて
+  /// 差し支えのないメッセージに置換しておく。
   ScaffoldFeatureController<SnackBar, SnackBarClosedReason> showSnackBarByException(Exception e) {
     final message = e.toString().replaceAll('Exception: ', '').replaceAll('Exception', '');
     return showSnackBar(message.ifIsEmpty(generalExceptionMessage));
@@ -91,12 +76,10 @@ class ScaffoldMessengerService {
 
   /// FirebaseException 起点でスナックバーを表示する
   ScaffoldFeatureController<SnackBar, SnackBarClosedReason> showSnackBarByFirebaseException(
-      FirebaseException e,) {
-    return showSnackBar('[${e.code}]: ${e.message ?? 'FirebaseException が発生しました。'}');
-  }
-
-  /// フォーカスを外す
-  void unFocus() {
-    FocusScope.of(scaffoldMessengerKey.currentContext!).unfocus();
+    FirebaseException e,
+  ) {
+    return showSnackBar(
+      '[${e.code}]: ${e.message ?? 'FirebaseException が発生しました。'}',
+    );
   }
 }

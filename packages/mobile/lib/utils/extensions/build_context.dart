@@ -58,7 +58,7 @@ extension BuildContextExtension on BuildContext {
   Size get displaySize => MediaQuery.of(this).size;
 
   /// AlertDialog などのウィジェットツリーの上位の
-  /// ScaffoldMessengerNavigator からスナックバーを出すことができない場合に
+  /// RootNavigator からスナックバーを出すことができない場合に
   /// 現在の BuildContext からスナックバーを表示する。
   ScaffoldFeatureController<SnackBar, SnackBarClosedReason> showSnackBar(
     String message, {

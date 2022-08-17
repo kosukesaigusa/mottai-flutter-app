@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../providers/bottom_tab/bottom_tab.dart';
-import '../route/bottom_tabs.dart';
+import '../features/bottom_tab/bottom_tab.dart';
 
 final navigationServiceProvider = Provider.autoDispose((ref) => NavigationService(ref.read));
 
@@ -14,10 +13,13 @@ class NavigationService {
 
   /// 現在アクティブな下タブに指定したパスのページを push する。
   Future<void> pushOnCurrentTab<T extends Object>({
-    required String path,
+    required String location,
     T? arguments,
   }) async =>
-      _read(bottomTabStateProvider).key.currentState?.pushNamed<void>(path, arguments: arguments);
+      _read(bottomTabStateProvider)
+          .key
+          .currentState
+          ?.pushNamed<void>(location, arguments: arguments);
 
   /// 一度 MainPage まで画面を pop した上で、
   /// 指定したタブをアクティブにして、その上で指定したパスのページを push する。

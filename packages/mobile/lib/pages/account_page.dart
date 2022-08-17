@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../providers/account/account.dart';
+import '../features/account/account.dart';
 import '../providers/account_page/account_page.dart';
 import '../providers/auth/auth.dart';
 import '../utils/enums.dart';
@@ -29,9 +29,8 @@ class AccountPage extends HookConsumerWidget {
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 32),
         child: Center(
-          child: ref.watch(accountStreamProvider).when(
-                data: (account) =>
-                    account == null ? const NotSignedInWidget() : const SignedInWidget(),
+          child: ref.watch(accountProvider).when(
+                data: (account) => account == null ? const GuestInWidget() : const SignedInWidget(),
                 error: (_, __) => const SizedBox(),
                 loading: () => const PrimarySpinkitCircle(),
               ),
@@ -41,9 +40,9 @@ class AccountPage extends HookConsumerWidget {
   }
 }
 
-/// 未ログイン時のウィジェット
-class NotSignedInWidget extends HookConsumerWidget {
-  const NotSignedInWidget({super.key});
+/// 未ログイン時のウィジェット。
+class GuestInWidget extends HookConsumerWidget {
+  const GuestInWidget({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -75,7 +74,7 @@ class NotSignedInWidget extends HookConsumerWidget {
   }
 }
 
-/// サインイン済み時のウィジェット
+/// サインイン済み時のウィジェット。
 class SignedInWidget extends HookConsumerWidget {
   const SignedInWidget({super.key});
 
@@ -84,13 +83,13 @@ class SignedInWidget extends HookConsumerWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        ref.watch(accountStreamProvider).when(
+        ref.watch(accountProvider).when(
               data: (account) => CircleImageWidget(diameter: 64, imageURL: account?.imageURL),
               error: (_, __) => const SizedBox(),
               loading: () => const SizedBox(),
             ),
         const Gap(16),
-        ref.watch(accountStreamProvider).when(
+        ref.watch(accountProvider).when(
               data: (account) {
                 if (account == null) {
                   return const SizedBox();
@@ -132,7 +131,7 @@ class SocialLoginButtons extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return ref.watch(accountStreamProvider).when(
+    return ref.watch(accountProvider).when(
           data: (account) {
             if (account == null) {
               return Column(
@@ -189,7 +188,7 @@ class ConnectedSocialAccountsWidget extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return ref.watch(accountStreamProvider).when(
+    return ref.watch(accountProvider).when(
           data: (account) {
             if (account == null) {
               return const SizedBox();

@@ -2,11 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mottai_flutter_app_models/models.dart';
 
+import '../../providers/auth/auth.dart';
 import '../../utils/exceptions/common.dart';
-import '../auth/auth.dart';
 
-/// サインイン中のユーザーの account ドキュメントを購読する StreamProvider
-final accountStreamProvider = StreamProvider.autoDispose<Account?>((ref) {
+/// サインイン中のユーザーの account ドキュメントを購読する StreamProvider。
+final accountProvider = StreamProvider.autoDispose<Account?>((ref) {
   final userId = ref.watch(userIdProvider).value;
   if (userId == null) {
     return Stream.value(null);
@@ -14,14 +14,10 @@ final accountStreamProvider = StreamProvider.autoDispose<Account?>((ref) {
   return ref.read(accountRepositoryProvider).subscribeAccount(accountId: userId);
 });
 
-/// サインイン中のユーザーの account ドキュメントを取得する FutureProvider
-final accountFutureProvider = FutureProvider.autoDispose<Account?>((ref) async {
-  final userId = ref.watch(userIdProvider).value;
-  if (userId == null) {
-    return Future.value();
-  }
-  final account = await ref.read(accountRepositoryProvider).fetchAccount(accountId: userId);
-  return account;
+/// サインイン中のユーザーがホストかどうかを取得する StreamProvider。
+final isHostProvider = Provider.autoDispose<bool>((ref) {
+  final account = ref.watch(accountProvider).value;
+  return account?.isHost ?? false;
 });
 
 /// サインイン中のユーザーの DocumentReference<Account> を取得する Provider

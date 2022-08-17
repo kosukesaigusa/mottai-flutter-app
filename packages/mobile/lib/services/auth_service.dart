@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mottai_flutter_app_models/models.dart';
 
-import '../providers/account/account.dart';
+import '../features/account/account.dart';
 import '../providers/auth/auth.dart';
 import '../repositories/auth/auth_repository.dart';
 import '../utils/enums.dart';

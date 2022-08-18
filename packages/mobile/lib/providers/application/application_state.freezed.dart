@@ -123,7 +123,7 @@ abstract class _ApplicationState implements ApplicationState {
   const factory _ApplicationState({final bool loading}) = _$_ApplicationState;
 
   @override
-  bool get loading => throw _privateConstructorUsedError;
+  bool get loading;
   @override
   @JsonKey(ignore: true)
   _$$_ApplicationStateCopyWith<_$_ApplicationState> get copyWith =>

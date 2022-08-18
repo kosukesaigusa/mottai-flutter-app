@@ -5,7 +5,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mottai_flutter_app_models/models.dart';
 
 import '../../constants/style.dart';
-import '../../providers/playgrounds/playground_message/playground_message_providers.dart';
+import '../../features/playgrounds/playground_message/playground_message_providers.dart';
 import '../../utils/date_time.dart';
 import '../../utils/extensions/build_context.dart';
 import '../../utils/utils.dart';

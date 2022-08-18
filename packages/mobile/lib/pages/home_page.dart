@@ -3,7 +3,7 @@ import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../utils/firebase_messaging.dart';
-import '../utils/scaffold_messenger_service.dart';
+import '../utils/scaffold_messenger.dart';
 import '../utils/utils.dart';
 import 'second_page.dart';
 

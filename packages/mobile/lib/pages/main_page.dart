@@ -5,7 +5,7 @@ import '../features/bottom_tab/bottom_tab.dart';
 import '../utils/firebase_messaging.dart';
 import '../utils/logger.dart';
 import '../utils/routing/app_router.dart';
-import '../utils/scaffold_messenger_service.dart';
+import '../utils/scaffold_messenger.dart';
 import 'not_found_page.dart';
 
 /// Consistent な BottomNavigationBar を含むアプリのメインのページ。

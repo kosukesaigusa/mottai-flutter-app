@@ -287,8 +287,6 @@ class AuthRepository {
   Future<void> signOut() async {
     try {
       await FirebaseAuth.instance.signOut();
-    } on FirebaseAuthException {
-      rethrow;
     } on Exception {
       rethrow;
     }

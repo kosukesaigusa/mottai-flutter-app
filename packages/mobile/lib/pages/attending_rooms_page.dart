@@ -9,7 +9,7 @@ import 'package:mottai_flutter_app_models/models.dart';
 
 import '../features/auth/auth.dart';
 import '../features/message/attending_room.dart';
-import '../providers/public_user/public_user_providers.dart';
+import '../features/public_user/public_user.dart';
 import '../utils/date_time.dart';
 import '../utils/extensions/build_context.dart';
 import '../widgets/empty_placeholder.dart';

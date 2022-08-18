@@ -5,11 +5,11 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mottai_flutter_app_models/models.dart';
 
 import '../../constants/style.dart';
-import '../../providers/playgrounds/playground_message/playground_message_providers.dart';
+import '../../features/playgrounds/playground_message/playground_message_providers.dart';
 import '../../utils/date_time.dart';
 import '../../utils/extensions/build_context.dart';
 import '../../utils/utils.dart';
-import '../../widgets/common/image.dart';
+import '../../widgets/image.dart';
 
 const double horizontalPadding = 8;
 const double partnerImageSize = 36;
@@ -92,7 +92,7 @@ class _InfiniteScrollPageState extends ConsumerState<InfiniteScrollPage> {
                           bottom: 16,
                         ),
                         child: Text(
-                          to24HourNotationString(message.createdAt),
+                          to24HourNotationString(message.createdAt.dateTime),
                           style: context.bodySmall,
                         ),
                       ),
@@ -137,8 +137,8 @@ class _InfiniteScrollPageState extends ConsumerState<InfiniteScrollPage> {
     if (index == itemCount - 1) {
       return true;
     }
-    final lastCreatedAt = messages[index].createdAt;
-    final previouslyCreatedAt = messages[index + 1].createdAt;
+    final lastCreatedAt = messages[index].createdAt.dateTime;
+    final previouslyCreatedAt = messages[index + 1].createdAt.dateTime;
     if (lastCreatedAt == null || previouslyCreatedAt == null) {
       return false;
     }
@@ -160,7 +160,7 @@ class _InfiniteScrollPageState extends ConsumerState<InfiniteScrollPage> {
             color: messageBackgroundColor,
           ),
           child: Text(
-            toIsoStringDateWithWeekDay(message.createdAt),
+            toIsoStringDateWithWeekDay(message.createdAt.dateTime),
             style: context.bodySmall,
           ),
         ),

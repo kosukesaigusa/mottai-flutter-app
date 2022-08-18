@@ -1,9 +1,9 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../providers/map/map.dart';
-import '../services/firebase_messaging_service.dart';
-import '../services/shared_preferences_service.dart';
+import '../features/map/map.dart';
+import 'firebase_messaging.dart';
+import 'shared_preferences.dart';
 
 /// RootProviderScope で指定する List<Override> を取得する。
 Future<List<Override>> get providerScopeOverrides async {
@@ -11,7 +11,7 @@ Future<List<Override>> get providerScopeOverrides async {
     sharedPreferencesProvider.overrideWithValue(
       await SharedPreferences.getInstance(),
     ),
-    fcmProvider.overrideWithValue(
+    firebaseMessagingProvider.overrideWithValue(
       await getFirebaseMessagingInstance,
     ),
     initialCenterLatLngProvider.overrideWithValue(await initialCenterLatLng),

@@ -73,7 +73,7 @@ android {
         if (dartEnvironmentVariables.FLAVOR != 'prod') {
             applicationIdSuffix ".${dartEnvironmentVariables.FLAVOR}"
         }
-        resValue "string", "app_name", "ZEN messenger" + 
+        resValue "string", "app_name", "MOTTAI" + 
             (dartEnvironmentVariables.FLAVOR == 'prod' ? '' : ".${dartEnvironmentVariables.FLAVOR}")
         multiDexEnabled true
     }

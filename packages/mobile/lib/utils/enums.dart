@@ -9,7 +9,7 @@ enum SocialSignInMethod {
   Google,
   Apple,
   LINE,
-  Twitter,
+  // Twitter,
 }
 
 /// ソーシャルログインごとのボタン・アイコンウィジェットの Extension
@@ -22,8 +22,8 @@ extension SocialSignInMethodExtension on SocialSignInMethod {
         return FontAwesomeIcons.apple;
       case SocialSignInMethod.LINE:
         return FontAwesomeIcons.line;
-      case SocialSignInMethod.Twitter:
-        return FontAwesomeIcons.twitter;
+      // case SocialSignInMethod.Twitter:
+      //   return FontAwesomeIcons.twitter;
     }
   }
 
@@ -35,8 +35,8 @@ extension SocialSignInMethodExtension on SocialSignInMethod {
         return Colors.black;
       case SocialSignInMethod.LINE:
         return const Color(0xff00ba52);
-      case SocialSignInMethod.Twitter:
-        return const Color(0xff1da1f2);
+      // case SocialSignInMethod.Twitter:
+      //   return const Color(0xff1da1f2);
     }
   }
 
@@ -59,7 +59,7 @@ extension SocialSignInMethodExtension on SocialSignInMethod {
         );
       case SocialSignInMethod.Apple:
       case SocialSignInMethod.LINE:
-      case SocialSignInMethod.Twitter:
+        // case SocialSignInMethod.Twitter:
         return Icon(iconData, size: 20, color: iconColor);
     }
   }

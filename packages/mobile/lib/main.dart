@@ -5,7 +5,7 @@ import 'package:flutter_line_sdk/flutter_line_sdk.dart';
 
 import 'utils/firebase_local_emulator.dart';
 import 'utils/provider_scope.dart';
-import 'widgets/root/root_widget.dart';
+import 'widgets/root_widget.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

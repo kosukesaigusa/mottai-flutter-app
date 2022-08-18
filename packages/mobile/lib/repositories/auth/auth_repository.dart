@@ -10,7 +10,6 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mottai_flutter_app_models/models.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
-import 'package:twitter_login/twitter_login.dart';
 
 import '../../constants/string.dart';
 import '../../models/firebase/firebase_task_result.dart';
@@ -22,11 +21,11 @@ class AuthRepository {
 
   final _auth = FirebaseAuth.instance;
   final _googleSignIn = GoogleSignIn(scopes: ['email', 'profile']);
-  final _twitterLogin = TwitterLogin(
-    apiKey: const String.fromEnvironment('TWITTER_API_KEY'),
-    apiSecretKey: const String.fromEnvironment('TWITTER_API_SECRET_KEY'),
-    redirectURI: const String.fromEnvironment('TWITTER_LOGIN_REDIRECT_URI'),
-  );
+  // final _twitterLogin = TwitterLogin(
+  //   apiKey: const String.fromEnvironment('TWITTER_API_KEY'),
+  //   apiSecretKey: const String.fromEnvironment('TWITTER_API_SECRET_KEY'),
+  //   redirectURI: const String.fromEnvironment('TWITTER_LOGIN_REDIRECT_URI'),
+  // );
 
   /// ログイン済みかつ CustomClaims のアドミンユーザーかどうか
   Future<bool> get isAdminUser async {
@@ -169,56 +168,56 @@ class AuthRepository {
     }
   }
 
-  /// Twitter でサインインする。
-  Future<AuthResult> signInWithTwitter() async {
-    try {
-      final twitterAuthResult = await _twitterLogin.loginV2(forceLogin: true);
-      _throwExceptionByTwitterAuthResult(twitterAuthResult);
-      final oAuthCredential = TwitterAuthProvider.credential(
-        accessToken: twitterAuthResult.authToken!,
-        secret: twitterAuthResult.authTokenSecret!,
-      );
-      final userCredential = await _signInWithOAuthCredential(oAuthCredential);
-      return AuthResult(
-        userCredential: userCredential,
-        displayName: twitterAuthResult.user!.name,
-        imageURL: twitterAuthResult.user!.thumbnailImage,
-      );
-    } on PlatformException {
-      rethrow;
-    } on Exception {
-      rethrow;
-    }
-  }
+  // /// Twitter でサインインする。
+  // Future<AuthResult> signInWithTwitter() async {
+  //   try {
+  //     final twitterAuthResult = await _twitterLogin.loginV2(forceLogin: true);
+  //     _throwExceptionByTwitterAuthResult(twitterAuthResult);
+  //     final oAuthCredential = TwitterAuthProvider.credential(
+  //       accessToken: twitterAuthResult.authToken!,
+  //       secret: twitterAuthResult.authTokenSecret!,
+  //     );
+  //     final userCredential = await _signInWithOAuthCredential(oAuthCredential);
+  //     return AuthResult(
+  //       userCredential: userCredential,
+  //       displayName: twitterAuthResult.user!.name,
+  //       imageURL: twitterAuthResult.user!.thumbnailImage,
+  //     );
+  //   } on PlatformException {
+  //     rethrow;
+  //   } on Exception {
+  //     rethrow;
+  //   }
+  // }
 
-  /// TwitterAuthResult を確認して、問題がある場合は例外をスローする。
-  /// 問題がなければ何もしない。
-  /// 通過できれば、user, authToken, authTokenSecret が非 null であることを保証して良い。
-  /// Never 型を用いてうまく書けないかと思ったが、できなかったので void 型の返り値にした。
-  void _throwExceptionByTwitterAuthResult(TwitterAuthResult result) {
-    final user = result.user;
-    final status = result.status;
-    final authToken = result.authToken;
-    final authTokenSecret = result.authTokenSecret;
-    if (user == null) {
-      throw Exception('Twitter ユーザーデータが取得できませんでした。');
-    }
-    if (status == null) {
-      throw Exception('Twitter ログインに失敗しました。');
-    }
-    if (status == TwitterLoginStatus.cancelledByUser) {
-      throw Exception('Twitter ログインをキャンセルしました。');
-    }
-    if (status == TwitterLoginStatus.error) {
-      throw Exception('Twitter ログインでエラーが発生しました。');
-    }
-    if (authToken == null) {
-      throw Exception('[Auth Token] Twitter ログインに失敗しました。');
-    }
-    if (authTokenSecret == null) {
-      throw Exception('[Auth Token Secret] Twitter ログインに失敗しました。');
-    }
-  }
+  // /// TwitterAuthResult を確認して、問題がある場合は例外をスローする。
+  // /// 問題がなければ何もしない。
+  // /// 通過できれば、user, authToken, authTokenSecret が非 null であることを保証して良い。
+  // /// Never 型を用いてうまく書けないかと思ったが、できなかったので void 型の返り値にした。
+  // void _throwExceptionByTwitterAuthResult(TwitterAuthResult result) {
+  //   final user = result.user;
+  //   final status = result.status;
+  //   final authToken = result.authToken;
+  //   final authTokenSecret = result.authTokenSecret;
+  //   if (user == null) {
+  //     throw Exception('Twitter ユーザーデータが取得できませんでした。');
+  //   }
+  //   if (status == null) {
+  //     throw Exception('Twitter ログインに失敗しました。');
+  //   }
+  //   if (status == TwitterLoginStatus.cancelledByUser) {
+  //     throw Exception('Twitter ログインをキャンセルしました。');
+  //   }
+  //   if (status == TwitterLoginStatus.error) {
+  //     throw Exception('Twitter ログインでエラーが発生しました。');
+  //   }
+  //   if (authToken == null) {
+  //     throw Exception('[Auth Token] Twitter ログインに失敗しました。');
+  //   }
+  //   if (authTokenSecret == null) {
+  //     throw Exception('[Auth Token Secret] Twitter ログインに失敗しました。');
+  //   }
+  // }
 
   /// Google や Apple ログインを通じた OAuthCredential を受け取ってサインインする。
   /// ログイン済みだった場合には、そのログイン済みのユーザーにリンクする。
@@ -288,8 +287,6 @@ class AuthRepository {
   Future<void> signOut() async {
     try {
       await FirebaseAuth.instance.signOut();
-    } on FirebaseAuthException {
-      rethrow;
     } on Exception {
       rethrow;
     }

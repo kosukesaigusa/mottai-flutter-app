@@ -1,4 +1,4 @@
-extension ListExtension on List {
+extension ListExtension on List<dynamic> {
   /// List<dynamic> を List<Map<String, dynamic>> に変換する。
   /// List<dynamic> を as List<Map<String, dynamic>> で変換できないため。
   List<Map<String, dynamic>> get toMaps {

@@ -4,7 +4,7 @@ import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../features/account/account.dart';
-import '../providers/auth/auth.dart';
+import '../features/auth/auth.dart';
 import '../utils/enums.dart';
 import '../utils/extensions/build_context.dart';
 import '../utils/extensions/string.dart';

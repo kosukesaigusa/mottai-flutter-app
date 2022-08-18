@@ -4,15 +4,17 @@ import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mottai_flutter_app_models/models.dart';
 
-import '../features/account/account.dart';
-import '../features/auth/auth.dart';
-import '../repositories/auth/auth_repository.dart';
-import '../utils/enums.dart';
-import '../utils/extensions/map.dart';
-import '../utils/firebase_messaging.dart';
-import '../utils/utils.dart';
+import '../../repositories/auth/auth_repository.dart';
+import '../../utils/enums.dart';
+import '../../utils/extensions/map.dart';
+import '../../utils/firebase_messaging.dart';
+import '../../utils/loading.dart';
+import '../../utils/scaffold_messenger.dart';
+import '../../utils/utils.dart';
+import '../account/account.dart';
+import 'auth.dart';
 
-final authService = Provider.autoDispose((ref) => AuthService(ref.read));
+final authServiceProvider = Provider.autoDispose((ref) => AuthService(ref.read));
 
 /// 主にサインインをするための、ビューコントローラとリポジトリの間に立つクラス。
 /// つまりビューコントローラはこのサービスクラスとだけやり取りをする。
@@ -111,15 +113,15 @@ class AuthService {
 
   /// サインアウトする。
   Future<void> signOut() async {
+    _read(overlayLoadingProvider.notifier).update((s) => true);
     try {
       await _removeFcmToken();
       await _read(authRepositoryProvider).signOut();
-    } on PlatformException {
-      rethrow;
-    } on FirebaseException {
-      rethrow;
-    } on Exception {
-      rethrow;
+      _read(scaffoldMessengerServiceProvider).showSnackBar('サインアウトしました。');
+    } on Exception catch (e) {
+      _read(scaffoldMessengerServiceProvider).showSnackBarByException(e);
+    } finally {
+      _read(overlayLoadingProvider.notifier).update((s) => false);
     }
   }
 

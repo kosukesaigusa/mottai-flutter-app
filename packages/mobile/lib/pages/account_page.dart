@@ -5,10 +5,10 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../features/account/account.dart';
 import '../features/auth/auth.dart';
+import '../features/auth/auth_service.dart';
 import '../utils/enums.dart';
 import '../utils/extensions/build_context.dart';
 import '../utils/extensions/string.dart';
-import '../utils/utils.dart';
 import '../widgets/image.dart';
 import '../widgets/loading.dart';
 import '../widgets/sign_in_buttons.dart';
@@ -109,13 +109,7 @@ class SignedInWidget extends HookConsumerWidget {
         const Gap(8),
         ElevatedButton.icon(
           icon: const Icon(Icons.exit_to_app),
-          onPressed: () async {
-            await auth.signOut();
-            // TODO: 下記のエラーが発生するので確認する
-            //  Unsupported operation:
-            //   ProviderScope was rebuilt with a different ProviderScope ancestor.
-            // await ref.read(restartAppProvider)();
-          },
+          onPressed: () => ref.read(authServiceProvider).signOut(),
           label: const Text('サインアウトする'),
         ),
         const SocialLoginButtons(),

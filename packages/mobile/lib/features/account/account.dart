@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -7,13 +6,13 @@ import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mottai_flutter_app_models/models.dart';
 
-import '../../services/auth_service.dart';
 import '../../utils/enums.dart';
 import '../../utils/exceptions/common.dart';
 import '../../utils/extensions/build_context.dart';
 import '../../utils/loading.dart';
-import '../../utils/scaffold_messenger_service.dart';
+import '../../utils/scaffold_messenger.dart';
 import '../auth/auth.dart';
+import '../auth/auth_service.dart';
 
 /// サインイン中のユーザーの account ドキュメントを購読する StreamProvider。
 final accountProvider = StreamProvider.autoDispose<Account?>((ref) {
@@ -52,7 +51,9 @@ final signInWithEmailAndPasswordProvider = Provider.autoDispose<
   }) async {
     ref.read(overlayLoadingProvider.notifier).update((s) => true);
     try {
-      await ref.read(authService).signInWithEmailAndPassword(email: email, password: password);
+      await ref
+          .read(authServiceProvider)
+          .signInWithEmailAndPassword(email: email, password: password);
       ref.read(scaffoldMessengerServiceProvider).showSnackBar('サインインしました。');
     } on PlatformException catch (e) {
       ref.read(scaffoldMessengerServiceProvider).showSnackBar('[${e.code}] キャンセルしました。');
@@ -78,7 +79,7 @@ final signInWithSocialAccountProvider =
     }
     ref.read(overlayLoadingProvider.notifier).update((s) => true);
     try {
-      await ref.read(authService).signInWithSocialAccount(method);
+      await ref.read(authServiceProvider).signInWithSocialAccount(method);
       ref.read(scaffoldMessengerServiceProvider).showSnackBar('サインインしました。');
     } on PlatformException catch (e) {
       ref
@@ -132,21 +133,5 @@ final agreeWithLINEEmailHandlingProvider = Provider.autoDispose<Future<bool> Fun
       },
     );
     return agreed ?? false;
-  },
-);
-
-/// サインアウトするメソッドを提供する Provider。
-final signOutProvider = Provider.autoDispose<Future<void> Function()>(
-  (ref) => () async {
-    ref.read(overlayLoadingProvider.notifier).update((s) => true);
-    try {
-      await ref.read(authService).signOut();
-    } on FirebaseAuthException catch (e) {
-      ref.read(scaffoldMessengerServiceProvider).showSnackBarByException(e);
-    } on Exception {
-      ref.read(scaffoldMessengerServiceProvider).showSnackBar('サインアウトに失敗しました。');
-    } finally {
-      ref.read(overlayLoadingProvider.notifier).update((s) => false);
-    }
   },
 );

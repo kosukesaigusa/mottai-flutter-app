@@ -7,8 +7,8 @@ import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mottai_flutter_app_models/models.dart';
 
+import '../features/auth/auth.dart';
 import '../features/message/attending_room.dart';
-import '../providers/auth/auth.dart';
 import '../providers/public_user/public_user_providers.dart';
 import '../utils/date_time.dart';
 import '../utils/extensions/build_context.dart';

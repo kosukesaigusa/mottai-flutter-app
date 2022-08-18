@@ -5,7 +5,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mottai_flutter_app_models/models.dart';
 
 import '../features/account/account.dart';
-import '../providers/auth/auth.dart';
+import '../features/auth/auth.dart';
 import '../repositories/auth/auth_repository.dart';
 import '../utils/enums.dart';
 import '../utils/extensions/map.dart';

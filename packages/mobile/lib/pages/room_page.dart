@@ -5,9 +5,9 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mottai_flutter_app_models/models.dart';
 
 import '../constants/style.dart';
+import '../features/auth/auth.dart';
 import '../features/message/read_status_providers.dart';
 import '../features/message/room.dart';
-import '../providers/auth/auth.dart';
 import '../providers/public_user/public_user_providers.dart';
 import '../utils/date_time.dart';
 import '../utils/exceptions/base.dart';

@@ -3,10 +3,10 @@ import 'dart:async';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mottai_flutter_app_models/models.dart';
 
-import '../../providers/auth/auth.dart';
 import '../../utils/exceptions/common.dart';
 import '../../utils/scaffold_messenger_service.dart';
 import '../../utils/utils.dart';
+import '../auth/auth.dart';
 import 'read_status_providers.dart';
 import 'room.dart';
 

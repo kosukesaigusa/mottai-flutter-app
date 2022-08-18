@@ -7,13 +7,13 @@ import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mottai_flutter_app_models/models.dart';
 
-import '../../providers/auth/auth.dart';
 import '../../services/auth_service.dart';
 import '../../utils/enums.dart';
 import '../../utils/exceptions/common.dart';
 import '../../utils/extensions/build_context.dart';
 import '../../utils/loading.dart';
 import '../../utils/scaffold_messenger_service.dart';
+import '../auth/auth.dart';
 
 /// サインイン中のユーザーの account ドキュメントを購読する StreamProvider。
 final accountProvider = StreamProvider.autoDispose<Account?>((ref) {

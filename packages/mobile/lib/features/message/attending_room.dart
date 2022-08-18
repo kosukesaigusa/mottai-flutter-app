@@ -4,11 +4,33 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mottai_flutter_app_models/models.dart';
 
 import '../../providers/auth/auth.dart';
-import '../../providers/read_status/read_status_providers.dart';
-import '../../providers/room/room_providers.dart';
 import '../../utils/exceptions/common.dart';
 import '../../utils/scaffold_messenger_service.dart';
 import '../../utils/utils.dart';
+import 'read_status_providers.dart';
+import 'room.dart';
+
+/// 指定した roomId の messages サブコレクションの最新最大 1 件を購読する StreamProvider。
+final _latestMessagesOfRoomProvider =
+    StreamProvider.autoDispose.family<List<Message>, String>((ref, roomId) {
+  final userId = ref.watch(userIdProvider).value;
+  if (userId == null) {
+    throw const SignInRequiredException();
+  }
+  return ref.read(messageRepositoryProvider).subscribeMessages(
+        roomId: roomId,
+        queryBuilder: (q) => q.orderBy('createdAt', descending: true).limit(1),
+      );
+});
+
+/// 指定した roomId の messages サブコレクションの最新最大 1 件を返す Provider。
+final latestMessageOfRoomProvider = Provider.autoDispose.family<Message?, String>((ref, roomId) {
+  return ref.watch(_latestMessagesOfRoomProvider(roomId)).when(
+        data: (messages) => messages.isNotEmpty ? messages.first : null,
+        error: (_, __) => null,
+        loading: () => null,
+      );
+});
 
 /// ユーザーの attendingRoom コレクションを購読する StreamProvider。
 /// ユーザーがログインしていない場合は例外をスローする。
@@ -32,12 +54,12 @@ final unreadCountProvider = StreamProvider.autoDispose.family<int, String>((ref,
   if (userId == null) {
     return Stream.value(0);
   }
-  final room = ref.watch(roomStreamProvider(roomId)).value;
+  final room = ref.watch(roomProvider(roomId)).value;
   if (room == null) {
     return Stream.value(0);
   }
-  final readStatus = ref.watch(readStatusStreamProvider(roomId)).value;
-  final lastReadAt = readStatus?.lastReadAt;
+  final readStatus = ref.watch(readStatusProvider(roomId)).value;
+  final lastReadAt = readStatus?.lastReadAt.dateTime;
   return ref
       .read(messageRepositoryProvider)
       .subscribeMessages(

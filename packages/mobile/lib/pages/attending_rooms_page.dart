@@ -9,7 +9,6 @@ import 'package:mottai_flutter_app_models/models.dart';
 
 import '../features/message/attending_room.dart';
 import '../providers/auth/auth.dart';
-import '../providers/message/message.dart';
 import '../providers/public_user/public_user_providers.dart';
 import '../utils/date_time.dart';
 import '../utils/extensions/build_context.dart';
@@ -174,16 +173,13 @@ class AttendingRoomLatestMessageWidget extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return ref.watch(messagesStreamProvider(roomId)).when(
-          data: (messages) => Text(
-            messages.isEmpty ? 'ルームが作成されました。' : messages.first.body,
-            style: context.bodySmall,
-            overflow: TextOverflow.ellipsis,
-            maxLines: 2,
-          ),
-          error: (_, __) => const SizedBox(),
-          loading: () => const SizedBox(),
-        );
+    final message = ref.watch(latestMessageOfRoomProvider(roomId));
+    return Text(
+      message == null ? 'ルームが作成されました。' : message.body,
+      style: context.bodySmall,
+      overflow: TextOverflow.ellipsis,
+      maxLines: 2,
+    );
   }
 }
 
@@ -198,16 +194,14 @@ class LatestMessageCreatedAtWidget extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return ref.watch(messagesStreamProvider(roomId)).when(
-          data: (messages) => messages.isEmpty
-              ? const SizedBox()
-              : Text(
-                  humanReadableDateTimeString(messages.first.createdAt.dateTime),
-                  style: context.bodySmall,
-                ),
-          error: (_, __) => const SizedBox(),
-          loading: () => const SizedBox(),
-        );
+    final message = ref.watch(latestMessageOfRoomProvider(roomId));
+    if (message == null) {
+      return const SizedBox();
+    }
+    return Text(
+      humanReadableDateTimeString(message.createdAt.dateTime),
+      style: context.bodySmall,
+    );
   }
 }
 

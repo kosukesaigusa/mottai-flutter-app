@@ -273,21 +273,19 @@ abstract class _PlaygroundMessageState implements PlaygroundMessageState {
       _$_PlaygroundMessageState;
 
   @override
-  bool get loading => throw _privateConstructorUsedError;
+  bool get loading;
   @override
-  List<PlaygroundMessage> get messages => throw _privateConstructorUsedError;
+  List<PlaygroundMessage> get messages;
   @override
-  List<PlaygroundMessage> get newMessages => throw _privateConstructorUsedError;
+  List<PlaygroundMessage> get newMessages;
   @override
-  List<PlaygroundMessage> get pastMessages =>
-      throw _privateConstructorUsedError;
+  List<PlaygroundMessage> get pastMessages;
   @override
-  bool get fetching => throw _privateConstructorUsedError;
+  bool get fetching;
   @override
-  bool get hasMore => throw _privateConstructorUsedError;
+  bool get hasMore;
   @override
-  QueryDocumentSnapshot<PlaygroundMessage>? get lastVisibleQds =>
-      throw _privateConstructorUsedError;
+  QueryDocumentSnapshot<PlaygroundMessage>? get lastVisibleQds;
   @override
   @JsonKey(ignore: true)
   _$$_PlaygroundMessageStateCopyWith<_$_PlaygroundMessageState> get copyWith =>

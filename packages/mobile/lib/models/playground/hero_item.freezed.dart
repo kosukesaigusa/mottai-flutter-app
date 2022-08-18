@@ -156,11 +156,11 @@ abstract class _HeroItem implements HeroItem {
       final String description}) = _$_HeroItem;
 
   @override
-  String get tag => throw _privateConstructorUsedError;
+  String get tag;
   @override
-  String get imageURL => throw _privateConstructorUsedError;
+  String get imageURL;
   @override
-  String get description => throw _privateConstructorUsedError;
+  String get description;
   @override
   @JsonKey(ignore: true)
   _$$_HeroItemCopyWith<_$_HeroItem> get copyWith =>

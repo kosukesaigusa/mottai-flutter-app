@@ -6,20 +6,19 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mottai_flutter_app_models/models.dart';
 
 import '../../constants/room.dart';
+import '../../providers/auth/auth.dart';
 import '../../services/shared_preferences_service.dart';
 import '../../utils/exceptions/common.dart';
 import '../../utils/scaffold_messenger_service.dart';
 import '../../utils/utils.dart';
-import '../auth/auth.dart';
 import 'room_page_state.dart';
 
-/// 指定した roomId の Room ドキュメントを購読する StreamProvider
-final roomStreamProvider = StreamProvider.autoDispose.family<Room?, String>((ref, roomId) {
+/// 指定した roomId の Room ドキュメントを購読する StreamProvider。
+final roomProvider = StreamProvider.autoDispose.family<Room?, String>((ref, roomId) {
   return ref.read(messageRepositoryProvider).subscribeRoom(roomId: roomId);
 });
 
-/// ルームページのメッセージを読み書きする状態管理・操作を担当する
-///  StateNotifierProvider
+/// ルームページのメッセージを読み書きする状態管理・操作をグループ化した StateNotifierProvider。
 final roomPageStateNotifierProvider =
     StateNotifierProvider.autoDispose.family<RoomPageStateNotifierProvider, RoomPageState, String>(
   (ref, roomId) {

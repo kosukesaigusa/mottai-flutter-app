@@ -309,24 +309,23 @@ abstract class _RoomPageState implements RoomPageState {
       final QueryDocumentSnapshot<Message>? lastVisibleQds}) = _$_RoomPageState;
 
   @override
-  bool get loading => throw _privateConstructorUsedError;
+  bool get loading;
   @override
-  bool get sending => throw _privateConstructorUsedError;
+  bool get sending;
   @override
-  bool get isValid => throw _privateConstructorUsedError;
+  bool get isValid;
   @override
-  List<Message> get messages => throw _privateConstructorUsedError;
+  List<Message> get messages;
   @override
-  List<Message> get newMessages => throw _privateConstructorUsedError;
+  List<Message> get newMessages;
   @override
-  List<Message> get pastMessages => throw _privateConstructorUsedError;
+  List<Message> get pastMessages;
   @override
-  bool get fetching => throw _privateConstructorUsedError;
+  bool get fetching;
   @override
-  bool get hasMore => throw _privateConstructorUsedError;
+  bool get hasMore;
   @override
-  QueryDocumentSnapshot<Message>? get lastVisibleQds =>
-      throw _privateConstructorUsedError;
+  QueryDocumentSnapshot<Message>? get lastVisibleQds;
   @override
   @JsonKey(ignore: true)
   _$$_RoomPageStateCopyWith<_$_RoomPageState> get copyWith =>

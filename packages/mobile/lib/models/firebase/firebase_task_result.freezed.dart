@@ -238,9 +238,9 @@ abstract class Success<T> implements FirebaseTaskResult<T> {
       final String? message,
       final bool success}) = _$Success<T>;
 
-  T get contents => throw _privateConstructorUsedError;
-  String? get message => throw _privateConstructorUsedError;
-  bool get success => throw _privateConstructorUsedError;
+  T get contents;
+  String? get message;
+  bool get success;
   @JsonKey(ignore: true)
   _$$SuccessCopyWith<T, _$Success<T>> get copyWith =>
       throw _privateConstructorUsedError;
@@ -392,8 +392,8 @@ abstract class Failure<T> implements FirebaseTaskResult<T> {
   const factory Failure({required final String message, final String? code}) =
       _$Failure<T>;
 
-  String get message => throw _privateConstructorUsedError;
-  String? get code => throw _privateConstructorUsedError;
+  String get message;
+  String? get code;
   @JsonKey(ignore: true)
   _$$FailureCopyWith<T, _$Failure<T>> get copyWith =>
       throw _privateConstructorUsedError;
@@ -532,7 +532,7 @@ class _$Error<T> implements Error<T> {
 abstract class Error<T> implements FirebaseTaskResult<T> {
   const factory Error(final Exception e) = _$Error<T>;
 
-  Exception get e => throw _privateConstructorUsedError;
+  Exception get e;
   @JsonKey(ignore: true)
   _$$ErrorCopyWith<T, _$Error<T>> get copyWith =>
       throw _privateConstructorUsedError;

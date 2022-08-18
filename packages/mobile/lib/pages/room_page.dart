@@ -5,10 +5,10 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mottai_flutter_app_models/models.dart';
 
 import '../constants/style.dart';
+import '../features/message/read_status_providers.dart';
+import '../features/message/room.dart';
 import '../providers/auth/auth.dart';
 import '../providers/public_user/public_user_providers.dart';
-import '../providers/read_status/read_status_providers.dart';
-import '../providers/room/room_providers.dart';
 import '../utils/date_time.dart';
 import '../utils/exceptions/base.dart';
 import '../utils/extensions/build_context.dart';
@@ -336,7 +336,7 @@ class MessageAdditionalInfoWidget extends HookConsumerWidget {
           if (isMyMessage)
             SizedBox(
               height: 14,
-              child: ref.watch(partnerReadStatusStreamProvider(roomId)).when(
+              child: ref.watch(partnerReadStatusProvider(roomId)).when(
                     data: (readStatus) => Text(
                       _isRead(message: message, lastReadAt: readStatus?.lastReadAt.dateTime)
                           ? '既読'

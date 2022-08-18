@@ -8,7 +8,7 @@ import '../constants/style.dart';
 import '../features/auth/auth.dart';
 import '../features/message/read_status_providers.dart';
 import '../features/message/room.dart';
-import '../providers/public_user/public_user_providers.dart';
+import '../features/public_user/public_user.dart';
 import '../utils/date_time.dart';
 import '../utils/exceptions/base.dart';
 import '../utils/extensions/build_context.dart';

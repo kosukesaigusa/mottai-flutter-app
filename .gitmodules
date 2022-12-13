@@ -4,6 +4,3 @@
 [submodule "packages/geoflutterfire"]
 	path = packages/geoflutterfire
 	url = https://github.com/KosukeSaigusa/GeoFlutterFire
-[submodule "mottai-flutter-app-firebase"]
-	path = mottai-flutter-app-firebase
-	url = https://github.com/KosukeSaigusa/mottai-flutter-app-firebase

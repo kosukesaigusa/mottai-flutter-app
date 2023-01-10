@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../../features/account/ui/account_page.dart';
+import '../../features/map/ui/map_page.dart';
 import '../../main_page.dart';
-import '../map/ui/map_page.dart';
 import 'app_route.dart';
 
 /// AppRoute インスタンスの一覧
@@ -18,5 +19,11 @@ final appRoutes = <AppRoute>[
     path: MapPage.path,
     name: MapPage.name,
     builder: (context, state) => const MapPage(key: ValueKey(MapPage.name)),
+  ),
+  AppRoute(
+    path: AccountPage.path,
+    name: AccountPage.name,
+    builder: (context, state) =>
+        const AccountPage(key: ValueKey(AccountPage.name)),
   ),
 ];

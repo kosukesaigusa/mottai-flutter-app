@@ -2,15 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../map/ui/map_page.dart';
+import '../../features/account/ui/account_page.dart';
+import '../../features/map/ui/map_page.dart';
 
 /// 現在選択状態になっている下タブを管理する StateProvider。
 final bottomTabStateProvider = StateProvider<BottomTab>((_) => bottomTabs[0]);
 
 /// BottomTab の種別。
 enum BottomTabEnum {
-  googleMap(label: 'GoogleMap', location: MapPage.location),
-  // about(label: 'About', location: AboutPage.location),
+  map(label: 'マップ', location: MapPage.location),
+  account(label: 'アカウント', location: AccountPage.location),
   ;
 
   const BottomTabEnum({
@@ -39,10 +40,10 @@ class BottomTab {
 final bottomTabIconProvider =
     Provider.family<Widget, BottomTabEnum>((ref, bottomTabEnum) {
   switch (bottomTabEnum) {
-    case BottomTabEnum.googleMap:
+    case BottomTabEnum.map:
       return const FaIcon(FontAwesomeIcons.map);
-    // case BottomTabEnum.about:
-    //   return const FaIcon(FontAwesomeIcons.database);
+    case BottomTabEnum.account:
+      return const FaIcon(FontAwesomeIcons.user);
   }
 });
 
@@ -51,13 +52,13 @@ final bottomTabs = <BottomTab>[
   BottomTab._(
     index: 0,
     key: GlobalKey<NavigatorState>(),
-    bottomTabEnum: BottomTabEnum.googleMap,
+    bottomTabEnum: BottomTabEnum.map,
   ),
-  // BottomTab._(
-  //   index: 1,
-  //   key: GlobalKey<NavigatorState>(),
-  //   bottomTabEnum: BottomTabEnum.about,
-  // ),
+  BottomTab._(
+    index: 1,
+    key: GlobalKey<NavigatorState>(),
+    bottomTabEnum: BottomTabEnum.account,
+  ),
 ];
 
 /// BottomNavigationBarItem をタップしたときの処理を提供する Provider。

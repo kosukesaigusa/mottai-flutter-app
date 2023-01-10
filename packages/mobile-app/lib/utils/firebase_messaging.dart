@@ -6,9 +6,9 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../features/routing/app_router.dart';
 import 'logger.dart';
 import 'navigation.dart';
+import 'routing/app_router.dart';
 
 /// FCM の Payload に含まれる、通知タップ時に画面遷移を期待している時のキー名。
 const fcmPayloadLocationKey = 'location';

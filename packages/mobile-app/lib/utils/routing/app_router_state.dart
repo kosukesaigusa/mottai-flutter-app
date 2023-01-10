@@ -1,7 +1,7 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../utils/exceptions/base.dart';
-import '../../utils/logger.dart';
+import '../exceptions/base.dart';
+import '../logger.dart';
 
 final appRouterStateProvider = Provider<AppRouterState>(
   (_) => throw const AppException(message: 'データが見つかりませんでした。'),

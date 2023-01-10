@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mottai_flutter_app/utils/extensions/build_context.dart';
+import 'package:mottai_flutter_app/utils/firebase_messaging.dart';
 
-import 'features/routing/root_navigator.dart';
 import 'firebase_options.dart';
+import 'utils/routing/root_navigator.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -13,7 +14,17 @@ void main() async {
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   // Firebase を初期化する。
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  runApp(const App());
+  runApp(
+    ProviderScope(
+      overrides: <Override>[
+        firebaseMessagingProvider.overrideWithValue(
+          await getFirebaseMessagingInstance,
+        ),
+        // initialCenterLatLngProvider.overrideWithValue(await initialCenterLatLng),
+      ],
+      child: const App(),
+    ),
+  );
 }
 
 class App extends ConsumerWidget {

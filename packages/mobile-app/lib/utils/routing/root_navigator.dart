@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../utils/global_key.dart';
-import '../../utils/loading.dart';
+import '../global_key.dart';
+import '../loading.dart';
 import 'app_router.dart';
 import 'not_found_page.dart';
 

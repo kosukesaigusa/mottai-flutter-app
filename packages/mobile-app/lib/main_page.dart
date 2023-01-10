@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../features/bottom_tab/bottom_tab.dart';
 import '../utils/firebase_messaging.dart';
 import '../utils/logger.dart';
 import '../utils/scaffold_messenger_service.dart';
-import 'features/routing/app_router.dart';
-import 'features/routing/not_found_page.dart';
+import 'utils/routing/app_router.dart';
+import 'utils/routing/bottom_tab.dart';
+import 'utils/routing/not_found_page.dart';
 
 /// Consistent な BottomNavigationBar を含むアプリのメインのページ。
 /// 目には見えないが、アプリケーション上の全てのページがこの Scaffold の上に載るので

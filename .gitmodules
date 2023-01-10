@@ -1,6 +1,0 @@
-[submodule "packages/models"]
-	path = packages/models
-	url = https://github.com/KosukeSaigusa/npo-mottai-matching-app-models
-[submodule "packages/geoflutterfire"]
-	path = packages/geoflutterfire
-	url = https://github.com/KosukeSaigusa/GeoFlutterFire

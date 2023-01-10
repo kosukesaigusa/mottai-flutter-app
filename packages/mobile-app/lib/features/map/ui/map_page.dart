@@ -9,15 +9,19 @@ import 'package:mottai_commons/common.dart';
 /// Tokyo Station location for demo.
 const tokyoStation = LatLng(35.681236, 139.767125);
 
-class WithConverterExample extends StatefulWidget {
-  const WithConverterExample({super.key});
+class MapPage extends StatefulWidget {
+  const MapPage({super.key});
+
+  static const path = '/map';
+  static const name = 'MapPage';
+  static const location = path;
 
   @override
-  WithConverterExampleState createState() => WithConverterExampleState();
+  MapPageState createState() => MapPageState();
 }
 
 /// Example page using [GoogleMap].
-class WithConverterExampleState extends State<WithConverterExample> {
+class MapPageState extends State<MapPage> {
   /// Camera position on Google Maps.
   /// Used as center point when running geo query.
   CameraPosition _cameraPosition = _initialCameraPosition;

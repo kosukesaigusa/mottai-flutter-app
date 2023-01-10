@@ -1,0 +1,1 @@
+const emptyMap = <String, dynamic>{};

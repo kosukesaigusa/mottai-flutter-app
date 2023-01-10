@@ -10,9 +10,8 @@ dependencies:
   cached_network_image: ^3.2.3
   cloud_firestore: ^4.3.1
   cloud_functions: ^4.0.7
-  mottai_commons:
-    path: ../common
   cupertino_icons: ^1.0.5
+  firebase_auth: ^4.2.5
   firebase_core: ^2.4.1
   firebase_messaging: ^14.2.1
   firebase_storage: ^11.0.10
@@ -31,6 +30,11 @@ dependencies:
       ref: main
   google_maps_flutter: ^2.2.3
   hooks_riverpod: ^2.1.3
+  mottai_commons:
+    path: ../common
+  path_to_regexp: ^0.4.0
+  simple_logger: ^1.9.0+1
+  tuple: ^2.0.1
   uuid: ^3.0.7
 
 dev_dependencies:

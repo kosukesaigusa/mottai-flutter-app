@@ -8,6 +8,8 @@ environment:
   flutter: '>=3.3.9'
 
 dependencies:
+  cloud_firestore:
+  firebase_core:
   freezed_annotation:
   json_annotation:
 

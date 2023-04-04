@@ -24,15 +24,13 @@ dependencies:
   font_awesome_flutter: ^10.4.0
   freezed_annotation: ^2.2.0
   gap: ^2.0.1
-  geoflutterfire_plus:
-    git:
-      url: https://github.com/KosukeSaigusa/geoflutterfire_plus.git
-      ref: main
+  geoflutterfire_plus: ^0.0.7
   google_maps_flutter: ^2.2.5
   hooks_riverpod: ^2.3.2
   mottai_commons:
     path: ../common
   path_to_regexp: ^0.4.0
+  rxdart: ^0.27.7
   simple_logger: ^1.9.0+2
   tuple: ^2.0.1
   uuid: ^3.0.7

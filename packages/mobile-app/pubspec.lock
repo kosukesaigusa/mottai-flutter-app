@@ -281,14 +281,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.7.8"
-  equatable:
-    dependency: transitive
-    description:
-      name: equatable
-      sha256: c2b87cb7756efdf69892005af546c56c0b5037f54d2a88269b4f347a505e3ca2
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.0.5"
   fake_async:
     dependency: transitive
     description:
@@ -560,12 +552,11 @@ packages:
   geoflutterfire_plus:
     dependency: "direct main"
     description:
-      path: "."
-      ref: main
-      resolved-ref: d296eeefb5a8f7d9d5d9324af319345f1274d05c
-      url: "https://github.com/KosukeSaigusa/geoflutterfire_plus.git"
-    source: git
-    version: "0.0.1"
+      name: geoflutterfire_plus
+      sha256: "6006b5cf9d5115894a8d010f87508af91c6545b15a0a48d0662b927d1e26d1df"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.7"
   glob:
     dependency: transitive
     description:
@@ -902,7 +893,7 @@ packages:
     source: hosted
     version: "2.3.2"
   rxdart:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: rxdart
       sha256: "0c7c0cedd93788d996e33041ffecda924cc54389199cde4e6a34b440f50044cb"
@@ -1132,4 +1123,4 @@ packages:
     version: "3.1.1"
 sdks:
   dart: ">=2.19.2 <3.0.0"
-  flutter: ">=3.3.0"
+  flutter: ">=3.3.9"

@@ -3,7 +3,7 @@
   "configurations": [
     {
       "name": "Debug",
-      "program": "packages/mobile/lib/main.dart",
+      "program": "packages/mobile-app/lib/main.dart",
       "request": "launch",
       "type": "dart",
       "args": [

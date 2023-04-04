@@ -33,10 +33,9 @@ class App extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
-        /// Android のステータスバーアイコンの色が変更される
+        // Android のステータスバーアイコンの色が変更される
         statusBarIconBrightness: Brightness.light,
-
-        /// iOS のステータスバーの文字色が変更される
+        // iOS のステータスバーの文字色が変更される
         statusBarBrightness: Brightness.light,
       ),
       child: MaterialApp(

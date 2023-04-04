@@ -56,7 +56,7 @@ class _SecondPageState extends ConsumerState<SecondPage> {
             ),
             Text(
               '$_counter',
-              style: Theme.of(context).textTheme.headline4,
+              style: Theme.of(context).textTheme.headlineMedium,
             ),
             ElevatedButton(
               onPressed: () => Navigator.pushNamed<void>(context, MapPage.location),

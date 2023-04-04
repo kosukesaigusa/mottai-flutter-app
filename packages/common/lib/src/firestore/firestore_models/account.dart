@@ -10,7 +10,9 @@ part 'account.g.dart';
 class Account with _$Account {
   const factory Account({
     @Default('') String accountId,
-    @unionTimestampConverter @Default(UnionTimestamp.serverTimestamp()) UnionTimestamp createdAt,
+    @unionTimestampConverter
+    @Default(UnionTimestamp.serverTimestamp())
+        UnionTimestamp createdAt,
     @alwaysUseServerTimestampUnionTimestampConverter
     @Default(UnionTimestamp.serverTimestamp())
         UnionTimestamp updatedAt,
@@ -22,7 +24,8 @@ class Account with _$Account {
     @Default(<String>[]) List<String> fcmTokens,
   }) = _Account;
 
-  factory Account.fromJson(Map<String, dynamic> json) => _$AccountFromJson(json);
+  factory Account.fromJson(Map<String, dynamic> json) =>
+      _$AccountFromJson(json);
 
   factory Account.fromDocumentSnapshot(DocumentSnapshot ds) {
     final data = ds.data()! as Map<String, dynamic>;

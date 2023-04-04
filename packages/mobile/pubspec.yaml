@@ -1,4 +1,4 @@
-name: mottai_flutter_app
+name: mottai_flutter_app_old
 description: A new Flutter project.
 publish_to: 'none'
 
@@ -37,8 +37,8 @@ dependencies:
   freezed:
   freezed_annotation:
   gap:
-  geoflutterfire:
-    path: ../geoflutterfire
+  # geoflutterfire:
+  #   path: ../geoflutterfire
   geolocator:
   google_fonts:
   google_maps_flutter:
@@ -49,8 +49,8 @@ dependencies:
   intl:
   json_annotation:
   keyboard_actions:
-  mottai_flutter_app_models:
-    path: ../models
+  # mottai_flutter_app_models:
+  #   path: ../models
   package_info_plus: ^1.4.3
   path_to_regexp: ^0.4.0
   shared_preferences:

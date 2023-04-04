@@ -38,24 +38,3 @@ scripts:
     run: melos exec --scope="mottai_flutter_app_models" \
       "fvm flutter pub run build_runner watch --delete-conflicting-outputs && exit"
 
-  build:devios:
-    run: melos exec --scope="mottai_matching_app" \
-      "fab devios && exit"
-
-  build:prodios:
-    run: melos exec --scope="mottai_matching_app" \
-      "fab prodios && exit"
-
-  build:devandroid:
-    run: melos exec --scope="mottai_matching_app" \
-      "fab devandroid && exit"
-
-  build:prodandroid:
-    run: melos exec --scope="mobile" \
-      "fab prodandroid && exit"
-
-  build:dev:
-    run: melos run build:devios && melos run build:devandroid
-
-  build:prod:
-    run: melos run build:prodios && melos run build:prodandroid

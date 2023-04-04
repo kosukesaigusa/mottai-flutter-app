@@ -2,10 +2,10 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:mottai_flutter_app/utils/extensions/build_context.dart';
-import 'package:mottai_flutter_app/utils/firebase_messaging.dart';
 
 import 'firebase_options.dart';
+import 'utils/extensions/build_context.dart';
+import 'utils/firebase_messaging.dart';
 import 'utils/routing/root_navigator.dart';
 
 void main() async {

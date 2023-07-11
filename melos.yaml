@@ -1,6 +1,6 @@
 name: mottai_flutter_app
 
-repository: https://github.com/KosukeSaigusa/npo-mottai-matching-app
+repository: https://github.com/KosukeSaigusa/mottai-flutter-app
 
 packages:
   - packages/**
@@ -10,31 +10,11 @@ sdkPath: .fvm/flutter_sdk
 
 scripts:
   clean:
-    run: melos exec -- "fvm flutter clean"
+    run: melos exec -- "flutter clean"
 
-  pub:get:
-    run: melos exec -- "fvm flutter pub get"
+  pg:
+    run: melos exec -- "flutter pub get"
 
-  clean:pub:get:
+  clpg:
     run: melos exec -- "fvm flutter clean && fvm flutter pub get"
-
-  build:
-    run: melos exec --scope="mottai_flutter_app" \
-      "fvm flutter pub run build_runner build --delete-conflicting-outputs && exit"
-
-  build:mobile:
-    run: melos exec --scope="mottai_flutter_app" \
-      "fvm flutter pub run build_runner build --delete-conflicting-outputs && exit"
-
-  watch:mobile:
-    run: melos exec --scope="mottai_flutter_app" \
-      "fvm flutter pub run build_runner watch --delete-conflicting-outputs && exit"
-
-  build:models:
-    run: melos exec --scope="mottai_flutter_app_models" \
-      "fvm flutter pub run build_runner build --delete-conflicting-outputs && exit"
-
-  watch:models:
-    run: melos exec --scope="mottai_flutter_app_models" \
-      "fvm flutter pub run build_runner watch --delete-conflicting-outputs && exit"
 

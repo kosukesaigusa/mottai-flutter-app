@@ -10,12 +10,16 @@ class ReadWorker {
     required this.workerReference,
     required this.displayName,
     required this.imageUrl,
+    required this.createdAt,
+    required this.updatedAt,
   });
 
   final String workerId;
   final DocumentReference<ReadWorker> workerReference;
   final String displayName;
-  final String? imageUrl;
+  final String imageUrl;
+  final SealedTimestamp createdAt;
+  final SealedTimestamp updatedAt;
 
   factory ReadWorker._fromJson(Map<String, dynamic> json) {
     return ReadWorker._(
@@ -23,6 +27,13 @@ class ReadWorker {
       workerReference: json['workerReference'] as DocumentReference<ReadWorker>,
       displayName: json['displayName'] as String,
       imageUrl: json['imageUrl'] as String? ?? '',
+      createdAt: json['createdAt'] == null
+          ? const ServerTimestamp()
+          : sealedTimestampConverter.fromJson(json['createdAt'] as Object),
+      updatedAt: json['updatedAt'] == null
+          ? const ServerTimestamp()
+          : alwaysUseServerTimestampSealedTimestampConverter
+              .fromJson(json['updatedAt'] as Object),
     );
   }
 
@@ -43,12 +54,16 @@ class ReadWorker {
     DocumentReference<ReadWorker>? workerReference,
     String? displayName,
     String? imageUrl,
+    SealedTimestamp? createdAt,
+    SealedTimestamp? updatedAt,
   }) {
     return ReadWorker._(
       workerId: workerId ?? this.workerId,
       workerReference: workerReference ?? this.workerReference,
       displayName: displayName ?? this.displayName,
       imageUrl: imageUrl ?? this.imageUrl,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
     );
   }
 }
@@ -56,16 +71,23 @@ class ReadWorker {
 class CreateWorker {
   const CreateWorker({
     required this.displayName,
-    this.imageUrl,
+    this.imageUrl = '',
+    this.createdAt = const ServerTimestamp(),
+    this.updatedAt = const ServerTimestamp(),
   });
 
   final String displayName;
-  final String? imageUrl;
+  final String imageUrl;
+  final SealedTimestamp createdAt;
+  final SealedTimestamp updatedAt;
 
   Map<String, dynamic> toJson() {
     return {
       'displayName': displayName,
       'imageUrl': imageUrl,
+      'createdAt': sealedTimestampConverter.toJson(createdAt),
+      'updatedAt':
+          alwaysUseServerTimestampSealedTimestampConverter.toJson(updatedAt),
     };
   }
 }
@@ -74,15 +96,24 @@ class UpdateWorker {
   const UpdateWorker({
     this.displayName,
     this.imageUrl,
+    this.createdAt,
+    this.updatedAt = const ServerTimestamp(),
   });
 
   final String? displayName;
   final String? imageUrl;
+  final SealedTimestamp? createdAt;
+  final SealedTimestamp? updatedAt;
 
   Map<String, dynamic> toJson() {
     return {
       if (displayName != null) 'displayName': displayName,
       if (imageUrl != null) 'imageUrl': imageUrl,
+      if (createdAt != null)
+        'createdAt': sealedTimestampConverter.toJson(createdAt!),
+      'updatedAt': updatedAt == null
+          ? const ServerTimestamp()
+          : alwaysUseServerTimestampSealedTimestampConverter.toJson(updatedAt!),
     };
   }
 }

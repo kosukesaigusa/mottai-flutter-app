@@ -2,105 +2,18 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Debug (mobile-app)",
-      "program": "packages/mobile-app/lib/main.dart",
+      "name": "Debug",
+      "program": "packages/mottai_flutter_app/lib/main.dart",
       "request": "launch",
       "type": "dart",
       "args": ["--debug"]
     },
     {
-      "name": "Debug (local)",
-      "program": "packages/mobile/lib/main.dart",
-      "request": "launch",
-      "type": "dart",
-      "args": [
-        "--debug",
-        "--dart-define=FLAVOR=local",
-        "--dart-define=USE_LOCAL_EMULATOR=true",
-        "--dart-define=GOOGLE_SIGN_IN_CLIENT_ID=709197089170-so0p0jb6k3hatq065fpgmij2v8e4a2s4.apps.googleusercontent.com",
-        "--dart-define=LINE_CHANNEL_ID=1656968545",
-        "--dart-define=HOST_1_ID=mSHQlbzX2BKY6TwdwfQ1Anf2KPaa",
-        "--dart-define=HOST_1_EMAIL=host-1@npo-mottai.org",
-        "--dart-define=HOST_1_PASSWORD=12345678",
-        "--dart-define=TWITTER_API_KEY=y8I8zTZC2AZgiSYEvmCbhKYHo",
-        "--dart-define=TWITTER_API_SECRET_KEY=Gzw2xPQReZpGx9Qfw17PzoNTLrNum2HsEVb3R5pPnG9I6s969U",
-        "--dart-define=TWITTER_LOGIN_REDIRECT_URI=com.kosukesaigusa.mottaiFlutterApp.local"
-      ]
-    },
-    {
-      "name": "Debug (dev)",
-      "program": "packages/mobile/lib/main.dart",
-      "request": "launch",
-      "type": "dart",
-      "args": [
-        "--debug",
-        "--dart-define=FLAVOR=dev",
-        "--dart-define=GOOGLE_SIGN_IN_CLIENT_ID=709197089170-so0p0jb6k3hatq065fpgmij2v8e4a2s4.apps.googleusercontent.com",
-        "--dart-define=LINE_CHANNEL_ID=1656962698",
-        "--dart-define=HOST_1_ID=VEpPy6zoheOTAXPdYHhU7T17Hpl2",
-        "--dart-define=HOST_1_EMAIL=host-1@npo-mottai.org",
-        "--dart-define=HOST_1_PASSWORD=12345678",
-        "--dart-define=TWITTER_API_KEY=y8I8zTZC2AZgiSYEvmCbhKYHo",
-        "--dart-define=TWITTER_API_SECRET_KEY=Gzw2xPQReZpGx9Qfw17PzoNTLrNum2HsEVb3R5pPnG9I6s969U",
-        "--dart-define=TWITTER_LOGIN_REDIRECT_URI=com.kosukesaigusa.mottaiFlutterApp.dev://"
-      ]
-    },
-    {
-      "name": "Release (dev)",
-      "program": "packages/mobile/lib/main.dart",
-      "request": "launch",
-      "type": "dart",
-      "args": [
-        "--release",
-        "--dart-define=FLAVOR=dev",
-        "--dart-define=GOOGLE_SIGN_IN_CLIENT_ID=709197089170-so0p0jb6k3hatq065fpgmij2v8e4a2s4.apps.googleusercontent.com",
-        "--dart-define=LINE_CHANNEL_ID=1656962698",
-        "--dart-define=HOST_1_ID=VEpPy6zoheOTAXPdYHhU7T17Hpl2",
-        "--dart-define=HOST_1_EMAIL=host-1@npo-mottai.org",
-        "--dart-define=HOST_1_PASSWORD=12345678",
-        "--dart-define=TWITTER_API_KEY=y8I8zTZC2AZgiSYEvmCbhKYHo",
-        "--dart-define=TWITTER_API_SECRET_KEY=Gzw2xPQReZpGx9Qfw17PzoNTLrNum2HsEVb3R5pPnG9I6s969U",
-        "--dart-define=TWITTER_LOGIN_REDIRECT_URI=com.kosukesaigusa.mottaiFlutterApp.dev"
-      ]
-    },
-    {
-      "name": "Debug (prod)",
-      "program": "packages/mobile/lib/main.dart",
-      "request": "launch",
-      "type": "dart",
-      "args": [
-        "--debug",
-        "--dart-define=FLAVOR=prod",
-        "--dart-define=GOOGLE_SIGN_IN_CLIENT_ID=709197089170-so0p0jb6k3hatq065fpgmij2v8e4a2s4.apps.googleusercontent.com",
-        "--dart-define=LINE_CHANNEL_ID=1656962698",
-        "--dart-define=TWITTER_API_KEY=y8I8zTZC2AZgiSYEvmCbhKYHo",
-        "--dart-define=TWITTER_API_SECRET_KEY=Gzw2xPQReZpGx9Qfw17PzoNTLrNum2HsEVb3R5pPnG9I6s969U",
-        "--dart-define=TWITTER_LOGIN_REDIRECT_URI=com.kosukesaigusa.mottaiFlutterApp.dev"
-      ]
-    },
-    {
-      "name": "Release (prod)",
-      "program": "packages/mobile/lib/main.dart",
-      "request": "launch",
-      "type": "dart",
-      "args": [
-        "--release",
-        "--dart-define=FLAVOR=prod",
-        "--dart-define=GOOGLE_SIGN_IN_CLIENT_ID=709197089170-so0p0jb6k3hatq065fpgmij2v8e4a2s4.apps.googleusercontent.com",
-        "--dart-define=LINE_CHANNEL_ID=1656962698",
-        "--dart-define=TWITTER_API_KEY=y8I8zTZC2AZgiSYEvmCbhKYHo",
-        "--dart-define=TWITTER_API_SECRET_KEY=Gzw2xPQReZpGx9Qfw17PzoNTLrNum2HsEVb3R5pPnG9I6s969U",
-        "--dart-define=TWITTER_LOGIN_REDIRECT_URI=com.kosukesaigusa.mottaiFlutterApp.dev"
-      ]
-    },
-    {
-      // 参考：
-      // https://medium.com/firebase-developers/debugging-firebase-functions-in-vs-code-a1caf22db0b2
       "name": "Debug Functions (local)",
       "type": "node",
       "request": "attach",
       "restart": true,
-      "port": 9229 // firebase emulator のデフォルトのポート番号
+      "port": 9229
     }
   ]
 }

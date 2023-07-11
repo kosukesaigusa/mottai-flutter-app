@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "709197089170",
+    "project_id": "mottai-app-dev-2",
+    "storage_bucket": "mottai-app-dev-2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:709197089170:android:eb3a88088fa0cbcc7ed94b",
+        "android_client_info": {
+          "package_name": "com.kosukesaigusa.mottai_flutter_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "709197089170-so0p0jb6k3hatq065fpgmij2v8e4a2s4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAR_-jpRLOtS59zlNI1KCufmI4OOwBERkM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "709197089170-so0p0jb6k3hatq065fpgmij2v8e4a2s4.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "709197089170-1lr8vaboc73s41u7l2vijfqs2c7udu0n.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.kosukesaigusa.mottaiFlutterApp.dev",
+                "app_store_id": "1611315150"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

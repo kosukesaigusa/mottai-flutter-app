@@ -30,4 +30,3 @@ linter:
     avoid_annotating_with_dynamic: false
     always_use_package_imports: false
     no_default_cases: false
-  

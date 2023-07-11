@@ -1,5 +1,6 @@
 {
   "dart.flutterSdkPath": ".fvm/flutter_sdk",
+  "dart.sdkPath": ".fvm/flutter_sdk/bin/cache/dart-sdk",
   "search.exclude": {
     "**/.fvm": true
   },
@@ -7,6 +8,5 @@
     "**/.fvm": true
   },
   "dart.runPubGetOnPubspecChanges": "never",
-  "dart.lineLength": 80,
   "cSpell.words": []
 }

@@ -1,7 +1,6 @@
 name: mottai_flutter_app
-description: A new Flutter project.
-publish_to: 'none'
-version: 0.1.0
+description: MOTTAI mobile app.
+version: 0.0.1
 
 environment:
   sdk: '>=2.19.5 <3.0.0'

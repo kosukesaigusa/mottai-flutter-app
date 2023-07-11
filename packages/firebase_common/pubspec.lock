@@ -296,6 +296,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.0.1-dev.2"
+  flutterfire_json_converters:
+    dependency: "direct main"
+    description:
+      name: flutterfire_json_converters
+      sha256: "379238d5d011a524e73b949a00d3e02db17dce3387f8ab069a5e05c88cc1293c"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.5"
   frontend_server_client:
     dependency: transitive
     description:

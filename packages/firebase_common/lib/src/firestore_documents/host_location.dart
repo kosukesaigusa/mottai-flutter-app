@@ -8,7 +8,7 @@ part 'host_location.flutterfire_gen.dart';
 
 @FirestoreDocument(path: 'hostLocations', documentName: 'hostLocation')
 class HostLocation {
-  HostLocation({
+  const HostLocation({
     required this.hostId,
     required this.address,
     required this.description,
@@ -33,6 +33,9 @@ class HostLocation {
   @CreateDefault(ServerTimestamp())
   final SealedTimestamp createdAt;
 
+  // TODO: やや冗長になってしまっているのは、flutterfire_gen と
+  // flutterfire_json_converters の作りのため。それらのパッケージが更新されたら
+  // この実装も変更する。
   @alwaysUseServerTimestampSealedTimestampConverter
   @CreateDefault(ServerTimestamp())
   @UpdateDefault(ServerTimestamp())

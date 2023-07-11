@@ -6,7 +6,7 @@ part 'worker.flutterfire_gen.dart';
 
 @FirestoreDocument(path: 'workers', documentName: 'worker')
 class Worker {
-  Worker({
+  const Worker({
     required this.displayName,
     this.imageUrl = '',
     this.createdAt = const ServerTimestamp(),
@@ -24,6 +24,9 @@ class Worker {
   @CreateDefault(ServerTimestamp())
   final SealedTimestamp createdAt;
 
+  // TODO: やや冗長になってしまっているのは、flutterfire_gen と
+  // flutterfire_json_converters の作りのため。それらのパッケージが更新されたら
+  // この実装も変更する。
   @alwaysUseServerTimestampSealedTimestampConverter
   @CreateDefault(ServerTimestamp())
   @UpdateDefault(ServerTimestamp())

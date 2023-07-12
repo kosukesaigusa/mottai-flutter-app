@@ -34,7 +34,7 @@ class ReadChatMessage {
           json['chatMessageReference'] as DocumentReference<ReadChatMessage>,
       senderId: json['senderId'] as String,
       chatMessageType:
-          chatMessageTypeConverter.fromJson(json['chatMessageType'] as String),
+          _chatMessageTypeConverter.fromJson(json['chatMessageType'] as String),
       content: json['content'] as String? ?? '',
       imageUrls: (json['imageUrls'] as List<dynamic>?)
               ?.map((e) => e as String)
@@ -110,7 +110,7 @@ class CreateChatMessage {
   Map<String, dynamic> toJson() {
     return {
       'senderId': senderId,
-      'chatMessageType': chatMessageTypeConverter.toJson(chatMessageType),
+      'chatMessageType': _chatMessageTypeConverter.toJson(chatMessageType),
       'content': content,
       'imageUrls': imageUrls,
       'isDeleted': isDeleted,
@@ -144,7 +144,7 @@ class UpdateChatMessage {
     return {
       if (senderId != null) 'senderId': senderId,
       if (chatMessageType != null)
-        'chatMessageType': chatMessageTypeConverter.toJson(chatMessageType!),
+        'chatMessageType': _chatMessageTypeConverter.toJson(chatMessageType!),
       if (content != null) 'content': content,
       if (imageUrls != null) 'imageUrls': imageUrls,
       if (isDeleted != null) 'isDeleted': isDeleted,

@@ -9,7 +9,7 @@ part 'read_status.flutterfire_gen.dart';
   documentName: 'readStatus',
 )
 class ReadStatus {
-  ReadStatus({
+  const ReadStatus({
     required this.userId,
     this.lastReadAt = const ServerTimestamp(),
   });

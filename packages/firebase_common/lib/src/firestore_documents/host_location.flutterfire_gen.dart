@@ -30,7 +30,7 @@ class ReadHostLocation {
           json['hostLocationReference'] as DocumentReference<ReadHostLocation>,
       hostId: json['hostId'] as String,
       address: json['address'] as String? ?? '',
-      geo: geoConverter.fromJson(json['geo'] as Map<String, dynamic>),
+      geo: _geoConverter.fromJson(json['geo'] as Map<String, dynamic>),
       createdAt: json['createdAt'] == null
           ? const ServerTimestamp()
           : sealedTimestampConverter.fromJson(json['createdAt'] as Object),
@@ -94,7 +94,7 @@ class CreateHostLocation {
     return {
       'hostId': hostId,
       'address': address,
-      'geo': geoConverter.toJson(geo),
+      'geo': _geoConverter.toJson(geo),
       'createdAt': sealedTimestampConverter.toJson(createdAt),
       'updatedAt':
           alwaysUseServerTimestampSealedTimestampConverter.toJson(updatedAt),
@@ -121,7 +121,7 @@ class UpdateHostLocation {
     return {
       if (hostId != null) 'hostId': hostId,
       if (address != null) 'address': address,
-      if (geo != null) 'geo': geoConverter.toJson(geo!),
+      if (geo != null) 'geo': _geoConverter.toJson(geo!),
       if (createdAt != null)
         'createdAt': sealedTimestampConverter.toJson(createdAt!),
       'updatedAt': updatedAt == null

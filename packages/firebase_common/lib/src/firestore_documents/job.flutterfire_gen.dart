@@ -43,7 +43,7 @@ class ReadJob {
       place: json['place'] as String? ?? '',
       accessTypes: json['accessTypes'] == null
           ? const <AccessType>{}
-          : accessTypesConverter
+          : _accessTypesConverter
               .fromJson(json['accessTypes'] as List<dynamic>?),
       accessDescription: json['accessDescription'] as String? ?? '',
       belongings: json['belongings'] as String? ?? '',
@@ -135,7 +135,7 @@ class CreateJob {
       'hostId': hostId,
       'content': content,
       'place': place,
-      'accessTypes': accessTypesConverter.toJson(accessTypes),
+      'accessTypes': _accessTypesConverter.toJson(accessTypes),
       'accessDescription': accessDescription,
       'belongings': belongings,
       'comment': comment,
@@ -178,7 +178,7 @@ class UpdateJob {
       if (content != null) 'content': content,
       if (place != null) 'place': place,
       if (accessTypes != null)
-        'accessTypes': accessTypesConverter.toJson(accessTypes!),
+        'accessTypes': _accessTypesConverter.toJson(accessTypes!),
       if (accessDescription != null) 'accessDescription': accessDescription,
       if (belongings != null) 'belongings': belongings,
       if (comment != null) 'comment': comment,

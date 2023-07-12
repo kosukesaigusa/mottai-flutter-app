@@ -1,8 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutterfire_gen_annotation/flutterfire_gen_annotation.dart';
 import 'package:flutterfire_json_converters/flutterfire_json_converters.dart';
-
-import '../json_converters/access_types.dart';
+import 'package:json_annotation/json_annotation.dart';
 
 part 'job.flutterfire_gen.dart';
 
@@ -29,7 +28,7 @@ class Job {
   @ReadDefault('')
   final String place;
 
-  @accessTypesConverter
+  @_accessTypesConverter
   final Set<AccessType> accessTypes;
 
   final String accessDescription;
@@ -90,4 +89,19 @@ enum AccessType {
 
   /// アクセスタイプの表示文字列。
   final String label;
+}
+
+const _accessTypesConverter = _AccessTypesConverter();
+
+class _AccessTypesConverter
+    implements JsonConverter<Set<AccessType>, List<dynamic>?> {
+  const _AccessTypesConverter();
+
+  @override
+  Set<AccessType> fromJson(List<dynamic>? json) =>
+      (json ?? []).map((e) => AccessType.fromString(e as String)).toSet();
+
+  @override
+  List<String> toJson(Set<AccessType> accessTypes) =>
+      accessTypes.map((a) => a.name).toList();
 }

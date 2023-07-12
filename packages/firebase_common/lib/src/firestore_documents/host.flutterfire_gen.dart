@@ -31,7 +31,7 @@ class ReadHost {
       imageUrl: json['imageUrl'] as String? ?? '',
       hostTypes: json['hostTypes'] == null
           ? const <HostType>{}
-          : hostTypesConverter.fromJson(json['hostTypes'] as List<dynamic>?),
+          : _hostTypesConverter.fromJson(json['hostTypes'] as List<dynamic>?),
       createdAt: json['createdAt'] == null
           ? const ServerTimestamp()
           : sealedTimestampConverter.fromJson(json['createdAt'] as Object),
@@ -94,7 +94,7 @@ class CreateHost {
     return {
       'displayName': displayName,
       'imageUrl': imageUrl,
-      'hostTypes': hostTypesConverter.toJson(hostTypes),
+      'hostTypes': _hostTypesConverter.toJson(hostTypes),
       'createdAt': sealedTimestampConverter.toJson(createdAt),
       'updatedAt':
           alwaysUseServerTimestampSealedTimestampConverter.toJson(updatedAt),
@@ -121,7 +121,8 @@ class UpdateHost {
     return {
       if (displayName != null) 'displayName': displayName,
       if (imageUrl != null) 'imageUrl': imageUrl,
-      if (hostTypes != null) 'hostTypes': hostTypesConverter.toJson(hostTypes!),
+      if (hostTypes != null)
+        'hostTypes': _hostTypesConverter.toJson(hostTypes!),
       if (createdAt != null)
         'createdAt': sealedTimestampConverter.toJson(createdAt!),
       'updatedAt': updatedAt == null

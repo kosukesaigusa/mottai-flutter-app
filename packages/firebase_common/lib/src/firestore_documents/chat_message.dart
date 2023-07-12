@@ -1,8 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutterfire_gen_annotation/flutterfire_gen_annotation.dart';
 import 'package:flutterfire_json_converters/flutterfire_json_converters.dart';
-
-import '../json_converters/message_type.dart';
+import 'package:json_annotation/json_annotation.dart';
 
 part 'chat_message.flutterfire_gen.dart';
 
@@ -11,7 +10,7 @@ part 'chat_message.flutterfire_gen.dart';
   documentName: 'chatMessage',
 )
 class ChatMessage {
-  ChatMessage({
+  const ChatMessage({
     required this.senderId,
     required this.chatMessageType,
     required this.content,
@@ -23,7 +22,7 @@ class ChatMessage {
 
   final String senderId;
 
-  @chatMessageTypeConverter
+  @_chatMessageTypeConverter
   final ChatMessageType chatMessageType;
 
   @ReadDefault('')
@@ -67,4 +66,17 @@ enum ChatMessageType {
     }
     throw ArgumentError('メッセージ種別が正しくありません。');
   }
+}
+
+const _chatMessageTypeConverter = _ChatMessageTypeConverter();
+
+class _ChatMessageTypeConverter
+    implements JsonConverter<ChatMessageType, String> {
+  const _ChatMessageTypeConverter();
+
+  @override
+  ChatMessageType fromJson(String json) => ChatMessageType.fromString(json);
+
+  @override
+  String toJson(ChatMessageType chatMessageType) => chatMessageType.name;
 }

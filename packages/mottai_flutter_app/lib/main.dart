@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'development/development_items/ui/development_items.dart';
+
 void main() {
   runApp(const MainApp());
 }
@@ -19,11 +21,7 @@ class MainApp extends StatelessWidget {
         ),
       ),
       debugShowCheckedModeBanner: false,
-      home: const Scaffold(
-        body: Center(
-          child: Text('Hello World!'),
-        ),
-      ),
+      home: const DevelopmentItemsPage(),
     );
   }
 }

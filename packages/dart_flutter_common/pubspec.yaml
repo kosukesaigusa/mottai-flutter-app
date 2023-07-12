@@ -1,17 +1,12 @@
-name: mottai_flutter_app
-description: MOTTAI mobile app.
+name: dart_flutter_common
+description: MOTTAI app Dart and Flutter common.
 publish_to: 'none'
 version: 0.0.1
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
 
-
 dependencies:
-  dart_flutter_common:
-    path: ../dart_flutter_common
-  firebase_common:
-    path: ../firebase_common
   flutter:
     sdk: flutter
 

@@ -13,6 +13,7 @@ class Job {
     this.content = '',
     this.place = '',
     this.accessTypes = const <AccessType>{},
+    this.accessDescription = '',
     this.belongings = '',
     this.comment = '',
     this.urls = const <String>[],
@@ -32,6 +33,8 @@ class Job {
 
   @accessTypesConverter
   final Set<AccessType> accessTypes;
+
+  final String accessDescription;
 
   final List<String> urls;
 

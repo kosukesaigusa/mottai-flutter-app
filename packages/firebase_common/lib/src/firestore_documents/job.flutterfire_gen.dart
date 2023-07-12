@@ -14,6 +14,7 @@ class ReadJob {
     required this.belongings,
     required this.comment,
     required this.accessTypes,
+    required this.accessDescription,
     required this.urls,
     required this.createdAt,
     required this.updatedAt,
@@ -27,6 +28,7 @@ class ReadJob {
   final String belongings;
   final String comment;
   final Set<AccessType> accessTypes;
+  final String accessDescription;
   final List<String> urls;
   final SealedTimestamp createdAt;
   final SealedTimestamp updatedAt;
@@ -44,6 +46,7 @@ class ReadJob {
       accessTypes: json['accessTypes'] == null
           ? const <AccessType>{}
           : accessTypesConverter.fromJson(json['accessTypes'] as List<String>),
+      accessDescription: json['accessDescription'] as String? ?? '',
       urls:
           (json['urls'] as List<dynamic>?)?.map((e) => e as String).toList() ??
               const <String>[],
@@ -78,6 +81,7 @@ class ReadJob {
     String? belongings,
     String? comment,
     Set<AccessType>? accessTypes,
+    String? accessDescription,
     List<String>? urls,
     SealedTimestamp? createdAt,
     SealedTimestamp? updatedAt,
@@ -92,6 +96,7 @@ class ReadJob {
       belongings: belongings ?? this.belongings,
       comment: comment ?? this.comment,
       accessTypes: accessTypes ?? this.accessTypes,
+      accessDescription: accessDescription ?? this.accessDescription,
       urls: urls ?? this.urls,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
@@ -107,6 +112,7 @@ class CreateJob {
     this.belongings = '',
     this.comment = '',
     this.accessTypes = const <AccessType>{},
+    this.accessDescription = '',
     this.urls = const <String>[],
     this.createdAt = const ServerTimestamp(),
     this.updatedAt = const ServerTimestamp(),
@@ -118,6 +124,7 @@ class CreateJob {
   final String belongings;
   final String comment;
   final Set<AccessType> accessTypes;
+  final String accessDescription;
   final List<String> urls;
   final SealedTimestamp createdAt;
   final SealedTimestamp updatedAt;
@@ -130,6 +137,7 @@ class CreateJob {
       'belongings': belongings,
       'comment': comment,
       'accessTypes': accessTypesConverter.toJson(accessTypes),
+      'accessDescription': accessDescription,
       'urls': urls,
       'createdAt': sealedTimestampConverter.toJson(createdAt),
       'updatedAt':
@@ -146,6 +154,7 @@ class UpdateJob {
     this.belongings,
     this.comment,
     this.accessTypes,
+    this.accessDescription,
     this.urls,
     this.createdAt,
     this.updatedAt = const ServerTimestamp(),
@@ -157,6 +166,7 @@ class UpdateJob {
   final String? belongings;
   final String? comment;
   final Set<AccessType>? accessTypes;
+  final String? accessDescription;
   final List<String>? urls;
   final SealedTimestamp? createdAt;
   final SealedTimestamp? updatedAt;
@@ -170,6 +180,7 @@ class UpdateJob {
       if (comment != null) 'comment': comment,
       if (accessTypes != null)
         'accessTypes': accessTypesConverter.toJson(accessTypes!),
+      if (accessDescription != null) 'accessDescription': accessDescription,
       if (urls != null) 'urls': urls,
       if (createdAt != null)
         'createdAt': sealedTimestampConverter.toJson(createdAt!),

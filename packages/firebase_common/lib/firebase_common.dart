@@ -1,1 +1,2 @@
-export 'src/firestore_documents/firestore_documents.dart';
+export 'src/firestore_documents/_export.dart';
+export 'src/firestore_repositories/_export.dart';

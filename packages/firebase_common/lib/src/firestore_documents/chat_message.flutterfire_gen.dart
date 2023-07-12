@@ -9,7 +9,7 @@ class ReadChatMessage {
     required this.chatMessageId,
     required this.chatMessageReference,
     required this.senderId,
-    required this.messageType,
+    required this.chatMessageType,
     required this.content,
     required this.imageUrls,
     required this.isDeleted,
@@ -20,7 +20,7 @@ class ReadChatMessage {
   final String chatMessageId;
   final DocumentReference<ReadChatMessage> chatMessageReference;
   final String senderId;
-  final MessageType messageType;
+  final ChatMessageType chatMessageType;
   final String content;
   final List<String> imageUrls;
   final bool isDeleted;
@@ -33,7 +33,8 @@ class ReadChatMessage {
       chatMessageReference:
           json['chatMessageReference'] as DocumentReference<ReadChatMessage>,
       senderId: json['senderId'] as String,
-      messageType: json['messageType'] as MessageType,
+      chatMessageType:
+          chatMessageTypeConverter.fromJson(json['chatMessageType'] as String),
       content: json['content'] as String? ?? '',
       imageUrls: (json['imageUrls'] as List<dynamic>?)
               ?.map((e) => e as String)
@@ -66,7 +67,7 @@ class ReadChatMessage {
     String? chatMessageId,
     DocumentReference<ReadChatMessage>? chatMessageReference,
     String? senderId,
-    MessageType? messageType,
+    ChatMessageType? chatMessageType,
     String? content,
     List<String>? imageUrls,
     bool? isDeleted,
@@ -77,7 +78,7 @@ class ReadChatMessage {
       chatMessageId: chatMessageId ?? this.chatMessageId,
       chatMessageReference: chatMessageReference ?? this.chatMessageReference,
       senderId: senderId ?? this.senderId,
-      messageType: messageType ?? this.messageType,
+      chatMessageType: chatMessageType ?? this.chatMessageType,
       content: content ?? this.content,
       imageUrls: imageUrls ?? this.imageUrls,
       isDeleted: isDeleted ?? this.isDeleted,
@@ -90,7 +91,7 @@ class ReadChatMessage {
 class CreateChatMessage {
   const CreateChatMessage({
     required this.senderId,
-    required this.messageType,
+    required this.chatMessageType,
     required this.content,
     this.imageUrls = const <String>[],
     this.isDeleted = false,
@@ -99,7 +100,7 @@ class CreateChatMessage {
   });
 
   final String senderId;
-  final MessageType messageType;
+  final ChatMessageType chatMessageType;
   final String content;
   final List<String> imageUrls;
   final bool isDeleted;
@@ -109,7 +110,7 @@ class CreateChatMessage {
   Map<String, dynamic> toJson() {
     return {
       'senderId': senderId,
-      'messageType': messageType,
+      'chatMessageType': chatMessageTypeConverter.toJson(chatMessageType),
       'content': content,
       'imageUrls': imageUrls,
       'isDeleted': isDeleted,
@@ -123,7 +124,7 @@ class CreateChatMessage {
 class UpdateChatMessage {
   const UpdateChatMessage({
     this.senderId,
-    this.messageType,
+    this.chatMessageType,
     this.content,
     this.imageUrls,
     this.isDeleted,
@@ -132,7 +133,7 @@ class UpdateChatMessage {
   });
 
   final String? senderId;
-  final MessageType? messageType;
+  final ChatMessageType? chatMessageType;
   final String? content;
   final List<String>? imageUrls;
   final bool? isDeleted;
@@ -142,7 +143,8 @@ class UpdateChatMessage {
   Map<String, dynamic> toJson() {
     return {
       if (senderId != null) 'senderId': senderId,
-      if (messageType != null) 'messageType': messageType,
+      if (chatMessageType != null)
+        'chatMessageType': chatMessageTypeConverter.toJson(chatMessageType!),
       if (content != null) 'content': content,
       if (imageUrls != null) 'imageUrls': imageUrls,
       if (isDeleted != null) 'isDeleted': isDeleted,

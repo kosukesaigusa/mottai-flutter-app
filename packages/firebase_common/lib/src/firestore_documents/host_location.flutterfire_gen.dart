@@ -10,7 +10,6 @@ class ReadHostLocation {
     required this.hostLocationReference,
     required this.hostId,
     required this.address,
-    required this.description,
     required this.geo,
     required this.createdAt,
     required this.updatedAt,
@@ -20,7 +19,6 @@ class ReadHostLocation {
   final DocumentReference<ReadHostLocation> hostLocationReference;
   final String hostId;
   final String address;
-  final String description;
   final Geo geo;
   final SealedTimestamp createdAt;
   final SealedTimestamp updatedAt;
@@ -32,7 +30,6 @@ class ReadHostLocation {
           json['hostLocationReference'] as DocumentReference<ReadHostLocation>,
       hostId: json['hostId'] as String,
       address: json['address'] as String,
-      description: json['description'] as String,
       geo: geoConverter.fromJson(json['geo'] as Map<String, dynamic>),
       createdAt: json['createdAt'] == null
           ? const ServerTimestamp()
@@ -61,7 +58,6 @@ class ReadHostLocation {
     DocumentReference<ReadHostLocation>? hostLocationReference,
     String? hostId,
     String? address,
-    String? description,
     Geo? geo,
     SealedTimestamp? createdAt,
     SealedTimestamp? updatedAt,
@@ -72,7 +68,6 @@ class ReadHostLocation {
           hostLocationReference ?? this.hostLocationReference,
       hostId: hostId ?? this.hostId,
       address: address ?? this.address,
-      description: description ?? this.description,
       geo: geo ?? this.geo,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
@@ -84,7 +79,6 @@ class CreateHostLocation {
   const CreateHostLocation({
     required this.hostId,
     required this.address,
-    required this.description,
     required this.geo,
     this.createdAt = const ServerTimestamp(),
     this.updatedAt = const ServerTimestamp(),
@@ -92,7 +86,6 @@ class CreateHostLocation {
 
   final String hostId;
   final String address;
-  final String description;
   final Geo geo;
   final SealedTimestamp createdAt;
   final SealedTimestamp updatedAt;
@@ -101,7 +94,6 @@ class CreateHostLocation {
     return {
       'hostId': hostId,
       'address': address,
-      'description': description,
       'geo': geoConverter.toJson(geo),
       'createdAt': sealedTimestampConverter.toJson(createdAt),
       'updatedAt':
@@ -114,7 +106,6 @@ class UpdateHostLocation {
   const UpdateHostLocation({
     this.hostId,
     this.address,
-    this.description,
     this.geo,
     this.createdAt,
     this.updatedAt = const ServerTimestamp(),
@@ -122,7 +113,6 @@ class UpdateHostLocation {
 
   final String? hostId;
   final String? address;
-  final String? description;
   final Geo? geo;
   final SealedTimestamp? createdAt;
   final SealedTimestamp? updatedAt;
@@ -131,7 +121,6 @@ class UpdateHostLocation {
     return {
       if (hostId != null) 'hostId': hostId,
       if (address != null) 'address': address,
-      if (description != null) 'description': description,
       if (geo != null) 'geo': geoConverter.toJson(geo!),
       if (createdAt != null)
         'createdAt': sealedTimestampConverter.toJson(createdAt!),

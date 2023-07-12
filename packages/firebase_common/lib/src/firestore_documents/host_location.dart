@@ -11,7 +11,6 @@ class HostLocation {
   const HostLocation({
     required this.hostId,
     required this.address,
-    required this.description,
     required this.geo,
     this.createdAt = const ServerTimestamp(),
     this.updatedAt = const ServerTimestamp(),
@@ -20,8 +19,6 @@ class HostLocation {
   final String hostId;
 
   final String address;
-
-  final String description;
 
   @geoConverter
   final Geo geo;

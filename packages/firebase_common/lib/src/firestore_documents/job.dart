@@ -66,6 +66,9 @@ enum AccessType {
   shuttleServiceAvailable('駅から送迎可能'),
   ;
 
+  // NOTE: ここで enhanced enum で label を定義するのは、Model に View の情報を
+  // 記述しているようで少し違和感もあるが、View で enum の extension を定義するのも
+  // 冗長に思えるのでこのようにしている。
   const AccessType(this.label);
 
   /// 与えられた文字列に対応する [AccessType] を返す。

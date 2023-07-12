@@ -9,9 +9,12 @@ class ReadJob {
     required this.hostLocationId,
     required this.hostLocationReference,
     required this.hostId,
-    required this.description,
+    required this.content,
     required this.place,
+    required this.belongings,
+    required this.comment,
     required this.accessTypes,
+    required this.urls,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -19,9 +22,12 @@ class ReadJob {
   final String hostLocationId;
   final DocumentReference<ReadJob> hostLocationReference;
   final String hostId;
-  final String description;
+  final String content;
   final String place;
+  final String belongings;
+  final String comment;
   final Set<AccessType> accessTypes;
+  final List<String> urls;
   final SealedTimestamp createdAt;
   final SealedTimestamp updatedAt;
 
@@ -31,11 +37,16 @@ class ReadJob {
       hostLocationReference:
           json['hostLocationReference'] as DocumentReference<ReadJob>,
       hostId: json['hostId'] as String,
-      description: json['description'] as String,
-      place: json['place'] as String,
+      content: json['content'] as String? ?? '',
+      place: json['place'] as String? ?? '',
+      belongings: json['belongings'] as String? ?? '',
+      comment: json['comment'] as String? ?? '',
       accessTypes: json['accessTypes'] == null
           ? const <AccessType>{}
           : accessTypesConverter.fromJson(json['accessTypes'] as List<String>),
+      urls:
+          (json['urls'] as List<dynamic>?)?.map((e) => e as String).toList() ??
+              const <String>[],
       createdAt: json['createdAt'] == null
           ? const ServerTimestamp()
           : sealedTimestampConverter.fromJson(json['createdAt'] as Object),
@@ -62,9 +73,12 @@ class ReadJob {
     String? hostLocationId,
     DocumentReference<ReadJob>? hostLocationReference,
     String? hostId,
-    String? description,
+    String? content,
     String? place,
+    String? belongings,
+    String? comment,
     Set<AccessType>? accessTypes,
+    List<String>? urls,
     SealedTimestamp? createdAt,
     SealedTimestamp? updatedAt,
   }) {
@@ -73,9 +87,12 @@ class ReadJob {
       hostLocationReference:
           hostLocationReference ?? this.hostLocationReference,
       hostId: hostId ?? this.hostId,
-      description: description ?? this.description,
+      content: content ?? this.content,
       place: place ?? this.place,
+      belongings: belongings ?? this.belongings,
+      comment: comment ?? this.comment,
       accessTypes: accessTypes ?? this.accessTypes,
+      urls: urls ?? this.urls,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );
@@ -85,26 +102,35 @@ class ReadJob {
 class CreateJob {
   const CreateJob({
     required this.hostId,
-    required this.description,
-    required this.place,
+    this.content = '',
+    this.place = '',
+    this.belongings = '',
+    this.comment = '',
     this.accessTypes = const <AccessType>{},
+    this.urls = const <String>[],
     this.createdAt = const ServerTimestamp(),
     this.updatedAt = const ServerTimestamp(),
   });
 
   final String hostId;
-  final String description;
+  final String content;
   final String place;
+  final String belongings;
+  final String comment;
   final Set<AccessType> accessTypes;
+  final List<String> urls;
   final SealedTimestamp createdAt;
   final SealedTimestamp updatedAt;
 
   Map<String, dynamic> toJson() {
     return {
       'hostId': hostId,
-      'description': description,
+      'content': content,
       'place': place,
+      'belongings': belongings,
+      'comment': comment,
       'accessTypes': accessTypesConverter.toJson(accessTypes),
+      'urls': urls,
       'createdAt': sealedTimestampConverter.toJson(createdAt),
       'updatedAt':
           alwaysUseServerTimestampSealedTimestampConverter.toJson(updatedAt),
@@ -115,27 +141,36 @@ class CreateJob {
 class UpdateJob {
   const UpdateJob({
     this.hostId,
-    this.description,
+    this.content,
     this.place,
+    this.belongings,
+    this.comment,
     this.accessTypes,
+    this.urls,
     this.createdAt,
     this.updatedAt = const ServerTimestamp(),
   });
 
   final String? hostId;
-  final String? description;
+  final String? content;
   final String? place;
+  final String? belongings;
+  final String? comment;
   final Set<AccessType>? accessTypes;
+  final List<String>? urls;
   final SealedTimestamp? createdAt;
   final SealedTimestamp? updatedAt;
 
   Map<String, dynamic> toJson() {
     return {
       if (hostId != null) 'hostId': hostId,
-      if (description != null) 'description': description,
+      if (content != null) 'content': content,
       if (place != null) 'place': place,
+      if (belongings != null) 'belongings': belongings,
+      if (comment != null) 'comment': comment,
       if (accessTypes != null)
         'accessTypes': accessTypesConverter.toJson(accessTypes!),
+      if (urls != null) 'urls': urls,
       if (createdAt != null)
         'createdAt': sealedTimestampConverter.toJson(createdAt!),
       'updatedAt': updatedAt == null

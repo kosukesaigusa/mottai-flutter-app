@@ -10,21 +10,30 @@ part 'job.flutterfire_gen.dart';
 class Job {
   const Job({
     required this.hostId,
-    required this.description,
-    required this.place,
+    this.content = '',
+    this.place = '',
     this.accessTypes = const <AccessType>{},
+    this.belongings = '',
+    this.comment = '',
+    this.urls = const <String>[],
     this.createdAt = const ServerTimestamp(),
     this.updatedAt = const ServerTimestamp(),
   });
 
   final String hostId;
 
-  final String description;
+  final String content;
 
   final String place;
 
+  final String belongings;
+
+  final String comment;
+
   @accessTypesConverter
   final Set<AccessType> accessTypes;
+
+  final List<String> urls;
 
   // TODO: やや冗長になってしまっているのは、flutterfire_gen と
   // flutterfire_json_converters の作りのため。それらのパッケージが更新されたら

@@ -53,3 +53,6 @@ app.*.map.json
 
 # FVM related
 .fvm/flutter_sdk
+
+# Melos related
+pubspec_overrides.yaml

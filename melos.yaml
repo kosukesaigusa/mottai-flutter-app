@@ -4,7 +4,6 @@ repository: https://github.com/KosukeSaigusa/mottai-flutter-app
 
 packages:
   - packages/**
-  - '*'
 
 sdkPath: .fvm/flutter_sdk
 
@@ -16,5 +15,7 @@ scripts:
     run: melos exec -- "flutter pub get"
 
   clpg:
-    run: melos exec -- "fvm flutter clean && fvm flutter pub get"
+    run: melos exec -- "flutter clean && flutter pub get"
 
+  build:
+    run: melos exec -- "flutter pub run build_runner build"

@@ -27,7 +27,7 @@ class ReadWorker {
     return ReadWorker._(
       workerId: json['workerId'] as String,
       workerReference: json['workerReference'] as DocumentReference<ReadWorker>,
-      displayName: json['displayName'] as String,
+      displayName: json['displayName'] as String? ?? '',
       imageUrl: json['imageUrl'] as String? ?? '',
       registeredAsHost: json['registeredAsHost'] as bool? ?? false,
       createdAt: json['createdAt'] == null

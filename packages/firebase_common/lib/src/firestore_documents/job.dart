@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutterfire_gen_annotation/flutterfire_gen_annotation.dart';
 import 'package:flutterfire_json_converters/flutterfire_json_converters.dart';
 
-import '../json_converters/access_type.dart';
+import '../json_converters/access_types.dart';
 
 part 'job.flutterfire_gen.dart';
 
@@ -10,11 +10,11 @@ part 'job.flutterfire_gen.dart';
 class Job {
   const Job({
     required this.hostId,
-    this.content = '',
-    this.place = '',
+    required this.content,
+    required this.place,
     this.accessTypes = const <AccessType>{},
     this.accessDescription = '',
-    this.belongings = '',
+    required this.belongings,
     this.comment = '',
     this.urls = const <String>[],
     this.createdAt = const ServerTimestamp(),
@@ -23,18 +23,21 @@ class Job {
 
   final String hostId;
 
+  @ReadDefault('')
   final String content;
 
+  @ReadDefault('')
   final String place;
-
-  final String belongings;
-
-  final String comment;
 
   @accessTypesConverter
   final Set<AccessType> accessTypes;
 
   final String accessDescription;
+
+  @ReadDefault('')
+  final String belongings;
+
+  final String comment;
 
   final List<String> urls;
 
@@ -79,7 +82,7 @@ enum AccessType {
       case 'shuttleServiceAvailable':
         return AccessType.shuttleServiceAvailable;
     }
-    throw ArgumentError('アクセスタイプが正しくありません。');
+    throw ArgumentError('アクセス種別が正しくありません。');
   }
 
   /// アクセスタイプの表示文字列。

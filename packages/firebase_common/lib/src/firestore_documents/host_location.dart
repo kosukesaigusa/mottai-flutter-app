@@ -18,6 +18,7 @@ class HostLocation {
 
   final String hostId;
 
+  @ReadDefault('')
   final String address;
 
   @geoConverter

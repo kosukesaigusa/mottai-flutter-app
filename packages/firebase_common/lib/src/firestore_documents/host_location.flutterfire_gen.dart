@@ -29,7 +29,7 @@ class ReadHostLocation {
       hostLocationReference:
           json['hostLocationReference'] as DocumentReference<ReadHostLocation>,
       hostId: json['hostId'] as String,
-      address: json['address'] as String,
+      address: json['address'] as String? ?? '',
       geo: geoConverter.fromJson(json['geo'] as Map<String, dynamic>),
       createdAt: json['createdAt'] == null
           ? const ServerTimestamp()

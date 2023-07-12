@@ -263,4 +263,14 @@ class ReadStatusQuery {
         chatRoomId: chatRoomId,
         readStatusId: readStatusId,
       ).update(updateReadStatus.toJson());
+
+  /// Deletes a specified [ReadStatus] document.
+  Future<void> delete({
+    required String chatRoomId,
+    required String readStatusId,
+  }) =>
+      readReadStatusDocumentReference(
+        chatRoomId: chatRoomId,
+        readStatusId: readStatusId,
+      ).delete();
 }

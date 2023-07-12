@@ -265,4 +265,12 @@ class WorkerQuery {
       updateWorkerDocumentReference(
         workerId: workerId,
       ).update(updateWorker.toJson());
+
+  /// Deletes a specified [Worker] document.
+  Future<void> delete({
+    required String workerId,
+  }) =>
+      readWorkerDocumentReference(
+        workerId: workerId,
+      ).delete();
 }

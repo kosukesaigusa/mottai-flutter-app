@@ -270,4 +270,12 @@ class HostLocationQuery {
       updateHostLocationDocumentReference(
         hostLocationId: hostLocationId,
       ).update(updateHostLocation.toJson());
+
+  /// Deletes a specified [HostLocation] document.
+  Future<void> delete({
+    required String hostLocationId,
+  }) =>
+      readHostLocationDocumentReference(
+        hostLocationId: hostLocationId,
+      ).delete();
 }

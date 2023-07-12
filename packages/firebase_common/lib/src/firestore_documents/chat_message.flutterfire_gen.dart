@@ -331,4 +331,14 @@ class ChatMessageQuery {
         chatRoomId: chatRoomId,
         chatMessageId: chatMessageId,
       ).update(updateChatMessage.toJson());
+
+  /// Deletes a specified [ChatMessage] document.
+  Future<void> delete({
+    required String chatRoomId,
+    required String chatMessageId,
+  }) =>
+      readChatMessageDocumentReference(
+        chatRoomId: chatRoomId,
+        chatMessageId: chatMessageId,
+      ).delete();
 }

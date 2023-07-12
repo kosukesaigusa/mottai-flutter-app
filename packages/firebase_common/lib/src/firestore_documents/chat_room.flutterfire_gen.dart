@@ -256,4 +256,12 @@ class ChatRoomQuery {
       updateChatRoomDocumentReference(
         chatRoomId: chatRoomId,
       ).update(updateChatRoom.toJson());
+
+  /// Deletes a specified [ChatRoom] document.
+  Future<void> delete({
+    required String chatRoomId,
+  }) =>
+      readChatRoomDocumentReference(
+        chatRoomId: chatRoomId,
+      ).delete();
 }

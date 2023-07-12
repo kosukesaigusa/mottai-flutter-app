@@ -276,10 +276,10 @@ packages:
     dependency: "direct dev"
     description:
       name: flutterfire_gen
-      sha256: "440f3fb090285e8b11fa9f20befcc11f2a67e4781346f344fef287783d2551aa"
+      sha256: "4b0af59192f0bd8623b8910750c41bd32cb12edf93073c1bba363d26d7f9e8b1"
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.1-dev.2"
+    version: "0.0.1-dev.3"
   flutterfire_gen_annotation:
     dependency: "direct main"
     description:

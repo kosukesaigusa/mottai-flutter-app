@@ -266,4 +266,12 @@ class HostQuery {
       updateHostDocumentReference(
         hostId: hostId,
       ).update(updateHost.toJson());
+
+  /// Deletes a specified [Host] document.
+  Future<void> delete({
+    required String hostId,
+  }) =>
+      readHostDocumentReference(
+        hostId: hostId,
+      ).delete();
 }

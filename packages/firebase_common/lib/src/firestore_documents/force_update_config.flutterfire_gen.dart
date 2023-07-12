@@ -284,4 +284,12 @@ class ForceUpdateConfigQuery {
       updateForceUpdateConfigDocumentReference(
         forceUpdateConfigId: forceUpdateConfigId,
       ).update(updateForceUpdateConfig.toJson());
+
+  /// Deletes a specified [ForceUpdateConfig] document.
+  Future<void> delete({
+    required String forceUpdateConfigId,
+  }) =>
+      readForceUpdateConfigDocumentReference(
+        forceUpdateConfigId: forceUpdateConfigId,
+      ).delete();
 }

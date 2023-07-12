@@ -326,4 +326,12 @@ class JobQuery {
       updateJobDocumentReference(
         hostLocationId: hostLocationId,
       ).update(updateJob.toJson());
+
+  /// Deletes a specified [Job] document.
+  Future<void> delete({
+    required String hostLocationId,
+  }) =>
+      readJobDocumentReference(
+        hostLocationId: hostLocationId,
+      ).delete();
 }

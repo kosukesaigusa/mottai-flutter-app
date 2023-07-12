@@ -216,4 +216,12 @@ class FcmTokenQuery {
       updateFcmTokenDocumentReference(
         fcmTokenId: fcmTokenId,
       ).update(updateFcmToken.toJson());
+
+  /// Deletes a specified [FcmToken] document.
+  Future<void> delete({
+    required String fcmTokenId,
+  }) =>
+      readFcmTokenDocumentReference(
+        fcmTokenId: fcmTokenId,
+      ).delete();
 }

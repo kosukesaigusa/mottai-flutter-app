@@ -259,4 +259,12 @@ class InReviewConfigQuery {
       updateInReviewConfigDocumentReference(
         inReviewConfigId: inReviewConfigId,
       ).update(updateInReviewConfig.toJson());
+
+  /// Deletes a specified [InReviewConfig] document.
+  Future<void> delete({
+    required String inReviewConfigId,
+  }) =>
+      readInReviewConfigDocumentReference(
+        inReviewConfigId: inReviewConfigId,
+      ).delete();
 }

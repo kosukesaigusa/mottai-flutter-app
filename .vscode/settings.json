@@ -8,5 +8,5 @@
     "**/.fvm": true
   },
   "dart.runPubGetOnPubspecChanges": "never",
-  "cSpell.words": []
+  "cSpell.words": ["signin"]
 }

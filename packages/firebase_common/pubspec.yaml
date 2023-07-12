@@ -8,6 +8,7 @@ environment:
 
 dependencies:
   cloud_firestore: ^4.8.2
+  firebase_storage: ^11.2.4
   flutter:
     sdk: flutter
   flutterfire_gen_annotation: ^0.1.0-dev.1

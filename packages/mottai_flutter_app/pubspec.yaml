@@ -10,14 +10,32 @@ environment:
 dependencies:
   dart_flutter_common:
     path: ../dart_flutter_common
+  firebase_auth: ^4.6.3
   firebase_common:
     path: ../firebase_common
+  firebase_core: ^2.14.0
+  firebase_dynamic_links: ^5.3.3
+  firebase_messaging: ^14.6.4
   flutter:
     sdk: flutter
+  flutter_image_compress: ^2.0.3
+  flutter_local_notifications: ^15.1.0+1
+  font_awesome_flutter: ^10.5.0
+  freezed_annotation: ^2.4.1
+  gap: ^3.0.1
+  geoflutterfire_plus: ^0.0.14
+  geolocator: ^9.0.2
+  google_maps_flutter: ^2.3.1
+  google_sign_in: ^6.1.4
+  hooks_riverpod: ^2.3.6
+  intl: ^0.18.1
+  package_info_plus: ^4.0.2
+  sign_in_button: ^3.2.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  freezed: ^2.4.1
 
 flutter:
   uses-material-design: true

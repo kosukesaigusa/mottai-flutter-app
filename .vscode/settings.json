@@ -23,6 +23,7 @@
     "json",
     "riverpod",
     "signin",
-    "todo"
+    "todo",
+    "Todos"
   ]
 }

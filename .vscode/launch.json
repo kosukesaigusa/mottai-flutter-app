@@ -9,7 +9,7 @@
       "args": ["--debug"]
     },
     {
-      "name": "Debug",
+      "name": "Release",
       "program": "packages/mottai_flutter_app/lib/main.dart",
       "request": "launch",
       "type": "dart",

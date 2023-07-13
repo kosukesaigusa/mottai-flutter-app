@@ -1,1 +1,1 @@
-export 'src/components/components.dart';
+export 'src/components/_export.dart';

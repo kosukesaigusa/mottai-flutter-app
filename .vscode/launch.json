@@ -9,6 +9,13 @@
       "args": ["--debug"]
     },
     {
+      "name": "Debug",
+      "program": "packages/mottai_flutter_app/lib/main.dart",
+      "request": "launch",
+      "type": "dart",
+      "args": ["--release"]
+    },
+    {
       "name": "Debug Functions (local)",
       "type": "node",
       "request": "attach",

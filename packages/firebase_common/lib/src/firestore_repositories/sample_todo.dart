@@ -5,16 +5,24 @@ import '../firestore_documents/sample_todo.dart';
 class SampleTodoRepository {
   final _query = SampleTodoQuery();
 
-  /// [SampleTodo] 一覧を `dueDateTime` の降順で取得する。
-  Future<List<ReadSampleTodo>> fetchTodos() => _query.fetchDocuments(
+  /// [SampleTodo] 一覧を `dueDateTime` の降順で購読する。
+  Stream<List<ReadSampleTodo>> subscribeTodos() => _query.subscribeDocuments(
         queryBuilder: (query) => query.orderBy('dueDateTime', descending: true),
       );
 
   /// [SampleTodo] を作成する。
   Future<DocumentReference<CreateSampleTodo>> createTodo({
-    required CreateSampleTodo createSampleTodo,
+    required String title,
+    required String description,
+    required DateTime dueDateTime,
   }) =>
-      _query.create(createSampleTodo: createSampleTodo);
+      _query.create(
+        createSampleTodo: CreateSampleTodo(
+          title: title,
+          description: description,
+          dueDateTime: dueDateTime,
+        ),
+      );
 
   /// 指定した [SampleTodo] を完了 or 未完了を更新する。
   Future<void> updateCompletionStatus({

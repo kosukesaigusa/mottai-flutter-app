@@ -8,5 +8,21 @@
     "**/.fvm": true
   },
   "dart.runPubGetOnPubspecChanges": "never",
-  "cSpell.words": ["signin"]
+  "cSpell.words": [
+    "firebase",
+    "firebaseapp",
+    "firebaserc",
+    "firestore",
+    "flutterfire",
+    "fontawesome",
+    "geoflutterfire",
+    "geoflutterfire_plus",
+    "geohash",
+    "geolocator",
+    "geopoint",
+    "json",
+    "riverpod",
+    "signin",
+    "todo"
+  ]
 }

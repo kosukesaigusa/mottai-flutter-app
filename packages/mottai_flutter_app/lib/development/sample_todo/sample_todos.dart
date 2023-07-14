@@ -22,7 +22,7 @@ class SampleTodoService {
   final SampleTodoRepository _sampleTodoRepository;
 
   /// [SampleTodo] を追加する。
-  Future<void> create({
+  Future<void> add({
     required String title,
     required String description,
     required DateTime dueDateTime,

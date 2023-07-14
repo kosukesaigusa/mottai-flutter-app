@@ -13,11 +13,7 @@ class DevelopmentItemsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('開発ページ'),
-        elevation: 4,
-        shadowColor: Theme.of(context).shadowColor,
-      ),
+      appBar: AppBar(title: const Text('開発ページ')),
       body: ListView(
         children: [
           Padding(

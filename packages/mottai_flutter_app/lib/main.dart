@@ -30,6 +30,10 @@ class MainApp extends StatelessWidget {
         sliderTheme: SliderThemeData(
           overlayShape: SliderComponentShape.noOverlay,
         ),
+        appBarTheme: Theme.of(context).appBarTheme.copyWith(
+              elevation: 4,
+              shadowColor: Theme.of(context).shadowColor,
+            ),
       ),
       debugShowCheckedModeBanner: false,
       home: const DevelopmentItemsPage(),

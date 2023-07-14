@@ -17,11 +17,7 @@ class SampleTodosPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Todo 一覧'),
-        elevation: 4,
-        shadowColor: Theme.of(context).shadowColor,
-      ),
+      appBar: AppBar(title: const Text('Todo 一覧')),
       body: ref.watch(sampleTodosFutureProvider).when(
             data: (sampleTodos) => ListView.builder(
               itemCount: sampleTodos.length,

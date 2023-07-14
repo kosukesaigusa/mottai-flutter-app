@@ -154,6 +154,23 @@ DocumentReference<UpdateReadStatus> updateReadStatusDocumentReference({
     updateReadStatusCollectionReference(chatRoomId: chatRoomId)
         .doc(readStatusId);
 
+/// A [CollectionReference] to readStatuses collection to delete.
+CollectionReference<Object?> deleteReadStatusCollectionReference({
+  required String chatRoomId,
+}) =>
+    FirebaseFirestore.instance
+        .collection('chatRooms')
+        .doc(chatRoomId)
+        .collection('readStatuses');
+
+/// A [DocumentReference] to readStatus document to delete.
+DocumentReference<Object?> deleteReadStatusDocumentReference({
+  required String chatRoomId,
+  required String readStatusId,
+}) =>
+    deleteReadStatusCollectionReference(chatRoomId: chatRoomId)
+        .doc(readStatusId);
+
 /// A query manager to execute query against [ReadStatus].
 class ReadStatusQuery {
   /// Fetches [ReadReadStatus] documents.
@@ -233,8 +250,8 @@ class ReadStatusQuery {
     return streamDs.map((ds) => ds.data());
   }
 
-  /// Creates a [ReadStatus] document.
-  Future<DocumentReference<CreateReadStatus>> create({
+  /// Adds a [ReadStatus] document.
+  Future<DocumentReference<CreateReadStatus>> add({
     required String chatRoomId,
     required CreateReadStatus createReadStatus,
   }) =>
@@ -269,7 +286,7 @@ class ReadStatusQuery {
     required String chatRoomId,
     required String readStatusId,
   }) =>
-      readReadStatusDocumentReference(
+      deleteReadStatusDocumentReference(
         chatRoomId: chatRoomId,
         readStatusId: readStatusId,
       ).delete();

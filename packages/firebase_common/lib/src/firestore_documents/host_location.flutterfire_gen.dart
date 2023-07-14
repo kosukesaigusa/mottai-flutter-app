@@ -173,6 +173,16 @@ DocumentReference<UpdateHostLocation> updateHostLocationDocumentReference({
 }) =>
     updateHostLocationCollectionReference.doc(hostLocationId);
 
+/// A [CollectionReference] to hostLocations collection to delete.
+final deleteHostLocationCollectionReference =
+    FirebaseFirestore.instance.collection('hostLocations');
+
+/// A [DocumentReference] to hostLocation document to delete.
+DocumentReference<Object?> deleteHostLocationDocumentReference({
+  required String hostLocationId,
+}) =>
+    deleteHostLocationCollectionReference.doc(hostLocationId);
+
 /// A query manager to execute query against [HostLocation].
 class HostLocationQuery {
   /// Fetches [ReadHostLocation] documents.
@@ -246,8 +256,8 @@ class HostLocationQuery {
     return streamDs.map((ds) => ds.data());
   }
 
-  /// Creates a [HostLocation] document.
-  Future<DocumentReference<CreateHostLocation>> create({
+  /// Adds a [HostLocation] document.
+  Future<DocumentReference<CreateHostLocation>> add({
     required CreateHostLocation createHostLocation,
   }) =>
       createHostLocationCollectionReference.add(createHostLocation);
@@ -275,7 +285,7 @@ class HostLocationQuery {
   Future<void> delete({
     required String hostLocationId,
   }) =>
-      readHostLocationDocumentReference(
+      deleteHostLocationDocumentReference(
         hostLocationId: hostLocationId,
       ).delete();
 }

@@ -162,6 +162,16 @@ DocumentReference<UpdateInReviewConfig> updateInReviewConfigDocumentReference({
 }) =>
     updateInReviewConfigCollectionReference.doc(inReviewConfigId);
 
+/// A [CollectionReference] to configurations collection to delete.
+final deleteInReviewConfigCollectionReference =
+    FirebaseFirestore.instance.collection('configurations');
+
+/// A [DocumentReference] to inReviewConfig document to delete.
+DocumentReference<Object?> deleteInReviewConfigDocumentReference({
+  required String inReviewConfigId,
+}) =>
+    deleteInReviewConfigCollectionReference.doc(inReviewConfigId);
+
 /// A query manager to execute query against [InReviewConfig].
 class InReviewConfigQuery {
   /// Fetches [ReadInReviewConfig] documents.
@@ -235,8 +245,8 @@ class InReviewConfigQuery {
     return streamDs.map((ds) => ds.data());
   }
 
-  /// Creates a [InReviewConfig] document.
-  Future<DocumentReference<CreateInReviewConfig>> create({
+  /// Adds a [InReviewConfig] document.
+  Future<DocumentReference<CreateInReviewConfig>> add({
     required CreateInReviewConfig createInReviewConfig,
   }) =>
       createInReviewConfigCollectionReference.add(createInReviewConfig);
@@ -264,7 +274,7 @@ class InReviewConfigQuery {
   Future<void> delete({
     required String inReviewConfigId,
   }) =>
-      readInReviewConfigDocumentReference(
+      deleteInReviewConfigDocumentReference(
         inReviewConfigId: inReviewConfigId,
       ).delete();
 }

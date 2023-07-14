@@ -185,6 +185,16 @@ DocumentReference<UpdateForceUpdateConfig>
 }) =>
         updateForceUpdateConfigCollectionReference.doc(forceUpdateConfigId);
 
+/// A [CollectionReference] to configurations collection to delete.
+final deleteForceUpdateConfigCollectionReference =
+    FirebaseFirestore.instance.collection('configurations');
+
+/// A [DocumentReference] to forceUpdateConfig document to delete.
+DocumentReference<Object?> deleteForceUpdateConfigDocumentReference({
+  required String forceUpdateConfigId,
+}) =>
+    deleteForceUpdateConfigCollectionReference.doc(forceUpdateConfigId);
+
 /// A query manager to execute query against [ForceUpdateConfig].
 class ForceUpdateConfigQuery {
   /// Fetches [ReadForceUpdateConfig] documents.
@@ -260,8 +270,8 @@ class ForceUpdateConfigQuery {
     return streamDs.map((ds) => ds.data());
   }
 
-  /// Creates a [ForceUpdateConfig] document.
-  Future<DocumentReference<CreateForceUpdateConfig>> create({
+  /// Adds a [ForceUpdateConfig] document.
+  Future<DocumentReference<CreateForceUpdateConfig>> add({
     required CreateForceUpdateConfig createForceUpdateConfig,
   }) =>
       createForceUpdateConfigCollectionReference.add(createForceUpdateConfig);
@@ -289,7 +299,7 @@ class ForceUpdateConfigQuery {
   Future<void> delete({
     required String forceUpdateConfigId,
   }) =>
-      readForceUpdateConfigDocumentReference(
+      deleteForceUpdateConfigDocumentReference(
         forceUpdateConfigId: forceUpdateConfigId,
       ).delete();
 }

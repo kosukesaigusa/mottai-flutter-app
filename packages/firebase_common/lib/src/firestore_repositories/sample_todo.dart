@@ -11,12 +11,12 @@ class SampleTodoRepository {
       );
 
   /// [SampleTodo] を作成する。
-  Future<DocumentReference<CreateSampleTodo>> createTodo({
+  Future<DocumentReference<CreateSampleTodo>> add({
     required String title,
     required String description,
     required DateTime dueDateTime,
   }) =>
-      _query.create(
+      _query.add(
         createSampleTodo: CreateSampleTodo(
           title: title,
           description: description,
@@ -24,7 +24,7 @@ class SampleTodoRepository {
         ),
       );
 
-  /// 指定した [SampleTodo] を完了 or 未完了を更新する。
+  /// 指定した [SampleTodo] の `isDone` を更新する。
   Future<void> updateCompletionStatus({
     required String sampleTodoId,
     required bool value,

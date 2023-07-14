@@ -231,6 +231,16 @@ DocumentReference<UpdateJob> updateJobDocumentReference({
 }) =>
     updateJobCollectionReference.doc(hostLocationId);
 
+/// A [CollectionReference] to jobs collection to delete.
+final deleteJobCollectionReference =
+    FirebaseFirestore.instance.collection('jobs');
+
+/// A [DocumentReference] to hostLocation document to delete.
+DocumentReference<Object?> deleteJobDocumentReference({
+  required String hostLocationId,
+}) =>
+    deleteJobCollectionReference.doc(hostLocationId);
+
 /// A query manager to execute query against [Job].
 class JobQuery {
   /// Fetches [ReadJob] documents.
@@ -302,8 +312,8 @@ class JobQuery {
     return streamDs.map((ds) => ds.data());
   }
 
-  /// Creates a [Job] document.
-  Future<DocumentReference<CreateJob>> create({
+  /// Adds a [Job] document.
+  Future<DocumentReference<CreateJob>> add({
     required CreateJob createJob,
   }) =>
       createJobCollectionReference.add(createJob);
@@ -331,7 +341,7 @@ class JobQuery {
   Future<void> delete({
     required String hostLocationId,
   }) =>
-      readJobDocumentReference(
+      deleteJobDocumentReference(
         hostLocationId: hostLocationId,
       ).delete();
 }

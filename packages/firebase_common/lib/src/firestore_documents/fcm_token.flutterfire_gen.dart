@@ -121,6 +121,16 @@ DocumentReference<UpdateFcmToken> updateFcmTokenDocumentReference({
 }) =>
     updateFcmTokenCollectionReference.doc(fcmTokenId);
 
+/// A [CollectionReference] to fcmTokens collection to delete.
+final deleteFcmTokenCollectionReference =
+    FirebaseFirestore.instance.collection('fcmTokens');
+
+/// A [DocumentReference] to fcmToken document to delete.
+DocumentReference<Object?> deleteFcmTokenDocumentReference({
+  required String fcmTokenId,
+}) =>
+    deleteFcmTokenCollectionReference.doc(fcmTokenId);
+
 /// A query manager to execute query against [FcmToken].
 class FcmTokenQuery {
   /// Fetches [ReadFcmToken] documents.
@@ -192,8 +202,8 @@ class FcmTokenQuery {
     return streamDs.map((ds) => ds.data());
   }
 
-  /// Creates a [FcmToken] document.
-  Future<DocumentReference<CreateFcmToken>> create({
+  /// Adds a [FcmToken] document.
+  Future<DocumentReference<CreateFcmToken>> add({
     required CreateFcmToken createFcmToken,
   }) =>
       createFcmTokenCollectionReference.add(createFcmToken);
@@ -221,7 +231,7 @@ class FcmTokenQuery {
   Future<void> delete({
     required String fcmTokenId,
   }) =>
-      readFcmTokenDocumentReference(
+      deleteFcmTokenDocumentReference(
         fcmTokenId: fcmTokenId,
       ).delete();
 }

@@ -171,6 +171,16 @@ DocumentReference<UpdateHost> updateHostDocumentReference({
 }) =>
     updateHostCollectionReference.doc(hostId);
 
+/// A [CollectionReference] to hosts collection to delete.
+final deleteHostCollectionReference =
+    FirebaseFirestore.instance.collection('hosts');
+
+/// A [DocumentReference] to host document to delete.
+DocumentReference<Object?> deleteHostDocumentReference({
+  required String hostId,
+}) =>
+    deleteHostCollectionReference.doc(hostId);
+
 /// A query manager to execute query against [Host].
 class HostQuery {
   /// Fetches [ReadHost] documents.
@@ -242,8 +252,8 @@ class HostQuery {
     return streamDs.map((ds) => ds.data());
   }
 
-  /// Creates a [Host] document.
-  Future<DocumentReference<CreateHost>> create({
+  /// Adds a [Host] document.
+  Future<DocumentReference<CreateHost>> add({
     required CreateHost createHost,
   }) =>
       createHostCollectionReference.add(createHost);
@@ -271,7 +281,7 @@ class HostQuery {
   Future<void> delete({
     required String hostId,
   }) =>
-      readHostDocumentReference(
+      deleteHostDocumentReference(
         hostId: hostId,
       ).delete();
 }

@@ -170,6 +170,16 @@ DocumentReference<UpdateWorker> updateWorkerDocumentReference({
 }) =>
     updateWorkerCollectionReference.doc(workerId);
 
+/// A [CollectionReference] to workers collection to delete.
+final deleteWorkerCollectionReference =
+    FirebaseFirestore.instance.collection('workers');
+
+/// A [DocumentReference] to worker document to delete.
+DocumentReference<Object?> deleteWorkerDocumentReference({
+  required String workerId,
+}) =>
+    deleteWorkerCollectionReference.doc(workerId);
+
 /// A query manager to execute query against [Worker].
 class WorkerQuery {
   /// Fetches [ReadWorker] documents.
@@ -241,8 +251,8 @@ class WorkerQuery {
     return streamDs.map((ds) => ds.data());
   }
 
-  /// Creates a [Worker] document.
-  Future<DocumentReference<CreateWorker>> create({
+  /// Adds a [Worker] document.
+  Future<DocumentReference<CreateWorker>> add({
     required CreateWorker createWorker,
   }) =>
       createWorkerCollectionReference.add(createWorker);
@@ -270,7 +280,7 @@ class WorkerQuery {
   Future<void> delete({
     required String workerId,
   }) =>
-      readWorkerDocumentReference(
+      deleteWorkerDocumentReference(
         workerId: workerId,
       ).delete();
 }

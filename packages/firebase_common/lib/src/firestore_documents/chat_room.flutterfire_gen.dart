@@ -161,6 +161,16 @@ DocumentReference<UpdateChatRoom> updateChatRoomDocumentReference({
 }) =>
     updateChatRoomCollectionReference.doc(chatRoomId);
 
+/// A [CollectionReference] to chatRooms collection to delete.
+final deleteChatRoomCollectionReference =
+    FirebaseFirestore.instance.collection('chatRooms');
+
+/// A [DocumentReference] to chatRoom document to delete.
+DocumentReference<Object?> deleteChatRoomDocumentReference({
+  required String chatRoomId,
+}) =>
+    deleteChatRoomCollectionReference.doc(chatRoomId);
+
 /// A query manager to execute query against [ChatRoom].
 class ChatRoomQuery {
   /// Fetches [ReadChatRoom] documents.
@@ -232,8 +242,8 @@ class ChatRoomQuery {
     return streamDs.map((ds) => ds.data());
   }
 
-  /// Creates a [ChatRoom] document.
-  Future<DocumentReference<CreateChatRoom>> create({
+  /// Adds a [ChatRoom] document.
+  Future<DocumentReference<CreateChatRoom>> add({
     required CreateChatRoom createChatRoom,
   }) =>
       createChatRoomCollectionReference.add(createChatRoom);
@@ -261,7 +271,7 @@ class ChatRoomQuery {
   Future<void> delete({
     required String chatRoomId,
   }) =>
-      readChatRoomDocumentReference(
+      deleteChatRoomDocumentReference(
         chatRoomId: chatRoomId,
       ).delete();
 }

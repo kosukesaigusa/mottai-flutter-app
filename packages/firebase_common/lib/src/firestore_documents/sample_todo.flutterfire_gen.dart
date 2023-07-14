@@ -169,6 +169,16 @@ DocumentReference<UpdateSampleTodo> updateSampleTodoDocumentReference({
 }) =>
     updateSampleTodoCollectionReference.doc(sampleTodoId);
 
+/// A [CollectionReference] to sampleTodos collection to delete.
+final deleteSampleTodoCollectionReference =
+    FirebaseFirestore.instance.collection('sampleTodos');
+
+/// A [DocumentReference] to sampleTodo document to delete.
+DocumentReference<Object?> deleteSampleTodoDocumentReference({
+  required String sampleTodoId,
+}) =>
+    deleteSampleTodoCollectionReference.doc(sampleTodoId);
+
 /// A query manager to execute query against [SampleTodo].
 class SampleTodoQuery {
   /// Fetches [ReadSampleTodo] documents.
@@ -240,8 +250,8 @@ class SampleTodoQuery {
     return streamDs.map((ds) => ds.data());
   }
 
-  /// Creates a [SampleTodo] document.
-  Future<DocumentReference<CreateSampleTodo>> create({
+  /// Adds a [SampleTodo] document.
+  Future<DocumentReference<CreateSampleTodo>> add({
     required CreateSampleTodo createSampleTodo,
   }) =>
       createSampleTodoCollectionReference.add(createSampleTodo);
@@ -269,7 +279,7 @@ class SampleTodoQuery {
   Future<void> delete({
     required String sampleTodoId,
   }) =>
-      readSampleTodoDocumentReference(
+      deleteSampleTodoDocumentReference(
         sampleTodoId: sampleTodoId,
       ).delete();
 }

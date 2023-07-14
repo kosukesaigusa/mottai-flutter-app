@@ -305,7 +305,11 @@ class _DrawerChildState extends ConsumerState<_DrawerChild> {
                 const Gap(16),
                 Center(
                   child: ElevatedButton(
-                    onPressed: () => ref.read(authServiceProvider).signOut(),
+                    onPressed: () async {
+                      final navigator = Navigator.of(context);
+                      await ref.read(authServiceProvider).signOut();
+                      navigator.pop();
+                    },
                     child: const Text('サインアウト'),
                   ),
                 ),

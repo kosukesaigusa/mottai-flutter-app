@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../../../auth.dart';
 import '../../sample_todo/ui/sample_todos.dart';
 
 /// 開発中の各ページへの導線を表示するページ。
@@ -14,6 +17,7 @@ class DevelopmentItemsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('開発ページ')),
+      drawer: const Drawer(child: _DrawerChild()),
       body: ListView(
         children: [
           Padding(
@@ -250,6 +254,100 @@ class DevelopmentItemsPage extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _DrawerChild extends ConsumerStatefulWidget {
+  const _DrawerChild();
+
+  @override
+  ConsumerState<_DrawerChild> createState() => _DrawerChildState();
+}
+
+class _DrawerChildState extends ConsumerState<_DrawerChild> {
+  late final TextEditingController _emailTextEditingController;
+  late final TextEditingController _passwordTextEditingController;
+
+  @override
+  void initState() {
+    _emailTextEditingController = TextEditingController();
+    _passwordTextEditingController = TextEditingController();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _emailTextEditingController.dispose();
+    _passwordTextEditingController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      children: [
+        const DrawerHeader(
+          child: Text('mottai-app-dev'),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (ref.watch(isSignedInProvider)) ...[
+                Text(
+                  'ユーザー ID',
+                  style: Theme.of(context).textTheme.labelSmall,
+                ),
+                const Gap(8),
+                Text(ref.watch(userIdProvider)!),
+                const Gap(16),
+                Center(
+                  child: ElevatedButton(
+                    onPressed: () => ref.read(authServiceProvider).signOut(),
+                    child: const Text('サインアウト'),
+                  ),
+                ),
+              ] else ...[
+                TextField(
+                  controller: _emailTextEditingController,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'メールアドレス',
+                  ),
+                  keyboardType: TextInputType.emailAddress,
+                ),
+                const Gap(16),
+                TextField(
+                  controller: _passwordTextEditingController,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'パスワード',
+                  ),
+                  obscureText: true,
+                ),
+                const Gap(16),
+                Center(
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      final navigator = Navigator.of(context);
+                      await ref
+                          .read(authServiceProvider)
+                          .signInWithEmailAndPassword(
+                            email: _emailTextEditingController.text,
+                            password: _passwordTextEditingController.text,
+                          );
+                      navigator.pop();
+                    },
+                    child: const Text('サインイン'),
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

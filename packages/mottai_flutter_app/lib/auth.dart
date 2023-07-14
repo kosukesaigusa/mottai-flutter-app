@@ -24,3 +24,25 @@ final userIdProvider = Provider<String?>((ref) {
 final isSignedInProvider = Provider<bool>(
   (ref) => ref.watch(userIdProvider) != null,
 );
+
+final authServiceProvider =
+    Provider.autoDispose<AuthService>((_) => const AuthService());
+
+/// [FirebaseAuth] の認証関係の振る舞いを記述するモデル。
+class AuthService {
+  const AuthService();
+
+  static final _auth = FirebaseAuth.instance;
+
+  // TODO: 開発中のみ使用する。リリース時には消すか、あとで デバッグモード or
+  // 開発環境接続時のみ使用可能にする。
+  /// [FirebaseAuth] にメールアドレスとパスワードでサインインする。
+  Future<UserCredential> signInWithEmailAndPassword({
+    required String email,
+    required String password,
+  }) =>
+      _auth.signInWithEmailAndPassword(email: email, password: password);
+
+  /// [FirebaseAuth] からサインアウトする。
+  Future<void> signOut() => _auth.signOut();
+}

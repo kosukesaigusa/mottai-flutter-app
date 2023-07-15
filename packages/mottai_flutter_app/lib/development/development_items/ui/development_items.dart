@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../../auth.dart';
+import '../../../auth/auth.dart';
 import '../../../map/ui/map.dart';
 import '../../../scaffold_messenger_controller.dart';
 import '../../sample_todo/ui/sample_todos.dart';

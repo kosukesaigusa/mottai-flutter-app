@@ -4,6 +4,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'development/development_items/ui/development_items.dart';
 import 'firebase_options.dart';
+import 'scaffold_messenger_controller.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,11 +18,11 @@ void main() async {
   );
 }
 
-class MainApp extends StatelessWidget {
+class MainApp extends ConsumerWidget {
   const MainApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return MaterialApp(
       title: 'MOTTAI',
       theme: ThemeData(
@@ -37,6 +38,12 @@ class MainApp extends StatelessWidget {
       ),
       debugShowCheckedModeBanner: false,
       home: const DevelopmentItemsPage(),
+      builder: (context, child) {
+        return ScaffoldMessenger(
+          key: ref.watch(scaffoldMessengerKeyProvider),
+          child: child!,
+        );
+      },
     );
   }
 }

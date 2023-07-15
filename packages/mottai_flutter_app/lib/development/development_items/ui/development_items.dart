@@ -3,10 +3,11 @@ import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../auth.dart';
+import '../../../scaffold_messenger_controller.dart';
 import '../../sample_todo/ui/sample_todos.dart';
 
 /// 開発中の各ページへの導線を表示するページ。
-class DevelopmentItemsPage extends StatelessWidget {
+class DevelopmentItemsPage extends ConsumerWidget {
   const DevelopmentItemsPage({super.key});
 
   static const path = '/developmentItems';
@@ -14,9 +15,19 @@ class DevelopmentItemsPage extends StatelessWidget {
   static const location = path;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      appBar: AppBar(title: const Text('開発ページ')),
+      appBar: AppBar(
+        title: const Text('開発ページ'),
+        actions: [
+          IconButton(
+            onPressed: () => ref
+                .read(appScaffoldMessengerControllerProvider)
+                .showSnackBar('SnackBar を表示します。'),
+            icon: const Icon(Icons.notifications_on),
+          )
+        ],
+      ),
       drawer: const Drawer(child: _DrawerChild()),
       body: ListView(
         children: [

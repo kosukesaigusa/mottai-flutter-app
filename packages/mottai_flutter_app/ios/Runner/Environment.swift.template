@@ -1,0 +1,5 @@
+import Foundation
+
+struct Env {
+  static let googleMapApiKey = "GOOGLE_MAP_API_KEY"
+}

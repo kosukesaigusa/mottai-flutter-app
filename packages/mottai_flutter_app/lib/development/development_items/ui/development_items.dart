@@ -3,6 +3,7 @@ import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../auth.dart';
+import '../../../map/ui/map.dart';
 import '../../../scaffold_messenger_controller.dart';
 import '../../sample_todo/ui/sample_todos.dart';
 
@@ -38,18 +39,18 @@ class DevelopmentItemsPage extends ConsumerWidget {
               style: Theme.of(context).textTheme.titleLarge,
             ),
           ),
-          const ListTile(
-            title: Text(
+          ListTile(
+            title: const Text(
               'マップページ (geoflutterfire_plus, flutter_google_maps, '
               'geolocator, PageView)',
             ),
             // TODO: 後に auto_route を採用して Navigator.pushNamed を使用する予定
-            // onTap: () => Navigator.push<void>(
-            //   context,
-            //   MaterialPageRoute<void>(
-            //     builder: (context) => FooPage(),
-            //   ),
-            // ),
+            onTap: () => Navigator.push<void>(
+              context,
+              MaterialPageRoute<void>(
+                builder: (context) => const MapPage(),
+              ),
+            ),
           ),
           const ListTile(
             title: Text('仕事詳細ページ (FutureProvider)'),

@@ -6,8 +6,10 @@ class SampleTodoRepository {
   final _query = SampleTodoQuery();
 
   /// [SampleTodo] 一覧を `dueDateTime` の降順で購読する。
-  Stream<List<ReadSampleTodo>> subscribeTodos() => _query.subscribeDocuments(
-        queryBuilder: (query) => query.orderBy('dueDateTime', descending: true),
+  Stream<List<ReadSampleTodo>> subscribeTodos({required bool descending}) =>
+      _query.subscribeDocuments(
+        queryBuilder: (query) =>
+            query.orderBy('dueDateTime', descending: descending),
       );
 
   /// [SampleTodo] を作成する。

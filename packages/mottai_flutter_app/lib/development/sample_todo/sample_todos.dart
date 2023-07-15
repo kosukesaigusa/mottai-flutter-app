@@ -2,11 +2,20 @@ import 'package:firebase_common/firebase_common.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../firestore_repository.dart';
+import 'ui/sample_todos.dart';
+
+final sampleTodosOrderByStateProvider =
+    StateProvider.autoDispose<SampleTodosOrderBy>(
+  (ref) => SampleTodosOrderBy.dueDateTimeDesc,
+);
 
 final sampleTodosFutureProvider =
     StreamProvider.autoDispose<List<ReadSampleTodo>>((ref) {
   final repository = ref.watch(sampleTodoRepositoryProvider);
-  return repository.subscribeTodos();
+  return repository.subscribeTodos(
+    descending: ref.watch(sampleTodosOrderByStateProvider) ==
+        SampleTodosOrderBy.dueDateTimeAsc,
+  );
 });
 
 final sampleTodoServiceProvider = Provider.autoDispose<SampleTodoService>(

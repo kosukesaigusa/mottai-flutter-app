@@ -17,7 +17,10 @@ class SampleTodosPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Todo 一覧')),
+      appBar: AppBar(
+        title: const Text('Todo 一覧'),
+        actions: const [_OrderByDropdownButton()],
+      ),
       body: ref.watch(sampleTodosFutureProvider).when(
             data: (sampleTodos) => ListView.builder(
               itemCount: sampleTodos.length,
@@ -35,6 +38,52 @@ class SampleTodosPage extends ConsumerWidget {
         ),
         child: const Icon(Icons.add),
       ),
+    );
+  }
+}
+
+/// [SampleTodo] の並び替え順。
+enum SampleTodosOrderBy {
+  dueDateTimeDesc,
+  dueDateTimeAsc,
+  ;
+
+  String get label {
+    switch (this) {
+      case dueDateTimeDesc:
+        return '締め切り降順';
+      case dueDateTimeAsc:
+        return '締め切り昇順';
+    }
+  }
+}
+
+class _OrderByDropdownButton extends ConsumerWidget {
+  const _OrderByDropdownButton();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return DropdownButton<SampleTodosOrderBy>(
+      value: ref.watch(sampleTodosOrderByStateProvider),
+      items: SampleTodosOrderBy.values
+          .map(
+            (orderBy) => DropdownMenuItem<SampleTodosOrderBy>(
+              value: orderBy,
+              child: Text(
+                orderBy.label,
+                style: Theme.of(context).textTheme.labelSmall,
+              ),
+            ),
+          )
+          .toList(),
+      onChanged: (orderBy) {
+        if (orderBy == null) {
+          return;
+        }
+        ref
+            .read(sampleTodosOrderByStateProvider.notifier)
+            .update((_) => orderBy);
+      },
     );
   }
 }

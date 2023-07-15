@@ -31,6 +31,7 @@ class SampleTodosController {
     required DateTime? dueDateTime,
   }) async {
     if (title.isEmpty || description.isEmpty || dueDateTime == null) {
+      _appScaffoldMessengerController.showSnackBar('入力内容を確認してください。');
       return;
     }
     await _sampleTodoService.add(

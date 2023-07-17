@@ -238,11 +238,11 @@ class HostQuery {
   }
 
   /// Subscribes a specified [Host] document.
-  Future<Stream<ReadHost?>> subscribeDocument({
+  Stream<ReadHost?> subscribeDocument({
     required String hostId,
     bool includeMetadataChanges = false,
     bool excludePendingWrites = false,
-  }) async {
+  }) {
     var streamDs = readHostDocumentReference(
       hostId: hostId,
     ).snapshots(includeMetadataChanges: includeMetadataChanges);

@@ -236,11 +236,11 @@ class SampleTodoQuery {
   }
 
   /// Subscribes a specified [SampleTodo] document.
-  Future<Stream<ReadSampleTodo?>> subscribeDocument({
+  Stream<ReadSampleTodo?> subscribeDocument({
     required String sampleTodoId,
     bool includeMetadataChanges = false,
     bool excludePendingWrites = false,
-  }) async {
+  }) {
     var streamDs = readSampleTodoDocumentReference(
       sampleTodoId: sampleTodoId,
     ).snapshots(includeMetadataChanges: includeMetadataChanges);

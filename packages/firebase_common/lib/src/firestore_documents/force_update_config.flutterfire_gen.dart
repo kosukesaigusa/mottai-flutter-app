@@ -256,11 +256,11 @@ class ForceUpdateConfigQuery {
   }
 
   /// Subscribes a specified [ForceUpdateConfig] document.
-  Future<Stream<ReadForceUpdateConfig?>> subscribeDocument({
+  Stream<ReadForceUpdateConfig?> subscribeDocument({
     required String forceUpdateConfigId,
     bool includeMetadataChanges = false,
     bool excludePendingWrites = false,
-  }) async {
+  }) {
     var streamDs = readForceUpdateConfigDocumentReference(
       forceUpdateConfigId: forceUpdateConfigId,
     ).snapshots(includeMetadataChanges: includeMetadataChanges);

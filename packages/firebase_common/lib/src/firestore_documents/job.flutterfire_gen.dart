@@ -298,11 +298,11 @@ class JobQuery {
   }
 
   /// Subscribes a specified [Job] document.
-  Future<Stream<ReadJob?>> subscribeDocument({
+  Stream<ReadJob?> subscribeDocument({
     required String hostLocationId,
     bool includeMetadataChanges = false,
     bool excludePendingWrites = false,
-  }) async {
+  }) {
     var streamDs = readJobDocumentReference(
       hostLocationId: hostLocationId,
     ).snapshots(includeMetadataChanges: includeMetadataChanges);

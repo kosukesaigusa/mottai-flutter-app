@@ -234,12 +234,12 @@ class ReadStatusQuery {
   }
 
   /// Subscribes a specified [ReadStatus] document.
-  Future<Stream<ReadReadStatus?>> subscribeDocument({
+  Stream<ReadReadStatus?> subscribeDocument({
     required String chatRoomId,
     required String readStatusId,
     bool includeMetadataChanges = false,
     bool excludePendingWrites = false,
-  }) async {
+  }) {
     var streamDs = readReadStatusDocumentReference(
       chatRoomId: chatRoomId,
       readStatusId: readStatusId,

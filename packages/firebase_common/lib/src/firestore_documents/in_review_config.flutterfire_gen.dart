@@ -231,11 +231,11 @@ class InReviewConfigQuery {
   }
 
   /// Subscribes a specified [InReviewConfig] document.
-  Future<Stream<ReadInReviewConfig?>> subscribeDocument({
+  Stream<ReadInReviewConfig?> subscribeDocument({
     required String inReviewConfigId,
     bool includeMetadataChanges = false,
     bool excludePendingWrites = false,
-  }) async {
+  }) {
     var streamDs = readInReviewConfigDocumentReference(
       inReviewConfigId: inReviewConfigId,
     ).snapshots(includeMetadataChanges: includeMetadataChanges);

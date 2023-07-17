@@ -228,11 +228,11 @@ class ChatRoomQuery {
   }
 
   /// Subscribes a specified [ChatRoom] document.
-  Future<Stream<ReadChatRoom?>> subscribeDocument({
+  Stream<ReadChatRoom?> subscribeDocument({
     required String chatRoomId,
     bool includeMetadataChanges = false,
     bool excludePendingWrites = false,
-  }) async {
+  }) {
     var streamDs = readChatRoomDocumentReference(
       chatRoomId: chatRoomId,
     ).snapshots(includeMetadataChanges: includeMetadataChanges);

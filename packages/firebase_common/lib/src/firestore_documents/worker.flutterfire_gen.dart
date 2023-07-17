@@ -10,7 +10,7 @@ class ReadWorker {
     required this.workerReference,
     required this.displayName,
     required this.imageUrl,
-    required this.registeredAsHost,
+    required this.isHost,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -19,7 +19,7 @@ class ReadWorker {
   final DocumentReference<ReadWorker> workerReference;
   final String displayName;
   final String imageUrl;
-  final bool registeredAsHost;
+  final bool isHost;
   final SealedTimestamp createdAt;
   final SealedTimestamp updatedAt;
 
@@ -29,7 +29,7 @@ class ReadWorker {
       workerReference: json['workerReference'] as DocumentReference<ReadWorker>,
       displayName: json['displayName'] as String? ?? '',
       imageUrl: json['imageUrl'] as String? ?? '',
-      registeredAsHost: json['registeredAsHost'] as bool? ?? false,
+      isHost: json['isHost'] as bool? ?? false,
       createdAt: json['createdAt'] == null
           ? const ServerTimestamp()
           : sealedTimestampConverter.fromJson(json['createdAt'] as Object),
@@ -57,7 +57,7 @@ class ReadWorker {
     DocumentReference<ReadWorker>? workerReference,
     String? displayName,
     String? imageUrl,
-    bool? registeredAsHost,
+    bool? isHost,
     SealedTimestamp? createdAt,
     SealedTimestamp? updatedAt,
   }) {
@@ -66,7 +66,7 @@ class ReadWorker {
       workerReference: workerReference ?? this.workerReference,
       displayName: displayName ?? this.displayName,
       imageUrl: imageUrl ?? this.imageUrl,
-      registeredAsHost: registeredAsHost ?? this.registeredAsHost,
+      isHost: isHost ?? this.isHost,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );
@@ -77,14 +77,14 @@ class CreateWorker {
   const CreateWorker({
     required this.displayName,
     this.imageUrl = '',
-    this.registeredAsHost = false,
+    this.isHost = false,
     this.createdAt = const ServerTimestamp(),
     this.updatedAt = const ServerTimestamp(),
   });
 
   final String displayName;
   final String imageUrl;
-  final bool registeredAsHost;
+  final bool isHost;
   final SealedTimestamp createdAt;
   final SealedTimestamp updatedAt;
 
@@ -92,7 +92,7 @@ class CreateWorker {
     return {
       'displayName': displayName,
       'imageUrl': imageUrl,
-      'registeredAsHost': registeredAsHost,
+      'isHost': isHost,
       'createdAt': sealedTimestampConverter.toJson(createdAt),
       'updatedAt':
           alwaysUseServerTimestampSealedTimestampConverter.toJson(updatedAt),
@@ -104,14 +104,14 @@ class UpdateWorker {
   const UpdateWorker({
     this.displayName,
     this.imageUrl,
-    this.registeredAsHost,
+    this.isHost,
     this.createdAt,
     this.updatedAt = const ServerTimestamp(),
   });
 
   final String? displayName;
   final String? imageUrl;
-  final bool? registeredAsHost;
+  final bool? isHost;
   final SealedTimestamp? createdAt;
   final SealedTimestamp? updatedAt;
 
@@ -119,7 +119,7 @@ class UpdateWorker {
     return {
       if (displayName != null) 'displayName': displayName,
       if (imageUrl != null) 'imageUrl': imageUrl,
-      if (registeredAsHost != null) 'registeredAsHost': registeredAsHost,
+      if (isHost != null) 'isHost': isHost,
       if (createdAt != null)
         'createdAt': sealedTimestampConverter.toJson(createdAt!),
       'updatedAt': updatedAt == null
@@ -237,11 +237,11 @@ class WorkerQuery {
   }
 
   /// Subscribes a specified [Worker] document.
-  Future<Stream<ReadWorker?>> subscribeDocument({
+  Stream<ReadWorker?> subscribeDocument({
     required String workerId,
     bool includeMetadataChanges = false,
     bool excludePendingWrites = false,
-  }) async {
+  }) {
     var streamDs = readWorkerDocumentReference(
       workerId: workerId,
     ).snapshots(includeMetadataChanges: includeMetadataChanges);

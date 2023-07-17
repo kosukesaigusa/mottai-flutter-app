@@ -302,12 +302,12 @@ class ChatMessageQuery {
   }
 
   /// Subscribes a specified [ChatMessage] document.
-  Future<Stream<ReadChatMessage?>> subscribeDocument({
+  Stream<ReadChatMessage?> subscribeDocument({
     required String chatRoomId,
     required String chatMessageId,
     bool includeMetadataChanges = false,
     bool excludePendingWrites = false,
-  }) async {
+  }) {
     var streamDs = readChatMessageDocumentReference(
       chatRoomId: chatRoomId,
       chatMessageId: chatMessageId,

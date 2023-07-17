@@ -188,11 +188,11 @@ class FcmTokenQuery {
   }
 
   /// Subscribes a specified [FcmToken] document.
-  Future<Stream<ReadFcmToken?>> subscribeDocument({
+  Stream<ReadFcmToken?> subscribeDocument({
     required String fcmTokenId,
     bool includeMetadataChanges = false,
     bool excludePendingWrites = false,
-  }) async {
+  }) {
     var streamDs = readFcmTokenDocumentReference(
       fcmTokenId: fcmTokenId,
     ).snapshots(includeMetadataChanges: includeMetadataChanges);

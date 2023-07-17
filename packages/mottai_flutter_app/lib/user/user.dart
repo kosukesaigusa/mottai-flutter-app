@@ -21,7 +21,7 @@ final isHostProvider = Provider.autoDispose<bool>(
 );
 
 /// サインイン中のユーザーがホストであるとき、対応する [Host] ドキュメントを購読
-/// する [StreamProvider]
+/// する [StreamProvider].
 final hostStreamProvider = StreamProvider.autoDispose<ReadHost?>((ref) {
   ref.watch(userModeStateProvider);
   final userId = ref.watch(userIdProvider);

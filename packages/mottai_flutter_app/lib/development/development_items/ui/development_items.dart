@@ -5,6 +5,8 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../../auth/auth.dart';
 import '../../../map/ui/map.dart';
 import '../../../scaffold_messenger_controller.dart';
+import '../../../user/user.dart';
+import '../../../user/user_mode.dart';
 import '../../sample_todo/ui/sample_todos.dart';
 
 /// 開発中の各ページへの導線を表示するページ。
@@ -299,8 +301,40 @@ class _DrawerChildState extends ConsumerState<_DrawerChild> {
   Widget build(BuildContext context) {
     return ListView(
       children: [
-        const DrawerHeader(
-          child: Text('mottai-app-dev'),
+        DrawerHeader(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('mottai-app-dev'),
+              if (ref.watch(isHostProvider)) ...[
+                Text(
+                  'ユーザーモード',
+                  style: Theme.of(context).textTheme.labelSmall,
+                ),
+                ToggleButtons(
+                  onPressed: (index) {
+                    final notifier = ref.read(userModeStateProvider.notifier);
+                    if (index == 0) {
+                      notifier.update((_) => UserMode.worker);
+                    } else if (index == 1) {
+                      notifier.update((_) => UserMode.host);
+                    }
+                  },
+                  borderRadius: const BorderRadius.all(Radius.circular(8)),
+                  constraints: const BoxConstraints(
+                    minHeight: 32,
+                    minWidth: 80,
+                  ),
+                  isSelected: UserMode.values
+                      .map((mode) => mode == ref.watch(userModeStateProvider))
+                      .toList(),
+                  children: UserMode.values
+                      .map((userMode) => Text(userMode.name))
+                      .toList(),
+                ),
+              ],
+            ],
+          ),
         ),
         Padding(
           padding: const EdgeInsets.all(16),

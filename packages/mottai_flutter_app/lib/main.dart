@@ -7,16 +7,25 @@ import 'development/development_items/ui/development_items.dart';
 import 'firebase_options.dart';
 import 'package_info.dart';
 import 'scaffold_messenger_controller.dart';
+import 'user/user.dart';
+import 'user/user_mode.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  final container = ProviderContainer();
+  final hostDocumentExists =
+      await container.read(hostDocumentExistsProvider).call();
+  container.dispose();
   runApp(
     ProviderScope(
       overrides: [
         packageInfoProvider.overrideWithValue(await PackageInfo.fromPlatform()),
+        userModeStateProvider.overrideWith(
+          (ref) => hostDocumentExists ? UserMode.host : UserMode.worker,
+        ),
       ],
       child: const MainApp(),
     ),

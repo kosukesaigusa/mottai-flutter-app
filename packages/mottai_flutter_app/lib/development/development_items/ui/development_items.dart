@@ -307,6 +307,7 @@ class _DrawerChildState extends ConsumerState<_DrawerChild> {
             children: [
               const Text('mottai-app-dev'),
               if (ref.watch(isHostProvider)) ...[
+                const Gap(8),
                 Text(
                   'ユーザーモード',
                   style: Theme.of(context).textTheme.labelSmall,

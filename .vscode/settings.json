@@ -9,6 +9,7 @@
   },
   "dart.runPubGetOnPubspecChanges": "never",
   "cSpell.words": [
+    "clpg",
     "createfirebaseauthcustomtoken",
     "firebase",
     "firebaseapp",

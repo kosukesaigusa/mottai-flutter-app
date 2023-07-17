@@ -1,9 +1,11 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 import 'development/development_items/ui/development_items.dart';
 import 'firebase_options.dart';
+import 'package_info.dart';
 import 'scaffold_messenger_controller.dart';
 
 void main() async {
@@ -12,8 +14,11 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   runApp(
-    const ProviderScope(
-      child: MainApp(),
+    ProviderScope(
+      overrides: [
+        packageInfoProvider.overrideWithValue(await PackageInfo.fromPlatform()),
+      ],
+      child: const MainApp(),
     ),
   );
 }

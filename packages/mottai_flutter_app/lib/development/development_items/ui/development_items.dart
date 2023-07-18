@@ -3,6 +3,7 @@ import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../auth/auth.dart';
+import '../../../force_update/ui/force_update.dart';
 import '../../../map/ui/map.dart';
 import '../../../scaffold_messenger_controller.dart';
 import '../../../user/user.dart';
@@ -263,6 +264,18 @@ class DevelopmentItemsPage extends ConsumerWidget {
               context,
               MaterialPageRoute<void>(
                 builder: (context) => const SampleTodosPage(),
+              ),
+            ),
+          ),
+          ListTile(
+            title: const Text(
+              'forceUpdateページ',
+            ),
+            // TODO: 後に auto_route を採用して Navigator.pushNamed を使用する予定
+            onTap: () => Navigator.push<void>(
+              context,
+              MaterialPageRoute<void>(
+                builder: (context) => const ForceUpdatePage(),
               ),
             ),
           ),

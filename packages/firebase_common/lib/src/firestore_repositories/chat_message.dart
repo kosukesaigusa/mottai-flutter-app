@@ -37,16 +37,18 @@ class ChatMessageRepository {
   /// 対応する [QueryDocumentSnapshot] 以降のメッセージを [limit] 件だけ取得する。
   /// Dart 3 以降の [Record] を用いて、取得した [ReadChatMessage] 一覧に加え、
   /// 最後に取得したドキュメント ID ([lastReadChatMessageId]) も返す。
-  /// [lastReadChatMessageId] が `null` の場合は、これ以上読み取るドキュメントが
-  /// 存在していないことを表している。
+  /// 返り値の [lastReadChatMessageId] が `null` の場合は、これ以上読み取る
+  /// ドキュメントが存在していないことを表している。
   Future<(List<ReadChatMessage>, String?)> loadMessagesWithDocumentIdCursor({
     required String chatRoomId,
     required int limit,
-    required String lastReadChatMessageId,
+    required String? lastReadChatMessageId,
   }) async {
     var query = readChatMessageCollectionReference(chatRoomId: chatRoomId)
         .orderBy('createdAt', descending: true);
-    final qds = _lastReadQueryDocumentSnapshotCache[lastReadChatMessageId];
+    final qds = lastReadChatMessageId == null
+        ? null
+        : _lastReadQueryDocumentSnapshotCache[lastReadChatMessageId];
     if (qds != null) {
       query = query.startAfterDocument(qds);
     }

@@ -17,6 +17,8 @@ class AuthDependentBuilder extends ConsumerWidget {
   /// ビルダー関数。
   final Widget Function(String userId) onAuthenticated;
 
+  /// サインインアウトの場合に表示されるウィジェットを返すビルダー関数（任意）。
+  /// 渡さなければ共通の [_SignedOut] ウィジェットが表示される。
   final Widget Function()? onUnAuthenticated;
 
   @override

@@ -5,7 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../auth/auth.dart';
+import '../../auth/ui/auth_dependent_builder.dart';
 import '../../color.dart';
 import '../../user/user_mode.dart';
 import '../chat_room.dart';
@@ -58,7 +58,6 @@ class _ChatRoomPageState extends ConsumerState<ChatRoomPage> {
 
   @override
   Widget build(BuildContext context) {
-    final userId = ref.watch(userIdProvider);
     final state = ref.watch(chatRoomStateNotifier);
     // TODO: パスパラメータから渡せるようにする
     const chatRoomId = 'aSNYpkUofu05nyasvMRx';
@@ -66,57 +65,51 @@ class _ChatRoomPageState extends ConsumerState<ChatRoomPage> {
       appBar: AppBar(),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8),
-        child: state.loading
-            ? const Center(
-                child: FaIcon(
-                  FontAwesomeIcons.solidComment,
-                  size: 72,
-                  color: Colors.black12,
-                ),
-              )
-            :
-            // TODO: 未ログインの場合の UI を調整するか、AuthGuard のような機能で
-            // 非 null であることを保証するかの対応をする。
-            userId == null
-                ? const Center(
-                    child: Text('ログインしてください。'),
-                  )
-                : Stack(
-                    children: [
-                      Column(
-                        children: [
-                          Expanded(
-                            child: ListView.builder(
-                              itemCount: state.readChatMessages.length,
-                              reverse: true,
-                              controller: _scrollController,
-                              itemBuilder: (context, index) {
-                                final readChatMessage =
-                                    state.readChatMessages[index];
-                                return _ChatMessageItem(
-                                  readChatMessage: readChatMessage,
-                                  isMyMessage:
-                                      readChatMessage.senderId == userId,
-                                );
-                              },
-                            ),
-                          ),
-                          _MessageTextField(
-                            chatRoomId: chatRoomId,
-                            userId: userId,
-                          ),
-                          const Gap(24),
-                        ],
-                      ),
-                      const Positioned(
-                        child: Align(
-                          alignment: Alignment.topCenter,
-                          // TODO: パスパラメータから渡せるようにする
-                          child: _DebugIndicator(chatRoomId: chatRoomId),
-                        ),
-                      ),
-                    ],
+        child: AuthDependentBuilder(
+          onAuthenticated: (userId) => state.loading
+              ? const Center(
+                  child: FaIcon(
+                    FontAwesomeIcons.solidComment,
+                    size: 72,
+                    color: Colors.black12,
                   ),
+                )
+              : Stack(
+                  children: [
+                    Column(
+                      children: [
+                        Expanded(
+                          child: ListView.builder(
+                            itemCount: state.readChatMessages.length,
+                            reverse: true,
+                            controller: _scrollController,
+                            itemBuilder: (context, index) {
+                              final readChatMessage =
+                                  state.readChatMessages[index];
+                              return _ChatMessageItem(
+                                readChatMessage: readChatMessage,
+                                isMyMessage: readChatMessage.senderId == userId,
+                              );
+                            },
+                          ),
+                        ),
+                        _MessageTextField(
+                          chatRoomId: chatRoomId,
+                          userId: userId,
+                        ),
+                        const Gap(24),
+                      ],
+                    ),
+                    const Positioned(
+                      child: Align(
+                        alignment: Alignment.topCenter,
+                        // TODO: パスパラメータから渡せるようにする
+                        child: _DebugIndicator(chatRoomId: chatRoomId),
+                      ),
+                    ),
+                  ],
+                ),
+        ),
       ),
     );
   }

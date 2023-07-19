@@ -7,6 +7,7 @@ import '../../../map/ui/map.dart';
 import '../../../scaffold_messenger_controller.dart';
 import '../../../user/user.dart';
 import '../../../user/user_mode.dart';
+import '../../color/ui/color.dart';
 import '../../sample_todo/ui/sample_todos.dart';
 
 /// 開発中の各ページへの導線を表示するページ。
@@ -263,6 +264,18 @@ class DevelopmentItemsPage extends ConsumerWidget {
               context,
               MaterialPageRoute<void>(
                 builder: (context) => const SampleTodosPage(),
+              ),
+            ),
+          ),
+          ListTile(
+            title: const Text(
+              '色の確認',
+            ),
+            // TODO: 後に auto_route を採用して Navigator.pushNamed を使用する予定
+            onTap: () => Navigator.push<void>(
+              context,
+              MaterialPageRoute<void>(
+                builder: (context) => const ColorPage(),
               ),
             ),
           ),

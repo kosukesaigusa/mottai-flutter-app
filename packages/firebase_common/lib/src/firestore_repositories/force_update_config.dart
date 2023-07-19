@@ -4,6 +4,6 @@ class ForceUpdateConfigRepository {
   final _query = ForceUpdateConfigQuery();
 
   /// [ReadForceUpdateConfig] を購読する。
-  Stream<List<ReadForceUpdateConfig>> subscribeForceUpdateConfig() =>
-      _query.subscribeDocuments();
+  Stream<ReadForceUpdateConfig?> subscribeForceUpdateConfig() =>
+      _query.subscribeDocument(forceUpdateConfigId: 'forceUpdateConfig');
 }

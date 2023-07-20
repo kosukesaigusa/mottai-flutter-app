@@ -5,9 +5,9 @@
 part of 'worker.dart';
 
 class ReadWorker {
-  const ReadWorker._({
+  const ReadWorker({
     required this.workerId,
-    required this.workerReference,
+    required this.path,
     required this.displayName,
     required this.imageUrl,
     required this.isHost,
@@ -16,17 +16,23 @@ class ReadWorker {
   });
 
   final String workerId;
-  final DocumentReference<ReadWorker> workerReference;
+
+  final String path;
+
   final String displayName;
+
   final String imageUrl;
+
   final bool isHost;
+
   final SealedTimestamp createdAt;
+
   final SealedTimestamp updatedAt;
 
   factory ReadWorker._fromJson(Map<String, dynamic> json) {
-    return ReadWorker._(
+    return ReadWorker(
       workerId: json['workerId'] as String,
-      workerReference: json['workerReference'] as DocumentReference<ReadWorker>,
+      path: json['path'] as String,
       displayName: json['displayName'] as String? ?? '',
       imageUrl: json['imageUrl'] as String? ?? '',
       isHost: json['isHost'] as bool? ?? false,
@@ -45,31 +51,8 @@ class ReadWorker {
     return ReadWorker._fromJson(<String, dynamic>{
       ...data,
       'workerId': ds.id,
-      'workerReference': ds.reference.parent.doc(ds.id).withConverter(
-            fromFirestore: (ds, _) => ReadWorker.fromDocumentSnapshot(ds),
-            toFirestore: (obj, _) => throw UnimplementedError(),
-          ),
+      'path': ds.reference.path,
     });
-  }
-
-  ReadWorker copyWith({
-    String? workerId,
-    DocumentReference<ReadWorker>? workerReference,
-    String? displayName,
-    String? imageUrl,
-    bool? isHost,
-    SealedTimestamp? createdAt,
-    SealedTimestamp? updatedAt,
-  }) {
-    return ReadWorker._(
-      workerId: workerId ?? this.workerId,
-      workerReference: workerReference ?? this.workerReference,
-      displayName: displayName ?? this.displayName,
-      imageUrl: imageUrl ?? this.imageUrl,
-      isHost: isHost ?? this.isHost,
-      createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? this.updatedAt,
-    );
   }
 }
 

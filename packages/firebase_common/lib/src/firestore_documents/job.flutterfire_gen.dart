@@ -5,9 +5,9 @@
 part of 'job.dart';
 
 class ReadJob {
-  const ReadJob._({
+  const ReadJob({
     required this.hostLocationId,
-    required this.hostLocationReference,
+    required this.path,
     required this.hostId,
     required this.content,
     required this.place,
@@ -21,23 +21,33 @@ class ReadJob {
   });
 
   final String hostLocationId;
-  final DocumentReference<ReadJob> hostLocationReference;
+
+  final String path;
+
   final String hostId;
+
   final String content;
+
   final String place;
+
   final Set<AccessType> accessTypes;
+
   final String accessDescription;
+
   final String belongings;
+
   final String comment;
+
   final List<String> urls;
+
   final SealedTimestamp createdAt;
+
   final SealedTimestamp updatedAt;
 
   factory ReadJob._fromJson(Map<String, dynamic> json) {
-    return ReadJob._(
+    return ReadJob(
       hostLocationId: json['hostLocationId'] as String,
-      hostLocationReference:
-          json['hostLocationReference'] as DocumentReference<ReadJob>,
+      path: json['path'] as String,
       hostId: json['hostId'] as String,
       content: json['content'] as String? ?? '',
       place: json['place'] as String? ?? '',
@@ -66,42 +76,8 @@ class ReadJob {
     return ReadJob._fromJson(<String, dynamic>{
       ...data,
       'hostLocationId': ds.id,
-      'hostLocationReference': ds.reference.parent.doc(ds.id).withConverter(
-            fromFirestore: (ds, _) => ReadJob.fromDocumentSnapshot(ds),
-            toFirestore: (obj, _) => throw UnimplementedError(),
-          ),
+      'path': ds.reference.path,
     });
-  }
-
-  ReadJob copyWith({
-    String? hostLocationId,
-    DocumentReference<ReadJob>? hostLocationReference,
-    String? hostId,
-    String? content,
-    String? place,
-    Set<AccessType>? accessTypes,
-    String? accessDescription,
-    String? belongings,
-    String? comment,
-    List<String>? urls,
-    SealedTimestamp? createdAt,
-    SealedTimestamp? updatedAt,
-  }) {
-    return ReadJob._(
-      hostLocationId: hostLocationId ?? this.hostLocationId,
-      hostLocationReference:
-          hostLocationReference ?? this.hostLocationReference,
-      hostId: hostId ?? this.hostId,
-      content: content ?? this.content,
-      place: place ?? this.place,
-      accessTypes: accessTypes ?? this.accessTypes,
-      accessDescription: accessDescription ?? this.accessDescription,
-      belongings: belongings ?? this.belongings,
-      comment: comment ?? this.comment,
-      urls: urls ?? this.urls,
-      createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? this.updatedAt,
-    );
   }
 }
 

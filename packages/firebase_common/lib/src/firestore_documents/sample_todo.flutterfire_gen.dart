@@ -5,9 +5,9 @@
 part of 'sample_todo.dart';
 
 class ReadSampleTodo {
-  const ReadSampleTodo._({
+  const ReadSampleTodo({
     required this.sampleTodoId,
-    required this.sampleTodoReference,
+    required this.path,
     required this.title,
     required this.description,
     required this.isDone,
@@ -16,18 +16,23 @@ class ReadSampleTodo {
   });
 
   final String sampleTodoId;
-  final DocumentReference<ReadSampleTodo> sampleTodoReference;
+
+  final String path;
+
   final String title;
+
   final String description;
+
   final bool isDone;
+
   final DateTime dueDateTime;
+
   final SealedTimestamp updatedAt;
 
   factory ReadSampleTodo._fromJson(Map<String, dynamic> json) {
-    return ReadSampleTodo._(
+    return ReadSampleTodo(
       sampleTodoId: json['sampleTodoId'] as String,
-      sampleTodoReference:
-          json['sampleTodoReference'] as DocumentReference<ReadSampleTodo>,
+      path: json['path'] as String,
       title: json['title'] as String? ?? '',
       description: json['description'] as String? ?? '',
       isDone: json['isDone'] as bool? ?? false,
@@ -44,31 +49,8 @@ class ReadSampleTodo {
     return ReadSampleTodo._fromJson(<String, dynamic>{
       ...data,
       'sampleTodoId': ds.id,
-      'sampleTodoReference': ds.reference.parent.doc(ds.id).withConverter(
-            fromFirestore: (ds, _) => ReadSampleTodo.fromDocumentSnapshot(ds),
-            toFirestore: (obj, _) => throw UnimplementedError(),
-          ),
+      'path': ds.reference.path,
     });
-  }
-
-  ReadSampleTodo copyWith({
-    String? sampleTodoId,
-    DocumentReference<ReadSampleTodo>? sampleTodoReference,
-    String? title,
-    String? description,
-    bool? isDone,
-    DateTime? dueDateTime,
-    SealedTimestamp? updatedAt,
-  }) {
-    return ReadSampleTodo._(
-      sampleTodoId: sampleTodoId ?? this.sampleTodoId,
-      sampleTodoReference: sampleTodoReference ?? this.sampleTodoReference,
-      title: title ?? this.title,
-      description: description ?? this.description,
-      isDone: isDone ?? this.isDone,
-      dueDateTime: dueDateTime ?? this.dueDateTime,
-      updatedAt: updatedAt ?? this.updatedAt,
-    );
   }
 }
 

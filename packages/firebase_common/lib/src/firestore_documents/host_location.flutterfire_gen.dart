@@ -5,9 +5,9 @@
 part of 'host_location.dart';
 
 class ReadHostLocation {
-  const ReadHostLocation._({
+  const ReadHostLocation({
     required this.hostLocationId,
-    required this.hostLocationReference,
+    required this.path,
     required this.hostId,
     required this.address,
     required this.geo,
@@ -16,18 +16,23 @@ class ReadHostLocation {
   });
 
   final String hostLocationId;
-  final DocumentReference<ReadHostLocation> hostLocationReference;
+
+  final String path;
+
   final String hostId;
+
   final String address;
+
   final Geo geo;
+
   final SealedTimestamp createdAt;
+
   final SealedTimestamp updatedAt;
 
   factory ReadHostLocation._fromJson(Map<String, dynamic> json) {
-    return ReadHostLocation._(
+    return ReadHostLocation(
       hostLocationId: json['hostLocationId'] as String,
-      hostLocationReference:
-          json['hostLocationReference'] as DocumentReference<ReadHostLocation>,
+      path: json['path'] as String,
       hostId: json['hostId'] as String,
       address: json['address'] as String? ?? '',
       geo: _geoConverter.fromJson(json['geo'] as Map<String, dynamic>),
@@ -46,32 +51,8 @@ class ReadHostLocation {
     return ReadHostLocation._fromJson(<String, dynamic>{
       ...data,
       'hostLocationId': ds.id,
-      'hostLocationReference': ds.reference.parent.doc(ds.id).withConverter(
-            fromFirestore: (ds, _) => ReadHostLocation.fromDocumentSnapshot(ds),
-            toFirestore: (obj, _) => throw UnimplementedError(),
-          ),
+      'path': ds.reference.path,
     });
-  }
-
-  ReadHostLocation copyWith({
-    String? hostLocationId,
-    DocumentReference<ReadHostLocation>? hostLocationReference,
-    String? hostId,
-    String? address,
-    Geo? geo,
-    SealedTimestamp? createdAt,
-    SealedTimestamp? updatedAt,
-  }) {
-    return ReadHostLocation._(
-      hostLocationId: hostLocationId ?? this.hostLocationId,
-      hostLocationReference:
-          hostLocationReference ?? this.hostLocationReference,
-      hostId: hostId ?? this.hostId,
-      address: address ?? this.address,
-      geo: geo ?? this.geo,
-      createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? this.updatedAt,
-    );
   }
 }
 

@@ -5,25 +5,83 @@ import '../firestore_documents/chat_message.dart';
 class ChatMessageRepository {
   final _query = ChatMessageQuery();
 
-  /// 指定したチャットルームのメッセージの、指定した [lastReadQueryDocumentSnapshot]
-  /// 以降のメッセージを [limit] 件だけ取得する。
+  /// [loadMessagesWithDocumentIdCursor] メソッドにおいて、最後に読み込んだ
+  /// [QueryDocumentSnapshot] を保持するための [Map] 型の変数。
+  /// キーはそのドキュメント ID で、バリューが [QueryDocumentSnapshot].
+  final Map<String, QueryDocumentSnapshot<ReadChatMessage>>
+      _lastReadQueryDocumentSnapshotCache = {};
+
+  /// 指定したチャットルームのメッセージの、指定した [lastReadChatMessageId] に
+  /// 対応する [QueryDocumentSnapshot] 以降のメッセージを [limit] 件だけ取得する。
   /// Dart 3 以降の [Record] を用いて、取得した [ReadChatMessage] 一覧に加え、
-  /// 最後に取得した [QueryDocumentSnapshot] も返す。
-  Future<(List<ReadChatMessage>, QueryDocumentSnapshot<ReadChatMessage>?)>
-      loadMessagesWithCursor({
+  /// 最後に取得したドキュメント ID ([lastReadChatMessageId]) も返す。
+  /// 返り値の [lastReadChatMessageId] が `null` の場合は、これ以上読み取る
+  /// ドキュメントが存在していないことを表している。
+  Future<(List<ReadChatMessage>, String?, bool)>
+      loadMessagesWithDocumentIdCursor({
     required String chatRoomId,
     required int limit,
-    required QueryDocumentSnapshot<ReadChatMessage>?
-        lastReadQueryDocumentSnapshot,
+    required String? lastReadChatMessageId,
   }) async {
     var query = readChatMessageCollectionReference(chatRoomId: chatRoomId)
         .orderBy('createdAt', descending: true);
-    final qds = lastReadQueryDocumentSnapshot;
+    final qds = lastReadChatMessageId == null
+        ? null
+        : _lastReadQueryDocumentSnapshotCache[lastReadChatMessageId];
     if (qds != null) {
       query = query.startAfterDocument(qds);
     }
     final qs = await query.limit(limit).get();
     final readChatMessages = qs.docs.map((qds) => qds.data()).toList();
-    return (readChatMessages, qs.docs.lastOrNull);
+    final lastReadQds = qs.docs.lastOrNull;
+    _updateLastReadQueryDocumentSnapshotCache(lastReadQds);
+    return (
+      readChatMessages,
+      lastReadQds?.id,
+      readChatMessages.length >= limit,
+    );
   }
+
+  /// まず [_lastReadQueryDocumentSnapshotCache] をクリアして、非 null の場合は、
+  /// 新しい [lastReadQueryDocumentSnapshot] をキャッシュに入れる。
+  void _updateLastReadQueryDocumentSnapshotCache(
+    QueryDocumentSnapshot<ReadChatMessage>? lastReadQueryDocumentSnapshot,
+  ) {
+    _lastReadQueryDocumentSnapshotCache.clear();
+    if (lastReadQueryDocumentSnapshot != null) {
+      _lastReadQueryDocumentSnapshotCache[lastReadQueryDocumentSnapshot.id] =
+          lastReadQueryDocumentSnapshot;
+    }
+  }
+
+  /// 指定した [chatRoomId] の、[startDateTime] 以降の [ChatMessage] 一覧を購読
+  /// する。
+  Stream<List<ReadChatMessage>> subscribeChatMessages({
+    required String chatRoomId,
+    required DateTime startDateTime,
+  }) =>
+      _query.subscribeDocuments(
+        chatRoomId: chatRoomId,
+        queryBuilder: (q) => q
+            .orderBy('createdAt', descending: true)
+            .where('createdAt', isGreaterThanOrEqualTo: startDateTime),
+      );
+
+  /// 指定した [chatRoomId] に [ChatMessage] を作成する。
+  Future<void> addChatMessage({
+    required String chatRoomId,
+    required String senderId,
+    required ChatMessageType chatMessageType,
+    required String content,
+    List<String> imageUrls = const <String>[],
+  }) =>
+      _query.add(
+        chatRoomId: chatRoomId,
+        createChatMessage: CreateChatMessage(
+          senderId: senderId,
+          chatMessageType: chatMessageType,
+          content: content,
+          imageUrls: imageUrls,
+        ),
+      );
 }

@@ -5,23 +5,25 @@
 part of 'read_status.dart';
 
 class ReadReadStatus {
-  const ReadReadStatus._({
+  const ReadReadStatus({
     required this.readStatusId,
-    required this.readStatusReference,
+    required this.path,
     required this.userId,
     required this.lastReadAt,
   });
 
   final String readStatusId;
-  final DocumentReference<ReadReadStatus> readStatusReference;
+
+  final String path;
+
   final String userId;
+
   final SealedTimestamp lastReadAt;
 
   factory ReadReadStatus._fromJson(Map<String, dynamic> json) {
-    return ReadReadStatus._(
+    return ReadReadStatus(
       readStatusId: json['readStatusId'] as String,
-      readStatusReference:
-          json['readStatusReference'] as DocumentReference<ReadReadStatus>,
+      path: json['path'] as String,
       userId: json['userId'] as String,
       lastReadAt: json['lastReadAt'] == null
           ? const ServerTimestamp()
@@ -34,25 +36,8 @@ class ReadReadStatus {
     return ReadReadStatus._fromJson(<String, dynamic>{
       ...data,
       'readStatusId': ds.id,
-      'readStatusReference': ds.reference.parent.doc(ds.id).withConverter(
-            fromFirestore: (ds, _) => ReadReadStatus.fromDocumentSnapshot(ds),
-            toFirestore: (obj, _) => throw UnimplementedError(),
-          ),
+      'path': ds.reference.path,
     });
-  }
-
-  ReadReadStatus copyWith({
-    String? readStatusId,
-    DocumentReference<ReadReadStatus>? readStatusReference,
-    String? userId,
-    SealedTimestamp? lastReadAt,
-  }) {
-    return ReadReadStatus._(
-      readStatusId: readStatusId ?? this.readStatusId,
-      readStatusReference: readStatusReference ?? this.readStatusReference,
-      userId: userId ?? this.userId,
-      lastReadAt: lastReadAt ?? this.lastReadAt,
-    );
   }
 }
 

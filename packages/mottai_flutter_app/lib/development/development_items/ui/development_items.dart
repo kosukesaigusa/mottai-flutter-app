@@ -4,10 +4,12 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../auth/auth.dart';
 import '../../../auth/ui/sign_in_buttons.dart';
+import '../../../chat/ui/chat_room.dart';
 import '../../../map/ui/map.dart';
 import '../../../scaffold_messenger_controller.dart';
 import '../../../user/user.dart';
 import '../../../user/user_mode.dart';
+import '../../color/ui/color.dart';
 import '../../sample_todo/ui/sample_todos.dart';
 
 
@@ -76,17 +78,17 @@ class DevelopmentItemsPage extends ConsumerWidget {
             //   ),
             // ),
           ),
-          const ListTile(
-            title: Text(
+          ListTile(
+            title: const Text(
               'チャットルームページ（AsyncNotifier, リアルタイムチャット、無限スクロール、チャット送信、未既読管理）',
             ),
             // TODO: 後に auto_route を採用して Navigator.pushNamed を使用する予定
-            // onTap: () => Navigator.push<void>(
-            //   context,
-            //   MaterialPageRoute<void>(
-            //     builder: (context) => FooPage(),
-            //   ),
-            // ),
+            onTap: () => Navigator.push<void>(
+              context,
+              MaterialPageRoute<void>(
+                builder: (context) => const ChatRoomPage(),
+              ),
+            ),
           ),
           const ListTile(
             title: Text('ユーザー詳細ページ（ワーカー）'),
@@ -265,6 +267,18 @@ class DevelopmentItemsPage extends ConsumerWidget {
               context,
               MaterialPageRoute<void>(
                 builder: (context) => const SampleTodosPage(),
+              ),
+            ),
+          ),
+          ListTile(
+            title: const Text(
+              '色の確認',
+            ),
+            // TODO: 後に auto_route を採用して Navigator.pushNamed を使用する予定
+            onTap: () => Navigator.push<void>(
+              context,
+              MaterialPageRoute<void>(
+                builder: (context) => const ColorPage(),
               ),
             ),
           ),

@@ -5,9 +5,9 @@
 part of 'host.dart';
 
 class ReadHost {
-  const ReadHost._({
+  const ReadHost({
     required this.hostId,
-    required this.hostReference,
+    required this.path,
     required this.displayName,
     required this.imageUrl,
     required this.hostTypes,
@@ -16,17 +16,23 @@ class ReadHost {
   });
 
   final String hostId;
-  final DocumentReference<ReadHost> hostReference;
+
+  final String path;
+
   final String displayName;
+
   final String imageUrl;
+
   final Set<HostType> hostTypes;
+
   final SealedTimestamp createdAt;
+
   final SealedTimestamp updatedAt;
 
   factory ReadHost._fromJson(Map<String, dynamic> json) {
-    return ReadHost._(
+    return ReadHost(
       hostId: json['hostId'] as String,
-      hostReference: json['hostReference'] as DocumentReference<ReadHost>,
+      path: json['path'] as String,
       displayName: json['displayName'] as String? ?? '',
       imageUrl: json['imageUrl'] as String? ?? '',
       hostTypes: json['hostTypes'] == null
@@ -47,31 +53,8 @@ class ReadHost {
     return ReadHost._fromJson(<String, dynamic>{
       ...data,
       'hostId': ds.id,
-      'hostReference': ds.reference.parent.doc(ds.id).withConverter(
-            fromFirestore: (ds, _) => ReadHost.fromDocumentSnapshot(ds),
-            toFirestore: (obj, _) => throw UnimplementedError(),
-          ),
+      'path': ds.reference.path,
     });
-  }
-
-  ReadHost copyWith({
-    String? hostId,
-    DocumentReference<ReadHost>? hostReference,
-    String? displayName,
-    String? imageUrl,
-    Set<HostType>? hostTypes,
-    SealedTimestamp? createdAt,
-    SealedTimestamp? updatedAt,
-  }) {
-    return ReadHost._(
-      hostId: hostId ?? this.hostId,
-      hostReference: hostReference ?? this.hostReference,
-      displayName: displayName ?? this.displayName,
-      imageUrl: imageUrl ?? this.imageUrl,
-      hostTypes: hostTypes ?? this.hostTypes,
-      createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? this.updatedAt,
-    );
   }
 }
 

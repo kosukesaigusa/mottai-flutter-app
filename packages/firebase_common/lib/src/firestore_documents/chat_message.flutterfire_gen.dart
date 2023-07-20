@@ -5,9 +5,9 @@
 part of 'chat_message.dart';
 
 class ReadChatMessage {
-  const ReadChatMessage._({
+  const ReadChatMessage({
     required this.chatMessageId,
-    required this.chatMessageReference,
+    required this.path,
     required this.senderId,
     required this.chatMessageType,
     required this.content,
@@ -18,20 +18,27 @@ class ReadChatMessage {
   });
 
   final String chatMessageId;
-  final DocumentReference<ReadChatMessage> chatMessageReference;
+
+  final String path;
+
   final String senderId;
+
   final ChatMessageType chatMessageType;
+
   final String content;
+
   final List<String> imageUrls;
+
   final bool isDeleted;
+
   final SealedTimestamp createdAt;
+
   final SealedTimestamp updatedAt;
 
   factory ReadChatMessage._fromJson(Map<String, dynamic> json) {
-    return ReadChatMessage._(
+    return ReadChatMessage(
       chatMessageId: json['chatMessageId'] as String,
-      chatMessageReference:
-          json['chatMessageReference'] as DocumentReference<ReadChatMessage>,
+      path: json['path'] as String,
       senderId: json['senderId'] as String,
       chatMessageType:
           _chatMessageTypeConverter.fromJson(json['chatMessageType'] as String),
@@ -56,35 +63,8 @@ class ReadChatMessage {
     return ReadChatMessage._fromJson(<String, dynamic>{
       ...data,
       'chatMessageId': ds.id,
-      'chatMessageReference': ds.reference.parent.doc(ds.id).withConverter(
-            fromFirestore: (ds, _) => ReadChatMessage.fromDocumentSnapshot(ds),
-            toFirestore: (obj, _) => throw UnimplementedError(),
-          ),
+      'path': ds.reference.path,
     });
-  }
-
-  ReadChatMessage copyWith({
-    String? chatMessageId,
-    DocumentReference<ReadChatMessage>? chatMessageReference,
-    String? senderId,
-    ChatMessageType? chatMessageType,
-    String? content,
-    List<String>? imageUrls,
-    bool? isDeleted,
-    SealedTimestamp? createdAt,
-    SealedTimestamp? updatedAt,
-  }) {
-    return ReadChatMessage._(
-      chatMessageId: chatMessageId ?? this.chatMessageId,
-      chatMessageReference: chatMessageReference ?? this.chatMessageReference,
-      senderId: senderId ?? this.senderId,
-      chatMessageType: chatMessageType ?? this.chatMessageType,
-      content: content ?? this.content,
-      imageUrls: imageUrls ?? this.imageUrls,
-      isDeleted: isDeleted ?? this.isDeleted,
-      createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? this.updatedAt,
-    );
   }
 }
 

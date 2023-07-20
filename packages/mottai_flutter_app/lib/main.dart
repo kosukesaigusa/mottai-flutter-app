@@ -40,7 +40,6 @@ class MainApp extends ConsumerWidget {
     return MaterialApp(
       title: 'MOTTAI',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
         sliderTheme: SliderThemeData(
           overlayShape: SliderComponentShape.noOverlay,
@@ -53,9 +52,12 @@ class MainApp extends ConsumerWidget {
       debugShowCheckedModeBanner: false,
       home: const DevelopmentItemsPage(),
       builder: (context, child) {
-        return ScaffoldMessenger(
-          key: ref.watch(scaffoldMessengerKeyProvider),
-          child: child!,
+        return GestureDetector(
+          onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+          child: ScaffoldMessenger(
+            key: ref.watch(scaffoldMessengerKeyProvider),
+            child: child!,
+          ),
         );
       },
     );

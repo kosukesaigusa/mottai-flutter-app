@@ -5,9 +5,9 @@
 part of 'force_update_config.dart';
 
 class ReadForceUpdateConfig {
-  const ReadForceUpdateConfig._({
+  const ReadForceUpdateConfig({
     required this.forceUpdateConfigId,
-    required this.forceUpdateConfigReference,
+    required this.path,
     required this.iOSLatestVersion,
     required this.iOSMinRequiredVersion,
     required this.iOSForceUpdate,
@@ -17,19 +17,25 @@ class ReadForceUpdateConfig {
   });
 
   final String forceUpdateConfigId;
-  final DocumentReference<ReadForceUpdateConfig> forceUpdateConfigReference;
+
+  final String path;
+
   final String iOSLatestVersion;
+
   final String iOSMinRequiredVersion;
+
   final bool iOSForceUpdate;
+
   final String androidLatestVersion;
+
   final String androidMinRequiredVersion;
+
   final bool androidForceUpdate;
 
   factory ReadForceUpdateConfig._fromJson(Map<String, dynamic> json) {
-    return ReadForceUpdateConfig._(
+    return ReadForceUpdateConfig(
       forceUpdateConfigId: json['forceUpdateConfigId'] as String,
-      forceUpdateConfigReference: json['forceUpdateConfigReference']
-          as DocumentReference<ReadForceUpdateConfig>,
+      path: json['path'] as String,
       iOSLatestVersion: json['iOSLatestVersion'] as String,
       iOSMinRequiredVersion: json['iOSMinRequiredVersion'] as String,
       iOSForceUpdate: json['iOSForceUpdate'] as bool? ?? false,
@@ -44,38 +50,8 @@ class ReadForceUpdateConfig {
     return ReadForceUpdateConfig._fromJson(<String, dynamic>{
       ...data,
       'forceUpdateConfigId': ds.id,
-      'forceUpdateConfigReference':
-          ds.reference.parent.doc(ds.id).withConverter(
-                fromFirestore: (ds, _) =>
-                    ReadForceUpdateConfig.fromDocumentSnapshot(ds),
-                toFirestore: (obj, _) => throw UnimplementedError(),
-              ),
+      'path': ds.reference.path,
     });
-  }
-
-  ReadForceUpdateConfig copyWith({
-    String? forceUpdateConfigId,
-    DocumentReference<ReadForceUpdateConfig>? forceUpdateConfigReference,
-    String? iOSLatestVersion,
-    String? iOSMinRequiredVersion,
-    bool? iOSForceUpdate,
-    String? androidLatestVersion,
-    String? androidMinRequiredVersion,
-    bool? androidForceUpdate,
-  }) {
-    return ReadForceUpdateConfig._(
-      forceUpdateConfigId: forceUpdateConfigId ?? this.forceUpdateConfigId,
-      forceUpdateConfigReference:
-          forceUpdateConfigReference ?? this.forceUpdateConfigReference,
-      iOSLatestVersion: iOSLatestVersion ?? this.iOSLatestVersion,
-      iOSMinRequiredVersion:
-          iOSMinRequiredVersion ?? this.iOSMinRequiredVersion,
-      iOSForceUpdate: iOSForceUpdate ?? this.iOSForceUpdate,
-      androidLatestVersion: androidLatestVersion ?? this.androidLatestVersion,
-      androidMinRequiredVersion:
-          androidMinRequiredVersion ?? this.androidMinRequiredVersion,
-      androidForceUpdate: androidForceUpdate ?? this.androidForceUpdate,
-    );
   }
 }
 

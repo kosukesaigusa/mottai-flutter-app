@@ -5,9 +5,9 @@
 part of 'in_review_config.dart';
 
 class ReadInReviewConfig {
-  const ReadInReviewConfig._({
+  const ReadInReviewConfig({
     required this.inReviewConfigId,
-    required this.inReviewConfigReference,
+    required this.path,
     required this.iOSInReviewVersion,
     required this.enableIOSInReviewMode,
     required this.androidInReviewVersion,
@@ -15,17 +15,21 @@ class ReadInReviewConfig {
   });
 
   final String inReviewConfigId;
-  final DocumentReference<ReadInReviewConfig> inReviewConfigReference;
+
+  final String path;
+
   final String iOSInReviewVersion;
+
   final bool enableIOSInReviewMode;
+
   final String androidInReviewVersion;
+
   final bool enableAndroidInReviewMode;
 
   factory ReadInReviewConfig._fromJson(Map<String, dynamic> json) {
-    return ReadInReviewConfig._(
+    return ReadInReviewConfig(
       inReviewConfigId: json['inReviewConfigId'] as String,
-      inReviewConfigReference: json['inReviewConfigReference']
-          as DocumentReference<ReadInReviewConfig>,
+      path: json['path'] as String,
       iOSInReviewVersion: json['iOSInReviewVersion'] as String? ?? '1.0.0',
       enableIOSInReviewMode: json['enableIOSInReviewMode'] as bool? ?? false,
       androidInReviewVersion:
@@ -40,34 +44,8 @@ class ReadInReviewConfig {
     return ReadInReviewConfig._fromJson(<String, dynamic>{
       ...data,
       'inReviewConfigId': ds.id,
-      'inReviewConfigReference': ds.reference.parent.doc(ds.id).withConverter(
-            fromFirestore: (ds, _) =>
-                ReadInReviewConfig.fromDocumentSnapshot(ds),
-            toFirestore: (obj, _) => throw UnimplementedError(),
-          ),
+      'path': ds.reference.path,
     });
-  }
-
-  ReadInReviewConfig copyWith({
-    String? inReviewConfigId,
-    DocumentReference<ReadInReviewConfig>? inReviewConfigReference,
-    String? iOSInReviewVersion,
-    bool? enableIOSInReviewMode,
-    String? androidInReviewVersion,
-    bool? enableAndroidInReviewMode,
-  }) {
-    return ReadInReviewConfig._(
-      inReviewConfigId: inReviewConfigId ?? this.inReviewConfigId,
-      inReviewConfigReference:
-          inReviewConfigReference ?? this.inReviewConfigReference,
-      iOSInReviewVersion: iOSInReviewVersion ?? this.iOSInReviewVersion,
-      enableIOSInReviewMode:
-          enableIOSInReviewMode ?? this.enableIOSInReviewMode,
-      androidInReviewVersion:
-          androidInReviewVersion ?? this.androidInReviewVersion,
-      enableAndroidInReviewMode:
-          enableAndroidInReviewMode ?? this.enableAndroidInReviewMode,
-    );
   }
 }
 

@@ -1,9 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../scaffold_messenger_controller.dart';
 import '../auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 final authControllerProvider =
     Provider.autoDispose<AuthController>(
@@ -35,10 +37,19 @@ class AuthController {
         // キャンセル時
         on PlatformException catch(e){}
 
+      case Authenticator.apple:
+        try{
+          await _authService.signInWithApple();
+        }
+        on FirebaseAuthException catch(e){}
+        return ;
+
       default:
         break;
     }
     return ;
   }
+
+
 
 }

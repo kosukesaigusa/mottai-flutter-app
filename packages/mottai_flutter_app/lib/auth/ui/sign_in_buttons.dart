@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:sign_in_button/sign_in_button.dart';
 import 'auth_controller.dart';
 import '../auth.dart';
+
 
 class GoogleAppleSignin extends ConsumerWidget {
   const GoogleAppleSignin({super.key});
@@ -17,6 +17,7 @@ class GoogleAppleSignin extends ConsumerWidget {
       body: Center(
         child: Column(
           children: [
+            // Google
             SizedBox(
               height: 50,
               child: SignInButton(
@@ -27,7 +28,18 @@ class GoogleAppleSignin extends ConsumerWidget {
                       .signInOauth(Authenticator.google),
               ),
             ),
-          ]
+            // Apple
+            SizedBox(
+              height: 50,
+              child: SignInButton(
+                Buttons.apple,
+                text: 'Sign up with Apple',
+                onPressed: () async => ref
+                              .read(authControllerProvider)
+                              .signInOauth(Authenticator.apple),
+              ),
+            ),
+          ],
         ),
       ),
     );

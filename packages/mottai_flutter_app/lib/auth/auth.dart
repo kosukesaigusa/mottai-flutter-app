@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_common/firebase_common.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import '../../firestore_repository.dart';
 
 enum Authenticator {
@@ -46,10 +46,10 @@ final authServiceProvider =
 
 /// [FirebaseAuth] の認証関係の振る舞いを記述するモデル。
 class AuthService {
-  const AuthService(ProviderRef ref): _ref = ref;
+  const AuthService(ProviderRef<dynamic> ref): _ref = ref;
 
   static final _auth = FirebaseAuth.instance;
-  final ProviderRef _ref;
+  final ProviderRef<dynamic> _ref;
 
   // TODO: 開発中のみ使用する。リリース時には消すか、あとで デバッグモード or
   // 開発環境接続時のみ使用可能にする。
@@ -69,18 +69,19 @@ class AuthService {
       idToken: googleAuth.idToken,
     );
 
-    final userCredential = await _signInWithOauth(credential);
+    final userCredential = await _auth.signInWithCredential(credential);
     _ref.read(authenticatorProvider.notifier).state = Authenticator.google;
 
     return userCredential;
   }
 
-  /// OAuthでサインイン
-  Future<UserCredential> _signInWithOauth(OAuthCredential credential) async {
-    final userCredential = await _auth.signInWithCredential(credential);
+  /// Appleでのサインイン
+  Future<UserCredential> signInWithApple() async {
+    final appleProvider = AppleAuthProvider();
+    final userCredential = await FirebaseAuth.instance.signInWithProvider(appleProvider);
+    _ref.read(authenticatorProvider.notifier).state = Authenticator.apple;
     return userCredential;
   }
-
 
   /// [FirebaseAuth] からサインアウトする。
   Future<void> signOut() async {
@@ -88,5 +89,6 @@ class AuthService {
     if(_ref.read(authenticatorProvider) == Authenticator.google){
       await GoogleSignIn().signOut();
     }
+    _ref.read(authenticatorProvider.notifier).state = Authenticator.none;
   }
 }

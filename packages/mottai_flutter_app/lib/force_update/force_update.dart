@@ -6,7 +6,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../firestore_repository.dart';
 import '../package_info.dart';
 
-final forceUpdateFutureProvider =
+final forceUpdateStreamProvider =
     StreamProvider.autoDispose<ReadForceUpdateConfig?>((ref) {
   final repository = ref.watch(forceUpdateConfigRepositoryProvider);
   return repository.subscribeForceUpdateConfig();
@@ -14,7 +14,7 @@ final forceUpdateFutureProvider =
 
 final isForceUpdateProvider = Provider.autoDispose<bool>(
   (ref) {
-    final forceUpdateInfo = ref.watch(forceUpdateFutureProvider).asData?.value;
+    final forceUpdateInfo = ref.watch(forceUpdateStreamProvider).asData?.value;
 
     // 読み込みが終わっていない場合またはエラーの場合
     if (forceUpdateInfo == null) {

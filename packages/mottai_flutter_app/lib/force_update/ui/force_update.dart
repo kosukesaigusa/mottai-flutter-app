@@ -16,7 +16,7 @@ class ForceUpdatePage extends ConsumerWidget {
       appBar: AppBar(
         title: const Text('フォースアップデート情報'),
       ),
-      body: ref.watch(forceUpdateFutureProvider).when(
+      body: ref.watch(forceUpdateStreamProvider).when(
             data: (forceUpdateConfig) => SingleChildScrollView(
               child: forceUpdateConfig != null
                   ? Column(

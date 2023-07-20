@@ -34,7 +34,6 @@ dependencies:
   package_info_plus: ^4.0.2
   rxdart: ^0.27.7
   sign_in_button: ^3.2.0
-  sign_in_with_apple: ^3.0.0
 
 dev_dependencies:
   flutter_test:

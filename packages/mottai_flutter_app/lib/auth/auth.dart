@@ -1,8 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:sign_in_with_apple/sign_in_with_apple.dart';
-import '../../firestore_repository.dart';
+import '../user/user.dart';
+import '../user/worker.dart';
 
 enum Authenticator {
   none,
@@ -70,17 +70,31 @@ class AuthService {
     );
 
     final userCredential = await _auth.signInWithCredential(credential);
-    _ref.read(authenticatorProvider.notifier).state = Authenticator.google;
-
+    await _signIn(Authenticator.google, userCredential);
     return userCredential;
   }
 
   /// Appleでのサインイン
   Future<UserCredential> signInWithApple() async {
     final appleProvider = AppleAuthProvider();
-    final userCredential = await FirebaseAuth.instance.signInWithProvider(appleProvider);
-    _ref.read(authenticatorProvider.notifier).state = Authenticator.apple;
+    final UserCredential userCredential;
+    userCredential = await _auth.signInWithProvider(appleProvider);
+    await _signIn(Authenticator.apple, userCredential);
     return userCredential;
+  }
+
+  Future<void> _signIn(Authenticator authenticator, UserCredential user) async {
+    _ref.read(authenticatorProvider.notifier).state = authenticator;
+
+    // ユーザーが存在していない場合作成する。
+    if(!(await _ref.read(workerDocumentExistsProvider).call())){
+      final signInUser = user.user;
+      final uid = signInUser?.uid;
+      if((signInUser != null) && (uid != null)){
+
+        await _ref.read(workerServiceProvider).create(workerId: uid, displayName: user.user?.displayName ?? '');
+      }
+    }
   }
 
   /// [FirebaseAuth] からサインアウトする。

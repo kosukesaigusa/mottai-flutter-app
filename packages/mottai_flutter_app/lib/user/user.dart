@@ -46,3 +46,18 @@ final hostDocumentExistsProvider =
     return host != null;
   },
 );
+
+/// サインイン中のユーザーに対応するワーカードキュメントが存在するかどうか判定する
+/// `Future<bool> Function()` 型の関数を提供する [Provider].
+final workerDocumentExistsProvider =
+    Provider.autoDispose<Future<bool> Function()>(
+  (ref) => () async {
+    final userId = ref.read(userIdProvider);
+    if (userId == null) {
+      return false;
+    }
+    final worker =
+        await ref.read(workerRepositoryProvider).fetchWorker(workerId: userId);
+    return worker != null;
+  },
+);

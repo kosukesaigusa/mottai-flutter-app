@@ -92,7 +92,8 @@ class AuthService {
       final uid = signInUser?.uid;
       if((signInUser != null) && (uid != null)){
 
-        await _ref.read(workerServiceProvider).create(workerId: uid, displayName: user.user?.displayName ?? '');
+        await _ref.read(workerServiceProvider)
+              .create(workerId: uid, displayName: user.user?.displayName ?? '');
       }
     }
   }

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:sign_in_button/sign_in_button.dart';
-import 'auth_controller.dart';
+
 import '../auth.dart';
+import 'auth_controller.dart';
 
 
 class GoogleAppleSignin extends ConsumerWidget {

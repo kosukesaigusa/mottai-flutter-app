@@ -1,10 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../../scaffold_messenger_controller.dart';
 import '../auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 
 final authControllerProvider =
     Provider.autoDispose<AuthController>(

@@ -3,13 +3,13 @@ import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../auth/auth.dart';
+import '../../../auth/ui/sign_in_buttons.dart';
 import '../../../map/ui/map.dart';
 import '../../../scaffold_messenger_controller.dart';
 import '../../../user/user.dart';
 import '../../../user/user_mode.dart';
 import '../../sample_todo/ui/sample_todos.dart';
 
-import '../../../auth/ui/sign_in_buttons.dart';
 
 /// 開発中の各ページへの導線を表示するページ。
 class DevelopmentItemsPage extends ConsumerWidget {
@@ -190,12 +190,12 @@ class DevelopmentItemsPage extends ConsumerWidget {
             // ),
           ),
           ListTile(
-            title: Text('サインイン (Google, Apple)'),
+            title: const Text('サインイン (Google, Apple)'),
             // TODO: 後に auto_route を採用して Navigator.pushNamed を使用する予定
             onTap: () => Navigator.push<void>(
               context,
               MaterialPageRoute<void>(
-                builder: (context) => GoogleAppleSignin(),
+                builder: (context) => const GoogleAppleSignin(),
               ),
             ),
           ),

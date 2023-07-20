@@ -5,21 +5,22 @@
 part of 'fcm_token.dart';
 
 class ReadFcmToken {
-  const ReadFcmToken._({
+  const ReadFcmToken({
     required this.fcmTokenId,
-    required this.fcmTokenReference,
+    required this.path,
     required this.tokenAndDevices,
   });
 
   final String fcmTokenId;
-  final DocumentReference<ReadFcmToken> fcmTokenReference;
+
+  final String path;
+
   final List<TokenAndDevice> tokenAndDevices;
 
   factory ReadFcmToken._fromJson(Map<String, dynamic> json) {
-    return ReadFcmToken._(
+    return ReadFcmToken(
       fcmTokenId: json['fcmTokenId'] as String,
-      fcmTokenReference:
-          json['fcmTokenReference'] as DocumentReference<ReadFcmToken>,
+      path: json['path'] as String,
       tokenAndDevices: _tokenAndDevicesConverter
           .fromJson(json['tokenAndDevices'] as List<dynamic>?),
     );
@@ -30,23 +31,8 @@ class ReadFcmToken {
     return ReadFcmToken._fromJson(<String, dynamic>{
       ...data,
       'fcmTokenId': ds.id,
-      'fcmTokenReference': ds.reference.parent.doc(ds.id).withConverter(
-            fromFirestore: (ds, _) => ReadFcmToken.fromDocumentSnapshot(ds),
-            toFirestore: (obj, _) => throw UnimplementedError(),
-          ),
+      'path': ds.reference.path,
     });
-  }
-
-  ReadFcmToken copyWith({
-    String? fcmTokenId,
-    DocumentReference<ReadFcmToken>? fcmTokenReference,
-    List<TokenAndDevice>? tokenAndDevices,
-  }) {
-    return ReadFcmToken._(
-      fcmTokenId: fcmTokenId ?? this.fcmTokenId,
-      fcmTokenReference: fcmTokenReference ?? this.fcmTokenReference,
-      tokenAndDevices: tokenAndDevices ?? this.tokenAndDevices,
-    );
   }
 }
 

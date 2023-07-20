@@ -5,9 +5,9 @@
 part of 'chat_room.dart';
 
 class ReadChatRoom {
-  const ReadChatRoom._({
+  const ReadChatRoom({
     required this.chatRoomId,
-    required this.chatRoomReference,
+    required this.path,
     required this.workerId,
     required this.hostId,
     required this.createdAt,
@@ -15,17 +15,21 @@ class ReadChatRoom {
   });
 
   final String chatRoomId;
-  final DocumentReference<ReadChatRoom> chatRoomReference;
+
+  final String path;
+
   final String workerId;
+
   final String hostId;
+
   final SealedTimestamp createdAt;
+
   final SealedTimestamp updatedAt;
 
   factory ReadChatRoom._fromJson(Map<String, dynamic> json) {
-    return ReadChatRoom._(
+    return ReadChatRoom(
       chatRoomId: json['chatRoomId'] as String,
-      chatRoomReference:
-          json['chatRoomReference'] as DocumentReference<ReadChatRoom>,
+      path: json['path'] as String,
       workerId: json['workerId'] as String,
       hostId: json['hostId'] as String,
       createdAt: json['createdAt'] == null
@@ -43,29 +47,8 @@ class ReadChatRoom {
     return ReadChatRoom._fromJson(<String, dynamic>{
       ...data,
       'chatRoomId': ds.id,
-      'chatRoomReference': ds.reference.parent.doc(ds.id).withConverter(
-            fromFirestore: (ds, _) => ReadChatRoom.fromDocumentSnapshot(ds),
-            toFirestore: (obj, _) => throw UnimplementedError(),
-          ),
+      'path': ds.reference.path,
     });
-  }
-
-  ReadChatRoom copyWith({
-    String? chatRoomId,
-    DocumentReference<ReadChatRoom>? chatRoomReference,
-    String? workerId,
-    String? hostId,
-    SealedTimestamp? createdAt,
-    SealedTimestamp? updatedAt,
-  }) {
-    return ReadChatRoom._(
-      chatRoomId: chatRoomId ?? this.chatRoomId,
-      chatRoomReference: chatRoomReference ?? this.chatRoomReference,
-      workerId: workerId ?? this.workerId,
-      hostId: hostId ?? this.hostId,
-      createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? this.updatedAt,
-    );
   }
 }
 

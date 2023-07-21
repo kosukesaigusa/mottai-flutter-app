@@ -5,7 +5,6 @@ import 'package:sign_in_button/sign_in_button.dart';
 import '../auth.dart';
 import 'auth_controller.dart';
 
-
 class GoogleAppleSignin extends ConsumerWidget {
   const GoogleAppleSignin({super.key});
 
@@ -25,8 +24,8 @@ class GoogleAppleSignin extends ConsumerWidget {
                 Buttons.google,
                 text: 'Sign up with Google',
                 onPressed: () async => ref
-                      .read(authControllerProvider)
-                      .signInOauth(Authenticator.google),
+                    .read(authControllerProvider)
+                    .signInOauth(Authenticator.google),
               ),
             ),
             // Apple
@@ -36,8 +35,8 @@ class GoogleAppleSignin extends ConsumerWidget {
                 Buttons.apple,
                 text: 'Sign up with Apple',
                 onPressed: () async => ref
-                              .read(authControllerProvider)
-                              .signInOauth(Authenticator.apple),
+                    .read(authControllerProvider)
+                    .signInOauth(Authenticator.apple),
               ),
             ),
           ],

@@ -1,5 +1,3 @@
-import 'package:flutterfire_json_converters/flutterfire_json_converters.dart';
-
 import '../firestore_documents/worker.dart';
 
 class WorkerRepository {
@@ -13,15 +11,12 @@ class WorkerRepository {
   Future<ReadWorker?> fetchWorker({required String workerId}) =>
       _query.fetchDocument(workerId: workerId);
 
-
   /// [Worker] を作成する。
-  Future<void> set({
+  Future<void> setWorker({
     required String workerId,
     required String displayName,
     String imageUrl = '',
     bool isHost = false,
-    SealedTimestamp createdAt = const ServerTimestamp(),
-    SealedTimestamp updatedAt = const ServerTimestamp(),
   }) =>
       _query.set(
         workerId: workerId,
@@ -29,8 +24,6 @@ class WorkerRepository {
           displayName: displayName,
           imageUrl: imageUrl,
           isHost: isHost,
-          createdAt: createdAt,
-          updatedAt: updatedAt,
         ),
       );
 }

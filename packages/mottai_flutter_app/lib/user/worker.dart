@@ -22,11 +22,10 @@ class WorkerService {
     String imageUrl = '',
     bool isHost = false,
   }) =>
-      _workerRepository.set(
+      _workerRepository.setWorker(
         workerId: workerId,
         displayName: displayName,
         imageUrl: imageUrl,
         isHost: isHost,
       );
-
 }

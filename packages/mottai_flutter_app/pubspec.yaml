@@ -9,6 +9,7 @@ environment:
 
 dependencies:
   auto_route: ^7.7.0
+  cached_network_image: ^3.2.3
   dart_flutter_common:
     path: ../dart_flutter_common
   firebase_auth: ^4.7.0

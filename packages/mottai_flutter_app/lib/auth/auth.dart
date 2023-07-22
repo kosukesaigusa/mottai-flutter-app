@@ -137,17 +137,6 @@ class AuthService {
   /// [FirebaseAuth] からサインアウトする。
   Future<void> signOut() async {
     await _auth.signOut();
-    // Google でサインインしていない（Apple や LINE でした）場合でも Google
-    // からも明示的にサインアウトする。
-    try {
-      await GoogleSignIn().signOut();
-      // ignore: avoid_catches_without_on_clauses
-    } catch (_) {
-      // TODO: Google でサインインしていない場合に上記の GoogleSignIn().signOut();
-      // をコールして例外やエラーが発生しうるか調べる。
-      // もし発生しないならこの try catch 句の記述を省略する。
-      // もし発生するなら、この TODO コメントを破棄して、代わりに意図的にそこで
-      // 発生する例外やエラーを握り潰していることをコメントで明記する。
-    }
+    await GoogleSignIn().signOut();
   }
 }

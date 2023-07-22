@@ -1,6 +1,4 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../scaffold_messenger_controller.dart';
@@ -24,32 +22,28 @@ class AuthController {
   final AuthService _authService;
   final AppScaffoldMessengerController _appScaffoldMessengerController;
 
-  /// OAuthを使用したサインイン
-  Future<void> signInOauth(Authenticator authenticator) async {
+  /// 選択した [SignInMethod] でサインインする。
+  Future<void> signIn(SignInMethod authenticator) async {
     switch (authenticator) {
-      // Googleアカウントを使用したログイン処理の場合
-      case Authenticator.google:
+      case SignInMethod.google:
         try {
           await _authService.signInWithGoogle();
-          return;
         }
         // キャンセル時
         on PlatformException catch (e) {
           if (e.code == 'network_error') {
-            // ネットワークエラー
             _appScaffoldMessengerController
                 .showSnackBar('接続できませんでした。\nネットワーク状況を確認してください。');
           }
-          return;
+          _appScaffoldMessengerController.showSnackBar('キャンセルしました。');
         }
 
-      case Authenticator.apple:
-        // Appleはキャンセルとネットワークエラーの判定ができないので、try-catchしない
+      case SignInMethod.apple:
+        // Apple はキャンセルやネットワークエラーの判定ができないので、try-catchしない
         await _authService.signInWithApple();
-        return;
-
-      default:
-        break;
+      case SignInMethod.line:
+      case SignInMethod.email:
+        throw UnimplementedError();
     }
     return;
   }

@@ -1,19 +1,21 @@
 import 'dart:convert';
-import 'dart:math';
+
 import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
-import '../user/user.dart';
 import '../user/worker.dart';
 
-enum Authenticator {
-  none,
+/// Firebase Console の Authentication で設定できるサインイン方法の種別。
+enum SignInMethod {
   google,
   apple,
+  line,
+  // TODO: 後で削除する予定
   email,
+  ;
 }
 
 /// [FirebaseAuth] のインスタンスを提供する [Provider].
@@ -40,52 +42,20 @@ final isSignedInProvider = Provider<bool>(
   (ref) => ref.watch(userIdProvider) != null,
 );
 
-/// 現在の認証方法を提供する[Provider]
-/// [authUserProvider] の変更を watch しているので、ユーザーの認証状態が変更され
-/// るたびに、この [Provider] も更新される。
-/// 認証者のURLが[User].[UserInfo.providerId]に入っている。
-/// そのため、以下のような条件で判定を行う。
-/// [UserInfo.providerId] : 'google.com' => google認証
-/// [UserInfo.providerId] : 'apple.com' => apple認証
-final authenticatorProvider = Provider<Authenticator>((ref) {
-  ref.watch(authUserProvider);
-  final user = ref.watch(_authProvider).currentUser;
-
-  // リンクされるごとにproviderDataが追加されるが、同時に1アカウントしか認証しないため
-  // 最初のデータのみを見る。
-  final infos = user?.providerData;
-  if (!(infos?.isEmpty ?? true)) {
-    final providerId = infos!.first.providerId;
-    if (providerId == 'google.com') {
-      return Authenticator.google;
-    } else if (providerId == 'apple.com') {
-      return Authenticator.apple;
-    }
-  }
-  return Authenticator.none;
-});
 final authServiceProvider = Provider.autoDispose<AuthService>((ref) {
   return AuthService(
-    ref.watch(workerServiceProvider),
-    ref.watch(workerDocumentExistsProvider),
-    ref.watch(authenticatorProvider),
+    workerService: ref.watch(workerServiceProvider),
   );
 });
 
 /// [FirebaseAuth] の認証関係の振る舞いを記述するモデル。
 class AuthService {
-  const AuthService(
-    WorkerService workerService,
-    Future<bool> Function() isWorkerExist,
-    Authenticator authenticator,
-  )   : _workerService = workerService,
-        _isWorkerExist = isWorkerExist,
-        _authenticator = authenticator;
+  const AuthService({
+    required WorkerService workerService,
+  }) : _workerService = workerService;
 
   static final _auth = FirebaseAuth.instance;
   final WorkerService _workerService;
-  final Future<bool> Function() _isWorkerExist;
-  final Authenticator _authenticator;
 
   // TODO: 開発中のみ使用する。リリース時には消すか、あとで デバッグモード or
   // 開発環境接続時のみ使用可能にする。
@@ -96,7 +66,8 @@ class AuthService {
   }) =>
       _auth.signInWithEmailAndPassword(email: email, password: password);
 
-  /// Googleでのサインイン
+  /// [FirebaseAuth] に Google でサインインする。
+  /// https://firebase.flutter.dev/docs/auth/social/#google に従っている。
   Future<UserCredential> signInWithGoogle() async {
     final googleUser = await GoogleSignIn().signIn(); // サインインダイアログの表示
     final googleAuth = await googleUser?.authentication; // アカウントからトークン生成
@@ -106,31 +77,15 @@ class AuthService {
     );
 
     final userCredential = await _auth.signInWithCredential(credential);
-    await _signIn(userCredential);
+    await _maybeCreateWorkerByUserCredential(userCredential: userCredential);
     return userCredential;
   }
 
-  /// Nonceを作成する。
-  /// Nonceは周期性のない[Random.secure]から生成する。
-  static String generateNonce([int length = 32]) {
-    const charset =
-        '0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._';
-    final random = Random.secure();
-    return List.generate(length, (_) => charset[random.nextInt(charset.length)])
-        .join();
-  }
-
-  /// 文字列からSHA-256ハッシュを作成する。
-  static String sha256ofString(String input) {
-    final bytes = utf8.encode(input);
-    final digest = sha256.convert(bytes);
-    return digest.toString();
-  }
-
-  /// Appleでのサインイン
+  /// [FirebaseAuth] に Apple でサインインする。
+  /// https://firebase.flutter.dev/docs/auth/social/#apple に従っている。
   Future<UserCredential> signInWithApple() async {
     final rawNonce = generateNonce();
-    final nonce = sha256ofString(rawNonce);
+    final nonce = _sha256ofString(rawNonce);
 
     final appleCredential = await SignInWithApple.getAppleIDCredential(
       scopes: [
@@ -147,27 +102,52 @@ class AuthService {
 
     final userCredential =
         await FirebaseAuth.instance.signInWithCredential(oauthCredential);
-    await _signIn(userCredential);
+    await _maybeCreateWorkerByUserCredential(userCredential: userCredential);
     return userCredential;
   }
 
-  Future<void> _signIn(UserCredential user) async {
-    // ユーザーが存在していない場合作成する。
-    if (!(await _isWorkerExist())) {
-      final signInUser = user.user;
-      final uid = signInUser?.uid;
-      if ((signInUser != null) && (uid != null)) {
-        await _workerService.create(
-            workerId: uid, displayName: user.user?.displayName ?? '');
-      }
+  /// 文字列から SHA-256 ハッシュを作成する。
+  String _sha256ofString(String input) {
+    final bytes = utf8.encode(input);
+    final digest = sha256.convert(bytes);
+    return digest.toString();
+  }
+
+  /// サインイン時に、まだ Worker ドキュメントが存在していなければ、Firebase
+  /// の [UserCredential] をもとに生成する。
+  /// Google や Apple によるはじめてのログインのときに相当する。
+  Future<void> _maybeCreateWorkerByUserCredential({
+    required UserCredential userCredential,
+  }) async {
+    final user = userCredential.user;
+    if (user == null) {
+      // UserCredential
+      return;
     }
+    final workerExists = await _workerService.workerExists(workerId: user.uid);
+    if (workerExists) {
+      return;
+    }
+    await _workerService.createWorker(
+      workerId: user.uid,
+      displayName: user.displayName ?? '',
+    );
   }
 
   /// [FirebaseAuth] からサインアウトする。
   Future<void> signOut() async {
     await _auth.signOut();
-    if (_authenticator == Authenticator.google) {
+    // Google でサインインしていない（Apple や LINE でした）場合でも Google
+    // からも明示的にサインアウトする。
+    try {
       await GoogleSignIn().signOut();
+      // ignore: avoid_catches_without_on_clauses
+    } catch (_) {
+      // TODO: Google でサインインしていない場合に上記の GoogleSignIn().signOut();
+      // をコールして例外やエラーが発生しうるか調べる。
+      // もし発生しないならこの try catch 句の記述を省略する。
+      // もし発生するなら、この TODO コメントを破棄して、代わりに意図的にそこで
+      // 発生する例外やエラーを握り潰していることをコメントで明記する。
     }
   }
 }

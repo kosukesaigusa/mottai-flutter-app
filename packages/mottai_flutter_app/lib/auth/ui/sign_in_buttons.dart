@@ -22,10 +22,10 @@ class GoogleAppleSignin extends ConsumerWidget {
               height: 50,
               child: SignInButton(
                 Buttons.google,
-                text: 'Sign up with Google',
+                text: 'Google でサインイン',
                 onPressed: () async => ref
                     .read(authControllerProvider)
-                    .signInOauth(Authenticator.google),
+                    .signIn(SignInMethod.google),
               ),
             ),
             // Apple
@@ -33,10 +33,9 @@ class GoogleAppleSignin extends ConsumerWidget {
               height: 50,
               child: SignInButton(
                 Buttons.apple,
-                text: 'Sign up with Apple',
-                onPressed: () async => ref
-                    .read(authControllerProvider)
-                    .signInOauth(Authenticator.apple),
+                text: 'Apple でサインイン',
+                onPressed: () async =>
+                    ref.read(authControllerProvider).signIn(SignInMethod.apple),
               ),
             ),
           ],

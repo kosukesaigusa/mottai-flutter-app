@@ -14,6 +14,7 @@ class ReadJob {
     required this.accessTypes,
     required this.accessDescription,
     required this.belongings,
+    required this.reward,
     required this.comment,
     required this.urls,
     required this.createdAt,
@@ -36,6 +37,8 @@ class ReadJob {
 
   final String belongings;
 
+  final String reward;
+
   final String comment;
 
   final List<String> urls;
@@ -57,6 +60,7 @@ class ReadJob {
               .fromJson(json['accessTypes'] as List<dynamic>?),
       accessDescription: json['accessDescription'] as String? ?? '',
       belongings: json['belongings'] as String? ?? '',
+      reward: json['reward'] as String? ?? '',
       comment: json['comment'] as String? ?? '',
       urls:
           (json['urls'] as List<dynamic>?)?.map((e) => e as String).toList() ??
@@ -89,6 +93,7 @@ class CreateJob {
     this.accessTypes = const <AccessType>{},
     this.accessDescription = '',
     required this.belongings,
+    required this.reward,
     this.comment = '',
     this.urls = const <String>[],
     this.createdAt = const ServerTimestamp(),
@@ -101,6 +106,7 @@ class CreateJob {
   final Set<AccessType> accessTypes;
   final String accessDescription;
   final String belongings;
+  final String reward;
   final String comment;
   final List<String> urls;
   final SealedTimestamp createdAt;
@@ -114,6 +120,7 @@ class CreateJob {
       'accessTypes': _accessTypesConverter.toJson(accessTypes),
       'accessDescription': accessDescription,
       'belongings': belongings,
+      'reward': reward,
       'comment': comment,
       'urls': urls,
       'createdAt': sealedTimestampConverter.toJson(createdAt),
@@ -131,6 +138,7 @@ class UpdateJob {
     this.accessTypes,
     this.accessDescription,
     this.belongings,
+    this.reward,
     this.comment,
     this.urls,
     this.createdAt,
@@ -143,6 +151,7 @@ class UpdateJob {
   final Set<AccessType>? accessTypes;
   final String? accessDescription;
   final String? belongings;
+  final String? reward;
   final String? comment;
   final List<String>? urls;
   final SealedTimestamp? createdAt;
@@ -157,6 +166,7 @@ class UpdateJob {
         'accessTypes': _accessTypesConverter.toJson(accessTypes!),
       if (accessDescription != null) 'accessDescription': accessDescription,
       if (belongings != null) 'belongings': belongings,
+      if (reward != null) 'reward': reward,
       if (comment != null) 'comment': comment,
       if (urls != null) 'urls': urls,
       if (createdAt != null)

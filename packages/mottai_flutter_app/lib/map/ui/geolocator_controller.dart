@@ -32,8 +32,8 @@ class CurrentLocationController {
         locationPermission == LocationPermission.deniedForever) {
       _appScaffoldMessengerController.showSnackBar('位置情報を取得する権限を得られませんでした');
       return null;
-    } else {
-      await _locationService.getCurrentPosition();
     }
+    
+    return _locationService.getCurrentPosition();
   }
 }

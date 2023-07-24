@@ -4,14 +4,15 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../../scaffold_messenger_controller.dart';
 import '../geolocator.dart';
 
-final currentLocationControllerProvider = Provider.autoDispose<CurrentLocationController>(
-  (ref) => CurrentLocationController(
-    locationService: ref.watch(locationServiceProvider),
-    appScaffoldMessengerController: ref.watch(
-      appScaffoldMessengerControllerProvider,
+final currentLocationControllerProvider =
+  Provider.autoDispose<CurrentLocationController>(
+    (ref) => CurrentLocationController(
+      locationService: ref.watch(locationServiceProvider),
+      appScaffoldMessengerController: ref.watch(
+        appScaffoldMessengerControllerProvider,
+      ),
     ),
-  ),
-);
+  );
 
 class CurrentLocationController {
   const CurrentLocationController({
@@ -27,11 +28,12 @@ class CurrentLocationController {
   Future<Position?> getCurrentPosition() async {
     final locationPermission = await _locationService.getLocationPermission();
 
-    if (locationPermission == LocationPermission.denied || locationPermission == LocationPermission.deniedForever) {
+    if (locationPermission == LocationPermission.denied ||
+        locationPermission == LocationPermission.deniedForever) {
       _appScaffoldMessengerController.showSnackBar('位置情報を取得する権限を得られませんでした');
       return null;
     } else {
-      return await _locationService.getCurrentPosition();
+      await _locationService.getCurrentPosition();
     }
   }
 }

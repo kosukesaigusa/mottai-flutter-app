@@ -1,8 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.kosukesaigusa.mottai_flutter_app">
    <application
-        android:label="mottai_flutter_app"
-        android:icon="@mipmap/ic_launcher">
+        android:label="mottai_flutter_app">
         <activity
             android:name=".MainActivity"
             android:exported="true"

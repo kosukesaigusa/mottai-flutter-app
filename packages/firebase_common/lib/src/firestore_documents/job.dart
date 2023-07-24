@@ -14,6 +14,7 @@ class Job {
     this.accessTypes = const <AccessType>{},
     this.accessDescription = '',
     required this.belongings,
+    required this.reward,
     this.comment = '',
     this.urls = const <String>[],
     this.createdAt = const ServerTimestamp(),
@@ -35,6 +36,9 @@ class Job {
 
   @ReadDefault('')
   final String belongings;
+
+  @ReadDefault('')
+  final String reward;
 
   final String comment;
 
@@ -62,7 +66,7 @@ enum AccessType {
   busAvailable('バスあり'),
   parkingAvailable('駐車場あり'),
   walkableFromNearest('最寄りから徒歩可能'),
-  shuttleServiceAvailable('駅から送迎可能'),
+  shuttleServiceAvailable('最寄りから送迎可能'),
   ;
 
   // NOTE: ここで enhanced enum で label を定義するのは、Model に View の情報を

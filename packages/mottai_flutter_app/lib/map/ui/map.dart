@@ -60,9 +60,9 @@ class MapPage extends ConsumerWidget {
                         ),
                       ),
                       ref.watch(currentPositionProvider).when(
-                            data: (position) => Text(
-                              '緯度: ${position.latitude}, 経度: ${position.longitude}',
-                            ),
+                            data: (position) => Text('''
+                              緯度: ${position.latitude}, 経度: ${position.longitude}
+                            '''),
                             error: (_, __) => const SizedBox(),
                             loading: () => const Center(
                               child: CircularProgressIndicator(),

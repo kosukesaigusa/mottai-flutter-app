@@ -12,6 +12,7 @@ class GenericImageWidget extends StatelessWidget {
     required this.imageUrl,
     this.onTap,
     this.size,
+    this.loading,
     super.key,
   })  : imageShape = ImageShape.circle,
         borderRadius = null,
@@ -23,6 +24,7 @@ class GenericImageWidget extends StatelessWidget {
     this.onTap,
     this.size,
     this.borderRadius,
+    this.loading,
     super.key,
   })  : imageShape = ImageShape.square,
         height = null,
@@ -34,6 +36,7 @@ class GenericImageWidget extends StatelessWidget {
     required this.height,
     required this.width,
     this.borderRadius,
+    this.loading,
     super.key,
   })  : imageShape = ImageShape.rectangle,
         size = null;
@@ -45,6 +48,7 @@ class GenericImageWidget extends StatelessWidget {
   final double? height;
   final double? width;
   final double? borderRadius;
+  final Widget? loading;
   @override
   Widget build(BuildContext context) {
     return imageUrl.isEmpty
@@ -72,9 +76,15 @@ class GenericImageWidget extends StatelessWidget {
                   ),
                 );
               },
-              placeholder: (context, url) => const Center(
-                child: CircularProgressIndicator(),
-              ),
+              placeholder: (context, url) =>
+                  loading ??
+                  _ImageDisplayContainer.placeholder(
+                    imageShape: imageShape,
+                    size: size,
+                    height: height,
+                    width: width,
+                    borderRadius: borderRadius,
+                  ),
               errorWidget: (context, url, error) => const Center(
                 child: Icon(Icons.broken_image),
               ),

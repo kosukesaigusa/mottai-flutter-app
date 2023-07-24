@@ -95,9 +95,11 @@ class _ImageDisplayContainer extends StatelessWidget {
   final double? height;
   final double? radius;
   final DecorationImage? decorationImage;
+
+  static const double _defaultSize = 64;
+
   @override
   Widget build(BuildContext context) {
-    const defaultSize = 64.0;
 
     // 長方形が指定された場合のみ、指定されたheightの2倍の値またはdefaulSizeの2倍の値をwidthに設定する
     // それ以外の場合は、指定されたheightの値またはdefaultSizeをwidthに設定する

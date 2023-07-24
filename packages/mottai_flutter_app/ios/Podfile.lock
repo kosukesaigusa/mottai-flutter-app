@@ -42,7 +42,7 @@ PODS:
     - Firebase/Messaging (= 10.12.0)
     - firebase_core
     - Flutter
-  - firebase_storage (11.2.4):
+  - firebase_storage (11.2.5):
     - Firebase/Storage (= 10.12.0)
     - firebase_core
     - Flutter
@@ -277,7 +277,7 @@ SPEC CHECKSUMS:
   firebase_core: e477125798fc37cd4ab43ca6a8536bf7e0929c00
   firebase_dynamic_links: d85cf455646322fd101c8a5a5942c3d47132fe80
   firebase_messaging: 334d68c3a36b6d4d5cd91e4f42509e0d4ae49828
-  firebase_storage: 5c771da5eea51b2a1525ae26f52fe92e939daa15
+  firebase_storage: d5c1b95383db1230d9fed88c76cb257d8d1ec1d6
   FirebaseAppCheckInterop: f95a4feb9089867aff1a4bdc2ce309137e07736a
   FirebaseAuth: a66c1e14ec58f41d154a4b41ce1a23ea00ad4805
   FirebaseAuthInterop: 047153f3c2928822032190aa5194e332670a0d66
@@ -285,7 +285,7 @@ SPEC CHECKSUMS:
   FirebaseCoreExtension: 0ce5ac36042001cfa233ce7bfa28e5c313cf80f4
   FirebaseCoreInternal: 950500ad8a08963657f6d8c67b579740c06d6aa1
   FirebaseDynamicLinks: 1a387da899779e5ef34f4d6f8bdba882f90d0e67
-  FirebaseFirestore: 5d42819d1b219bc20e91c0cc854ed562680f31da
+  FirebaseFirestore: 8d9dd05bb50e0891ebe4fdd9bd0f9b9d22ea5556
   FirebaseInstallations: 7b99ef103f013624444c614397038219c45f8e63
   FirebaseMessaging: bb2c4f6422a753038fe137d90ae7c1af57251316
   FirebaseStorage: 1d7ca8c8953fc61ccacaa7c612696b5402968a0d

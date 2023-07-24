@@ -21,7 +21,7 @@ class CurrentLocationController {
   final LocationService _locationService;
   final AppScaffoldMessengerController _appScaffoldMessengerController;
 
-  /// 現在地取得のための権限を取得する
+  /// 権限を確認しつつ、現在地を取得
   Future<void> getCurrentPosition() async {
     final locationPermission = await _locationService.getLocationPermission();
 

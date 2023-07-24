@@ -27,7 +27,7 @@ class GenericImageWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return imageUrl.isEmpty
-        ? ImageDisplayContainer(
+        ? _ImageDisplayContainer(
             imageShape: imageShape,
             color: Colors.grey,
             height: height,
@@ -38,7 +38,7 @@ class GenericImageWidget extends StatelessWidget {
             child: CachedNetworkImage(
               imageUrl: imageUrl,
               imageBuilder: (context, imageProvider) {
-                return ImageDisplayContainer(
+                return _ImageDisplayContainer(
                   imageShape: imageShape,
                   height: height,
                   radius: radius,
@@ -59,14 +59,13 @@ class GenericImageWidget extends StatelessWidget {
   }
 }
 
-class ImageDisplayContainer extends StatelessWidget {
-  const ImageDisplayContainer({
+class _ImageDisplayContainer extends StatelessWidget {
+  const _ImageDisplayContainer({
     required this.imageShape,
     this.color,
     this.height,
     this.radius,
     this.decorationImage,
-    super.key,
   });
 
   final ImageShape imageShape;
@@ -77,6 +76,7 @@ class ImageDisplayContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const defaultSize = 64.0;
+
     final adjustWidth = imageShape == ImageShape.rectangle
         ? (height != null ? height! * 2 : defaultSize * 2)
         : height ?? defaultSize;

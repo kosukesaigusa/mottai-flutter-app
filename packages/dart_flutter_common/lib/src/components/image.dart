@@ -8,7 +8,6 @@ enum ImageShape {
 }
 
 class GenericImageWidget extends StatelessWidget {
-
   const GenericImageWidget.circle({
     required this.imageUrl,
     this.onTap,
@@ -52,7 +51,9 @@ class GenericImageWidget extends StatelessWidget {
         ? _ImageDisplayContainer(
             imageShape: imageShape,
             color: Colors.grey,
+            size: size,
             height: height,
+            width: width,
             radius: borderRadius,
           )
         : GestureDetector(
@@ -62,7 +63,9 @@ class GenericImageWidget extends StatelessWidget {
               imageBuilder: (context, imageProvider) {
                 return _ImageDisplayContainer(
                   imageShape: imageShape,
+                  size: size,
                   height: height,
+                  width: width,
                   radius: borderRadius,
                   decorationImage: DecorationImage(
                     image: imageProvider,
@@ -85,14 +88,18 @@ class _ImageDisplayContainer extends StatelessWidget {
   const _ImageDisplayContainer({
     required this.imageShape,
     this.color,
+    this.size,
     this.height,
+    this.width,
     this.radius,
     this.decorationImage,
   });
 
   final ImageShape imageShape;
   final Color? color;
+  final double? size;
   final double? height;
+  final double? width;
   final double? radius;
   final DecorationImage? decorationImage;
 
@@ -100,28 +107,44 @@ class _ImageDisplayContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    switch (imageShape) {
+      case ImageShape.circle:
+        {
+          return Container(
+            height: size ?? _defaultSize,
+            width: size ?? _defaultSize,
+            decoration: BoxDecoration(
+              color: color,
+              shape: BoxShape.circle,
+              image: decorationImage,
+            ),
+          );
+        }
 
-    // 長方形が指定された場合のみ、指定されたheightの2倍の値またはdefaulSizeの2倍の値をwidthに設定する
-    // それ以外の場合は、指定されたheightの値またはdefaultSizeをwidthに設定する
-    final adjustWidth = imageShape == ImageShape.rectangle
-        ? (height != null ? height! * 2 : defaultSize * 2)
-        : height ?? defaultSize;
+      case ImageShape.square:
+        {
+          return Container(
+            height: size ?? _defaultSize,
+            width: size ?? _defaultSize,
+            decoration: BoxDecoration(
+              color: color,
+              image: decorationImage,
+            ),
+          );
+        }
 
-    return Center(
-      child: Container(
-        height: height ?? defaultSize,
-        width: adjustWidth,
-        decoration: BoxDecoration(
-          color: color,
-          shape: imageShape == ImageShape.circle
-              ? BoxShape.circle
-              : BoxShape.rectangle,
-          borderRadius: imageShape != ImageShape.circle
-              ? BorderRadius.circular(radius ?? 0)
-              : null,
-          image: decorationImage,
-        ),
-      ),
-    );
+      case ImageShape.rectangle:
+        {
+          return Container(
+            height: height,
+            width: width,
+            decoration: BoxDecoration(
+              color: color,
+              image: decorationImage,
+            ),
+          );
+        }
+    }
+
   }
 }

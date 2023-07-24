@@ -1,6 +1,5 @@
+import 'package:dart_flutter_common/dart_flutter_common.dart';
 import 'package:flutter/material.dart';
-
-import './image_detail_view.dart';
 
 /// 開発中の各ページへの導線を表示するページ。
 class ImageDetailViewStubPage extends StatelessWidget {

@@ -4,3 +4,4 @@ export 'src/int.dart';
 export 'src/pick_image.dart';
 export 'src/scaffold_messenger_controller.dart';
 export 'src/string.dart';
+export 'src/image_detail_view.dart';

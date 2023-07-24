@@ -77,6 +77,8 @@ class _ImageDisplayContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     const defaultSize = 64.0;
 
+    // 長方形が指定された場合のみ、指定されたheightの2倍の値またはdefaulSizeの2倍の値をwidthに設定する
+    // それ以外の場合は、指定されたheightの値またはdefaultSizeをwidthに設定する
     final adjustWidth = imageShape == ImageShape.rectangle
         ? (height != null ? height! * 2 : defaultSize * 2)
         : height ?? defaultSize;

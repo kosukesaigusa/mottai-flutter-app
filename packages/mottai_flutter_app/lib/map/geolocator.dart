@@ -17,13 +17,12 @@ class LocationService {
 
   // 現在地を取得
   Future<Position> getCurrentPosition() async {
-    bool serviceEnabled;
-
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
+    if (await Geolocator.isLocationServiceEnabled()) {
       return Future.error('位置情報サービスが使えない状態です');
     }
 
-    return Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    return Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
+    );
   }
 }

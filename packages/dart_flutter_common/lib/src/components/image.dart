@@ -8,21 +8,43 @@ enum ImageShape {
 }
 
 class GenericImageWidget extends StatelessWidget {
-  const GenericImageWidget({
+
+  const GenericImageWidget.circle({
     required this.imageUrl,
-    required this.imageShape,
     this.onTap,
-    // 各図形の高さ。circle/squareの場合、widthにもこの値が入る。rectangleの場合、widthはこれの2倍の値が入る
-    // 指定がない場合は、defaultとして64.0が入る
-    this.height,
+    this.size,
+    super.key,
+  })  : imageShape = ImageShape.circle,
+        radius = null,
+        height = null,
+        width = null;
+
+  const GenericImageWidget.square({
+    required this.imageUrl,
+    this.onTap,
+    this.size,
     this.radius,
     super.key,
-  });
+  })  : imageShape = ImageShape.square,
+        height = null,
+        width = null;
+
+  const GenericImageWidget.reqtangle({
+    required this.imageUrl,
+    this.onTap,
+    required this.height,
+    required this.width,
+    this.radius,
+    super.key,
+  })  : imageShape = ImageShape.rectangle,
+        size = null;
 
   final String imageUrl;
   final ImageShape imageShape;
   final VoidCallback? onTap;
+  final double? size;
   final double? height;
+  final double? width;
   final double? radius;
   @override
   Widget build(BuildContext context) {

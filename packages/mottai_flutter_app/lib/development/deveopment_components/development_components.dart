@@ -15,32 +15,29 @@ class DevelopmentComponents extends StatelessWidget {
           Column(
             children: [
               const Text('汎用的な画像Widget'),
-              const GenericImageWidget(
+              const GenericImageWidget.circle(
                 imageUrl: '',
-                imageShape: ImageShape.circle,
               ),
               const SizedBox(
                 height: 10,
               ),
-              const GenericImageWidget(
+              const GenericImageWidget.circle(
                 imageUrl: 'https://picsum.photos/128',
-                imageShape: ImageShape.circle,
               ),
               const SizedBox(
                 height: 10,
               ),
-              const GenericImageWidget(
+              const GenericImageWidget.square(
                 imageUrl: 'https://picsum.photos/200',
-                imageShape: ImageShape.square,
-                height: 100,
+                size: 100,
               ),
               const SizedBox(
                 height: 10,
               ),
-              GenericImageWidget(
+              GenericImageWidget.reqtangle(
                 imageUrl: 'https://picsum.photos/100',
-                imageShape: ImageShape.rectangle,
                 height: 100,
+                width: 250,
                 radius: 10,
                 onTap: () => debugPrint('onTap'),
               ),

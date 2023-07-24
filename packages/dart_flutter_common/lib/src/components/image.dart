@@ -15,7 +15,7 @@ class GenericImageWidget extends StatelessWidget {
     this.size,
     super.key,
   })  : imageShape = ImageShape.circle,
-        radius = null,
+        borderRadius = null,
         height = null,
         width = null;
 
@@ -23,7 +23,7 @@ class GenericImageWidget extends StatelessWidget {
     required this.imageUrl,
     this.onTap,
     this.size,
-    this.radius,
+    this.borderRadius,
     super.key,
   })  : imageShape = ImageShape.square,
         height = null,
@@ -34,7 +34,7 @@ class GenericImageWidget extends StatelessWidget {
     this.onTap,
     required this.height,
     required this.width,
-    this.radius,
+    this.borderRadius,
     super.key,
   })  : imageShape = ImageShape.rectangle,
         size = null;
@@ -45,7 +45,7 @@ class GenericImageWidget extends StatelessWidget {
   final double? size;
   final double? height;
   final double? width;
-  final double? radius;
+  final double? borderRadius;
   @override
   Widget build(BuildContext context) {
     return imageUrl.isEmpty
@@ -53,7 +53,7 @@ class GenericImageWidget extends StatelessWidget {
             imageShape: imageShape,
             color: Colors.grey,
             height: height,
-            radius: radius,
+            radius: borderRadius,
           )
         : GestureDetector(
             onTap: onTap,
@@ -63,7 +63,7 @@ class GenericImageWidget extends StatelessWidget {
                 return _ImageDisplayContainer(
                   imageShape: imageShape,
                   height: height,
-                  radius: radius,
+                  radius: borderRadius,
                   decorationImage: DecorationImage(
                     image: imageProvider,
                     fit: BoxFit.cover,

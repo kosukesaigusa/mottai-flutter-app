@@ -38,7 +38,7 @@ class DevelopmentComponents extends StatelessWidget {
                 imageUrl: 'https://picsum.photos/100',
                 height: 100,
                 width: 250,
-                radius: 10,
+                borderRadius: 10,
                 onTap: () => debugPrint('onTap'),
               ),
             ],

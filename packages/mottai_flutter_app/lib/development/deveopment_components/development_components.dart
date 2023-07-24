@@ -16,6 +16,13 @@ class DevelopmentComponents extends StatelessWidget {
             children: [
               const Text('汎用的な画像Widget'),
               const GenericImageWidget(
+                imageUrl: '',
+                imageShape: ImageShape.circle,
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              const GenericImageWidget(
                 imageUrl: 'https://picsum.photos/128',
                 imageShape: ImageShape.circle,
               ),

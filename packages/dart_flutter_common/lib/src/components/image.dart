@@ -48,9 +48,8 @@ class GenericImageWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return imageUrl.isEmpty
-        ? _ImageDisplayContainer(
+        ? _ImageDisplayContainer.placeholder(
             imageShape: imageShape,
-            color: Colors.grey,
             size: size,
             height: height,
             width: width,
@@ -87,13 +86,21 @@ class GenericImageWidget extends StatelessWidget {
 class _ImageDisplayContainer extends StatelessWidget {
   const _ImageDisplayContainer({
     required this.imageShape,
-    this.color,
     this.size,
     this.height,
     this.width,
     this.radius,
     this.decorationImage,
-  });
+  }) : color = null;
+
+  const _ImageDisplayContainer.placeholder({
+    required this.imageShape,
+    this.size,
+    this.height,
+    this.width,
+    this.radius,
+  })  : color = Colors.grey,
+        decorationImage = null;
 
   final ImageShape imageShape;
   final Color? color;
@@ -145,6 +152,5 @@ class _ImageDisplayContainer extends StatelessWidget {
           );
         }
     }
-
   }
 }

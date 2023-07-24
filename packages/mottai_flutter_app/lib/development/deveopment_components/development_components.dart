@@ -35,7 +35,7 @@ class DevelopmentComponents extends StatelessWidget {
                 imageShape: ImageShape.rectangle,
                 height: 100,
                 radius: 10,
-                onTap: () => print('onTap'),
+                onTap: () => debugPrint('onTap'),
               ),
             ],
           ),

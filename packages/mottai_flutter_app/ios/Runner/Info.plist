@@ -22,6 +22,10 @@
 	<string>$(FLUTTER_BUILD_NAME)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Photo Library Access Warning</string>
+    <key>NSCameraUsageDescription</key>
+    <string>Camera Library Access Warning</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>

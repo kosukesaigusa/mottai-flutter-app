@@ -11,7 +11,7 @@ final currentPositionProvider = FutureProvider<Position>((ref) {
 });
 
 class LocationService {
-  // 現在地を取得する権限を取得
+  // 現在地を取得するための権限を取得
   Future<LocationPermission> getLocationPermission() async {
     return Geolocator.requestPermission();
   }

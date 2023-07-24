@@ -1,4 +1,3 @@
-// 現在地を取得するための権限を取得
 import 'package:geolocator/geolocator.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 

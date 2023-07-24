@@ -171,16 +171,6 @@ class DevelopmentItemsPage extends ConsumerWidget {
             //   ),
             // ),
           ),
-          ListTile(
-            title: const Text('Components'),
-            // TODO: 後に auto_route を採用して Navigator.pushNamed を使用する予定
-            onTap: () => Navigator.push<void>(
-              context,
-              MaterialPageRoute<void>(
-                builder: (context) => const DevelopmentComponents(),
-              ),
-            ),
-          ),
           const ListTile(
             title: Text('強制アップデート'),
             // TODO: 後に auto_route を採用して Navigator.pushNamed を使用する予定
@@ -242,6 +232,16 @@ class DevelopmentItemsPage extends ConsumerWidget {
             //     builder: (context) => FooPage(),
             //   ),
             // ),
+          ),
+          ListTile(
+            title: const Text('Components'),
+            // TODO: 後に auto_route を採用して Navigator.pushNamed を使用する予定
+            onTap: () => Navigator.push<void>(
+              context,
+              MaterialPageRoute<void>(
+                builder: (context) => const DevelopmentComponents(),
+              ),
+            ),
           ),
           const Divider(),
           Padding(

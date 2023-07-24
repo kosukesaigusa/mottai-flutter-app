@@ -51,45 +51,46 @@ class GenericImageWidget extends StatelessWidget {
   final Widget? loading;
   @override
   Widget build(BuildContext context) {
-    return imageUrl.isEmpty
-        ? _ImageDisplayContainer.placeholder(
+    if (imageUrl.isEmpty) {
+      return _ImageDisplayContainer.placeholder(
+        imageShape: imageShape,
+        size: size,
+        height: height,
+        width: width,
+        borderRadius: borderRadius,
+      );
+    }
+    return GestureDetector(
+      onTap: onTap,
+      child: CachedNetworkImage(
+        imageUrl: imageUrl,
+        imageBuilder: (context, imageProvider) {
+          return _ImageDisplayContainer(
             imageShape: imageShape,
             size: size,
             height: height,
             width: width,
             borderRadius: borderRadius,
-          )
-        : GestureDetector(
-            onTap: onTap,
-            child: CachedNetworkImage(
-              imageUrl: imageUrl,
-              imageBuilder: (context, imageProvider) {
-                return _ImageDisplayContainer(
-                  imageShape: imageShape,
-                  size: size,
-                  height: height,
-                  width: width,
-                  borderRadius: borderRadius,
-                  decorationImage: DecorationImage(
-                    image: imageProvider,
-                    fit: BoxFit.cover,
-                  ),
-                );
-              },
-              placeholder: (context, url) =>
-                  loading ??
-                  _ImageDisplayContainer.placeholder(
-                    imageShape: imageShape,
-                    size: size,
-                    height: height,
-                    width: width,
-                    borderRadius: borderRadius,
-                  ),
-              errorWidget: (context, url, error) => const Center(
-                child: Icon(Icons.broken_image),
-              ),
+            decorationImage: DecorationImage(
+              image: imageProvider,
+              fit: BoxFit.cover,
             ),
           );
+        },
+        placeholder: (context, url) =>
+            loading ??
+            _ImageDisplayContainer.placeholder(
+              imageShape: imageShape,
+              size: size,
+              height: height,
+              width: width,
+              borderRadius: borderRadius,
+            ),
+        errorWidget: (context, url, error) => const Center(
+          child: Icon(Icons.broken_image),
+        ),
+      ),
+    );
   }
 }
 

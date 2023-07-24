@@ -53,7 +53,7 @@ class GenericImageWidget extends StatelessWidget {
             size: size,
             height: height,
             width: width,
-            radius: borderRadius,
+            borderRadius: borderRadius,
           )
         : GestureDetector(
             onTap: onTap,
@@ -65,7 +65,7 @@ class GenericImageWidget extends StatelessWidget {
                   size: size,
                   height: height,
                   width: width,
-                  radius: borderRadius,
+                  borderRadius: borderRadius,
                   decorationImage: DecorationImage(
                     image: imageProvider,
                     fit: BoxFit.cover,
@@ -89,7 +89,7 @@ class _ImageDisplayContainer extends StatelessWidget {
     this.size,
     this.height,
     this.width,
-    this.radius,
+    this.borderRadius,
     this.decorationImage,
   }) : color = null;
 
@@ -98,7 +98,7 @@ class _ImageDisplayContainer extends StatelessWidget {
     this.size,
     this.height,
     this.width,
-    this.radius,
+    this.borderRadius,
   })  : color = Colors.grey,
         decorationImage = null;
 
@@ -107,7 +107,7 @@ class _ImageDisplayContainer extends StatelessWidget {
   final double? size;
   final double? height;
   final double? width;
-  final double? radius;
+  final double? borderRadius;
   final DecorationImage? decorationImage;
 
   static const double _defaultSize = 64;
@@ -136,6 +136,7 @@ class _ImageDisplayContainer extends StatelessWidget {
             decoration: BoxDecoration(
               color: color,
               image: decorationImage,
+              borderRadius: BorderRadius.circular(borderRadius ?? 0),
             ),
           );
         }
@@ -148,6 +149,7 @@ class _ImageDisplayContainer extends StatelessWidget {
             decoration: BoxDecoration(
               color: color,
               image: decorationImage,
+              borderRadius: BorderRadius.circular(borderRadius ?? 0),
             ),
           );
         }

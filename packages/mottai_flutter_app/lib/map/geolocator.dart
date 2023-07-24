@@ -10,12 +10,12 @@ final currentPositionProvider = FutureProvider<Position>((ref) {
 });
 
 class LocationService {
-  // 現在地を取得するための権限を取得
+  /// 現在地を取得するための権限を取得
   Future<LocationPermission> getLocationPermission() async {
     return Geolocator.requestPermission();
   }
 
-  // 現在地を取得
+  /// 現在地を取得
   Future<Position> getCurrentPosition() async {
     if (await Geolocator.isLocationServiceEnabled()) {
       return Future.error('位置情報サービスが使えない状態です');

@@ -4,7 +4,29 @@ import 'package:firebase_common/firebase_common.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../firestore_repository.dart';
+import '../user/host.dart';
+import '../user/user_mode.dart';
+import '../user/worker.dart';
 import 'chat_room_state.dart';
+
+/// チャット相手の画像 URL を取得する [Provider].
+final chatPartnerImageUrlProvider =
+    Provider.family.autoDispose<String, ReadChatRoom>((ref, readChatRoom) {
+  final userMode = ref.watch(userModeStateProvider);
+  switch (userMode) {
+    case UserMode.worker:
+      return ref.watch(hostImageUrlProvider(readChatRoom.hostId));
+    case UserMode.host:
+      return ref.watch(workerImageUrlProvider(readChatRoom.workerId));
+  }
+});
+
+final futureChatPartnerImageUrlProvider =
+    FutureProvider.family.autoDispose<String, String>((ref, chatRoomId) async {
+  final chatRoom = await ChatRoomQuery().fetchDocument(chatRoomId: chatRoomId);
+  final partnerImg = ref.watch(chatPartnerImageUrlProvider(chatRoom!));
+  return partnerImg;
+});
 
 final chatRoomStateNotifier =
     StateNotifierProvider.autoDispose<ChatRoomStateNotifier, ChatRoomState>(

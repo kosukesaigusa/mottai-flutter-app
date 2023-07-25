@@ -8,21 +8,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../auth/ui/auth_dependent_builder.dart';
 import '../../color.dart';
 import '../../user/user_mode.dart';
-import '../../user/worker.dart';
 import '../chat_room.dart';
-
-/// チャット相手の画像 URL を取得する [Provider].
-final chatPartnerImageUrlProvider =
-    Provider.family.autoDispose<String, ReadChatRoom>((ref, readChatRoom) {
-  final userMode = ref.watch(userModeStateProvider);
-  switch (userMode) {
-    case UserMode.worker:
-      // TODO: 後でムヒョンが担当する
-      throw UnimplementedError();
-    case UserMode.host:
-      return ref.watch(workerImageUrlProvider(readChatRoom.workerId));
-  }
-});
 
 /// このファイルの複数箇所で指定している水平方向の Padding。
 const double _horizontalPadding = 8;
@@ -75,6 +61,7 @@ class _ChatRoomPageState extends ConsumerState<ChatRoomPage> {
     final state = ref.watch(chatRoomStateNotifier);
     // TODO: パスパラメータから渡せるようにする
     const chatRoomId = 'aSNYpkUofu05nyasvMRx';
+
     return Scaffold(
       appBar: AppBar(),
       body: Padding(
@@ -103,6 +90,7 @@ class _ChatRoomPageState extends ConsumerState<ChatRoomPage> {
                               return _ChatMessageItem(
                                 readChatMessage: readChatMessage,
                                 isMyMessage: readChatMessage.senderId == userId,
+                                chatRoomId: chatRoomId,
                               );
                             },
                           ),
@@ -134,14 +122,32 @@ class _ChatMessageItem extends ConsumerWidget {
   const _ChatMessageItem({
     required this.readChatMessage,
     required this.isMyMessage,
+    required this.chatRoomId,
   });
 
   final ReadChatMessage readChatMessage;
 
   final bool isMyMessage;
+  final String chatRoomId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final partnerImgId =
+        ref.read(futureChatPartnerImageUrlProvider(chatRoomId));
+    final partnerImg = partnerImgId.when(
+      data: (partnerImg) {
+        return partnerImg == ''
+            ? const FaIcon(FontAwesomeIcons.user, size: _senderIconSize)
+            : SizedBox(
+                width: _senderIconSize,
+                height: _senderIconSize,
+                child: Image.network(partnerImg),
+              );
+      },
+      error: (error, stackTrace) => Text('パートナーイメージエラー: $error'),
+      loading: CircularProgressIndicator.new,
+    );
+
     return Column(
       crossAxisAlignment:
           isMyMessage ? CrossAxisAlignment.end : CrossAxisAlignment.start,
@@ -154,7 +160,7 @@ class _ChatMessageItem extends ConsumerWidget {
             if (!isMyMessage) ...[
               // TODO: readChatMessage.senderId の imageUrl を表示する。
               // 要するにクライアントサイドジョインをする。
-              const FaIcon(FontAwesomeIcons.user, size: _senderIconSize),
+              partnerImg,
               const Gap(8),
             ],
             Column(

@@ -1,4 +1,5 @@
 import 'package:firebase_common/firebase_common.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mockito/annotations.dart';
@@ -12,11 +13,12 @@ import 'force_update_test.mocks.dart';
 
 @GenerateNiceMocks([MockSpec<ForceUpdateConfigRepository>()])
 Future<void> main() async {
-  group('強制アップデート', () {
-    test('データローディング中はisForceUpdateProviderがfalseを返す', () async {
+  group('データローディング中はfalseを返す', () {
+    test('iOSの時ローディング中はfalseを返す', () async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
       final mockForceUpdateConfigRepository = MockForceUpdateConfigRepository();
       PackageInfo.setMockInitialValues(
-        appName: 'test_mottai_flutter_app_monorepo',
+        appName: 'test_mottai_flutter_app',
         packageName: 'packageName',
         version: '0.0.1',
         buildNumber: 'buildNumber',
@@ -26,7 +28,6 @@ Future<void> main() async {
         overrides: [
           packageInfoProvider
               .overrideWithValue(await PackageInfo.fromPlatform()),
-          isIOSProvider.overrideWithValue(true),
           forceUpdateConfigRepositoryProvider
               .overrideWithValue(mockForceUpdateConfigRepository),
         ],
@@ -38,34 +39,33 @@ Future<void> main() async {
           androidForceUpdate: false,
           androidLatestVersion: '0.0.2',
           androidMinRequiredVersion: '0.0.1',
-          forceUpdateConfigId: 'forceUpdateConfig',
+          forceUpdateConfigId: 'forceUpdateConfigId',
           iOSForceUpdate: false,
           iOSLatestVersion: '0.0.2',
-          iOSMinRequiredVersion: '0.0.2',
+          iOSMinRequiredVersion: '0.0.1',
           path: 'configurations',
         );
       });
       // プロバイダーをリッスンすることで変更を反映させる
       container.listen(
-        forceUpdateFutureProvider,
+        forceUpdateStreamProvider,
         (previous, next) {},
         fireImmediately: true,
       );
       expect(
-        container.read(forceUpdateFutureProvider),
+        container.read(forceUpdateStreamProvider),
         const AsyncValue<ReadForceUpdateConfig?>.loading(),
       );
       // ローディング中はfalseを返す
       expect(
-        container.read(isForceUpdateProvider),
+        container.read(isForceUpdateRequiredProvider),
         false,
       );
       // リクエストの結果が戻るのを待つ
-      await container.read(forceUpdateFutureProvider.future);
-      // 取得したデータを公開する
+      await container.read(forceUpdateStreamProvider.future);
       // 取得したデータがmockitoで設定した値と同じであること
       expect(
-        container.read(forceUpdateFutureProvider).value,
+        container.read(forceUpdateStreamProvider).value,
         isA<ReadForceUpdateConfig>()
             .having((s) => s.androidForceUpdate, 'androidForceUpdate', false)
             .having(
@@ -81,7 +81,7 @@ Future<void> main() async {
             .having(
               (s) => s.forceUpdateConfigId,
               'forceUpdateConfigId',
-              'forceUpdateConfig',
+              'forceUpdateConfigId',
             )
             .having(
               (s) => s.iOSForceUpdate,
@@ -96,7 +96,7 @@ Future<void> main() async {
             .having(
               (s) => s.iOSMinRequiredVersion,
               'iOSMinRequiredVersion',
-              '0.0.2',
+              '0.0.1',
             )
             .having(
               (s) => s.path,
@@ -104,16 +104,12 @@ Future<void> main() async {
               'configurations',
             ),
       );
-      // データローディング後はtrueになる
-      expect(
-        container.read(isForceUpdateProvider),
-        true,
-      );
     });
-    test('iosの時、iOSForceUpdateがtrueだとtrueを返す', () async {
+    test('androidの時ローディング中はfalseを返す', () async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.android;
       final mockForceUpdateConfigRepository = MockForceUpdateConfigRepository();
       PackageInfo.setMockInitialValues(
-        appName: 'test_mottai_flutter_app_monorepo',
+        appName: 'test_mottai_flutter_app',
         packageName: 'packageName',
         version: '0.0.1',
         buildNumber: 'buildNumber',
@@ -123,7 +119,6 @@ Future<void> main() async {
         overrides: [
           packageInfoProvider
               .overrideWithValue(await PackageInfo.fromPlatform()),
-          isIOSProvider.overrideWithValue(true),
           forceUpdateConfigRepositoryProvider
               .overrideWithValue(mockForceUpdateConfigRepository),
         ],
@@ -135,8 +130,8 @@ Future<void> main() async {
           androidForceUpdate: false,
           androidLatestVersion: '0.0.2',
           androidMinRequiredVersion: '0.0.1',
-          forceUpdateConfigId: 'forceUpdateConfig',
-          iOSForceUpdate: true,
+          forceUpdateConfigId: 'forceUpdateConfigId',
+          iOSForceUpdate: false,
           iOSLatestVersion: '0.0.2',
           iOSMinRequiredVersion: '0.0.1',
           path: 'configurations',
@@ -144,14 +139,24 @@ Future<void> main() async {
       });
       // プロバイダーをリッスンすることで変更を反映させる
       container.listen(
-        forceUpdateFutureProvider,
+        forceUpdateStreamProvider,
         (previous, next) {},
         fireImmediately: true,
       );
-      // リクエストの結果が戻るのを待つ
-      await container.read(forceUpdateFutureProvider.future);
       expect(
-        container.read(forceUpdateFutureProvider).value,
+        container.read(forceUpdateStreamProvider),
+        const AsyncValue<ReadForceUpdateConfig?>.loading(),
+      );
+      // ローディング中はfalseを返す
+      expect(
+        container.read(isForceUpdateRequiredProvider),
+        false,
+      );
+      // リクエストの結果が戻るのを待つ
+      await container.read(forceUpdateStreamProvider.future);
+      // 取得したデータがmockitoで設定した値と同じであること
+      expect(
+        container.read(forceUpdateStreamProvider).value,
         isA<ReadForceUpdateConfig>()
             .having((s) => s.androidForceUpdate, 'androidForceUpdate', false)
             .having(
@@ -167,12 +172,12 @@ Future<void> main() async {
             .having(
               (s) => s.forceUpdateConfigId,
               'forceUpdateConfigId',
-              'forceUpdateConfig',
+              'forceUpdateConfigId',
             )
             .having(
               (s) => s.iOSForceUpdate,
               'iOSForceUpdate',
-              true,
+              false,
             )
             .having(
               (s) => s.iOSLatestVersion,
@@ -190,16 +195,14 @@ Future<void> main() async {
               'configurations',
             ),
       );
-      // 値はtrueになること
-      expect(
-        container.read(isForceUpdateProvider),
-        true,
-      );
     });
-    test('iosの時、iOSForceUpdateがfalseの場合かつバージョンが範囲外の時はtrue', () async {
+  });
+  group('iOS強制アップデートの確認', () {
+    setUp(() => debugDefaultTargetPlatformOverride = TargetPlatform.iOS);
+    test('現在バージョン<最低限バージョンはtrueを返す', () async {
       final mockForceUpdateConfigRepository = MockForceUpdateConfigRepository();
       PackageInfo.setMockInitialValues(
-        appName: 'test_mottai_flutter_app_monorepo',
+        appName: 'test_mottai_flutter_app',
         packageName: 'packageName',
         version: '0.0.1',
         buildNumber: 'buildNumber',
@@ -209,7 +212,6 @@ Future<void> main() async {
         overrides: [
           packageInfoProvider
               .overrideWithValue(await PackageInfo.fromPlatform()),
-          isIOSProvider.overrideWithValue(true),
           forceUpdateConfigRepositoryProvider
               .overrideWithValue(mockForceUpdateConfigRepository),
         ],
@@ -229,17 +231,17 @@ Future<void> main() async {
         );
       });
       // リクエストの結果が戻るのを待つ
-      await container.read(forceUpdateFutureProvider.future);
+      await container.read(forceUpdateStreamProvider.future);
       // 値はtrueになること
       expect(
-        container.read(isForceUpdateProvider),
+        container.read(isForceUpdateRequiredProvider),
         true,
       );
     });
-    test('iosの時、iOSForceUpdateがfalseの場合かつバージョンが範囲内の時はfalse', () async {
+    test('現在バージョン<=最低限バージョンはfalseを返す', () async {
       final mockForceUpdateConfigRepository = MockForceUpdateConfigRepository();
       PackageInfo.setMockInitialValues(
-        appName: 'test_mottai_flutter_app_monorepo',
+        appName: 'test_mottai_flutter_app',
         packageName: 'packageName',
         version: '0.0.1',
         buildNumber: 'buildNumber',
@@ -249,7 +251,6 @@ Future<void> main() async {
         overrides: [
           packageInfoProvider
               .overrideWithValue(await PackageInfo.fromPlatform()),
-          isIOSProvider.overrideWithValue(true),
           forceUpdateConfigRepositoryProvider
               .overrideWithValue(mockForceUpdateConfigRepository),
         ],
@@ -269,19 +270,18 @@ Future<void> main() async {
         );
       });
       // リクエストの結果が戻るのを待つ
-      await container.read(forceUpdateFutureProvider.future);
-      // 値はtrueになること
+      await container.read(forceUpdateStreamProvider.future);
       expect(
-        container.read(isForceUpdateProvider),
+        container.read(isForceUpdateRequiredProvider),
         false,
       );
     });
-    test('androidの時、androidForceUpdateがtrueだとtrueを返す', () async {
+    test('現在バージョン>最低限バージョンはfalseを返す', () async {
       final mockForceUpdateConfigRepository = MockForceUpdateConfigRepository();
       PackageInfo.setMockInitialValues(
-        appName: 'test_mottai_flutter_app_monorepo',
+        appName: 'test_mottai_flutter_app',
         packageName: 'packageName',
-        version: '0.0.1',
+        version: '0.0.2',
         buildNumber: 'buildNumber',
         buildSignature: 'buildSignature',
       );
@@ -289,7 +289,6 @@ Future<void> main() async {
         overrides: [
           packageInfoProvider
               .overrideWithValue(await PackageInfo.fromPlatform()),
-          isIOSProvider.overrideWithValue(false),
           forceUpdateConfigRepositoryProvider
               .overrideWithValue(mockForceUpdateConfigRepository),
         ],
@@ -309,17 +308,19 @@ Future<void> main() async {
         );
       });
       // リクエストの結果が戻るのを待つ
-      await container.read(forceUpdateFutureProvider.future);
-      // 値はtrueになること
+      await container.read(forceUpdateStreamProvider.future);
       expect(
-        container.read(isForceUpdateProvider),
-        true,
+        container.read(isForceUpdateRequiredProvider),
+        false,
       );
     });
-    test('androidの時、androidForceUpdateがfalseの場合かつバージョンが範囲外の時はtrue', () async {
+  });
+  group('android強制アップデートの確認', () {
+    setUp(() => debugDefaultTargetPlatformOverride = TargetPlatform.android);
+    test('現在バージョン<最低限バージョンはtrueを返す', () async {
       final mockForceUpdateConfigRepository = MockForceUpdateConfigRepository();
       PackageInfo.setMockInitialValues(
-        appName: 'test_mottai_flutter_app_monorepo',
+        appName: 'test_mottai_flutter_app',
         packageName: 'packageName',
         version: '0.0.1',
         buildNumber: 'buildNumber',
@@ -329,7 +330,6 @@ Future<void> main() async {
         overrides: [
           packageInfoProvider
               .overrideWithValue(await PackageInfo.fromPlatform()),
-          isIOSProvider.overrideWithValue(false),
           forceUpdateConfigRepositoryProvider
               .overrideWithValue(mockForceUpdateConfigRepository),
         ],
@@ -349,17 +349,16 @@ Future<void> main() async {
         );
       });
       // リクエストの結果が戻るのを待つ
-      await container.read(forceUpdateFutureProvider.future);
-      // 値はtrueになること
+      await container.read(forceUpdateStreamProvider.future);
       expect(
-        container.read(isForceUpdateProvider),
+        container.read(isForceUpdateRequiredProvider),
         true,
       );
     });
-    test('androidの時、androidForceUpdateがfalseの場合かつバージョンが範囲内の時はfalse', () async {
+    test('現在バージョン<=最低限バージョンはfalseを返す', () async {
       final mockForceUpdateConfigRepository = MockForceUpdateConfigRepository();
       PackageInfo.setMockInitialValues(
-        appName: 'test_mottai_flutter_app_monorepo',
+        appName: 'test_mottai_flutter_app',
         packageName: 'packageName',
         version: '0.0.1',
         buildNumber: 'buildNumber',
@@ -369,7 +368,6 @@ Future<void> main() async {
         overrides: [
           packageInfoProvider
               .overrideWithValue(await PackageInfo.fromPlatform()),
-          isIOSProvider.overrideWithValue(false),
           forceUpdateConfigRepositoryProvider
               .overrideWithValue(mockForceUpdateConfigRepository),
         ],
@@ -389,17 +387,56 @@ Future<void> main() async {
         );
       });
       // リクエストの結果が戻るのを待つ
-      await container.read(forceUpdateFutureProvider.future);
-      // 値はtrueになること
+      await container.read(forceUpdateStreamProvider.future);
       expect(
-        container.read(isForceUpdateProvider),
+        container.read(isForceUpdateRequiredProvider),
         false,
       );
     });
+    test('現在バージョン>最低限バージョンはfalseを返す', () async {
+      final mockForceUpdateConfigRepository = MockForceUpdateConfigRepository();
+      PackageInfo.setMockInitialValues(
+        appName: 'test_mottai_flutter_app',
+        packageName: 'packageName',
+        version: '0.0.2',
+        buildNumber: 'buildNumber',
+        buildSignature: 'buildSignature',
+      );
+      final container = ProviderContainer(
+        overrides: [
+          packageInfoProvider
+              .overrideWithValue(await PackageInfo.fromPlatform()),
+          forceUpdateConfigRepositoryProvider
+              .overrideWithValue(mockForceUpdateConfigRepository),
+        ],
+      );
+      // モックリポジトリにより取得するデータを変更する
+      when(mockForceUpdateConfigRepository.subscribeForceUpdateConfig())
+          .thenAnswer((_) async* {
+        yield const ReadForceUpdateConfig(
+          androidForceUpdate: false,
+          androidLatestVersion: '0.0.2',
+          androidMinRequiredVersion: '0.0.1',
+          forceUpdateConfigId: 'forceUpdateConfig',
+          iOSForceUpdate: false,
+          iOSLatestVersion: '0.0.2',
+          iOSMinRequiredVersion: '0.0.1',
+          path: 'configurations',
+        );
+      });
+      // リクエストの結果が戻るのを待つ
+      await container.read(forceUpdateStreamProvider.future);
+      expect(
+        container.read(isForceUpdateRequiredProvider),
+        false,
+      );
+    });
+  });
+  group('おかしな値を取得した場合', () {
     test('fireStoreから取得した数値がおかしな場合はfalseを返す', () async {
       final mockForceUpdateConfigRepository = MockForceUpdateConfigRepository();
       PackageInfo.setMockInitialValues(
-        appName: 'test_mottai_flutter_app_monorepo',
+        appName: 'test_mottai_flutter_app',
         packageName: 'packageName',
         version: '0.0.1',
         buildNumber: 'buildNumber',
@@ -409,7 +446,6 @@ Future<void> main() async {
         overrides: [
           packageInfoProvider
               .overrideWithValue(await PackageInfo.fromPlatform()),
-          isIOSProvider.overrideWithValue(false),
           forceUpdateConfigRepositoryProvider
               .overrideWithValue(mockForceUpdateConfigRepository),
         ],
@@ -429,10 +465,9 @@ Future<void> main() async {
         );
       });
       // リクエストの結果が戻るのを待つ
-      await container.read(forceUpdateFutureProvider.future);
-      // 値はtrueになること
+      await container.read(forceUpdateStreamProvider.future);
       expect(
-        container.read(isForceUpdateProvider),
+        container.read(isForceUpdateRequiredProvider),
         false,
       );
     });

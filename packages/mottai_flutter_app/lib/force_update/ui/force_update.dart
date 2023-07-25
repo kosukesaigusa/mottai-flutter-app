@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../../scaffold_messenger_controller.dart';
 import '../force_update.dart';
 
 class ForceUpdatePage extends ConsumerWidget {
@@ -16,7 +17,7 @@ class ForceUpdatePage extends ConsumerWidget {
       appBar: AppBar(
         title: const Text('フォースアップデート情報'),
       ),
-      body: ref.watch(forceUpdateFutureProvider).when(
+      body: ref.watch(forceUpdateStreamProvider).when(
             data: (forceUpdateConfig) => SingleChildScrollView(
               child: forceUpdateConfig != null
                   ? Column(
@@ -60,18 +61,19 @@ class ForceUpdatePage extends ConsumerWidget {
                         ),
                         ListTile(
                           title: Text(
-                            ref.watch(isForceUpdateProvider).toString(),
+                            ref.watch(isForceUpdateRequiredProvider).toString(),
                           ),
                           subtitle: const Text('アップデートするかどうか'),
                         ),
                         // if (ref.watch(isForceUpdateProvider))
                         ElevatedButton(
                           onPressed: () async {
-                            await showDialog<Widget>(
-                              barrierDismissible: false,
-                              context: context,
-                              builder: (_) => const _ForceUpdateDialog(),
-                            );
+                            await ref
+                                .read(appScaffoldMessengerControllerProvider)
+                                .showDialogByBuilder<void>(
+                                  builder: (_) => const _ForceUpdateDialog(),
+                                  barrierDismissible: false,
+                                );
                           },
                           child: const Text('ダイアログ表示'),
                         ),

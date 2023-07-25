@@ -9,6 +9,14 @@ import '../user/user_mode.dart';
 import '../user/worker.dart';
 import 'chat_room_state.dart';
 
+/// 指定した [ChatRoom] を取得する [FutureProvider].
+final chatRoomFutureProvider =
+    FutureProvider.family.autoDispose<ReadChatRoom?, String>(
+  (ref, chatRoomId) => ref
+      .watch(chatRoomRepositoryProvider)
+      .fetchChatRoom(chatRoomId: chatRoomId),
+);
+
 /// チャット相手の画像 URL を取得する [Provider].
 final chatPartnerImageUrlProvider =
     Provider.family.autoDispose<String, ReadChatRoom>((ref, readChatRoom) {
@@ -21,14 +29,7 @@ final chatPartnerImageUrlProvider =
   }
 });
 
-final futureChatPartnerImageUrlProvider =
-    FutureProvider.family.autoDispose<String, String>((ref, chatRoomId) async {
-  final chatRoom = await ChatRoomQuery().fetchDocument(chatRoomId: chatRoomId);
-  final partnerImg = ref.watch(chatPartnerImageUrlProvider(chatRoom!));
-  return partnerImg;
-});
-
-final chatRoomStateNotifier =
+final chatRoomStateNotifierProvider =
     StateNotifierProvider.autoDispose<ChatRoomStateNotifier, ChatRoomState>(
   (ref) => ChatRoomStateNotifier(
     // TODO: パスパラメータから渡せるようにする

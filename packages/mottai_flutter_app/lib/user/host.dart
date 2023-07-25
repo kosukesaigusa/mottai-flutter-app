@@ -9,7 +9,7 @@ final hostStreamProvider = StreamProvider.family.autoDispose<ReadHost?, String>(
       ref.watch(hostRepositoryProvider).subscribeHost(hostId: hostId),
 );
 
-/// 指定した [Host] の画像　URL を返す　[Provider].
+/// 指定した [Host] の画像 URL を返す [Provider].
 /// 画像が存在しない場合や読み込み中・エラーの場合でもから文字を返す。
 final hostImageUrlProvider =
     Provider.family.autoDispose<String, String>((ref, hostId) {

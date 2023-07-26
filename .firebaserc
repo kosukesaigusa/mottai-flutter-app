@@ -1,5 +1,9 @@
 {
   "projects": {
-    "default": "mottai-app-dev-2"
-  }
+    "default": "mottai-app-dev-2",
+    "dev": "mottai-app-dev-2",
+    "prod": "mottai-app-prod"
+  },
+  "targets": {},
+  "etags": {}
 }

@@ -36,17 +36,17 @@ final userIdProvider = Provider<String?>((ref) {
 });
 
 /// ユーザーがログインしているかどうかを示す bool 値を提供する Provider.
-/// [userIdProvider] の変更を watch しているので、ユーザーの認証状態が変更され
-/// るたびに、この [Provider] も更新される。
+/// [userIdProvider] の変更を watch しているので、ユーザーの認証状態が変更される
+/// たびに、この [Provider] も更新される。
 final isSignedInProvider = Provider<bool>(
   (ref) => ref.watch(userIdProvider) != null,
 );
 
-final authServiceProvider = Provider.autoDispose<AuthService>((ref) {
-  return AuthService(
+final authServiceProvider = Provider.autoDispose<AuthService>(
+  (ref) => AuthService(
     workerService: ref.watch(workerServiceProvider),
-  );
-});
+  ),
+);
 
 /// [FirebaseAuth] の認証関係の振る舞いを記述するモデル。
 class AuthService {
@@ -55,6 +55,7 @@ class AuthService {
   }) : _workerService = workerService;
 
   static final _auth = FirebaseAuth.instance;
+
   final WorkerService _workerService;
 
   // TODO: 開発中のみ使用する。リリース時には消すか、あとで デバッグモード or
@@ -121,7 +122,6 @@ class AuthService {
   }) async {
     final user = userCredential.user;
     if (user == null) {
-      // UserCredential
       return;
     }
     final workerExists = await _workerService.workerExists(workerId: user.uid);

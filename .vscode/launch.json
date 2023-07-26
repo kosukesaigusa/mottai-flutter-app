@@ -2,18 +2,18 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Debug",
+      "name": "Debug (dev)",
       "program": "packages/mottai_flutter_app/lib/main.dart",
       "request": "launch",
       "type": "dart",
-      "args": ["--debug"]
+      "args": ["--debug", "--dart-define-from-file=dev-dart-define.json"]
     },
     {
-      "name": "Release",
+      "name": "Release (dev)",
       "program": "packages/mottai_flutter_app/lib/main.dart",
       "request": "launch",
       "type": "dart",
-      "args": ["--release"]
+      "args": ["--release", "--dart-define-from-file=dev-dart-define.json"]
     },
     {
       "name": "Debug Functions (local)",

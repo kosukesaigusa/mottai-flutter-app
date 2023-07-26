@@ -23,11 +23,17 @@ final isForceUpdateRequiredProvider = StateProvider.autoDispose<bool>(
       final currentVersion = ref.watch(packageInfoProvider).version;
       switch (defaultTargetPlatform) {
         case TargetPlatform.iOS:
+          if (!forceUpdateInfo.iOSForceUpdate) {
+            return false;
+          }
           return isCurrentVersionLessThanMinimum(
             currentVersion,
             forceUpdateInfo.iOSMinRequiredVersion,
           );
         case TargetPlatform.android:
+          if (!forceUpdateInfo.androidForceUpdate) {
+            return false;
+          }
           return isCurrentVersionLessThanMinimum(
             currentVersion,
             forceUpdateInfo.androidMinRequiredVersion,

@@ -9,6 +9,7 @@ part 'job.flutterfire_gen.dart';
 class Job {
   const Job({
     required this.hostId,
+    required this.title,
     required this.content,
     required this.place,
     this.accessTypes = const <AccessType>{},
@@ -22,6 +23,9 @@ class Job {
   });
 
   final String hostId;
+
+  @ReadDefault('')
+  final String title;
 
   @ReadDefault('')
   final String content;

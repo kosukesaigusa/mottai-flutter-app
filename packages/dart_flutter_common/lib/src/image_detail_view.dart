@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class DetailDisplayableImage extends StatelessWidget {
-  DetailDisplayableImage({
+  const DetailDisplayableImage({
     required this.image,
     super.key,
   });
@@ -37,10 +37,9 @@ class DetailDisplayableImage extends StatelessWidget {
 
 // 詳細画像表示
 class _ImageDetailView extends StatelessWidget {
-  _ImageDetailView({
+  const _ImageDetailView({
     required this.tag,
     required this.image,
-    super.key,
   });
 
   final String tag;

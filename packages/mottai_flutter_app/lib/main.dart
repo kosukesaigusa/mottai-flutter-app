@@ -48,6 +48,9 @@ class MainApp extends ConsumerWidget {
               elevation: 4,
               shadowColor: Theme.of(context).shadowColor,
             ),
+        chipTheme: Theme.of(context).chipTheme.copyWith(
+              backgroundColor: const Color(0xFFE8DEF8),
+            ),
       ),
       debugShowCheckedModeBanner: false,
       home: GestureDetector(

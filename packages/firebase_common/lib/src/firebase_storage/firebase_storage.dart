@@ -3,13 +3,11 @@ import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
 
 class FirebaseStorageService {
-  FirebaseStorageService({required String path}) {
-    _reference = FirebaseStorage.instance.ref().child(path);
-  }
-  late Reference _reference;
+  final Reference _reference = FirebaseStorage.instance.ref();
 
-  Future<String> upload(File file) async {
-    await _reference.putFile(file);
-    return _reference.getDownloadURL();
+  Future<String> upload({required String path, required File file}) async {
+    final imageRef = _reference.child(path);
+    await imageRef.putFile(file);
+    return imageRef.getDownloadURL();
   }
 }

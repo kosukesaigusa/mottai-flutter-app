@@ -148,46 +148,40 @@ class _ImageDisplayContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     switch (imageShape) {
       case ImageShape.circle:
-        {
-          return Container(
-            height: size ?? _defaultSize,
-            width: size ?? _defaultSize,
-            decoration: BoxDecoration(
-              color: color,
-              shape: BoxShape.circle,
-              image: decorationImage,
-            ),
-            child: icon,
-          );
-        }
+        return Container(
+          height: size ?? _defaultSize,
+          width: size ?? _defaultSize,
+          decoration: BoxDecoration(
+            color: color,
+            shape: BoxShape.circle,
+            image: decorationImage,
+          ),
+          child: icon,
+        );
 
       case ImageShape.square:
-        {
-          return Container(
-            height: size ?? _defaultSize,
-            width: size ?? _defaultSize,
-            decoration: BoxDecoration(
-              color: color,
-              image: decorationImage,
-              borderRadius: BorderRadius.circular(borderRadius ?? 0),
-            ),
-            child: icon,
-          );
-        }
+        return Container(
+          height: size ?? _defaultSize,
+          width: size ?? _defaultSize,
+          decoration: BoxDecoration(
+            color: color,
+            image: decorationImage,
+            borderRadius: BorderRadius.circular(borderRadius ?? 0),
+          ),
+          child: icon,
+        );
 
       case ImageShape.rectangle:
-        {
-          return Container(
-            height: height,
-            width: width,
-            decoration: BoxDecoration(
-              color: color,
-              image: decorationImage,
-              borderRadius: BorderRadius.circular(borderRadius ?? 0),
-            ),
-            child: icon,
-          );
-        }
+        return Container(
+          height: height,
+          width: width,
+          decoration: BoxDecoration(
+            color: color,
+            image: decorationImage,
+            borderRadius: BorderRadius.circular(borderRadius ?? 0),
+          ),
+          child: icon,
+        );
     }
   }
 }

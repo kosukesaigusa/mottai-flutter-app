@@ -38,16 +38,11 @@ class AuthController {
   final AppScaffoldMessengerController _appScaffoldMessengerController;
 
   /// 選択した [SignInMethod] でサインインする。
-  /// サインイン後、該当ユーザーに対応するドキュメントが存在するか確認し、存在
-  /// する場合は [UserMode] を host にする。
+  /// サインイン後、必要性を確認して [UserMode] を `UserMode.Host` にする。
   Future<void> signIn(SignInMethod signInMethod) async {
     try {
       final userCredential = await _signIn(signInMethod);
-      if (await _hostService.hostExists(
-        hostId: userCredential.user?.uid ?? '',
-      )) {
-        _userModeStateController.update((state) => UserMode.host);
-      }
+      await _maybeSetUserModeToHost(userCredential);
     } on AppException catch (e) {
       _appScaffoldMessengerController.showSnackBarByException(e);
     }
@@ -79,6 +74,19 @@ class AuthController {
       case SignInMethod.line:
       case SignInMethod.email:
         throw UnimplementedError();
+    }
+  }
+
+  /// サインインで得られた [UserCredential] を与え、それに対応する
+  /// ホストドキュメントが存在するか確認し、存在する場合は [UserMode] を
+  /// `UserMode.host` にする。
+  Future<void> _maybeSetUserModeToHost(UserCredential userCredential) async {
+    final uid = userCredential.user?.uid;
+    if (uid == null) {
+      return;
+    }
+    if (await _hostService.hostExists(hostId: uid)) {
+      _userModeStateController.update((state) => UserMode.host);
     }
   }
 }

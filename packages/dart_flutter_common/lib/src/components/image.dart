@@ -86,8 +86,13 @@ class GenericImageWidget extends StatelessWidget {
               width: width,
               borderRadius: borderRadius,
             ),
-        errorWidget: (context, url, error) => const Center(
-          child: Icon(Icons.broken_image),
+        errorWidget: (context, url, error) =>
+            _ImageDisplayContainer.errorWidget(
+          imageShape: imageShape,
+          size: size,
+          height: height,
+          width: width,
+          borderRadius: borderRadius,
         ),
       ),
     );
@@ -102,7 +107,8 @@ class _ImageDisplayContainer extends StatelessWidget {
     this.width,
     this.borderRadius,
     this.decorationImage,
-  }) : color = null;
+  })  : color = null,
+        icon = null;
 
   const _ImageDisplayContainer.placeholder({
     required this.imageShape,
@@ -111,7 +117,21 @@ class _ImageDisplayContainer extends StatelessWidget {
     this.width,
     this.borderRadius,
   })  : color = Colors.grey,
-        decorationImage = null;
+        decorationImage = null,
+        icon = null;
+
+  const _ImageDisplayContainer.errorWidget({
+    required this.imageShape,
+    this.size,
+    this.height,
+    this.width,
+    this.borderRadius,
+  })  : color = Colors.grey,
+        decorationImage = null,
+        icon = const Icon(
+          Icons.broken_image,
+          color: Colors.white,
+        );
 
   final ImageShape imageShape;
   final Color? color;
@@ -120,6 +140,7 @@ class _ImageDisplayContainer extends StatelessWidget {
   final double? width;
   final double? borderRadius;
   final DecorationImage? decorationImage;
+  final Icon? icon;
 
   static const double _defaultSize = 64;
 
@@ -136,6 +157,7 @@ class _ImageDisplayContainer extends StatelessWidget {
               shape: BoxShape.circle,
               image: decorationImage,
             ),
+            child: icon,
           );
         }
 
@@ -149,6 +171,7 @@ class _ImageDisplayContainer extends StatelessWidget {
               image: decorationImage,
               borderRadius: BorderRadius.circular(borderRadius ?? 0),
             ),
+            child: icon,
           );
         }
 
@@ -162,6 +185,7 @@ class _ImageDisplayContainer extends StatelessWidget {
               image: decorationImage,
               borderRadius: BorderRadius.circular(borderRadius ?? 0),
             ),
+            child: icon,
           );
         }
     }

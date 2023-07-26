@@ -12,7 +12,7 @@ class GenericImageWidget extends StatelessWidget {
     required this.imageUrl,
     this.onTap,
     this.size,
-    this.loading,
+    this.loadingWidget,
     super.key,
   })  : imageShape = ImageShape.circle,
         borderRadius = null,
@@ -24,7 +24,7 @@ class GenericImageWidget extends StatelessWidget {
     this.onTap,
     this.size,
     this.borderRadius,
-    this.loading,
+    this.loadingWidget,
     super.key,
   })  : imageShape = ImageShape.square,
         height = null,
@@ -36,7 +36,7 @@ class GenericImageWidget extends StatelessWidget {
     required this.height,
     required this.width,
     this.borderRadius,
-    this.loading,
+    this.loadingWidget,
     super.key,
   })  : imageShape = ImageShape.rectangle,
         size = null;
@@ -48,7 +48,7 @@ class GenericImageWidget extends StatelessWidget {
   final double? height;
   final double? width;
   final double? borderRadius;
-  final Widget? loading;
+  final Widget? loadingWidget;
   @override
   Widget build(BuildContext context) {
     if (imageUrl.isEmpty) {
@@ -78,7 +78,7 @@ class GenericImageWidget extends StatelessWidget {
           );
         },
         placeholder: (context, url) =>
-            loading ??
+            loadingWidget ??
             _ImageDisplayContainer.placeholder(
               imageShape: imageShape,
               size: size,

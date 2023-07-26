@@ -44,4 +44,5 @@ app.*.map.json
 /android/app/release
 
 # dart-define
-dart-define.json
+dev-dart-define.json
+prod-dart-define.json

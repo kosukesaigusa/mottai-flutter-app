@@ -13,3 +13,5 @@ service_account_keys/
 
 # .env
 .env
+.env.dev
+.env.prod

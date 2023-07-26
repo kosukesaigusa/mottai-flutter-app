@@ -6,14 +6,14 @@
       "program": "packages/mottai_flutter_app/lib/main.dart",
       "request": "launch",
       "type": "dart",
-      "args": ["--debug"]
+      "args": ["--debug", "--dart-define-from-file=dart_define.json"]
     },
     {
       "name": "Release",
       "program": "packages/mottai_flutter_app/lib/main.dart",
       "request": "launch",
       "type": "dart",
-      "args": ["--release"]
+      "args": ["--release", "--dart-define-from-file=dart_define.json"]
     },
     {
       "name": "Debug Functions (local)",

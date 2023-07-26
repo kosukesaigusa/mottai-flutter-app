@@ -41,6 +41,17 @@ class DevelopmentComponents extends StatelessWidget {
                 borderRadius: 10,
                 onTap: () => debugPrint('onTap'),
               ),
+              const SizedBox(
+                height: 10,
+              ),
+              // errorWidgetのサンプル
+              GenericImageWidget.reqtangle(
+                imageUrl: 'https://testinvalidurl.com',
+                height: 100,
+                width: 250,
+                borderRadius: 10,
+                onTap: () => debugPrint('onTap'),
+              ),
             ],
           ),
           const Divider(),

@@ -22,4 +22,9 @@ class FirebaseStorageService {
     final imageRef = _firebaseStorage.ref().child(path);
     return imageRef.getDownloadURL();
   }
+
+  Future<void> delete({required String path}) async {
+    final imageRef = _firebaseStorage.ref().child(path);
+    return imageRef.delete();
+  }
 }

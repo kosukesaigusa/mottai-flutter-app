@@ -9,11 +9,13 @@ class ReadJob {
     required this.hostLocationId,
     required this.path,
     required this.hostId,
+    required this.title,
     required this.content,
     required this.place,
     required this.accessTypes,
     required this.accessDescription,
     required this.belongings,
+    required this.reward,
     required this.comment,
     required this.urls,
     required this.createdAt,
@@ -26,6 +28,8 @@ class ReadJob {
 
   final String hostId;
 
+  final String title;
+
   final String content;
 
   final String place;
@@ -35,6 +39,8 @@ class ReadJob {
   final String accessDescription;
 
   final String belongings;
+
+  final String reward;
 
   final String comment;
 
@@ -49,6 +55,7 @@ class ReadJob {
       hostLocationId: json['hostLocationId'] as String,
       path: json['path'] as String,
       hostId: json['hostId'] as String,
+      title: json['title'] as String? ?? '',
       content: json['content'] as String? ?? '',
       place: json['place'] as String? ?? '',
       accessTypes: json['accessTypes'] == null
@@ -57,6 +64,7 @@ class ReadJob {
               .fromJson(json['accessTypes'] as List<dynamic>?),
       accessDescription: json['accessDescription'] as String? ?? '',
       belongings: json['belongings'] as String? ?? '',
+      reward: json['reward'] as String? ?? '',
       comment: json['comment'] as String? ?? '',
       urls:
           (json['urls'] as List<dynamic>?)?.map((e) => e as String).toList() ??
@@ -84,11 +92,13 @@ class ReadJob {
 class CreateJob {
   const CreateJob({
     required this.hostId,
+    required this.title,
     required this.content,
     required this.place,
     this.accessTypes = const <AccessType>{},
     this.accessDescription = '',
     required this.belongings,
+    required this.reward,
     this.comment = '',
     this.urls = const <String>[],
     this.createdAt = const ServerTimestamp(),
@@ -96,11 +106,13 @@ class CreateJob {
   });
 
   final String hostId;
+  final String title;
   final String content;
   final String place;
   final Set<AccessType> accessTypes;
   final String accessDescription;
   final String belongings;
+  final String reward;
   final String comment;
   final List<String> urls;
   final SealedTimestamp createdAt;
@@ -109,11 +121,13 @@ class CreateJob {
   Map<String, dynamic> toJson() {
     return {
       'hostId': hostId,
+      'title': title,
       'content': content,
       'place': place,
       'accessTypes': _accessTypesConverter.toJson(accessTypes),
       'accessDescription': accessDescription,
       'belongings': belongings,
+      'reward': reward,
       'comment': comment,
       'urls': urls,
       'createdAt': sealedTimestampConverter.toJson(createdAt),
@@ -126,11 +140,13 @@ class CreateJob {
 class UpdateJob {
   const UpdateJob({
     this.hostId,
+    this.title,
     this.content,
     this.place,
     this.accessTypes,
     this.accessDescription,
     this.belongings,
+    this.reward,
     this.comment,
     this.urls,
     this.createdAt,
@@ -138,11 +154,13 @@ class UpdateJob {
   });
 
   final String? hostId;
+  final String? title;
   final String? content;
   final String? place;
   final Set<AccessType>? accessTypes;
   final String? accessDescription;
   final String? belongings;
+  final String? reward;
   final String? comment;
   final List<String>? urls;
   final SealedTimestamp? createdAt;
@@ -151,12 +169,14 @@ class UpdateJob {
   Map<String, dynamic> toJson() {
     return {
       if (hostId != null) 'hostId': hostId,
+      if (title != null) 'title': title,
       if (content != null) 'content': content,
       if (place != null) 'place': place,
       if (accessTypes != null)
         'accessTypes': _accessTypesConverter.toJson(accessTypes!),
       if (accessDescription != null) 'accessDescription': accessDescription,
       if (belongings != null) 'belongings': belongings,
+      if (reward != null) 'reward': reward,
       if (comment != null) 'comment': comment,
       if (urls != null) 'urls': urls,
       if (createdAt != null)

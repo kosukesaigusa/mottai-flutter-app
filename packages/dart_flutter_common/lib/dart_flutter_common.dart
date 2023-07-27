@@ -3,6 +3,8 @@ export 'src/date_time.dart';
 export 'src/image_detail_view.dart';
 export 'src/int.dart';
 export 'src/pick_image.dart';
+export 'src/row_chips.dart';
 export 'src/scaffold_messenger_controller.dart';
+export 'src/simple_section.dart';
 export 'src/string.dart';
 export 'src/switching_chip.dart';

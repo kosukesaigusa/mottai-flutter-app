@@ -85,7 +85,7 @@ class JobDetailPage extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // ホスト名 / 仕事タイトル
-                _buildSection(
+                SimpleSection(
                   title: host.displayName,
                   content: job.title,
                   titleStyle: Theme.of(context)
@@ -97,7 +97,7 @@ class JobDetailPage extends ConsumerWidget {
                   sectionPadding: const EdgeInsets.only(bottom: 16),
                 ),
                 // ホスト住所
-                _buildSection(
+                SimpleSection(
                   title: 'お手伝いの場所',
                   content: job.place,
                   titleStyle: Theme.of(context).textTheme.headlineMedium,
@@ -106,17 +106,23 @@ class JobDetailPage extends ConsumerWidget {
                 ),
 
                 // ホスト職種
-                _buildSection(
+                SimpleSection(
                   title: 'ホスト',
                   titleStyle: Theme.of(context).textTheme.headlineMedium,
                   sectionPadding: const EdgeInsets.only(bottom: 16),
-                  contentWidget: Row(
-                    children: _buildHostTypeChips(host.hostTypes),
+                  contentWidget: RowChips<HostType>(
+                    allData: HostType.values,
+                    allLable: Map.fromEntries(
+                      HostType.values.map(
+                        (type) => MapEntry(type, type.label),
+                      ),
+                    ),
+                    enableData: host.hostTypes,
                   ),
                 ),
 
                 // 内容
-                _buildSection(
+                SimpleSection(
                   title: '内容',
                   content: job.content,
                   titleStyle: Theme.of(context).textTheme.headlineMedium,
@@ -125,7 +131,7 @@ class JobDetailPage extends ConsumerWidget {
                 ),
 
                 // 持ち物
-                _buildSection(
+                SimpleSection(
                   title: '持ち物',
                   content: job.belongings,
                   titleStyle: Theme.of(context).textTheme.headlineMedium,
@@ -134,7 +140,7 @@ class JobDetailPage extends ConsumerWidget {
                 ),
 
                 // 報酬
-                _buildSection(
+                SimpleSection(
                   title: '報酬',
                   content: job.reward,
                   titleStyle: Theme.of(context).textTheme.headlineMedium,
@@ -143,19 +149,26 @@ class JobDetailPage extends ConsumerWidget {
                 ),
 
                 // アクセス
-                _buildSection(
+                SimpleSection(
                   title: 'アクセス',
                   content: job.accessDescription,
                   titleStyle: Theme.of(context).textTheme.headlineMedium,
                   contentStyle: Theme.of(context).textTheme.bodyLarge,
                   sectionPadding: const EdgeInsets.only(bottom: 16),
-                  contentWidget: Wrap(
-                    children: _buildAccessTypeChips(job.accessTypes),
+                  contentWidget: RowChips<AccessType>(
+                    allData: AccessType.values,
+                    allLable: Map.fromEntries(
+                      AccessType.values.map(
+                        (type) => MapEntry(type, type.label),
+                      ),
+                    ),
+                    enableData: job.accessTypes,
+                    isDisplayDisable: false,
                   ),
                 ),
 
                 // ひとこと
-                _buildSection(
+                SimpleSection(
                   title: 'ひとこと',
                   content: job.comment,
                   titleStyle: Theme.of(context).textTheme.headlineMedium,
@@ -164,7 +177,7 @@ class JobDetailPage extends ConsumerWidget {
                 ),
 
                 // URL
-                _buildSection(
+                SimpleSection(
                   title: 'URL',
                   titleStyle: Theme.of(context).textTheme.headlineMedium,
                   sectionPadding: const EdgeInsets.only(bottom: 16),
@@ -182,7 +195,7 @@ class JobDetailPage extends ConsumerWidget {
                 ),
 
                 // 体験者の感想
-                _buildSection(
+                SimpleSection(
                   //TODO: 未実装
                   title: '体験者の感想',
                   content: '仮',
@@ -205,78 +218,5 @@ class JobDetailPage extends ConsumerWidget {
         ],
       ),
     );
-  }
-
-  Widget _buildSection({
-    required String title,
-    String? content,
-    EdgeInsetsGeometry? sectionPadding,
-    TextStyle? titleStyle,
-    TextStyle? contentStyle,
-    int? contentMaxLines,
-    Widget? contentWidget,
-  }) {
-    return Padding(
-      padding: sectionPadding ?? EdgeInsets.zero,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: titleStyle,
-            maxLines: 1,
-          ),
-          const SizedBox(
-            height: 8,
-          ),
-          if (content != null)
-            Text(
-              content,
-              style: contentStyle,
-              maxLines: contentMaxLines,
-            ),
-          if (contentWidget != null) contentWidget,
-        ],
-      ),
-    );
-  }
-
-  List<Widget> _buildHostTypeChips(
-    Set<HostType> hostTypes,
-  ) {
-    final chipList = <Widget>[];
-
-    for (final type in HostType.values) {
-      chipList.add(
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          child: SwitchingChip(
-            label: type.label,
-            isEnabled: hostTypes.contains(type),
-          ),
-        ),
-      );
-    }
-    return chipList;
-  }
-
-  List<Widget> _buildAccessTypeChips(
-    Set<AccessType> accessTypes,
-  ) {
-    final chipList = <Widget>[];
-    for (final type in AccessType.values) {
-      if (accessTypes.contains(type)) {
-        chipList.add(
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: SwitchingChip(
-              label: type.label,
-              isEnabled: true,
-            ),
-          ),
-        );
-      }
-    }
-    return chipList;
   }
 }

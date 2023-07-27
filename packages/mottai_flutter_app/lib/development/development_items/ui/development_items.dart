@@ -11,6 +11,7 @@ import '../../../scaffold_messenger_controller.dart';
 import '../../../user/user.dart';
 import '../../../user/user_mode.dart';
 import '../../color/ui/color.dart';
+import '../../deveopment_components/development_components.dart';
 import '../../image_detail_view/image_detail_view_stub.dart';
 import '../../sample_todo/ui/sample_todos.dart';
 
@@ -235,6 +236,16 @@ class DevelopmentItemsPage extends ConsumerWidget {
             // ),
           ),
           ListTile(
+            title: const Text('Components'),
+            // TODO: 後に auto_route を採用して Navigator.pushNamed を使用する予定
+            onTap: () => Navigator.push<void>(
+              context,
+              MaterialPageRoute<void>(
+                builder: (context) => const DevelopmentComponents(),
+              ),
+            ),
+          ),
+          ListTile(
             title: const Text(
               '画像の詳細拡大画面サンプル',
             ),
@@ -242,7 +253,7 @@ class DevelopmentItemsPage extends ConsumerWidget {
             onTap: () => Navigator.push<void>(
               context,
               MaterialPageRoute<void>(
-                builder: (context) => ImageDetailViewStubPage(),
+                builder: (context) => const ImageDetailViewStubPage(),
               ),
             ),
           ),

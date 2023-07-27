@@ -16,3 +16,11 @@ final hostImageUrlProvider =
   final host = ref.watch(hostStreamProvider(hostId)).valueOrNull;
   return host?.imageUrl ?? '';
 });
+
+/// 指定した [Host] の名前を返す [Provider].
+/// 読み込み中・エラーの場合は'農家さん'を返す。
+final hostDisplayNameProvider =
+    Provider.family.autoDispose<String, String>((ref, hostId) {
+  final host = ref.watch(hostStreamProvider(hostId)).valueOrNull;
+  return host?.displayName ?? '農家さん';
+});

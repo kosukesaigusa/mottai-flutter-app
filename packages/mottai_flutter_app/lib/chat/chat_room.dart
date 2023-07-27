@@ -29,6 +29,18 @@ final chatPartnerImageUrlProvider =
   }
 });
 
+/// チャット相手の名前 を取得する [Provider].
+final chatPartnerDisplayNameProvider =
+    Provider.family.autoDispose<String, ReadChatRoom>((ref, readChatRoom) {
+  final userMode = ref.watch(userModeStateProvider);
+  switch (userMode) {
+    case UserMode.worker:
+      return ref.watch(hostDisplayNameProvider(readChatRoom.hostId));
+    case UserMode.host:
+      return ref.watch(workerDisplayNameProvider(readChatRoom.workerId));
+  }
+});
+
 final chatRoomStateNotifierProvider =
     StateNotifierProvider.autoDispose<ChatRoomStateNotifier, ChatRoomState>(
   (ref) => ChatRoomStateNotifier(

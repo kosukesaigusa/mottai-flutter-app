@@ -148,6 +148,8 @@ class _ChatMessageItem extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final partnerImageUrl =
         ref.watch(chatPartnerImageUrlProvider(readChatRoom));
+    final partnerDisplayName =
+        ref.watch(chatPartnerDisplayNameProvider(readChatRoom));
     return Column(
       crossAxisAlignment:
           isMyMessage ? CrossAxisAlignment.end : CrossAxisAlignment.start,
@@ -164,7 +166,7 @@ class _ChatMessageItem extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 if (!isMyMessage) ...[
-                  const Text('名前'),
+                  Text(partnerDisplayName),
                   if (partnerImageUrl.isEmpty)
                     const Icon(Icons.account_circle)
                   else

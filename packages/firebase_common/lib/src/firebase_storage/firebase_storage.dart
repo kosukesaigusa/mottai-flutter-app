@@ -17,4 +17,9 @@ class FirebaseStorageService {
     await imageRef.putFile(file);
     return imageRef.getDownloadURL();
   }
+
+  Future<String> getDownloadURL({required String path}) async {
+    final imageRef = _firebaseStorage.ref().child(path);
+    return imageRef.getDownloadURL();
+  }
 }

@@ -18,14 +18,13 @@ extension DateTimeExtension on DateTime {
 
   /// 現在時刻と比較して、相対的な日付文字列を返す。
   String formatRelativeDate() {
-    final now = DateTime.now();
     if (_isToday()) {
       return DateFormat('HH:mm').format(this);
     }
-    if (_isYesterday(now)) {
+    if (_isYesterday()) {
       return '昨日';
     }
-    final daysBeforeResult = _daysBefore(now);
+    final daysBeforeResult = _daysBefore();
     if (daysBeforeResult != null) {
       return '$daysBeforeResult日前';
     }

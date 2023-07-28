@@ -10,7 +10,7 @@ extension DateTimeExtension on DateTime {
   /// 現在時刻と比較して、相対的な日付文字列を返す。
   String formatRelativeDate() {
     final now = DateTime.now();
-    if (_isToday(now)) {
+    if (_isToday()) {
       return DateFormat('HH:mm').format(this);
     }
     if (_isYesterday(now)) {
@@ -23,7 +23,9 @@ extension DateTimeExtension on DateTime {
     return formatDate();
   }
 
-  bool _isToday(DateTime now) {
+  /// thisが今日かどうかの真偽値を返す
+  bool _isToday() {
+    final now = DateTime.now();
     return year == now.year && month == now.month && day == now.day;
   }
 

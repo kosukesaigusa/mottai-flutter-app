@@ -6,28 +6,31 @@ import 'package:flutter/material.dart';
 /// htmlでのイメージは以下
 /// # [title]
 /// <[titleSpace]分の空白>
+/// [overview]
 /// [content]
-/// [contentWidget]
 ///
-/// [contentWidget]は[content]の後に配置される
-class SimpleSection extends StatelessWidget {
-  const SimpleSection({
+/// [content]は[overview]の後に配置される
+class Section extends StatelessWidget {
+  const Section({
     required this.title,
-    this.content,
+    required this.content,
+    this.overview,
     this.sectionPadding,
     this.titleStyle,
-    this.contentStyle,
-    this.contentMaxLines,
-    this.contentWidget,
+    this.overviewStyle,
+    this.overviewMaxLines,
     this.titleSpace = 8,
+    this.titleMaxLines = 1,
     super.key,
   });
 
   /// セクションのタイトル
   final String title;
 
-  /// セクションの文字列コンテンツ
-  final String? content;
+  final int titleMaxLines;
+
+  /// 概要
+  final String? overview;
 
   /// セクション全体のパディング
   final EdgeInsetsGeometry? sectionPadding;
@@ -35,14 +38,14 @@ class SimpleSection extends StatelessWidget {
   /// [title]のスタイル
   final TextStyle? titleStyle;
 
-  /// [content]のスタイル
-  final TextStyle? contentStyle;
+  /// [overview]のスタイル
+  final TextStyle? overviewStyle;
 
-  /// [content]の最大行数
-  final int? contentMaxLines;
+  /// [overview]の最大行数
+  final int? overviewMaxLines;
 
   /// セクションのウィジェットコンテンツ
-  final Widget? contentWidget;
+  final Widget content;
 
   /// タイトルとコンテンツの間のスペース
   final double titleSpace;
@@ -57,18 +60,18 @@ class SimpleSection extends StatelessWidget {
           Text(
             title,
             style: titleStyle,
-            maxLines: 1,
+            maxLines: titleMaxLines,
           ),
           SizedBox(
             height: titleSpace,
           ),
-          if (content != null)
+          if (overview != null)
             Text(
-              content!,
-              style: contentStyle,
-              maxLines: contentMaxLines,
+              overview!,
+              style: overviewStyle,
+              maxLines: overviewMaxLines,
             ),
-          if (contentWidget != null) contentWidget!,
+          content,
         ],
       ),
     );

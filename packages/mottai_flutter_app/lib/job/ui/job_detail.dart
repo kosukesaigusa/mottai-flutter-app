@@ -23,53 +23,57 @@ class JobDetailPage extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('お手伝い募集'),
-        centerTitle: true,
       ),
       // Jobの読み込み状態によって表示を変更
       body: ref.watch(jobFutureProvider(jobId)).when(
             data: (job) {
               if (job == null) {
-                return _buildErrorPage('お手伝いが存在していません。');
+                return const Center(
+                  child: Text('お手伝いが存在していません。'),
+                );
               }
               // ホストの読み込み状態によってレスポンス
               return ref.watch(hostFutureProvider(job.hostId)).when(
                     data: (host) {
                       if (host == null) {
-                        return _buildErrorPage('ホストが存在していません。');
+                        return const Center(
+                          child: Text('ホストが存在していません。'),
+                        );
                       }
-                      return _buildJobPage(context, job, host, ref);
+                      return _JobDetail(job: job, host: host);
                     },
-                    loading: _buildLoadingPage,
-                    error: (error, stackTrace) => _buildErrorPage('通信に失敗しました。'),
+                    loading: () =>
+                        const Center(child: CircularProgressIndicator()),
+                    error: (error, stackTrace) => const Center(
+                      child: Text('通信に失敗しました。'),
+                    ),
                   );
             },
-            loading: _buildLoadingPage,
-            error: (error, stackTrace) => _buildErrorPage('通信に失敗しました。'),
+            loading: () => const Center(child: CircularProgressIndicator()),
+            error: (error, stackTrace) => const Center(
+              child: Text('通信に失敗しました。'),
+            ),
           ),
     );
   }
+}
 
-  Widget _buildErrorPage(String message) {
-    return Center(
-      child: Text(message),
-    );
-  }
+class _JobDetail extends ConsumerWidget {
+  const _JobDetail({
+    required this.job,
+    required this.host,
+  });
 
-  Widget _buildLoadingPage() {
-    return const Center(child: CircularProgressIndicator());
-  }
+  final ReadJob job;
+  final ReadHost host;
 
-  Widget _buildJobPage(
-    BuildContext context,
-    ReadJob job,
-    ReadHost host,
-    WidgetRef ref,
-  ) {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (host.imageUrl != '')
+          if (host.imageUrl.isNotEmpty)
             Center(
               child: LimitedBox(
                 maxHeight: 300,
@@ -85,103 +89,115 @@ class JobDetailPage extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // ホスト名 / 仕事タイトル
-                SimpleSection(
+                Section(
                   title: host.displayName,
-                  content: job.title,
                   titleStyle: Theme.of(context)
                       .textTheme
                       .headlineLarge!
                       .copyWith(fontWeight: FontWeight.bold),
-                  contentStyle: Theme.of(context).textTheme.bodyMedium,
-                  contentMaxLines: 2,
-                  sectionPadding: const EdgeInsets.only(bottom: 16),
+                  content: Text(
+                    job.title,
+                    style: Theme.of(context).textTheme.bodyMedium,
+                    maxLines: 2,
+                  ),
+                  sectionPadding: const EdgeInsets.only(bottom: 32),
                 ),
                 // ホスト住所
-                SimpleSection(
+                Section(
                   title: 'お手伝いの場所',
-                  content: job.place,
                   titleStyle: Theme.of(context).textTheme.headlineMedium,
-                  contentStyle: Theme.of(context).textTheme.titleMedium,
-                  sectionPadding: const EdgeInsets.only(bottom: 16),
+                  content: Text(
+                    job.place,
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                  sectionPadding: const EdgeInsets.only(bottom: 32),
                 ),
 
                 // ホスト職種
-                SimpleSection(
+                Section(
                   title: 'ホスト',
                   titleStyle: Theme.of(context).textTheme.headlineMedium,
-                  sectionPadding: const EdgeInsets.only(bottom: 16),
-                  contentWidget: RowChips<HostType>(
-                    allData: HostType.values,
-                    allLable: Map.fromEntries(
+                  sectionPadding: const EdgeInsets.only(bottom: 32),
+                  content: ChipsSelector<HostType>(
+                    allItems: HostType.values,
+                    labels: Map.fromEntries(
                       HostType.values.map(
                         (type) => MapEntry(type, type.label),
                       ),
                     ),
-                    enableData: host.hostTypes,
+                    enableItems: host.hostTypes,
                   ),
                 ),
 
                 // 内容
-                SimpleSection(
+                Section(
                   title: '内容',
-                  content: job.content,
                   titleStyle: Theme.of(context).textTheme.headlineMedium,
-                  contentStyle: Theme.of(context).textTheme.bodyLarge,
-                  sectionPadding: const EdgeInsets.only(bottom: 16),
+                  content: Text(
+                    job.content,
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
+                  sectionPadding: const EdgeInsets.only(bottom: 32),
                 ),
 
                 // 持ち物
-                SimpleSection(
+                Section(
                   title: '持ち物',
-                  content: job.belongings,
                   titleStyle: Theme.of(context).textTheme.headlineMedium,
-                  contentStyle: Theme.of(context).textTheme.bodyLarge,
-                  sectionPadding: const EdgeInsets.only(bottom: 16),
+                  content: Text(
+                    job.belongings,
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
+                  sectionPadding: const EdgeInsets.only(bottom: 32),
                 ),
 
                 // 報酬
-                SimpleSection(
+                Section(
                   title: '報酬',
-                  content: job.reward,
                   titleStyle: Theme.of(context).textTheme.headlineMedium,
-                  contentStyle: Theme.of(context).textTheme.bodyLarge,
-                  sectionPadding: const EdgeInsets.only(bottom: 16),
+                  content: Text(
+                    job.reward,
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
+                  sectionPadding: const EdgeInsets.only(bottom: 32),
                 ),
 
                 // アクセス
-                SimpleSection(
+                Section(
                   title: 'アクセス',
-                  content: job.accessDescription,
+                  overview: job.accessDescription,
                   titleStyle: Theme.of(context).textTheme.headlineMedium,
-                  contentStyle: Theme.of(context).textTheme.bodyLarge,
-                  sectionPadding: const EdgeInsets.only(bottom: 16),
-                  contentWidget: RowChips<AccessType>(
-                    allData: AccessType.values,
-                    allLable: Map.fromEntries(
+                  overviewStyle: Theme.of(context).textTheme.bodyLarge,
+                  sectionPadding: const EdgeInsets.only(bottom: 32),
+                  content: ChipsSelector<AccessType>(
+                    allItems: AccessType.values,
+                    labels: Map.fromEntries(
                       AccessType.values.map(
                         (type) => MapEntry(type, type.label),
                       ),
                     ),
-                    enableData: job.accessTypes,
+                    enableItems: job.accessTypes,
                     isDisplayDisable: false,
                   ),
                 ),
 
                 // ひとこと
-                SimpleSection(
+                Section(
                   title: 'ひとこと',
-                  content: job.comment,
                   titleStyle: Theme.of(context).textTheme.headlineMedium,
-                  contentStyle: Theme.of(context).textTheme.bodyLarge,
-                  sectionPadding: const EdgeInsets.only(bottom: 16),
+                  content: Text(
+                    job.comment,
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
+                  sectionPadding: const EdgeInsets.only(bottom: 32),
                 ),
 
                 // URL
-                SimpleSection(
+                Section(
                   title: 'URL',
                   titleStyle: Theme.of(context).textTheme.headlineMedium,
-                  sectionPadding: const EdgeInsets.only(bottom: 16),
-                  contentWidget: Column(
+                  sectionPadding: const EdgeInsets.only(bottom: 32),
+                  content: Column(
                     //TODO: リンクウィジェットにする。
                     children: job.urls
                         .map(
@@ -195,13 +211,15 @@ class JobDetailPage extends ConsumerWidget {
                 ),
 
                 // 体験者の感想
-                SimpleSection(
+                Section(
                   //TODO: 未実装
                   title: '体験者の感想',
-                  content: '仮',
                   titleStyle: Theme.of(context).textTheme.headlineMedium,
-                  contentStyle: Theme.of(context).textTheme.bodyLarge,
-                  sectionPadding: const EdgeInsets.only(bottom: 16),
+                  content: Text(
+                    '仮',
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
+                  sectionPadding: const EdgeInsets.only(bottom: 32),
                 ),
               ],
             ),

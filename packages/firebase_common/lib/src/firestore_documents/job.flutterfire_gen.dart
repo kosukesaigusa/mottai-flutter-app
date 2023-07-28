@@ -9,6 +9,7 @@ class ReadJob {
     required this.hostLocationId,
     required this.path,
     required this.hostId,
+    required this.title,
     required this.content,
     required this.place,
     required this.accessTypes,
@@ -26,6 +27,8 @@ class ReadJob {
   final String path;
 
   final String hostId;
+
+  final String title;
 
   final String content;
 
@@ -52,6 +55,7 @@ class ReadJob {
       hostLocationId: json['hostLocationId'] as String,
       path: json['path'] as String,
       hostId: json['hostId'] as String,
+      title: json['title'] as String? ?? '',
       content: json['content'] as String? ?? '',
       place: json['place'] as String? ?? '',
       accessTypes: json['accessTypes'] == null
@@ -88,6 +92,7 @@ class ReadJob {
 class CreateJob {
   const CreateJob({
     required this.hostId,
+    required this.title,
     required this.content,
     required this.place,
     this.accessTypes = const <AccessType>{},
@@ -101,6 +106,7 @@ class CreateJob {
   });
 
   final String hostId;
+  final String title;
   final String content;
   final String place;
   final Set<AccessType> accessTypes;
@@ -115,6 +121,7 @@ class CreateJob {
   Map<String, dynamic> toJson() {
     return {
       'hostId': hostId,
+      'title': title,
       'content': content,
       'place': place,
       'accessTypes': _accessTypesConverter.toJson(accessTypes),
@@ -133,6 +140,7 @@ class CreateJob {
 class UpdateJob {
   const UpdateJob({
     this.hostId,
+    this.title,
     this.content,
     this.place,
     this.accessTypes,
@@ -146,6 +154,7 @@ class UpdateJob {
   });
 
   final String? hostId;
+  final String? title;
   final String? content;
   final String? place;
   final Set<AccessType>? accessTypes;
@@ -160,6 +169,7 @@ class UpdateJob {
   Map<String, dynamic> toJson() {
     return {
       if (hostId != null) 'hostId': hostId,
+      if (title != null) 'title': title,
       if (content != null) 'content': content,
       if (place != null) 'place': place,
       if (accessTypes != null)

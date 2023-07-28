@@ -29,7 +29,9 @@ extension DateTimeExtension on DateTime {
     return year == now.year && month == now.month && day == now.day;
   }
 
-  bool _isYesterday(DateTime now) {
+  /// thisが昨日かどうかの真偽値を返す
+  bool _isYesterday() {
+    final now = DateTime.now();
     final yesterday = DateTime(now.year, now.month, now.day - 1);
     return year == yesterday.year &&
         month == yesterday.month &&

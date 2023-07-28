@@ -36,9 +36,9 @@ extension DateTimeExtension on DateTime {
 
   /// 現在と比較して2日〜7日前ならその数字を、そうでなければnullを返す
   int? _daysBefore(DateTime now) {
-    final differece = now.difference(this).inDays;
-    if (differece >= 2 && differece <= 7) {
-      return differece;
+    final difference = now.difference(this).inDays;
+    if (difference >= 2 && difference <= 7) {
+      return difference;
     }
     return null;
   }

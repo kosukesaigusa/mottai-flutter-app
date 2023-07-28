@@ -1,6 +1,15 @@
 import 'package:intl/intl.dart';
 
 extension DateTimeExtension on DateTime {
+
+  /// _daysBeforeメソッドで使用される定数。
+  /// 「N日前」と表示される最小日数を示す。
+  static const _daysBeforeLowerLimit = 2;
+
+  /// _daysBeforeメソッドで使用される定数。
+  /// 「N日前」と表示される最大日数を示す。
+  static const _daysBeforeUpperLimit = 7;
+
   /// 「yyyy年MM月dd日」形式の文字列を返す。
   String formatDate() => DateFormat('yyyy年MM月dd日').format(this);
 
@@ -38,10 +47,14 @@ extension DateTimeExtension on DateTime {
         day == yesterday.day;
   }
 
-  /// 現在と比較して2日〜7日前ならその数字を、そうでなければnullを返す
-  int? _daysBefore(DateTime now) {
+  /// thisが、現在時刻と比較して
+  /// [_daysBeforeLowerLimit] 日〜 [_daysBeforeUpperLimit] 日前ならその数字を、
+  /// そうでなければnullを返す
+  int? _daysBefore() {
+    final now = DateTime.now();
     final difference = now.difference(this).inDays;
-    if (difference >= 2 && difference <= 7) {
+    if (difference >= _daysBeforeLowerLimit &&
+        difference <= _daysBeforeUpperLimit) {
       return difference;
     }
     return null;

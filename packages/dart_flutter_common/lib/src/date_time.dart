@@ -43,7 +43,7 @@ extension DateTimeExtension on DateTime {
   }
 
   /// thisが昨日かどうかの真偽値を返す。
-  /// thisと現在時刻より1日前の「年、月、日」が全て一致する場合には「昨日」であるため真を返す。
+  /// thisと現在の日付より1日前の「年、月、日」が全て一致する場合には「昨日」であるため真を返す。
   bool _isYesterday() {
     final now = DateTime.now();
     final yesterday = DateTime(now.year, now.month, now.day - 1);
@@ -52,8 +52,8 @@ extension DateTimeExtension on DateTime {
         day == yesterday.day;
   }
 
-  /// thisが、現在時刻と比較して
-  /// [_daysBeforeLowerLimit] 日〜 [_daysBeforeUpperLimit] 日前ならその数字を、
+  /// thisと現在時刻との間の日数を計算し、
+  /// その日数が[_daysBeforeLowerLimit] 日〜 [_daysBeforeUpperLimit] 日の範囲内ならその数字を、
   /// そうでなければnullを返す
   int? _daysBefore() {
     final now = DateTime.now();

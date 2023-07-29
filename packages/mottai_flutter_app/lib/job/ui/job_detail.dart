@@ -118,14 +118,14 @@ class _JobDetail extends ConsumerWidget {
                   title: 'ホスト',
                   titleStyle: Theme.of(context).textTheme.headlineMedium,
                   sectionPadding: const EdgeInsets.only(bottom: 32),
-                  content: ChipsSelector<HostType>(
+                  content: SelectableChips<HostType>(
                     allItems: HostType.values,
                     labels: Map.fromEntries(
                       HostType.values.map(
                         (type) => MapEntry(type, type.label),
                       ),
                     ),
-                    enableItems: host.hostTypes,
+                    enabledItems: host.hostTypes,
                   ),
                 ),
 
@@ -165,18 +165,18 @@ class _JobDetail extends ConsumerWidget {
                 // アクセス
                 Section(
                   title: 'アクセス',
-                  overview: job.accessDescription,
+                  description: job.accessDescription,
                   titleStyle: Theme.of(context).textTheme.headlineMedium,
-                  overviewStyle: Theme.of(context).textTheme.bodyLarge,
+                  descriptionStyle: Theme.of(context).textTheme.bodyLarge,
                   sectionPadding: const EdgeInsets.only(bottom: 32),
-                  content: ChipsSelector<AccessType>(
+                  content: SelectableChips<AccessType>(
                     allItems: AccessType.values,
                     labels: Map.fromEntries(
                       AccessType.values.map(
                         (type) => MapEntry(type, type.label),
                       ),
                     ),
-                    enableItems: job.accessTypes,
+                    enabledItems: job.accessTypes,
                     isDisplayDisable: false,
                   ),
                 ),

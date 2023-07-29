@@ -1,54 +1,54 @@
 import 'package:flutter/material.dart';
 
-/// タイトルとコンテンツの文字列やウィジェットで構成された、
-/// シンプルなセクションウィジェット
+/// - 必須: [title] タイトル文字列
+/// - 任意: [description] 説明文字列
+/// - 必須: [content] 内容を表すウィジェット
 ///
-/// htmlでのイメージは以下
-/// # [title]
-/// <[titleSpace]分の空白>
-/// [overview]
-/// [content]
-///
-/// [content]は[overview]の後に配置される
+/// を上から順に並べて構成されるシンプルなセクションウィジェット。
 class Section extends StatelessWidget {
   const Section({
     required this.title,
-    required this.content,
-    this.overview,
-    this.sectionPadding,
     this.titleStyle,
-    this.overviewStyle,
-    this.overviewMaxLines,
-    this.titleSpace = 8,
     this.titleMaxLines = 1,
+    this.titleBottomMargin = 16,
+    this.description,
+    this.descriptionStyle,
+    this.descriptionMaxLines,
+    this.descriptionBottomMargin = 16,
+    required this.content,
+    this.sectionPadding,
     super.key,
   });
 
-  /// セクションのタイトル
+  /// セクションのタイトル。
   final String title;
 
-  final int titleMaxLines;
-
-  /// 概要
-  final String? overview;
-
-  /// セクション全体のパディング
-  final EdgeInsetsGeometry? sectionPadding;
-
-  /// [title]のスタイル
+  /// [title] のスタイル。
   final TextStyle? titleStyle;
 
-  /// [overview]のスタイル
-  final TextStyle? overviewStyle;
+  /// [title] の表示行数。
+  final int titleMaxLines;
 
-  /// [overview]の最大行数
-  final int? overviewMaxLines;
+  /// [title] の下の余白。
+  final double titleBottomMargin;
 
-  /// セクションのウィジェットコンテンツ
+  /// セクションの説明。
+  final String? description;
+
+  /// [description] のスタイル。
+  final TextStyle? descriptionStyle;
+
+  /// [description] の最大行数。
+  final int? descriptionMaxLines;
+
+  /// [description] の下の余白
+  final double descriptionBottomMargin;
+
+  /// セクションのコンテンツ。
   final Widget content;
 
-  /// タイトルとコンテンツの間のスペース
-  final double titleSpace;
+  /// セクション全体のパディング。
+  final EdgeInsetsGeometry? sectionPadding;
 
   @override
   Widget build(BuildContext context) {
@@ -62,15 +62,15 @@ class Section extends StatelessWidget {
             style: titleStyle,
             maxLines: titleMaxLines,
           ),
-          SizedBox(
-            height: titleSpace,
-          ),
-          if (overview != null)
+          SizedBox(height: titleBottomMargin),
+          if (description != null) ...[
             Text(
-              overview!,
-              style: overviewStyle,
-              maxLines: overviewMaxLines,
+              description!,
+              style: descriptionStyle,
+              maxLines: descriptionMaxLines,
             ),
+            SizedBox(height: descriptionBottomMargin),
+          ],
           content,
         ],
       ),

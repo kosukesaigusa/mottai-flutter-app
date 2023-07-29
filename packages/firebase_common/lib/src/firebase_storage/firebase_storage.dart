@@ -1,6 +1,6 @@
-import 'dart:io';
-
 import 'package:firebase_storage/firebase_storage.dart';
+
+import 'firebase_storage_resource.dart';
 
 class FirebaseStorageService {
   FirebaseStorageService({String? bucket}) {
@@ -12,9 +12,19 @@ class FirebaseStorageService {
   }
   late FirebaseStorage _firebaseStorage;
 
-  Future<String> upload({required String path, required File file}) async {
+  Future<String> upload({
+    required String path,
+    required FirebaseStorageResource resource,
+  }) async {
     final imageRef = _firebaseStorage.ref().child(path);
-    await imageRef.putFile(file);
+    switch (resource) {
+      case FirebaseStorageFile():
+        await imageRef.putFile(resource.file);
+      case FirebaseStorageUrl():
+        await imageRef.putString(resource.url);
+      case FirebaseStorageRawData():
+        await imageRef.putData(resource.data);
+    }
     return imageRef.getDownloadURL();
   }
 

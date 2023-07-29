@@ -48,4 +48,23 @@ class FirebaseStorageService {
     final imageRef = _firebaseStorage.ref().child(path);
     return imageRef.getData(megaByte);
   }
+
+  Future<ListResult> fetchAllReferences({required String path}) async {
+    final storageRef = _firebaseStorage.ref().child(path);
+    return storageRef.listAll();
+  }
+
+  Future<ListResult> fetchList({
+    required String path,
+    int maxResults = 100,
+    String? pageToken,
+  }) async {
+    final storageRef = _firebaseStorage.ref().child(path);
+    return storageRef.list(
+      ListOptions(
+        maxResults: maxResults,
+        pageToken: pageToken,
+      ),
+    );
+  }
 }

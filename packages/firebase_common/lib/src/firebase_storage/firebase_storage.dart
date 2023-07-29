@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:firebase_storage/firebase_storage.dart';
 
 import 'firebase_storage_resource.dart';
@@ -36,5 +38,14 @@ class FirebaseStorageService {
   Future<void> delete({required String path}) async {
     final imageRef = _firebaseStorage.ref().child(path);
     return imageRef.delete();
+  }
+
+  Future<Uint8List?> getData({
+    required String path,
+    int byte = 1024,
+  }) async {
+    final megaByte = byte * byte;
+    final imageRef = _firebaseStorage.ref().child(path);
+    return imageRef.getData(megaByte);
   }
 }

@@ -35,6 +35,8 @@ dependencies:
   rxdart: ^0.27.7
   sign_in_button: ^3.2.0
   sign_in_with_apple: ^3.0.0
+  permission_handler: ^10.4.3
+  image_picker: ^1.0.1
 
 dev_dependencies:
   build_runner: ^2.4.6

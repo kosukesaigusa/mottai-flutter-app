@@ -62,12 +62,12 @@ class DevelopmentItemsPage extends ConsumerWidget {
             ),
           ),
           ListTile(
-            title: Text('仕事詳細ページ (FutureProvider)'),
+            title: const Text('仕事詳細ページ (FutureProvider)'),
             // TODO: 後に auto_route を採用して Navigator.pushNamed を使用する予定
             onTap: () => Navigator.push<void>(
               context,
               MaterialPageRoute<void>(
-                builder: (context) => JobDetailPage(),
+                builder: (context) => const JobDetailPage(),
               ),
             ),
           ),

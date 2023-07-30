@@ -1,5 +1,5 @@
-import '../firestore_documents/fcm_token.dart';
+// import '../firestore_documents/fcm_token.dart';
 
 class FcmTokenRepository {
-  final _query = FcmTokenQuery();
+  // final _query = FcmTokenQuery();
 }

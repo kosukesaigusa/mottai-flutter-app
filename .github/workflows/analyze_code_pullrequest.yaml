@@ -21,13 +21,13 @@ jobs:
 
       - name: Install dependencies
         run: |
-          flutter analyze upgrade -C pakages/dart_flutter_common
-          flutter analyze upgrade -C pakages/firebase_common
-          flutter analyze upgrade -C pakages/mottai_flutter_app
+          flutter pub upgrade -C pakages/dart_flutter_common
+          flutter pub upgrade -C pakages/firebase_common
+          flutter pub upgrade -C pakages/mottai_flutter_app
 
-          flutter analyze get -C pakages/dart_flutter_common
-          flutter analyze get -C pakages/firebase_common
-          flutter analyze get -C pakages/mottai_flutter_app
+          flutter pub get -C pakages/dart_flutter_common
+          flutter pub get -C pakages/firebase_common
+          flutter pub get -C pakages/mottai_flutter_app
 
       - name: Analyze project source
         run: flutter analyze

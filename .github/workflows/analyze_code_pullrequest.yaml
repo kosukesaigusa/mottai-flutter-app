@@ -20,7 +20,9 @@ jobs:
           flutter-version: "3.10.6"
 
       - name: Install dependencies
-        run: flutter pub get
+        run: |
+        dart pub global activate melos
+        dart pub global activate melos
 
       - name: Analyze project source
         run: flutter analyze

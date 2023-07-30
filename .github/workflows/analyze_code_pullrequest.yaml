@@ -22,7 +22,7 @@ jobs:
       - name: Install dependencies
         run: |
           dart pub global activate melos
-          dart pub global activate melos
+          melos bs
 
       - name: Analyze project source
         run: flutter analyze

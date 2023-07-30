@@ -1,0 +1,51 @@
+
+name: flutter_test
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+  push:
+    branches:
+      - main
+
+jobs:
+  flutter_test:
+    runs-on: ubuntu-latest
+    # timeout-minutesのデフォルト値は6時間
+    # タイムアウトを設定しないと処理が終わらないまま放置され、莫大な請求額になるため短めに設定する
+    timeout-minutes: 10
+    steps:
+      # ソースコードをチェックアウト
+      - name: Checkout
+        uses: actions/checkout@v3
+    # fvm のバージョンとチャネルを環境変数に設定する
+      - name: Check fvm
+        uses: kuhnroyal/flutter-fvm-config-action@v1
+      # Flutter SDK の設定
+      - name: Setup Flutter SDK
+        uses: subosito/flutter-action@v2
+        with:
+          # バージョンとチャネルは fvm の値を使う
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: ${{ env.FLUTTER_CHANNEL }}
+          # 次回以降起動を速くするためにキャッシュしておく
+          cache: true
+          cache-key: flutter
+          cache-path: ${{ runner.tool_cache }}/flutter
+      # flutter pub get を実行
+      - name: Install Flutter dependencies
+        run: flutter pub get
+      # テストを実行
+      # あとでテスト結果を GitHub Actions 上に表示するので log に出力する
+      # あとでカバレッジ結果をCodecovに送信するのでカバレッジありで実行する
+      - name: Run Flutter Test
+        run: flutter test --machine --coverage > test-report.log
+      # テスト結果を GitHub Actions に表示する
+      - name: Report Test
+        uses: dorny/test-reporter@v1
+        # テスト結果を表示するのでテストが失敗しても実行する
+        if: always()
+        with:
+          name: Flutter Test Report
+          path: test-report.log
+          reporter: flutter-json

@@ -1,0 +1,26 @@
+name: Analyze source code in pull request
+
+on:
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: 3.10.4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.10.6"
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Analyze project source
+        run: flutter analyze

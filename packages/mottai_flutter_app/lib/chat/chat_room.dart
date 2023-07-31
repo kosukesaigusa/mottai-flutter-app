@@ -69,6 +69,7 @@ class ChatRoomStateNotifier extends StateNotifier<ChatRoomState> {
       await Future.wait<void>([
         _fetchChatRoom(),
         loadMore(),
+        // readStatusService.updateLastReadAt(lastReadAt: DateTime.now());
         // ChatPage に遷移直後のメッセージアイコンを意図的に見せるために最低でも 500 ms 待つ。
         Future<void>.delayed(const Duration(milliseconds: 500)),
       ]);
@@ -136,11 +137,14 @@ class ChatRoomStateNotifier extends StateNotifier<ChatRoomState> {
     );
   }
 
-  /// チャットルーム画面に遷移した後に新たに取得したメッセージを更新した後、
-  /// 取得したメッセージ全体も更新する。
+  /// チャットルーム画面に遷移した後に、新たにメッセージを取得したときに、
+  /// `state.newReadChatMessages` を更新し、[_updateReadChatMessages] メソッドを
+  /// コールして、取得したメッセージ全体を更新する。
   void _updateNewReadChatMessages(List<ReadChatMessage> newReadChatMessages) {
     state = state.copyWith(newReadChatMessages: newReadChatMessages);
     _updateReadChatMessages();
+    // TODO: 自分の lastReadAt を現在時刻に更新する。
+    // readStatusService.updateLastReadAt(lastReadAt: DateTime.now());
   }
 
   /// チャットルーム画面を遡って取得した過去のメッセージを更新した後、

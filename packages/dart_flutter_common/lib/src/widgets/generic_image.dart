@@ -41,7 +41,7 @@ class GenericImage extends StatelessWidget {
         height = null,
         width = null;
 
-  /// 長方形。
+  /// 長方形の画像を表示する。
   const GenericImage.rectangle({
     required this.imageUrl,
     this.onTap,
@@ -112,7 +112,15 @@ class GenericImage extends StatelessWidget {
             MaterialPageRoute<void>(
               builder: (context) => _ImageDetailView(
                 tag: tag,
-                image: _image(),
+                child: _GenericCachedNetworkImage(
+                  imageUrl: imageUrl,
+                  imageShape: imageShape,
+                  size: size,
+                  width: width,
+                  height: height,
+                  borderRadius: borderRadius,
+                  loadingWidget: loadingWidget,
+                ),
               ),
             ),
           );
@@ -120,12 +128,54 @@ class GenericImage extends StatelessWidget {
       },
       child: Hero(
         tag: tag,
-        child: _image(),
+        child: _GenericCachedNetworkImage(
+          imageUrl: imageUrl,
+          imageShape: imageShape,
+          size: size,
+          width: width,
+          height: height,
+          borderRadius: borderRadius,
+          loadingWidget: loadingWidget,
+        ),
       ),
     );
   }
+}
 
-  CachedNetworkImage _image() {
+class _GenericCachedNetworkImage extends StatelessWidget {
+  const _GenericCachedNetworkImage({
+    required this.imageUrl,
+    required this.imageShape,
+    required this.size,
+    required this.width,
+    required this.height,
+    required this.borderRadius,
+    required this.loadingWidget,
+  });
+
+  /// 表示する画像の URL 文字列。
+  final String imageUrl;
+
+  /// 表示する画像の形状。
+  final ImageShape imageShape;
+
+  /// 円形・正方形で指定する画像のサイズ（直径、一辺の長さ）。
+  final double? size;
+
+  /// 長方形で指定する画像の横幅。
+  final double? width;
+
+  /// 長方形で指定する画像の高さ。
+  final double? height;
+
+  /// 角丸の半径。
+  final double? borderRadius;
+
+  /// 読み込み中に表示するウィジェット。
+  final Widget? loadingWidget;
+
+  @override
+  Widget build(BuildContext context) {
     return CachedNetworkImage(
       imageUrl: imageUrl,
       imageBuilder: (context, imageProvider) {
@@ -252,11 +302,11 @@ class _Image extends StatelessWidget {
 class _ImageDetailView extends StatelessWidget {
   const _ImageDetailView({
     required this.tag,
-    required this.image,
+    required this.child,
   });
 
   final String tag;
-  final CachedNetworkImage image;
+  final Widget child;
 
   @override
   Widget build(BuildContext context) {
@@ -284,7 +334,7 @@ class _ImageDetailView extends StatelessWidget {
             clipBehavior: Clip.none,
             child: Hero(
               tag: tag,
-              child: image,
+              child: child,
             ),
           ),
         ),

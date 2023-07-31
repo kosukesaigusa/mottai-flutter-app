@@ -6,7 +6,7 @@ part of 'job.dart';
 
 class ReadJob {
   const ReadJob({
-    required this.hostLocationId,
+    required this.jobId,
     required this.path,
     required this.hostId,
     required this.title,
@@ -22,7 +22,7 @@ class ReadJob {
     required this.updatedAt,
   });
 
-  final String hostLocationId;
+  final String jobId;
 
   final String path;
 
@@ -52,7 +52,7 @@ class ReadJob {
 
   factory ReadJob._fromJson(Map<String, dynamic> json) {
     return ReadJob(
-      hostLocationId: json['hostLocationId'] as String,
+      jobId: json['jobId'] as String,
       path: json['path'] as String,
       hostId: json['hostId'] as String,
       title: json['title'] as String? ?? '',
@@ -83,7 +83,7 @@ class ReadJob {
     final data = ds.data()! as Map<String, dynamic>;
     return ReadJob._fromJson(<String, dynamic>{
       ...data,
-      'hostLocationId': ds.id,
+      'jobId': ds.id,
       'path': ds.reference.path,
     });
   }
@@ -197,9 +197,9 @@ final readJobCollectionReference =
 
 /// A [DocumentReference] to hostLocation document to read.
 DocumentReference<ReadJob> readJobDocumentReference({
-  required String hostLocationId,
+  required String jobId,
 }) =>
-    readJobCollectionReference.doc(hostLocationId);
+    readJobCollectionReference.doc(jobId);
 
 /// A [CollectionReference] to jobs collection to create.
 final createJobCollectionReference =
@@ -210,9 +210,9 @@ final createJobCollectionReference =
 
 /// A [DocumentReference] to hostLocation document to create.
 DocumentReference<CreateJob> createJobDocumentReference({
-  required String hostLocationId,
+  required String jobId,
 }) =>
-    createJobCollectionReference.doc(hostLocationId);
+    createJobCollectionReference.doc(jobId);
 
 /// A [CollectionReference] to jobs collection to update.
 final updateJobCollectionReference =
@@ -223,9 +223,9 @@ final updateJobCollectionReference =
 
 /// A [DocumentReference] to hostLocation document to update.
 DocumentReference<UpdateJob> updateJobDocumentReference({
-  required String hostLocationId,
+  required String jobId,
 }) =>
-    updateJobCollectionReference.doc(hostLocationId);
+    updateJobCollectionReference.doc(jobId);
 
 /// A [CollectionReference] to jobs collection to delete.
 final deleteJobCollectionReference =
@@ -233,9 +233,9 @@ final deleteJobCollectionReference =
 
 /// A [DocumentReference] to hostLocation document to delete.
 DocumentReference<Object?> deleteJobDocumentReference({
-  required String hostLocationId,
+  required String jobId,
 }) =>
-    deleteJobCollectionReference.doc(hostLocationId);
+    deleteJobCollectionReference.doc(jobId);
 
 /// A query manager to execute query against [Job].
 class JobQuery {
@@ -284,23 +284,23 @@ class JobQuery {
 
   /// Fetches a specified [ReadJob] document.
   Future<ReadJob?> fetchDocument({
-    required String hostLocationId,
+    required String jobId,
     GetOptions? options,
   }) async {
     final ds = await readJobDocumentReference(
-      hostLocationId: hostLocationId,
+      jobId: jobId,
     ).get(options);
     return ds.data();
   }
 
   /// Subscribes a specified [Job] document.
   Stream<ReadJob?> subscribeDocument({
-    required String hostLocationId,
+    required String jobId,
     bool includeMetadataChanges = false,
     bool excludePendingWrites = false,
   }) {
     var streamDs = readJobDocumentReference(
-      hostLocationId: hostLocationId,
+      jobId: jobId,
     ).snapshots(includeMetadataChanges: includeMetadataChanges);
     if (excludePendingWrites) {
       streamDs = streamDs.where((ds) => !ds.metadata.hasPendingWrites);
@@ -316,28 +316,28 @@ class JobQuery {
 
   /// Sets a [Job] document.
   Future<void> set({
-    required String hostLocationId,
+    required String jobId,
     required CreateJob createJob,
     SetOptions? options,
   }) =>
       createJobDocumentReference(
-        hostLocationId: hostLocationId,
+        jobId: jobId,
       ).set(createJob, options);
 
   /// Updates a specified [Job] document.
   Future<void> update({
-    required String hostLocationId,
+    required String jobId,
     required UpdateJob updateJob,
   }) =>
       updateJobDocumentReference(
-        hostLocationId: hostLocationId,
+        jobId: jobId,
       ).update(updateJob.toJson());
 
   /// Deletes a specified [Job] document.
   Future<void> delete({
-    required String hostLocationId,
+    required String jobId,
   }) =>
       deleteJobDocumentReference(
-        hostLocationId: hostLocationId,
+        jobId: jobId,
       ).delete();
 }

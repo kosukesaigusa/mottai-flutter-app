@@ -5,7 +5,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'job.flutterfire_gen.dart';
 
-@FirestoreDocument(path: 'jobs', documentName: 'hostLocation')
+@FirestoreDocument(path: 'jobs', documentName: 'jobs')
 class Job {
   const Job({
     required this.hostId,

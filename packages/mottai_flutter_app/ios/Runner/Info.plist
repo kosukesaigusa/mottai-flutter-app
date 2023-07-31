@@ -59,11 +59,11 @@
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>現在地を取得するため位置情報サービスへのアクセスが必要です</string>
+	<string>現在地を取得するため位置情報サービスを使用します。</string>
     <key>NSPhotoLibraryUsageDescription</key>
-    <string>This app requires to access your photo library</string>
+    <string>プロフィール画像などを選択するために端末の写真ライブラリを使用します。</string>
     <key>NSCameraUsageDescription</key>
-    <string>This app requires to add file to your camera</string>
+    <string>プロフィール画像などを撮影するために端末のカメラを使用します。</string>
     <key>NSMicrophoneUsageDescription</key>
     <string>This app requires to add file to your photo library your microphone</string>
 </dict>

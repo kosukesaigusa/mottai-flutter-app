@@ -50,6 +50,9 @@ jobs:
       # file path 確認用コマンド
       - name: pwd
         run: pwd
+      # fileが存在するか確認
+      - name: ls -a
+        run: ls -a
 
       # # flutter pub get を実行
       # - name: Install Flutter dependencies

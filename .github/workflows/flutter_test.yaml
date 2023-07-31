@@ -43,10 +43,10 @@ jobs:
         run: melos bootstrap --sdk-path=${{ runner.tool_cache }}/flutter
       # 依存関係を解決
       - name: Install Flutter dependencies by melos
-        run: melos pg
+        run: melos pg --sdk-path=${{ runner.tool_cache }}/flutter
       # テストを実行
       - name: Run Flutter Test by melos
-        run: melos test --machine --coverage > test-report.log
+        run: melos test --sdk-path=${{ runner.tool_cache }}/flutter --machine --coverage > test-report.log
 
       # # flutter pub get を実行
       # - name: Install Flutter dependencies

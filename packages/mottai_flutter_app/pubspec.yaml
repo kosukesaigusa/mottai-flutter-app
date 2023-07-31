@@ -8,6 +8,7 @@ environment:
 
 dependencies:
   auto_route: ^7.7.0
+  cached_network_image: ^3.2.3
   crypto: ^3.0.1
   dart_flutter_common:
     path: ../dart_flutter_common
@@ -31,6 +32,7 @@ dependencies:
   hooks_riverpod: ^2.3.6
   intl: ^0.18.1
   package_info_plus: ^4.0.2
+  permission_handler: ^10.4.3
   rxdart: ^0.27.7
   sign_in_button: ^3.2.0
   sign_in_with_apple: ^3.0.0

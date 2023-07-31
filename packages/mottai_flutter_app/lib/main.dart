@@ -51,18 +51,18 @@ class MainApp extends ConsumerWidget {
               elevation: 4,
               shadowColor: Theme.of(context).shadowColor,
             ),
+        chipTheme: Theme.of(context).chipTheme.copyWith(
+              backgroundColor: const Color(0xFFE8DEF8),
+            ),
       ),
       debugShowCheckedModeBanner: false,
-      home: const DevelopmentItemsPage(),
-      builder: (context, child) {
-        return GestureDetector(
-          onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-          child: ScaffoldMessenger(
-            key: ref.watch(scaffoldMessengerKeyProvider),
-            child: child!,
-          ),
-        );
-      },
+      home: GestureDetector(
+        onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+        child: ScaffoldMessenger(
+          key: ref.watch(scaffoldMessengerKeyProvider),
+          child: const DevelopmentItemsPage(),
+        ),
+      ),
     );
   }
 }

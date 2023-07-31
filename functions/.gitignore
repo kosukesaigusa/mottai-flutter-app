@@ -10,3 +10,8 @@ node_modules/
 
 # Firebase service account keys
 service_account_keys/
+
+# .env
+.env
+.env.dev
+.env.prod

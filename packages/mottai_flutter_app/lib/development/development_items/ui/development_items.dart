@@ -5,13 +5,17 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../../auth/auth.dart';
 import '../../../auth/ui/sign_in_buttons.dart';
 import '../../../chat/ui/chat_room.dart';
+import '../../../force_update/ui/force_update.dart';
+import '../../../job/ui/job_detail.dart';
 import '../../../map/ui/map.dart';
 import '../../../scaffold_messenger_controller.dart';
 import '../../../user/user.dart';
 import '../../../user/user_mode.dart';
 import '../../color/ui/color.dart';
+import '../../generic_image/generic_image.dart';
+import '../../image_detail_view/image_detail_view_stub.dart';
+import '../../image_picker/ui/image_picker_sample.dart';
 import '../../sample_todo/ui/sample_todos.dart';
-
 
 /// 開発中の各ページへの導線を表示するページ。
 class DevelopmentItemsPage extends ConsumerWidget {
@@ -58,15 +62,15 @@ class DevelopmentItemsPage extends ConsumerWidget {
               ),
             ),
           ),
-          const ListTile(
-            title: Text('仕事詳細ページ (FutureProvider)'),
+          ListTile(
+            title: const Text('仕事詳細ページ (FutureProvider)'),
             // TODO: 後に auto_route を採用して Navigator.pushNamed を使用する予定
-            // onTap: () => Navigator.push<void>(
-            //   context,
-            //   MaterialPageRoute<void>(
-            //     builder: (context) => FooPage(),
-            //   ),
-            // ),
+            onTap: () => Navigator.push<void>(
+              context,
+              MaterialPageRoute<void>(
+                builder: (context) => const JobDetailPage(),
+              ),
+            ),
           ),
           const ListTile(
             title: Text('チャットルーム一覧ページ（StreamProvider、未既読管理）'),
@@ -151,15 +155,15 @@ class DevelopmentItemsPage extends ConsumerWidget {
               style: Theme.of(context).textTheme.titleLarge,
             ),
           ),
-          const ListTile(
-            title: Text('画像選択・圧縮（1 枚 or 複数）'),
+          ListTile(
+            title: const Text('画像選択・圧縮（1 枚 or 複数）'),
             // TODO: 後に auto_route を採用して Navigator.pushNamed を使用する予定
-            // onTap: () => Navigator.push<void>(
-            //   context,
-            //   MaterialPageRoute<void>(
-            //     builder: (context) => FooPage(),
-            //   ),
-            // ),
+            onTap: () => Navigator.push<void>(
+              context,
+              MaterialPageRoute<void>(
+                builder: (context) => const ImagePickSample(),
+              ),
+            ),
           ),
           const ListTile(
             title: Text('画像アップロード'),
@@ -233,6 +237,28 @@ class DevelopmentItemsPage extends ConsumerWidget {
             //   ),
             // ),
           ),
+          ListTile(
+            title: const Text('Components'),
+            // TODO: 後に auto_route を採用して Navigator.pushNamed を使用する予定
+            onTap: () => Navigator.push<void>(
+              context,
+              MaterialPageRoute<void>(
+                builder: (context) => const GenericImages(),
+              ),
+            ),
+          ),
+          ListTile(
+            title: const Text(
+              '画像の詳細拡大画面サンプル',
+            ),
+            // TODO: 後に auto_route を採用して Navigator.pushNamed を使用する予定
+            onTap: () => Navigator.push<void>(
+              context,
+              MaterialPageRoute<void>(
+                builder: (context) => const ImageDetailViewStubPage(),
+              ),
+            ),
+          ),
           const Divider(),
           Padding(
             padding: const EdgeInsets.all(16),
@@ -279,6 +305,18 @@ class DevelopmentItemsPage extends ConsumerWidget {
               context,
               MaterialPageRoute<void>(
                 builder: (context) => const ColorPage(),
+              ),
+            ),
+          ),
+          ListTile(
+            title: const Text(
+              'forceUpdateページ',
+            ),
+            // TODO: 後に auto_route を採用して Navigator.pushNamed を使用する予定
+            onTap: () => Navigator.push<void>(
+              context,
+              MaterialPageRoute<void>(
+                builder: (context) => const ForceUpdatePage(),
               ),
             ),
           ),

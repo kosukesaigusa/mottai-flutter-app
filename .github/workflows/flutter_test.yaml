@@ -60,6 +60,9 @@ jobs:
     timeout-minutes: 10
     # ジョブの手順
     steps:
+      # ソースコードをチェックアウト
+      - name: Checkout
+        uses: actions/checkout@v3
       # テスト結果を GitHub Actions に表示する
       - name: Report Test
         uses: dorny/test-reporter@v1

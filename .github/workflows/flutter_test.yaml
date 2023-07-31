@@ -1,4 +1,3 @@
-
 name: flutter_test
 
 on:
@@ -18,7 +17,7 @@ jobs:
       # ソースコードをチェックアウト
       - name: Checkout
         uses: actions/checkout@v3
-    # fvm のバージョンとチャネルを環境変数に設定する
+      # fvm のバージョンとチャネルを環境変数に設定する
       - name: Check fvm
         uses: kuhnroyal/flutter-fvm-config-action@v1
       # Flutter SDK の設定
@@ -36,13 +35,18 @@ jobs:
       # デフォルトでmelos bootstrapコマンドが実行される
       - name: Setup melos
         uses: bluefireteam/melos-action@v1
+        with:
+          run-bootstrap: false
+      # melos bootstrap
+      - name: melos bootstrap
+        run: melos bootstrap --flutter-sdk=${{ runner.tool_cache }}/flutter
       # 依存関係を解決
       - name: Install Flutter dependencies by melos
         run: melos pg
       # テストを実行
       - name: Run Flutter Test by melos
         run: melos test --machine --coverage > test-report.log
-      
+
       # # flutter pub get を実行
       # - name: Install Flutter dependencies
       #   run: flutter pub get
@@ -51,7 +55,7 @@ jobs:
       # # あとでカバレッジ結果をCodecovに送信するのでカバレッジありで実行する
       # - name: Run Flutter Test
       #   run: flutter test --machine --coverage > test-report.log
-      
+
       # テスト結果を GitHub Actions に表示する
       - name: Report Test
         uses: dorny/test-reporter@v1

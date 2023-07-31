@@ -10,10 +10,10 @@ class ImageDetailViewStubPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('画像詳細拡大画面サンプル'),
       ),
-      body: DetailDisplayableImage(
-        image: Image.network(
-          'https://free-materials.com/adm/wp-content/uploads/2017/02/adtDSC_0905-300x199.jpg',
-        ),
+      body: const GenericImage.square(
+        size: 300,
+        imageUrl:
+            'https://free-materials.com/adm/wp-content/uploads/2017/02/adtDSC_0905-300x199.jpg',
       ),
     );
   }

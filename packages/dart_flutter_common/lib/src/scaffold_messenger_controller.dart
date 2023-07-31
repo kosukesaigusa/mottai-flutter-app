@@ -4,6 +4,7 @@ import 'string.dart';
 
 /// ツリー上部の [ScaffoldMessenger] 上でスナックバーやダイアログの表示を操作する。
 class ScaffoldMessengerController {
+  /// [ScaffoldMessengerController] を作成する。
   ScaffoldMessengerController({
     required GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey,
   }) : _scaffoldMessengerKey = scaffoldMessengerKey;

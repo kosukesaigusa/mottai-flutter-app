@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 ///
 /// を上から順に並べて構成されるシンプルなセクションウィジェット。
 class Section extends StatelessWidget {
+  /// [Section] を作成する。
   const Section({
     required this.title,
     this.titleStyle,

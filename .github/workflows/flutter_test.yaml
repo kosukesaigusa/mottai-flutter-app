@@ -47,42 +47,9 @@ jobs:
       # テストを実行
       - name: Run Flutter Test by melos
         run: melos exec --sdk-path=${{ runner.tool_cache }}/flutter -- "flutter test --machine --coverage > test-report.log"
-      # # テスト結果を GitHub Actions に表示する
-      # - name: Report Test
-      #   uses: dorny/test-reporter@v1
-      #   # テスト結果を表示するのでテストが失敗しても実行する
-      #   if: always()
-      #   with:
-      #     name: Flutter Test Report mottai_flutter_app
-      #     path: /home/runner/work/mottai-flutter-app/mottai-flutter-app/packages/mottai_flutter_app/test-report.log
-      #     reporter: flutter-json
-      # # Codecov に結果を送信
-      # - name: Upload coverage to Codecov
-      #   uses: codecov/codecov-action@v2
-      #   with:
-      #     token: ${{secrets.CODECOV_TOKEN}}
-      #     file: /home/runner/work/mottai-flutter-app/mottai-flutter-app/packages/mottai_flutter_app/coverage/lcov.info
-      #     fail_ci_if_error: true
-      #     flags: unittests_mottai_flutter_app
-      #     verbose: true
 
-  # test report mottai_flutter_app
-  test_report_mottai_flutter_app:
-    name: test report mottai_flutter_app
-    # テストジョブが成功したら実行する
-    needs:
-      - flutter_test
-    # ジョブを実行するOS
-    runs-on: ubuntu-latest
-    # タイムアウト時間（分）
-    timeout-minutes: 10
-    # ジョブの手順
-    steps:
-      # ソースコードをチェックアウト
-      - name: Checkout
-        uses: actions/checkout@v3
-      # テスト結果を GitHub Actions に表示する
-      - name: Report Test
+      # mottai_flutter_appのテスト結果を GitHub Actions に表示する
+      - name: Report Test mottai_flutter_app
         uses: dorny/test-reporter@v1
         # テスト結果を表示するのでテストが失敗しても実行する
         if: always()
@@ -98,4 +65,42 @@ jobs:
           file: /home/runner/work/mottai-flutter-app/mottai-flutter-app/packages/mottai_flutter_app/coverage/lcov.info
           fail_ci_if_error: true
           flags: unittests_mottai_flutter_app
+          verbose: true
+
+      # firebase_commonのテスト結果を GitHub Actions に表示する
+      - name: Report Test firebase_common
+        uses: dorny/test-reporter@v1
+        # テスト結果を表示するのでテストが失敗しても実行する
+        if: always()
+        with:
+          name: Flutter Test Report mottai_flutter_app
+          path: /home/runner/work/mottai-flutter-app/mottai-flutter-app/packages/firebase_common/test-report.log
+          reporter: flutter-json
+      # Codecov に結果を送信
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v2
+        with:
+          token: ${{secrets.CODECOV_TOKEN}}
+          file: /home/runner/work/mottai-flutter-app/mottai-flutter-app/packages/firebase_common/coverage/lcov.info
+          fail_ci_if_error: true
+          flags: unittests_firebase_common
+          verbose: true
+
+      # dart_flutter_commonのテスト結果を GitHub Actions に表示する
+      - name: Report Test dart_flutter_common
+        uses: dorny/test-reporter@v1
+        # テスト結果を表示するのでテストが失敗しても実行する
+        if: always()
+        with:
+          name: Flutter Test Report dart_flutter_common
+          path: /home/runner/work/mottai-flutter-app/mottai-flutter-app/packages/dart_flutter_common/test-report.log
+          reporter: flutter-json
+      # Codecov に結果を送信
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v2
+        with:
+          token: ${{secrets.CODECOV_TOKEN}}
+          file: /home/runner/work/mottai-flutter-app/mottai-flutter-app/packages/dart_flutter_common/coverage/lcov.info
+          fail_ci_if_error: true
+          flags: unittests_dart_flutter_common
           verbose: true

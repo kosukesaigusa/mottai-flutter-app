@@ -38,6 +38,16 @@ class GoogleAppleSignin extends ConsumerWidget {
                     ref.read(authControllerProvider).signIn(SignInMethod.apple),
               ),
             ),
+            // Line
+            SizedBox(
+              height: 50,
+              child: SignInButton(
+                Buttons.apple,
+                text: 'Line でサインイン',
+                onPressed: () async =>
+                    ref.read(authControllerProvider).signIn(SignInMethod.line),
+              ),
+            ),
           ],
         ),
       ),

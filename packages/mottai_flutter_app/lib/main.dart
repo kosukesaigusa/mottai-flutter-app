@@ -15,6 +15,9 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  LineSDK.instance.setup('YOUR-CHANNEL-ID-HERE').then((_) {
+    print("LineSDK Prepared");
+  });
   final container = ProviderContainer();
   final hostDocumentExists =
       await container.read(hostDocumentExistsProvider).call();

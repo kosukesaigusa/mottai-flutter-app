@@ -42,6 +42,7 @@ class AuthController {
         // Apple はキャンセルやネットワークエラーの判定ができないので、try-catchしない
         await _authService.signInWithApple();
       case SignInMethod.line:
+        await _authService.signInWithLINE();
       case SignInMethod.email:
         throw UnimplementedError();
     }

@@ -106,6 +106,30 @@ class AuthService {
     return userCredential;
   }
 
+  /// [FirebaseAuth] に Line でサインインする。
+  /// https://firebase.flutter.dev/docs/auth/custom-auth に従っている。
+  Future<void> signInWithLINE() async {
+  // LineSDK の login メソッドをコールする。
+  final loginResult = await LineSDK.instance.login();
+
+  // 得られる LoginResult 型の値にアクセストークン文字列が入っている。
+  final accessToken = loginResult.accessToken.data['access_token'] as String;
+
+  // Firebase Functions の httpsCallable を使用してバックエンドサーバと通信する。
+  // リクエストボディに上で得られたアクセストークンを与える。
+  final callable = FirebaseFunctions.instanceFor(region: 'asia-northeast1')
+      .httpsCallable('createfirebaseauthcustomtoken');
+  final response = await callable.call<Map<String, dynamic>>(
+    <String, dynamic>{'accessToken': accessToken},
+  );
+
+  // バックエンドサーバで作成されたカスタムトークンを得る。
+  final customToken = response.data['customToken'] as String;
+
+  // カスタムトークンを用いて Firebase Authentication にサインインする。
+  await FirebaseAuth.instance.signInWithCustomToken(customToken);
+}
+
   /// 文字列から SHA-256 ハッシュを作成する。
   String _sha256ofString(String input) {
     final bytes = utf8.encode(input);

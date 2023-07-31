@@ -32,14 +32,26 @@ jobs:
           cache: true
           cache-key: flutter
           cache-path: ${{ runner.tool_cache }}/flutter
-      # flutter pub get を実行
-      - name: Install Flutter dependencies
-        run: flutter pub get
+      # melosの設定
+      # デフォルトでmelos bootstrapコマンドが実行される
+      - name: Setup melos
+        uses: bluefireteam/melos-action@v1
+      # 依存関係を解決
+      - name: Install Flutter dependencies by melos
+        run: melos pg
       # テストを実行
-      # あとでテスト結果を GitHub Actions 上に表示するので log に出力する
-      # あとでカバレッジ結果をCodecovに送信するのでカバレッジありで実行する
-      - name: Run Flutter Test
-        run: flutter test --machine --coverage > test-report.log
+      - name: Run Flutter Test by melos
+        run: melos test --machine --coverage > test-report.log
+      
+      # # flutter pub get を実行
+      # - name: Install Flutter dependencies
+      #   run: flutter pub get
+      # # テストを実行
+      # # あとでテスト結果を GitHub Actions 上に表示するので log に出力する
+      # # あとでカバレッジ結果をCodecovに送信するのでカバレッジありで実行する
+      # - name: Run Flutter Test
+      #   run: flutter test --machine --coverage > test-report.log
+      
       # テスト結果を GitHub Actions に表示する
       - name: Report Test
         uses: dorny/test-reporter@v1

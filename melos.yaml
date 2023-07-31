@@ -19,3 +19,6 @@ scripts:
 
   build:
     run: melos exec -- "flutter pub run build_runner build"
+
+  test:
+    run: melos exec -- "flutter test"

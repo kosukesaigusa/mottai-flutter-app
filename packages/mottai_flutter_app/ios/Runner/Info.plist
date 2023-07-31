@@ -61,7 +61,7 @@
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>現在地を取得するため位置情報サービスを使用します。</string>
     <key>NSPhotoLibraryUsageDescription</key>
-    <string>プロフィール画像などを選択するために端末の写真ライブラリを使用します。</string>
+    <string>プロフィール画像などを選択するために端末の画像ライブラリを使用します。</string>
     <key>NSCameraUsageDescription</key>
     <string>プロフィール画像などを撮影するために端末のカメラを使用します。</string>
     <key>NSMicrophoneUsageDescription</key>

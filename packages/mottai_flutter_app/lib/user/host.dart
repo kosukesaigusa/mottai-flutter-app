@@ -18,13 +18,14 @@ final hostImageUrlProvider =
 });
 
 /// 指定した [Host] の名前を返す [Provider].
-/// 読み込み中・エラーの場合は'農家さん'を返す。
+/// 読み込み中・エラーの場合は空文字を返す。
 final hostDisplayNameProvider =
     Provider.family.autoDispose<String, String>((ref, hostId) {
   final host = ref.watch(hostStreamProvider(hostId)).valueOrNull;
-  return host?.displayName ?? '農家さん';
+  return host?.displayName ?? '';
 });
 
+/// 指定した [Host] を返す [FutureProvider].
 final hostFutureProvider = FutureProvider.family.autoDispose<ReadHost?, String>(
   (ref, id) => ref.watch(hostServiceProvider).fetchHost(hostId: id),
 );

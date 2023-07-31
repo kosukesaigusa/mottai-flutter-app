@@ -18,12 +18,12 @@ final workerImageUrlProvider =
   return worker?.imageUrl ?? '';
 });
 
-/// 指定した [Worker] の名前 を返す [Provider].
-/// 画像が存在しない場合や読み込み中・エラーの場合でも空文字を返す。
+/// 指定した [Worker] の名前を返す [Provider].
+/// 読み込み中・エラーの場合は空文字を返す。
 final workerDisplayNameProvider =
     Provider.family.autoDispose<String, String>((ref, workerId) {
   final worker = ref.watch(workerStreamProvider(workerId)).valueOrNull;
-  return worker?.displayName ?? 'お客さん';
+  return worker?.displayName ?? '';
 });
 
 final workerServiceProvider = Provider.autoDispose<WorkerService>(

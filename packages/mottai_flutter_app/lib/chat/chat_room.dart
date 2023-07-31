@@ -29,7 +29,7 @@ final chatPartnerImageUrlProvider =
   }
 });
 
-/// チャット相手の名前 を取得する [Provider].
+/// チャット相手の名前を取得する [Provider].
 final chatPartnerDisplayNameProvider =
     Provider.family.autoDispose<String, ReadChatRoom>((ref, readChatRoom) {
   final userMode = ref.watch(userModeStateProvider);

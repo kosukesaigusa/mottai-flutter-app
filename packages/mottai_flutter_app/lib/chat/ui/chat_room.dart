@@ -7,6 +7,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../auth/ui/auth_dependent_builder.dart';
 import '../../color.dart';
+import '../../error/ui/error.dart';
 import '../../user/user_mode.dart';
 import '../chat_room.dart';
 
@@ -42,7 +43,7 @@ class _ChatRoomPageState extends ConsumerState<ChatRoomPage> {
         final scrollValue = _scrollController.offset /
             _scrollController.position.maxScrollExtent;
         if (scrollValue > _scrollValueThreshold) {
-          await ref.read(chatRoomStateNotifier.notifier).loadMore();
+          await ref.read(chatRoomStateNotifierProvider.notifier).loadMore();
         }
       });
     super.initState();
@@ -58,11 +59,21 @@ class _ChatRoomPageState extends ConsumerState<ChatRoomPage> {
 
   @override
   Widget build(BuildContext context) {
-    final state = ref.watch(chatRoomStateNotifier);
     // TODO: パスパラメータから渡せるようにする
     const chatRoomId = 'aSNYpkUofu05nyasvMRx';
+    final readChatRoom = ref.watch(chatRoomFutureProvider(chatRoomId)).value;
+    if (readChatRoom == null) {
+      // TODO: この実装だと、loading 中に UnavailablePage がちらっと見えそうなので改善したい。
+      return const UnavailablePage('チャットルームの情報の取得に失敗しました。');
+    }
+    final state = ref.watch(chatRoomStateNotifierProvider);
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        // TODO: chatPartnerImageUrlProvider を真似して、chatPartnerNameProvider
+        // を定義して（それに必要な workerNameProvider, hostNameProvider）、
+        // AppBart のタイトルを適切なパートナ名にする。
+        title: const Text('相手の名前'),
+      ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8),
         child: AuthDependentBuilder(
@@ -87,8 +98,10 @@ class _ChatRoomPageState extends ConsumerState<ChatRoomPage> {
                               final readChatMessage =
                                   state.readChatMessages[index];
                               return _ChatMessageItem(
+                                readChatRoom: readChatRoom,
                                 readChatMessage: readChatMessage,
                                 isMyMessage: readChatMessage.senderId == userId,
+                                chatRoomId: chatRoomId,
                               );
                             },
                           ),
@@ -103,7 +116,6 @@ class _ChatRoomPageState extends ConsumerState<ChatRoomPage> {
                     const Positioned(
                       child: Align(
                         alignment: Alignment.topCenter,
-                        // TODO: パスパラメータから渡せるようにする
                         child: _DebugIndicator(chatRoomId: chatRoomId),
                       ),
                     ),
@@ -118,16 +130,26 @@ class _ChatRoomPageState extends ConsumerState<ChatRoomPage> {
 /// [ChatMessage] のひとつひとつの UI.
 class _ChatMessageItem extends ConsumerWidget {
   const _ChatMessageItem({
+    required this.readChatRoom,
     required this.readChatMessage,
     required this.isMyMessage,
+    required this.chatRoomId,
   });
+
+  final ReadChatRoom readChatRoom;
 
   final ReadChatMessage readChatMessage;
 
   final bool isMyMessage;
 
+  final String chatRoomId;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final partnerImageUrl =
+        ref.watch(chatPartnerImageUrlProvider(readChatRoom));
+    final partnerDisplayName =
+        ref.watch(chatPartnerDisplayNameProvider(readChatRoom));
     return Column(
       crossAxisAlignment:
           isMyMessage ? CrossAxisAlignment.end : CrossAxisAlignment.start,
@@ -138,17 +160,22 @@ class _ChatMessageItem extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (!isMyMessage) ...[
-              // TODO: readChatMessage.senderId の imageUrl を表示する。
-              // 要するにクライアントサイドジョインをする。
-              const FaIcon(FontAwesomeIcons.user, size: _senderIconSize),
               const Gap(8),
             ],
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 if (!isMyMessage) ...[
-                  const Text('名前'),
-                  const Gap(8),
+                  Text(partnerDisplayName),
+                  if (partnerImageUrl.isEmpty)
+                    const Icon(Icons.account_circle)
+                  else
+                    // TODO: 汎用的な画像ウィジェットができたら丸形に差し替える
+                    SizedBox(
+                      width: _senderIconSize,
+                      height: _senderIconSize,
+                      child: Image.network(partnerImageUrl),
+                    ),
                 ],
                 Container(
                   constraints: BoxConstraints(
@@ -281,7 +308,9 @@ class _MessageTextFieldState extends ConsumerState<_MessageTextField> {
             if (content.isEmpty) {
               return;
             }
-            await ref.read(chatRoomStateNotifier.notifier).sendChatMessage(
+            await ref
+                .read(chatRoomStateNotifierProvider.notifier)
+                .sendChatMessage(
                   senderId: widget.userId,
                   chatMessageType: _chatMessageType(userMode),
                   content: content,
@@ -325,7 +354,7 @@ class _DebugIndicator extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(chatRoomStateNotifier);
+    final state = ref.watch(chatRoomStateNotifierProvider);
     final readChatMessages = state.readChatMessages;
     final lastReadChatMessageId = state.lastReadChatMessageId;
     return Container(

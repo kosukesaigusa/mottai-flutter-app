@@ -49,3 +49,12 @@ jobs:
           name: Flutter Test Report
           path: test-report.log
           reporter: flutter-json
+      # Codecov に結果を送信
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v2
+        with:
+          token: ${{secrets.CODECOV_TOKEN}}
+          file: coverage/lcov.info
+          fail_ci_if_error: true
+          flags: unittests
+          verbose: true

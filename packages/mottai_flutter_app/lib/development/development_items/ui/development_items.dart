@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:mottai_flutter_app/development/image_pick/ui/image_pick_sample.dart';
 
 import '../../../auth/auth.dart';
 import '../../../auth/ui/sign_in_buttons.dart';
@@ -14,6 +13,7 @@ import '../../../user/user_mode.dart';
 import '../../color/ui/color.dart';
 import '../../deveopment_components/development_components.dart';
 import '../../image_detail_view/image_detail_view_stub.dart';
+import '../../image_picker/ui/image_picker_sample.dart';
 import '../../sample_todo/ui/sample_todos.dart';
 
 /// 開発中の各ページへの導線を表示するページ。
@@ -154,7 +154,7 @@ class DevelopmentItemsPage extends ConsumerWidget {
               style: Theme.of(context).textTheme.titleLarge,
             ),
           ),
-           ListTile(
+          ListTile(
             title: const Text('画像選択・圧縮（1 枚 or 複数）'),
             // TODO: 後に auto_route を採用して Navigator.pushNamed を使用する予定
             onTap: () => Navigator.push<void>(

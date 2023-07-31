@@ -47,25 +47,6 @@ jobs:
       # テストを実行
       - name: Run Flutter Test by melos
         run: melos exec --sdk-path=${{ runner.tool_cache }}/flutter -- "flutter test --machine --coverage > test-report.log"
-      # file path 確認用コマンド
-      - name: pwd
-        run: pwd
-      # fileが存在するか確認
-      - name: ls -a
-        run: ls -a
-      # file検索
-      - name: find
-        run: find . -type f -name "test-report.log"
-
-      # # flutter pub get を実行
-      # - name: Install Flutter dependencies
-      #   run: flutter pub get
-      # # テストを実行
-      # # あとでテスト結果を GitHub Actions 上に表示するので log に出力する
-      # # あとでカバレッジ結果をCodecovに送信するのでカバレッジありで実行する
-      # - name: Run Flutter Test
-      #   run: flutter test --machine --coverage > test-report.log
-
       # テスト結果を GitHub Actions に表示する
       - name: Report Test
         uses: dorny/test-reporter@v1
@@ -73,14 +54,14 @@ jobs:
         if: always()
         with:
           name: Flutter Test Report
-          path: /home/runner/work/mottai-flutter-app/mottai-flutter-app/test-report.log
+          path: /home/runner/work/mottai-flutter-app/mottai-flutter-app/packages/mottai_flutter_app/test-report.log
           reporter: flutter-json
       # Codecov に結果を送信
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v2
         with:
           token: ${{secrets.CODECOV_TOKEN}}
-          file: coverage/lcov.info
+          file: /home/runner/work/mottai-flutter-app/mottai-flutter-app/packages/mottai_flutter_app/coverage/lcov.info
           fail_ci_if_error: true
           flags: unittests
           verbose: true

@@ -53,6 +53,9 @@ jobs:
       # fileが存在するか確認
       - name: ls -a
         run: ls -a
+      # file検索
+      - name: find
+        run: find . -type f -name "test-report.log"
 
       # # flutter pub get を実行
       # - name: Install Flutter dependencies

@@ -31,6 +31,7 @@ jobs:
           cache: true
           cache-key: flutter
           cache-path: ${{ runner.tool_cache }}/flutter
+          # /opt/hostedtoolcache/flutter
       # melosの設定
       # デフォルトでmelos bootstrapコマンドが実行される
       - name: Setup melos
@@ -39,7 +40,7 @@ jobs:
           run-bootstrap: false
       # melos bootstrap
       - name: melos bootstrap
-        run: melos bootstrap --flutter-sdk=${{ runner.tool_cache }}/flutter
+        run: melos bootstrap --sdk-path=${{ runner.tool_cache }}/flutter
       # 依存関係を解決
       - name: Install Flutter dependencies by melos
         run: melos pg

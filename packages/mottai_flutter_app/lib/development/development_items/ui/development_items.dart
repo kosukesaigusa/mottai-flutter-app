@@ -12,7 +12,7 @@ import '../../../scaffold_messenger_controller.dart';
 import '../../../user/user.dart';
 import '../../../user/user_mode.dart';
 import '../../color/ui/color.dart';
-import '../../deveopment_components/development_components.dart';
+import '../../generic_image/generic_image.dart';
 import '../../image_detail_view/image_detail_view_stub.dart';
 import '../../image_picker/ui/image_picker_sample.dart';
 import '../../sample_todo/ui/sample_todos.dart';
@@ -243,7 +243,7 @@ class DevelopmentItemsPage extends ConsumerWidget {
             onTap: () => Navigator.push<void>(
               context,
               MaterialPageRoute<void>(
-                builder: (context) => const DevelopmentComponents(),
+                builder: (context) => const GenericImages(),
               ),
             ),
           ),

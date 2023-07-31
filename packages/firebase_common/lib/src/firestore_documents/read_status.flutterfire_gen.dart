@@ -8,7 +8,6 @@ class ReadReadStatus {
   const ReadReadStatus({
     required this.readStatusId,
     required this.path,
-    required this.userId,
     required this.lastReadAt,
   });
 
@@ -16,15 +15,12 @@ class ReadReadStatus {
 
   final String path;
 
-  final String userId;
-
   final SealedTimestamp lastReadAt;
 
   factory ReadReadStatus._fromJson(Map<String, dynamic> json) {
     return ReadReadStatus(
       readStatusId: json['readStatusId'] as String,
       path: json['path'] as String,
-      userId: json['userId'] as String,
       lastReadAt: json['lastReadAt'] == null
           ? const ServerTimestamp()
           : sealedTimestampConverter.fromJson(json['lastReadAt'] as Object),
@@ -43,16 +39,13 @@ class ReadReadStatus {
 
 class CreateReadStatus {
   const CreateReadStatus({
-    required this.userId,
     this.lastReadAt = const ServerTimestamp(),
   });
 
-  final String userId;
   final SealedTimestamp lastReadAt;
 
   Map<String, dynamic> toJson() {
     return {
-      'userId': userId,
       'lastReadAt': sealedTimestampConverter.toJson(lastReadAt),
     };
   }
@@ -60,16 +53,13 @@ class CreateReadStatus {
 
 class UpdateReadStatus {
   const UpdateReadStatus({
-    this.userId,
     this.lastReadAt = const ServerTimestamp(),
   });
 
-  final String? userId;
   final SealedTimestamp? lastReadAt;
 
   Map<String, dynamic> toJson() {
     return {
-      if (userId != null) 'userId': userId,
       'lastReadAt': lastReadAt == null
           ? const ServerTimestamp()
           : sealedTimestampConverter.toJson(lastReadAt!),

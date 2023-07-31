@@ -195,7 +195,7 @@ final readJobCollectionReference =
           toFirestore: (obj, _) => throw UnimplementedError(),
         );
 
-/// A [DocumentReference] to hostLocation document to read.
+/// A [DocumentReference] to job document to read.
 DocumentReference<ReadJob> readJobDocumentReference({
   required String jobId,
 }) =>
@@ -208,7 +208,7 @@ final createJobCollectionReference =
           toFirestore: (obj, _) => obj.toJson(),
         );
 
-/// A [DocumentReference] to hostLocation document to create.
+/// A [DocumentReference] to job document to create.
 DocumentReference<CreateJob> createJobDocumentReference({
   required String jobId,
 }) =>
@@ -221,7 +221,7 @@ final updateJobCollectionReference =
           toFirestore: (obj, _) => obj.toJson(),
         );
 
-/// A [DocumentReference] to hostLocation document to update.
+/// A [DocumentReference] to job document to update.
 DocumentReference<UpdateJob> updateJobDocumentReference({
   required String jobId,
 }) =>
@@ -231,7 +231,7 @@ DocumentReference<UpdateJob> updateJobDocumentReference({
 final deleteJobCollectionReference =
     FirebaseFirestore.instance.collection('jobs');
 
-/// A [DocumentReference] to hostLocation document to delete.
+/// A [DocumentReference] to job document to delete.
 DocumentReference<Object?> deleteJobDocumentReference({
   required String jobId,
 }) =>

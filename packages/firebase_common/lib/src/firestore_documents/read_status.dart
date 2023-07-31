@@ -4,17 +4,15 @@ import 'package:flutterfire_json_converters/flutterfire_json_converters.dart';
 
 part 'read_status.flutterfire_gen.dart';
 
+// NOTE: ドキュメント ID は userId に一致する。
 @FirestoreDocument(
   path: 'chatRooms/{chatRoomId}/readStatuses',
   documentName: 'readStatus',
 )
 class ReadStatus {
   const ReadStatus({
-    required this.userId,
     this.lastReadAt = const ServerTimestamp(),
   });
-
-  final String userId;
 
   @sealedTimestampConverter
   @CreateDefault(ServerTimestamp())

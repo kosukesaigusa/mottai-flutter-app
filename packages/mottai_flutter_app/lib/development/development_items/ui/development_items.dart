@@ -87,12 +87,17 @@ class DevelopmentItemsPage extends ConsumerWidget {
               'チャットルームページ（AsyncNotifier, リアルタイムチャット、無限スクロール、チャット送信、未既読管理）',
             ),
             // TODO: 後に auto_route を採用して Navigator.pushNamed を使用する予定
-            onTap: () => Navigator.push<void>(
-              context,
-              MaterialPageRoute<void>(
-                builder: (context) => const ChatRoomPage(),
-              ),
-            ),
+            onTap: () async {
+              await Navigator.push<void>(
+                context,
+                MaterialPageRoute<void>(
+                  builder: (context) => const ChatRoomPage(),
+                ),
+              );
+              // TODO: 下記を実装する
+              // print('いまチャットルームをでた！');
+              // ref.read(readStatusService).updateLastReadAt(lastReadAt: DateTime.now());
+            },
           ),
           const ListTile(
             title: Text('ユーザー詳細ページ（ワーカー）'),

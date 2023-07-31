@@ -46,7 +46,7 @@ jobs:
         run: melos pg --sdk-path=${{ runner.tool_cache }}/flutter
       # テストを実行
       - name: Run Flutter Test by melos
-        run: melos test --sdk-path=${{ runner.tool_cache }}/flutter --machine --coverage > test-report.log
+        run: melos exec --sdk-path=${{ runner.tool_cache }}/flutter -- "flutter test --machine --coverage > test-report.log"
 
       # # flutter pub get を実行
       # - name: Install Flutter dependencies

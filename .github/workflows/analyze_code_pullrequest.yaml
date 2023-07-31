@@ -1,0 +1,31 @@
+name: Analyze source code in pull request
+
+on:
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: dart-lang/setup-dart@v1
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+
+      - name: Install dependencies
+        run: |
+          flutter pub upgrade -C packages/dart_flutter_common
+          flutter pub upgrade -C packages/firebase_common
+          flutter pub upgrade -C packages/mottai_flutter_app
+
+          flutter pub get -C packages/dart_flutter_common
+          flutter pub get -C packages/firebase_common
+          flutter pub get -C packages/mottai_flutter_app
+
+      - name: Analyze project source
+        run: flutter analyze

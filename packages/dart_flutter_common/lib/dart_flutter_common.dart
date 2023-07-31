@@ -5,4 +5,6 @@ export 'src/image_picker.dart';
 export 'src/int.dart';
 export 'src/pick_image.dart';
 export 'src/scaffold_messenger_controller.dart';
+export 'src/section.dart';
+export 'src/selectable_chips.dart';
 export 'src/string.dart';

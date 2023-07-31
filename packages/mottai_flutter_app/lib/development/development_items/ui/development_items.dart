@@ -6,6 +6,7 @@ import '../../../auth/auth.dart';
 import '../../../auth/ui/sign_in_buttons.dart';
 import '../../../chat/ui/chat_room.dart';
 import '../../../force_update/ui/force_update.dart';
+import '../../../job/ui/job_detail.dart';
 import '../../../map/ui/map.dart';
 import '../../../scaffold_messenger_controller.dart';
 import '../../../user/user.dart';
@@ -61,15 +62,15 @@ class DevelopmentItemsPage extends ConsumerWidget {
               ),
             ),
           ),
-          const ListTile(
-            title: Text('仕事詳細ページ (FutureProvider)'),
+          ListTile(
+            title: const Text('仕事詳細ページ (FutureProvider)'),
             // TODO: 後に auto_route を採用して Navigator.pushNamed を使用する予定
-            // onTap: () => Navigator.push<void>(
-            //   context,
-            //   MaterialPageRoute<void>(
-            //     builder: (context) => FooPage(),
-            //   ),
-            // ),
+            onTap: () => Navigator.push<void>(
+              context,
+              MaterialPageRoute<void>(
+                builder: (context) => const JobDetailPage(),
+              ),
+            ),
           ),
           const ListTile(
             title: Text('チャットルーム一覧ページ（StreamProvider、未既読管理）'),

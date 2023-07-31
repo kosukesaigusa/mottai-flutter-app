@@ -1,5 +1,5 @@
-import '../firestore_documents/chat_room.dart';
+// import '../firestore_documents/chat_room.dart';
 
 class ChatRoomRepository {
-  final _query = ChatRoomQuery();
+  // final _query = ChatRoomQuery();
 }

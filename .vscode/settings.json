@@ -8,6 +8,8 @@
     "**/.fvm": true
   },
   "dart.runPubGetOnPubspecChanges": "never",
+  "files.insertFinalNewline": true,
+  "editor.formatOnSave": true,
   "cSpell.words": [
     "clpg",
     "createfirebaseauthcustomtoken",

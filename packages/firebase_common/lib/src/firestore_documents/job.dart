@@ -5,15 +5,17 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'job.flutterfire_gen.dart';
 
-@FirestoreDocument(path: 'jobs', documentName: 'hostLocation')
+@FirestoreDocument(path: 'jobs', documentName: 'jobs')
 class Job {
   const Job({
     required this.hostId,
+    required this.title,
     required this.content,
     required this.place,
     this.accessTypes = const <AccessType>{},
     this.accessDescription = '',
     required this.belongings,
+    required this.reward,
     this.comment = '',
     this.urls = const <String>[],
     this.createdAt = const ServerTimestamp(),
@@ -21,6 +23,9 @@ class Job {
   });
 
   final String hostId;
+
+  @ReadDefault('')
+  final String title;
 
   @ReadDefault('')
   final String content;
@@ -35,6 +40,9 @@ class Job {
 
   @ReadDefault('')
   final String belongings;
+
+  @ReadDefault('')
+  final String reward;
 
   final String comment;
 
@@ -62,7 +70,7 @@ enum AccessType {
   busAvailable('バスあり'),
   parkingAvailable('駐車場あり'),
   walkableFromNearest('最寄りから徒歩可能'),
-  shuttleServiceAvailable('駅から送迎可能'),
+  shuttleServiceAvailable('最寄りから送迎可能'),
   ;
 
   // NOTE: ここで enhanced enum で label を定義するのは、Model に View の情報を

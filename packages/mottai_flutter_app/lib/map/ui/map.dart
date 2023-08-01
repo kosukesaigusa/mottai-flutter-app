@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:geoflutterfire_plus/geoflutterfire_plus.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+
 import 'package:rxdart/rxdart.dart';
 
 /// Tokyo Station location for demo.
@@ -176,6 +177,59 @@ class MapPageState extends State<MapPage> {
             //   builder: (context) => AddLocationDialog(latLng: latLng),
             // ),
           ),
+
+          // MEMO: 位置情報取得実装部分
+          // riverpodを使用していて、こんがらがるので一旦コメントアウト
+          // Container(
+          //   margin: EdgeInsets.only(
+          //     bottom: MediaQuery.of(context).size.height * 0.1,
+          //   ),
+          //   child: Align(
+          //     alignment: Alignment.bottomCenter,
+          //     child: GestureDetector(
+          //       onTap: () {
+          //         ref
+          //             .read(
+          //               currentLocationControllerProvider,
+          //             )
+          //             .getCurrentPosition();
+          //       },
+          //       child: Container(
+          //         padding: const EdgeInsets.symmetric(
+          //           horizontal: 15,
+          //           vertical: 5,
+          //         ),
+          //         decoration: BoxDecoration(
+          //           color: Colors.yellow,
+          //           border: Border.all(
+          //             color: Colors.white,
+          //           ),
+          //           borderRadius: BorderRadius.circular(25),
+          //         ),
+          //         child: Column(
+          //           mainAxisSize: MainAxisSize.min,
+          //           children: [
+          //             const Text(
+          //               '現在地を取得',
+          //               style: TextStyle(
+          //                 fontWeight: FontWeight.bold,
+          //               ),
+          //             ),
+          //             ref.watch(currentPositionProvider).when(
+          //                   data: (position) => Text('''
+          //                     緯度: ${position.latitude}, 経度: ${position.longitude}
+          //                   '''),
+          //                   error: (_, __) => const SizedBox(),
+          //                   loading: () => const Center(
+          //                     child: CircularProgressIndicator(),
+          //                   ),
+          //                 ),
+          //           ],
+          //         ),
+          //       ),
+          //     ),
+          //   ),
+          // ),
 
           // TODO: PageView.builderに変更する
           Align(

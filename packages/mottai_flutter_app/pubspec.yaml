@@ -1,14 +1,15 @@
 name: mottai_flutter_app
 description: MOTTAI mobile app.
-publish_to: 'none'
+publish_to: "none"
 version: 0.0.1
 
 environment:
-  sdk: '>=3.0.0 <4.0.0'
-
+  sdk: ">=3.0.0 <4.0.0"
 
 dependencies:
   auto_route: ^7.7.0
+  cached_network_image: ^3.2.3
+  crypto: ^3.0.1
   dart_flutter_common:
     path: ../dart_flutter_common
   firebase_auth: ^4.7.0
@@ -33,6 +34,7 @@ dependencies:
   package_info_plus: ^4.0.2
   rxdart: ^0.27.7
   sign_in_button: ^3.2.0
+  sign_in_with_apple: ^3.0.0
 
 dev_dependencies:
   build_runner: ^2.4.6

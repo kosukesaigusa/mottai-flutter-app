@@ -1,4 +1,5 @@
 import 'package:firebase_common/firebase_common.dart';
+import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../scaffold_messenger_controller.dart';
@@ -31,7 +32,12 @@ class SampleTodosController {
     required DateTime? dueDateTime,
   }) async {
     if (title.isEmpty || description.isEmpty || dueDateTime == null) {
-      _appScaffoldMessengerController.showSnackBar('入力内容を確認してください。');
+      await _appScaffoldMessengerController.showDialogByBuilder<void>(
+        builder: (_) => const AlertDialog(
+          title: Text('入力内容の確認'),
+          content: Text('入力内容が正しくありません。確認してください。'),
+        ),
+      );
       return;
     }
     await _sampleTodoService.add(

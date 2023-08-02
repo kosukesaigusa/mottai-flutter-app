@@ -12,6 +12,7 @@ import '../../../scaffold_messenger_controller.dart';
 import '../../../user/user.dart';
 import '../../../user/user_mode.dart';
 import '../../color/ui/color.dart';
+import '../../firebase_storage/ui/firebase_storage.dart';
 import '../../generic_image/generic_image.dart';
 import '../../image_detail_view/image_detail_view_stub.dart';
 import '../../image_picker/ui/image_picker_sample.dart';
@@ -165,15 +166,15 @@ class DevelopmentItemsPage extends ConsumerWidget {
               ),
             ),
           ),
-          const ListTile(
-            title: Text('画像アップロード'),
+          ListTile(
+            title: const Text('画像アップロード'),
             // TODO: 後に auto_route を採用して Navigator.pushNamed を使用する予定
-            // onTap: () => Navigator.push<void>(
-            //   context,
-            //   MaterialPageRoute<void>(
-            //     builder: (context) => FooPage(),
-            //   ),
-            // ),
+            onTap: () => Navigator.push<void>(
+              context,
+              MaterialPageRoute<void>(
+                builder: (context) => const FirebaseStorageSamplePage(),
+              ),
+            ),
           ),
           const ListTile(
             title: Text('強制アップデート'),

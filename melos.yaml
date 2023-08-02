@@ -22,3 +22,9 @@ scripts:
 
   test:
     run: melos exec -- "flutter test"
+
+  analyze:
+    run: melos exec -- "flutter analyze ."
+
+  format:
+    run: melos exec -- "dart format ."

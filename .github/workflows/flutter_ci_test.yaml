@@ -44,8 +44,15 @@ jobs:
       # 依存関係を解決
       - name: Install Flutter dependencies by melos
         run: melos pg --sdk-path=${{ runner.tool_cache }}/flutter
+      # コードフォーマットを実行
+      # フォーマットの結果変更が発生した場合はエラー扱いにする
+      - name: Run Flutter format
+        run: melos exec --sdk-path=${{ runner.tool_cache }}/flutter -- "dart format --set-exit-if-changed ."
+      # 静的解析を実行
+      - name: Analyze project source
+        run: melos analyze
       # テストを実行
-      - name: Run Flutter Test by melos
+      - name: Run Flutter Test
         run: melos exec --sdk-path=${{ runner.tool_cache }}/flutter -- "flutter test --machine --coverage > test-report.log"
 
       # mottai_flutter_appのテスト結果を GitHub Actions に表示する

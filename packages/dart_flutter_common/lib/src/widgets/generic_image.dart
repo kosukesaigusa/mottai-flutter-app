@@ -111,10 +111,7 @@ class GenericImage extends StatelessWidget {
           return Navigator.push<void>(
             context,
             MaterialPageRoute<void>(
-              builder: (context) => // PhotoView(
-                  //   imageProvider: NetworkImage(imageUrl),
-                  // ),
-                  _ImageDetailView(
+              builder: (context) => _ImageDetailView(
                 tag: tag,
                 imageUrl: imageUrl,
               ),
@@ -302,7 +299,6 @@ class _ImageDetailView extends StatelessWidget {
   });
 
   final String tag;
-  // final Widget child;
   final String imageUrl;
 
   @override

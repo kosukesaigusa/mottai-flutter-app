@@ -50,7 +50,7 @@ jobs:
         run: melos exec --sdk-path=${{ runner.tool_cache }}/flutter -- "dart format --set-exit-if-changed ."
       # 静的解析を実行
       - name: Analyze project source
-        run: melos analyze
+        run: melos exec --sdk-path=${{ runner.tool_cache }}/flutter -- "flutter analyze ."
       # テストを実行
       - name: Run Flutter Test
         run: melos exec --sdk-path=${{ runner.tool_cache }}/flutter -- "flutter test --machine --coverage > test-report.log"

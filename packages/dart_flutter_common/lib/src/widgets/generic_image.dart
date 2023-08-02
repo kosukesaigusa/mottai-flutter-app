@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:photo_view/photo_view.dart';
 
 /// [GenericImage] で表示する画像の形状。
 enum ImageShape {
@@ -110,17 +111,12 @@ class GenericImage extends StatelessWidget {
           return Navigator.push<void>(
             context,
             MaterialPageRoute<void>(
-              builder: (context) => _ImageDetailView(
+              builder: (context) => // PhotoView(
+                  //   imageProvider: NetworkImage(imageUrl),
+                  // ),
+                  _ImageDetailView(
                 tag: tag,
-                child: _GenericCachedNetworkImage(
-                  imageUrl: imageUrl,
-                  imageShape: imageShape,
-                  size: size,
-                  width: width,
-                  height: height,
-                  borderRadius: borderRadius,
-                  loadingWidget: loadingWidget,
-                ),
+                imageUrl: imageUrl,
               ),
             ),
           );
@@ -302,43 +298,26 @@ class _Image extends StatelessWidget {
 class _ImageDetailView extends StatelessWidget {
   const _ImageDetailView({
     required this.tag,
-    required this.child,
+    required this.imageUrl,
   });
 
   final String tag;
-  final Widget child;
+  // final Widget child;
+  final String imageUrl;
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        GestureDetector(
-          onTap: () => Navigator.pop(context),
-          child: Scaffold(
-            floatingActionButtonLocation: FloatingActionButtonLocation.startTop,
-            floatingActionButton: IconButton(
-              icon: const Icon(Icons.close),
-              onPressed: () => Navigator.pop(context),
-            ),
-            body: Container(
-              height: MediaQuery.of(context).size.height,
-              width: MediaQuery.of(context).size.width,
-              decoration: const BoxDecoration(
-                color: Colors.black,
-              ),
-            ),
-          ),
-        ),
-        Center(
-          child: InteractiveViewer(
-            clipBehavior: Clip.none,
-            child: Hero(
-              tag: tag,
-              child: child,
-            ),
-          ),
-        ),
-      ],
+    return Scaffold(
+      floatingActionButtonLocation: FloatingActionButtonLocation.startTop,
+      floatingActionButton: IconButton(
+        icon: const Icon(Icons.close),
+        onPressed: () => Navigator.pop(context),
+      ),
+      body: PhotoView(
+        imageProvider: NetworkImage(imageUrl),
+        minScale: PhotoViewComputedScale.contained,
+        heroAttributes: PhotoViewHeroAttributes(tag: tag),
+      ),
     );
   }
 }

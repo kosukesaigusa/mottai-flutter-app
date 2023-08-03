@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 /// 実際に選択されている選択肢 [enabledItems] を受け取る。
 /// オプションで選択されていないデータの表示非表示を選択可能である。
 class SelectableChips<T> extends StatelessWidget {
+  /// [SelectableChips] を作成する。
   const SelectableChips({
     required this.allItems,
     required this.labels,

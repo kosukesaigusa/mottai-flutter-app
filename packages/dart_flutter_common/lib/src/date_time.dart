@@ -1,7 +1,7 @@
 import 'package:intl/intl.dart';
 
+/// [DateTime] 型の拡張クラス。
 extension DateTimeExtension on DateTime {
-
   /// _daysBeforeメソッドで使用される定数。
   /// 「N日前」と表示される最小日数を示す。
   static const _daysBeforeLowerLimit = 2;

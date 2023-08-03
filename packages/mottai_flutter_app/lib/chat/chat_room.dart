@@ -4,9 +4,44 @@ import 'package:firebase_common/firebase_common.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../firestore_repository.dart';
+import '../user/host.dart';
+import '../user/user_mode.dart';
+import '../user/worker.dart';
 import 'chat_room_state.dart';
 
-final chatRoomStateNotifier =
+/// 指定した [ChatRoom] を取得する [FutureProvider].
+final chatRoomFutureProvider =
+    FutureProvider.family.autoDispose<ReadChatRoom?, String>(
+  (ref, chatRoomId) => ref
+      .watch(chatRoomRepositoryProvider)
+      .fetchChatRoom(chatRoomId: chatRoomId),
+);
+
+/// チャット相手の画像 URL を取得する [Provider].
+final chatPartnerImageUrlProvider =
+    Provider.family.autoDispose<String, ReadChatRoom>((ref, readChatRoom) {
+  final userMode = ref.watch(userModeStateProvider);
+  switch (userMode) {
+    case UserMode.worker:
+      return ref.watch(hostImageUrlProvider(readChatRoom.hostId));
+    case UserMode.host:
+      return ref.watch(workerImageUrlProvider(readChatRoom.workerId));
+  }
+});
+
+/// チャット相手の名前を取得する [Provider].
+final chatPartnerDisplayNameProvider =
+    Provider.family.autoDispose<String, ReadChatRoom>((ref, readChatRoom) {
+  final userMode = ref.watch(userModeStateProvider);
+  switch (userMode) {
+    case UserMode.worker:
+      return ref.watch(hostDisplayNameProvider(readChatRoom.hostId));
+    case UserMode.host:
+      return ref.watch(workerDisplayNameProvider(readChatRoom.workerId));
+  }
+});
+
+final chatRoomStateNotifierProvider =
     StateNotifierProvider.autoDispose<ChatRoomStateNotifier, ChatRoomState>(
   (ref) => ChatRoomStateNotifier(
     // TODO: パスパラメータから渡せるようにする

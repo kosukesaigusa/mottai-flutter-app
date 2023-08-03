@@ -442,7 +442,7 @@
 //     });
 //   });
 //   group('android強制アップデートテスト', () {
-//     setUpAll(() => debugDefaultTargetPlatformOverride = 
+//     setUpAll(() => debugDefaultTargetPlatformOverride =
 // TargetPlatform.android);
 //     group('強制アップデートfalse(forceUpdate=false)', () {
 //       test('現在バージョン<最低限バージョンはfalseを返す', () async {

@@ -16,7 +16,8 @@
 //   group('データローディング中はfalseを返す', () {
 //     test('iOSの時ローディング中はfalseを返す', () async {
 //       debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
-//       final mockForceUpdateConfigRepository = MockForceUpdateConfigRepository();
+//       final mockForceUpdateConfigRepository = MockForceUpdateConfigRepository
+// ();
 //       PackageInfo.setMockInitialValues(
 //         appName: 'test_mottai_flutter_app',
 //         packageName: 'packageName',
@@ -107,7 +108,8 @@
 //     });
 //     test('androidの時ローディング中はfalseを返す', () async {
 //       debugDefaultTargetPlatformOverride = TargetPlatform.android;
-//       final mockForceUpdateConfigRepository = MockForceUpdateConfigRepository();
+//       final mockForceUpdateConfigRepository = MockForceUpdateConfigRepository
+// ();
 //       PackageInfo.setMockInitialValues(
 //         appName: 'test_mottai_flutter_app',
 //         packageName: 'packageName',
@@ -440,7 +442,8 @@
 //     });
 //   });
 //   group('android強制アップデートテスト', () {
-//     setUpAll(() => debugDefaultTargetPlatformOverride = TargetPlatform.android);
+//     setUpAll(() => debugDefaultTargetPlatformOverride = 
+// TargetPlatform.android);
 //     group('強制アップデートfalse(forceUpdate=false)', () {
 //       test('現在バージョン<最低限バージョンはfalseを返す', () async {
 //         final mockForceUpdateConfigRepository =
@@ -682,7 +685,8 @@
 //   });
 //   group('おかしな値を取得した場合', () {
 //     test('fireStoreから取得した数値がおかしな場合はfalseを返す', () async {
-//       final mockForceUpdateConfigRepository = MockForceUpdateConfigRepository();
+//       final mockForceUpdateConfigRepository = MockForceUpdateConfigRepository
+// ();
 //       PackageInfo.setMockInitialValues(
 //         appName: 'test_mottai_flutter_app',
 //         packageName: 'packageName',

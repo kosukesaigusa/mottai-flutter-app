@@ -11,6 +11,7 @@ class WebLinkStubPage extends StatelessWidget {
         title: const Text('WebLinkサンプル'),
       ),
       body: const Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           WebLink(
             urlText: 'アプリ内で表示 https://google.com',

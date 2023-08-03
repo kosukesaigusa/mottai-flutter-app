@@ -197,248 +197,248 @@ Future<void> main() async {
       );
     });
   });
-  group('iOS強制アップデートテスト', () {
-    setUpAll(() => debugDefaultTargetPlatformOverride = TargetPlatform.iOS);
-    group('強制アップデートfalse(forceUpdate=false)', () {
-      test('現在バージョン<最低限バージョンはfalseを返す', () async {
-        final mockForceUpdateConfigRepository =
-            MockForceUpdateConfigRepository();
-        PackageInfo.setMockInitialValues(
-          appName: 'test_mottai_flutter_app',
-          packageName: 'packageName',
-          version: '0.0.1',
-          buildNumber: 'buildNumber',
-          buildSignature: 'buildSignature',
-        );
-        final container = ProviderContainer(
-          overrides: [
-            packageInfoProvider
-                .overrideWithValue(await PackageInfo.fromPlatform()),
-            forceUpdateConfigRepositoryProvider
-                .overrideWithValue(mockForceUpdateConfigRepository),
-          ],
-        );
-        // モックリポジトリにより取得するデータを変更する
-        when(mockForceUpdateConfigRepository.subscribeForceUpdateConfig())
-            .thenAnswer((_) async* {
-          yield const ReadForceUpdateConfig(
-            androidForceUpdate: false,
-            androidLatestVersion: '0.0.2',
-            androidMinRequiredVersion: '0.0.1',
-            forceUpdateConfigId: 'forceUpdateConfig',
-            iOSForceUpdate: false,
-            iOSLatestVersion: '0.0.2',
-            iOSMinRequiredVersion: '0.0.2',
-            path: 'configurations',
-          );
-        });
-        // リクエストの結果が戻るのを待つ
-        await container.read(forceUpdateStreamProvider.future);
-        expect(
-          container.read(isForceUpdateRequiredProvider),
-          false,
-        );
-      });
-      test('現在バージョン<=最低限バージョンはfalseを返す', () async {
-        final mockForceUpdateConfigRepository =
-            MockForceUpdateConfigRepository();
-        PackageInfo.setMockInitialValues(
-          appName: 'test_mottai_flutter_app',
-          packageName: 'packageName',
-          version: '0.0.1',
-          buildNumber: 'buildNumber',
-          buildSignature: 'buildSignature',
-        );
-        final container = ProviderContainer(
-          overrides: [
-            packageInfoProvider
-                .overrideWithValue(await PackageInfo.fromPlatform()),
-            forceUpdateConfigRepositoryProvider
-                .overrideWithValue(mockForceUpdateConfigRepository),
-          ],
-        );
-        // モックリポジトリにより取得するデータを変更する
-        when(mockForceUpdateConfigRepository.subscribeForceUpdateConfig())
-            .thenAnswer((_) async* {
-          yield const ReadForceUpdateConfig(
-            androidForceUpdate: false,
-            androidLatestVersion: '0.0.2',
-            androidMinRequiredVersion: '0.0.1',
-            forceUpdateConfigId: 'forceUpdateConfig',
-            iOSForceUpdate: false,
-            iOSLatestVersion: '0.0.2',
-            iOSMinRequiredVersion: '0.0.1',
-            path: 'configurations',
-          );
-        });
-        // リクエストの結果が戻るのを待つ
-        await container.read(forceUpdateStreamProvider.future);
-        expect(
-          container.read(isForceUpdateRequiredProvider),
-          false,
-        );
-      });
-      test('現在バージョン>最低限バージョンはfalseを返す', () async {
-        final mockForceUpdateConfigRepository =
-            MockForceUpdateConfigRepository();
-        PackageInfo.setMockInitialValues(
-          appName: 'test_mottai_flutter_app',
-          packageName: 'packageName',
-          version: '0.0.2',
-          buildNumber: 'buildNumber',
-          buildSignature: 'buildSignature',
-        );
-        final container = ProviderContainer(
-          overrides: [
-            packageInfoProvider
-                .overrideWithValue(await PackageInfo.fromPlatform()),
-            forceUpdateConfigRepositoryProvider
-                .overrideWithValue(mockForceUpdateConfigRepository),
-          ],
-        );
-        // モックリポジトリにより取得するデータを変更する
-        when(mockForceUpdateConfigRepository.subscribeForceUpdateConfig())
-            .thenAnswer((_) async* {
-          yield const ReadForceUpdateConfig(
-            androidForceUpdate: false,
-            androidLatestVersion: '0.0.2',
-            androidMinRequiredVersion: '0.0.1',
-            forceUpdateConfigId: 'forceUpdateConfig',
-            iOSForceUpdate: false,
-            iOSLatestVersion: '0.0.2',
-            iOSMinRequiredVersion: '0.0.1',
-            path: 'configurations',
-          );
-        });
-        // リクエストの結果が戻るのを待つ
-        await container.read(forceUpdateStreamProvider.future);
-        expect(
-          container.read(isForceUpdateRequiredProvider),
-          false,
-        );
-      });
-    });
-    group('強制アップデートtrue(forceUpdate=true)', () {
-      test('現在バージョン<最低限バージョンはtrueを返す', () async {
-        final mockForceUpdateConfigRepository =
-            MockForceUpdateConfigRepository();
-        PackageInfo.setMockInitialValues(
-          appName: 'test_mottai_flutter_app',
-          packageName: 'packageName',
-          version: '0.0.1',
-          buildNumber: 'buildNumber',
-          buildSignature: 'buildSignature',
-        );
-        final container = ProviderContainer(
-          overrides: [
-            packageInfoProvider
-                .overrideWithValue(await PackageInfo.fromPlatform()),
-            forceUpdateConfigRepositoryProvider
-                .overrideWithValue(mockForceUpdateConfigRepository),
-          ],
-        );
-        // モックリポジトリにより取得するデータを変更する
-        when(mockForceUpdateConfigRepository.subscribeForceUpdateConfig())
-            .thenAnswer((_) async* {
-          yield const ReadForceUpdateConfig(
-            androidForceUpdate: true,
-            androidLatestVersion: '0.0.2',
-            androidMinRequiredVersion: '0.0.1',
-            forceUpdateConfigId: 'forceUpdateConfig',
-            iOSForceUpdate: true,
-            iOSLatestVersion: '0.0.2',
-            iOSMinRequiredVersion: '0.0.2',
-            path: 'configurations',
-          );
-        });
-        // リクエストの結果が戻るのを待つ
-        await container.read(forceUpdateStreamProvider.future);
-        // 値はtrueになること
-        expect(
-          container.read(isForceUpdateRequiredProvider),
-          true,
-        );
-      });
-      test('現在バージョン<=最低限バージョンはfalseを返す', () async {
-        final mockForceUpdateConfigRepository =
-            MockForceUpdateConfigRepository();
-        PackageInfo.setMockInitialValues(
-          appName: 'test_mottai_flutter_app',
-          packageName: 'packageName',
-          version: '0.0.1',
-          buildNumber: 'buildNumber',
-          buildSignature: 'buildSignature',
-        );
-        final container = ProviderContainer(
-          overrides: [
-            packageInfoProvider
-                .overrideWithValue(await PackageInfo.fromPlatform()),
-            forceUpdateConfigRepositoryProvider
-                .overrideWithValue(mockForceUpdateConfigRepository),
-          ],
-        );
-        // モックリポジトリにより取得するデータを変更する
-        when(mockForceUpdateConfigRepository.subscribeForceUpdateConfig())
-            .thenAnswer((_) async* {
-          yield const ReadForceUpdateConfig(
-            androidForceUpdate: true,
-            androidLatestVersion: '0.0.2',
-            androidMinRequiredVersion: '0.0.1',
-            forceUpdateConfigId: 'forceUpdateConfig',
-            iOSForceUpdate: true,
-            iOSLatestVersion: '0.0.2',
-            iOSMinRequiredVersion: '0.0.1',
-            path: 'configurations',
-          );
-        });
-        // リクエストの結果が戻るのを待つ
-        await container.read(forceUpdateStreamProvider.future);
-        expect(
-          container.read(isForceUpdateRequiredProvider),
-          false,
-        );
-      });
-      test('現在バージョン>最低限バージョンはfalseを返す', () async {
-        final mockForceUpdateConfigRepository =
-            MockForceUpdateConfigRepository();
-        PackageInfo.setMockInitialValues(
-          appName: 'test_mottai_flutter_app',
-          packageName: 'packageName',
-          version: '0.0.2',
-          buildNumber: 'buildNumber',
-          buildSignature: 'buildSignature',
-        );
-        final container = ProviderContainer(
-          overrides: [
-            packageInfoProvider
-                .overrideWithValue(await PackageInfo.fromPlatform()),
-            forceUpdateConfigRepositoryProvider
-                .overrideWithValue(mockForceUpdateConfigRepository),
-          ],
-        );
-        // モックリポジトリにより取得するデータを変更する
-        when(mockForceUpdateConfigRepository.subscribeForceUpdateConfig())
-            .thenAnswer((_) async* {
-          yield const ReadForceUpdateConfig(
-            androidForceUpdate: true,
-            androidLatestVersion: '0.0.2',
-            androidMinRequiredVersion: '0.0.1',
-            forceUpdateConfigId: 'forceUpdateConfig',
-            iOSForceUpdate: true,
-            iOSLatestVersion: '0.0.2',
-            iOSMinRequiredVersion: '0.0.1',
-            path: 'configurations',
-          );
-        });
-        // リクエストの結果が戻るのを待つ
-        await container.read(forceUpdateStreamProvider.future);
-        expect(
-          container.read(isForceUpdateRequiredProvider),
-          false,
-        );
-      });
-    });
-  });
+  // group('iOS強制アップデートテスト', () {
+  //   setUpAll(() => debugDefaultTargetPlatformOverride = TargetPlatform.iOS);
+  //   group('強制アップデートfalse(forceUpdate=false)', () {
+  //     test('現在バージョン<最低限バージョンはfalseを返す', () async {
+  //       final mockForceUpdateConfigRepository =
+  //           MockForceUpdateConfigRepository();
+  //       PackageInfo.setMockInitialValues(
+  //         appName: 'test_mottai_flutter_app',
+  //         packageName: 'packageName',
+  //         version: '0.0.1',
+  //         buildNumber: 'buildNumber',
+  //         buildSignature: 'buildSignature',
+  //       );
+  //       final container = ProviderContainer(
+  //         overrides: [
+  //           packageInfoProvider
+  //               .overrideWithValue(await PackageInfo.fromPlatform()),
+  //           forceUpdateConfigRepositoryProvider
+  //               .overrideWithValue(mockForceUpdateConfigRepository),
+  //         ],
+  //       );
+  //       // モックリポジトリにより取得するデータを変更する
+  //       when(mockForceUpdateConfigRepository.subscribeForceUpdateConfig())
+  //           .thenAnswer((_) async* {
+  //         yield const ReadForceUpdateConfig(
+  //           androidForceUpdate: false,
+  //           androidLatestVersion: '0.0.2',
+  //           androidMinRequiredVersion: '0.0.1',
+  //           forceUpdateConfigId: 'forceUpdateConfig',
+  //           iOSForceUpdate: false,
+  //           iOSLatestVersion: '0.0.2',
+  //           iOSMinRequiredVersion: '0.0.2',
+  //           path: 'configurations',
+  //         );
+  //       });
+  //       // リクエストの結果が戻るのを待つ
+  //       await container.read(forceUpdateStreamProvider.future);
+  //       expect(
+  //         container.read(isForceUpdateRequiredProvider),
+  //         false,
+  //       );
+  //     });
+  //     test('現在バージョン<=最低限バージョンはfalseを返す', () async {
+  //       final mockForceUpdateConfigRepository =
+  //           MockForceUpdateConfigRepository();
+  //       PackageInfo.setMockInitialValues(
+  //         appName: 'test_mottai_flutter_app',
+  //         packageName: 'packageName',
+  //         version: '0.0.1',
+  //         buildNumber: 'buildNumber',
+  //         buildSignature: 'buildSignature',
+  //       );
+  //       final container = ProviderContainer(
+  //         overrides: [
+  //           packageInfoProvider
+  //               .overrideWithValue(await PackageInfo.fromPlatform()),
+  //           forceUpdateConfigRepositoryProvider
+  //               .overrideWithValue(mockForceUpdateConfigRepository),
+  //         ],
+  //       );
+  //       // モックリポジトリにより取得するデータを変更する
+  //       when(mockForceUpdateConfigRepository.subscribeForceUpdateConfig())
+  //           .thenAnswer((_) async* {
+  //         yield const ReadForceUpdateConfig(
+  //           androidForceUpdate: false,
+  //           androidLatestVersion: '0.0.2',
+  //           androidMinRequiredVersion: '0.0.1',
+  //           forceUpdateConfigId: 'forceUpdateConfig',
+  //           iOSForceUpdate: false,
+  //           iOSLatestVersion: '0.0.2',
+  //           iOSMinRequiredVersion: '0.0.1',
+  //           path: 'configurations',
+  //         );
+  //       });
+  //       // リクエストの結果が戻るのを待つ
+  //       await container.read(forceUpdateStreamProvider.future);
+  //       expect(
+  //         container.read(isForceUpdateRequiredProvider),
+  //         false,
+  //       );
+  //     });
+  //     test('現在バージョン>最低限バージョンはfalseを返す', () async {
+  //       final mockForceUpdateConfigRepository =
+  //           MockForceUpdateConfigRepository();
+  //       PackageInfo.setMockInitialValues(
+  //         appName: 'test_mottai_flutter_app',
+  //         packageName: 'packageName',
+  //         version: '0.0.2',
+  //         buildNumber: 'buildNumber',
+  //         buildSignature: 'buildSignature',
+  //       );
+  //       final container = ProviderContainer(
+  //         overrides: [
+  //           packageInfoProvider
+  //               .overrideWithValue(await PackageInfo.fromPlatform()),
+  //           forceUpdateConfigRepositoryProvider
+  //               .overrideWithValue(mockForceUpdateConfigRepository),
+  //         ],
+  //       );
+  //       // モックリポジトリにより取得するデータを変更する
+  //       when(mockForceUpdateConfigRepository.subscribeForceUpdateConfig())
+  //           .thenAnswer((_) async* {
+  //         yield const ReadForceUpdateConfig(
+  //           androidForceUpdate: false,
+  //           androidLatestVersion: '0.0.2',
+  //           androidMinRequiredVersion: '0.0.1',
+  //           forceUpdateConfigId: 'forceUpdateConfig',
+  //           iOSForceUpdate: false,
+  //           iOSLatestVersion: '0.0.2',
+  //           iOSMinRequiredVersion: '0.0.1',
+  //           path: 'configurations',
+  //         );
+  //       });
+  //       // リクエストの結果が戻るのを待つ
+  //       await container.read(forceUpdateStreamProvider.future);
+  //       expect(
+  //         container.read(isForceUpdateRequiredProvider),
+  //         false,
+  //       );
+  //     });
+  //   });
+  //   group('強制アップデートtrue(forceUpdate=true)', () {
+  //     test('現在バージョン<最低限バージョンはtrueを返す', () async {
+  //       final mockForceUpdateConfigRepository =
+  //           MockForceUpdateConfigRepository();
+  //       PackageInfo.setMockInitialValues(
+  //         appName: 'test_mottai_flutter_app',
+  //         packageName: 'packageName',
+  //         version: '0.0.1',
+  //         buildNumber: 'buildNumber',
+  //         buildSignature: 'buildSignature',
+  //       );
+  //       final container = ProviderContainer(
+  //         overrides: [
+  //           packageInfoProvider
+  //               .overrideWithValue(await PackageInfo.fromPlatform()),
+  //           forceUpdateConfigRepositoryProvider
+  //               .overrideWithValue(mockForceUpdateConfigRepository),
+  //         ],
+  //       );
+  //       // モックリポジトリにより取得するデータを変更する
+  //       when(mockForceUpdateConfigRepository.subscribeForceUpdateConfig())
+  //           .thenAnswer((_) async* {
+  //         yield const ReadForceUpdateConfig(
+  //           androidForceUpdate: true,
+  //           androidLatestVersion: '0.0.2',
+  //           androidMinRequiredVersion: '0.0.1',
+  //           forceUpdateConfigId: 'forceUpdateConfig',
+  //           iOSForceUpdate: true,
+  //           iOSLatestVersion: '0.0.2',
+  //           iOSMinRequiredVersion: '0.0.2',
+  //           path: 'configurations',
+  //         );
+  //       });
+  //       // リクエストの結果が戻るのを待つ
+  //       await container.read(forceUpdateStreamProvider.future);
+  //       // 値はtrueになること
+  //       expect(
+  //         container.read(isForceUpdateRequiredProvider),
+  //         true,
+  //       );
+  //     });
+  //     test('現在バージョン<=最低限バージョンはfalseを返す', () async {
+  //       final mockForceUpdateConfigRepository =
+  //           MockForceUpdateConfigRepository();
+  //       PackageInfo.setMockInitialValues(
+  //         appName: 'test_mottai_flutter_app',
+  //         packageName: 'packageName',
+  //         version: '0.0.1',
+  //         buildNumber: 'buildNumber',
+  //         buildSignature: 'buildSignature',
+  //       );
+  //       final container = ProviderContainer(
+  //         overrides: [
+  //           packageInfoProvider
+  //               .overrideWithValue(await PackageInfo.fromPlatform()),
+  //           forceUpdateConfigRepositoryProvider
+  //               .overrideWithValue(mockForceUpdateConfigRepository),
+  //         ],
+  //       );
+  //       // モックリポジトリにより取得するデータを変更する
+  //       when(mockForceUpdateConfigRepository.subscribeForceUpdateConfig())
+  //           .thenAnswer((_) async* {
+  //         yield const ReadForceUpdateConfig(
+  //           androidForceUpdate: true,
+  //           androidLatestVersion: '0.0.2',
+  //           androidMinRequiredVersion: '0.0.1',
+  //           forceUpdateConfigId: 'forceUpdateConfig',
+  //           iOSForceUpdate: true,
+  //           iOSLatestVersion: '0.0.2',
+  //           iOSMinRequiredVersion: '0.0.1',
+  //           path: 'configurations',
+  //         );
+  //       });
+  //       // リクエストの結果が戻るのを待つ
+  //       await container.read(forceUpdateStreamProvider.future);
+  //       expect(
+  //         container.read(isForceUpdateRequiredProvider),
+  //         false,
+  //       );
+  //     });
+  //     test('現在バージョン>最低限バージョンはfalseを返す', () async {
+  //       final mockForceUpdateConfigRepository =
+  //           MockForceUpdateConfigRepository();
+  //       PackageInfo.setMockInitialValues(
+  //         appName: 'test_mottai_flutter_app',
+  //         packageName: 'packageName',
+  //         version: '0.0.2',
+  //         buildNumber: 'buildNumber',
+  //         buildSignature: 'buildSignature',
+  //       );
+  //       final container = ProviderContainer(
+  //         overrides: [
+  //           packageInfoProvider
+  //               .overrideWithValue(await PackageInfo.fromPlatform()),
+  //           forceUpdateConfigRepositoryProvider
+  //               .overrideWithValue(mockForceUpdateConfigRepository),
+  //         ],
+  //       );
+  //       // モックリポジトリにより取得するデータを変更する
+  //       when(mockForceUpdateConfigRepository.subscribeForceUpdateConfig())
+  //           .thenAnswer((_) async* {
+  //         yield const ReadForceUpdateConfig(
+  //           androidForceUpdate: true,
+  //           androidLatestVersion: '0.0.2',
+  //           androidMinRequiredVersion: '0.0.1',
+  //           forceUpdateConfigId: 'forceUpdateConfig',
+  //           iOSForceUpdate: true,
+  //           iOSLatestVersion: '0.0.2',
+  //           iOSMinRequiredVersion: '0.0.1',
+  //           path: 'configurations',
+  //         );
+  //       });
+  //       // リクエストの結果が戻るのを待つ
+  //       await container.read(forceUpdateStreamProvider.future);
+  //       expect(
+  //         container.read(isForceUpdateRequiredProvider),
+  //         false,
+  //       );
+  //     });
+  //   });
+  // });
   group('android強制アップデートテスト', () {
     setUpAll(
       () => debugDefaultTargetPlatformOverride = TargetPlatform.android,

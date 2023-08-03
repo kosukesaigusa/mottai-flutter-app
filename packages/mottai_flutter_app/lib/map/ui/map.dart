@@ -1,16 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_common/firebase_common.dart';
 import 'package:flutter/material.dart';
 import 'package:geoflutterfire_plus/geoflutterfire_plus.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'package:rxdart/rxdart.dart';
 
-/// Tokyo Station location for demo.
+/// 東京駅の緯度経度（テスト用）初期位置は現在地？
 const _tokyoStation = LatLng(35.681236, 139.767125);
-
-/// Reference to the collection where the location data is stored.
-/// `withConverter` is available to type-safely define [CollectionReference].
-final _collectionReference = FirebaseFirestore.instance.collection('locations');
 
 /// Geo query geoQueryCondition.
 class _GeoQueryCondition {
@@ -30,12 +27,30 @@ class MapPage extends StatefulWidget {
   MapPageState createState() => MapPageState();
 }
 
-/// Example page using [GoogleMap].
 class MapPageState extends State<MapPage> {
-  /// [Marker]s on Google Maps.
+  /// Google Mapに記される[Marker]。
   Set<Marker> _markers = {};
 
-  /// [BehaviorSubject] of currently geo query radius and camera position.
+  /// Googleマップの初期ターゲット位置。
+  static final LatLng _initialTarget = LatLng(
+    _tokyoStation.latitude,
+    _tokyoStation.longitude,
+  );
+
+  /// Googleマップの初期カメラズームレベル。
+  static const double _initialZoom = 14;
+
+  /// Googleマップの初期カメラ位置。
+  static final _initialCameraPosition = CameraPosition(
+    target: _initialTarget,
+    zoom: _initialZoom,
+  );
+
+  /// ジオクエリーの検出半径（km）。
+  /// MEMO: 一旦は10kmで表示。
+  static const double _initialRadiusInKm = 10;
+
+  /// [BehaviorSubject]には、現在のジオクエリー半径とカメラ位置を指定。
   final _geoQueryCondition = BehaviorSubject<_GeoQueryCondition>.seeded(
     _GeoQueryCondition(
       radiusInKm: _initialRadiusInKm,
@@ -43,11 +58,12 @@ class MapPageState extends State<MapPage> {
     ),
   );
 
-  /// [Stream] of geo query result.
-  late final Stream<List<DocumentSnapshot<Map<String, dynamic>>>> _stream =
+  /// ジオクエリー結果は[Stream]で取得。
+  late final Stream<List<DocumentSnapshot<ReadHostLocation>>> _stream =
       _geoQueryCondition.switchMap(
     (geoQueryCondition) =>
-        GeoCollectionReference(_collectionReference).subscribeWithin(
+        GeoCollectionReference(readHostLocationCollectionReference)
+            .subscribeWithin(
       center: GeoFirePoint(
         GeoPoint(
           _cameraPosition.target.latitude,
@@ -56,80 +72,50 @@ class MapPageState extends State<MapPage> {
       ),
       radiusInKm: geoQueryCondition.radiusInKm,
       field: 'geo',
-      geopointFrom: (data) =>
-          (data['geo'] as Map<String, dynamic>)['geopoint'] as GeoPoint,
+      geopointFrom: (location) => location.geo.geopoint,
       strictMode: true,
     ),
   );
 
-  /// Updates [_markers] by fetched geo [DocumentSnapshot]s.
+  /// フェッチされた位置情報[DocumentSnapshot]によって[_markers]を更新。
   void _updateMarkersByDocumentSnapshots(
-    List<DocumentSnapshot<Map<String, dynamic>>> documentSnapshots,
+    List<DocumentSnapshot<ReadHostLocation>> documentSnapshots,
   ) {
     final markers = <Marker>{};
     for (final ds in documentSnapshots) {
       final id = ds.id;
-      final data = ds.data();
-      if (data == null) {
+      final location = ds.data();
+      if (location == null) {
         continue;
       }
-      final name = data['name'] as String;
-      final geoPoint =
-          (data['geo'] as Map<String, dynamic>)['geopoint'] as GeoPoint;
-      markers.add(_createMarker(id: id, name: name, geoPoint: geoPoint));
+      final hostId = location.hostId;
+      final geoPoint = location.geo.geopoint;
+      markers.add(_createMarker(id: id, hostId: hostId, geoPoint: geoPoint));
     }
-    debugPrint('📍 markers count: ${markers.length}');
     setState(() {
       _markers = markers;
     });
   }
 
-  /// Creates a [Marker] by fetched geo location.
+  /// 取得した位置情報で[Marker]を作成。
   Marker _createMarker({
     required String id,
-    required String name,
+    required String hostId,
     required GeoPoint geoPoint,
   }) =>
       Marker(
         markerId: MarkerId('(${geoPoint.latitude}, ${geoPoint.longitude})'),
         position: LatLng(geoPoint.latitude, geoPoint.longitude),
-        infoWindow: InfoWindow(title: name),
-        onTap: () => showDialog<void>(
-          context: context,
-          builder: (context) => SetOrDeleteLocationDialog(
-            id: id,
-            name: name,
-            geoFirePoint: GeoFirePoint(
-              GeoPoint(geoPoint.latitude, geoPoint.longitude),
-            ),
-          ),
-        ),
+        infoWindow: InfoWindow(title: hostId),
+        onTap: () => null,
+        // MEMO: マーカーにTapした時、Card swipe処理を実装する。
       );
 
-  /// Current detecting radius in kilometers.
+  /// 現在の検出半径（km）。
   double get _radiusInKm => _geoQueryCondition.value.radiusInKm;
 
-  /// Current camera position on Google Maps.
+  /// Googleマップ上の現在のカメラ位置。
   CameraPosition get _cameraPosition => _geoQueryCondition.value.cameraPosition;
-
-  /// Initial geo query detection radius in km.
-  /// TODO: サークルとか表示しないので、どの範囲を初期値で表示するかを確認する。
-  static const double _initialRadiusInKm = 100;
-
-  /// Google Maps initial camera zoom level.
-  static const double _initialZoom = 14;
-
-  /// Google Maps initial target position.
-  static final LatLng _initialTarget = LatLng(
-    _tokyoStation.latitude,
-    _tokyoStation.longitude,
-  );
-
-  /// Google Maps initial camera position.
-  static final _initialCameraPosition = CameraPosition(
-    target: _initialTarget,
-    zoom: _initialZoom,
-  );
 
   @override
   void dispose() {
@@ -145,10 +131,8 @@ class MapPageState extends State<MapPage> {
         centerTitle: true,
         leading: const Icon(Icons.menu),
         title: const Text('探す'),
-        actions: [
-          Container(
-              margin: const EdgeInsets.only(right: 8),
-              child: const Icon(Icons.notifications_none_outlined)),
+        actions: const [
+          Icon(Icons.notifications_none_outlined),
         ],
       ),
       body: Stack(
@@ -160,9 +144,20 @@ class MapPageState extends State<MapPage> {
             onMapCreated: (_) =>
                 _stream.listen(_updateMarkersByDocumentSnapshots),
             markers: _markers,
+            circles: {
+              Circle(
+                circleId: const CircleId('value'),
+                center: LatLng(
+                  _cameraPosition.target.latitude,
+                  _cameraPosition.target.longitude,
+                ),
+                // キロメートルからメートルに変換する場合は、1000の倍数を用いる。
+                radius: _radiusInKm * 1000,
+                fillColor: Colors.black12,
+                strokeWidth: 0,
+              ),
+            },
             onCameraMove: (cameraPosition) {
-              debugPrint('📷 lat: ${cameraPosition.target.latitude}, '
-                  'lng: ${cameraPosition.target.latitude}');
               _geoQueryCondition.add(
                 _GeoQueryCondition(
                   radiusInKm: _radiusInKm,
@@ -170,16 +165,75 @@ class MapPageState extends State<MapPage> {
                 ),
               );
             },
-
-            /// MEMO: testデータ登録用で手軽に登録できるためコメントアウト
-            // onLongPress: (latLng) => showDialog<void>(
-            //   context: context,
-            //   builder: (context) => AddLocationDialog(latLng: latLng),
-            // ),
           ),
 
-          // MEMO: 位置情報取得実装部分
-          // riverpodを使用していて、こんがらがるので一旦コメントアウト
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Container(
+              height: 250,
+              padding: const EdgeInsets.only(top: 16, bottom: 16),
+              child: StreamBuilder(
+                // MEMO: 用意されてるメソッドがあるはずなのでそれを使う。
+                // StreamBuilderでPageViewを表示するのが微妙な気がする。
+                stream: readHostCollectionReference.snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Center(child: Text('エラーが発生しました'));
+                  } else {
+                    return PageView.builder(
+                      // MEMO: カードスワイプした際に、カメラ位置を更新する。
+                      // onPageChanged: (index) {
+                      //   final _currentHostId =
+                      //       snapshot.data!.docs[index].data().hostId;
+                      //   // _currentHostIdと一致するドキュメントを取得する。
+                      //   _stream.listen(
+                      //     (documentSnapshots) {
+                      //       final currentHostLocation = documentSnapshots
+                      //           .firstWhere(
+                      //             (documentSnapshot) =>
+                      //                 documentSnapshot.data()!.hostId ==
+                      //                 _currentHostId,
+                      //           )
+                      //           .data();
+
+                      //       _geoQueryCondition.add(
+                      //         _GeoQueryCondition(
+                      //           radiusInKm: _radiusInKm,
+                      //           cameraPosition: CameraPosition(
+                      //             target: LatLng(
+                      //               currentHostLocation!.geo.geopoint.latitude,
+                      //               currentHostLocation.geo.geopoint.longitude,
+                      //             ),
+                      //           ),
+                      //         ),
+                      //       );
+                      //     },
+                      //   );
+                      // },
+                      controller: PageController(viewportFraction: 0.85),
+                      itemCount: snapshot.data!.docs.length,
+                      itemBuilder: (context, index) {
+                        final host = snapshot.data!.docs[index].data();
+                        return CustomCard(
+                          // MEMO: imageUrlも追加して画像を表示する。
+                          hostName: host.displayName,
+                          address: 'ああああああああ',
+                          jobTypes: host.hostTypes,
+                          details:
+                              'みかんの収穫や、その他、農作業全般の体験・お手伝いをしてくれる方を募集します！(job.description)\n内容が長くて入り切らない場合は、末尾は...にする',
+                        );
+                      },
+                    );
+                  }
+                },
+              ),
+            ),
+          ),
+
+          // MEMO: 位置情報取得実装部分。後にMergeする。
+
           // Container(
           //   margin: EdgeInsets.only(
           //     bottom: MediaQuery.of(context).size.height * 0.1,
@@ -230,41 +284,6 @@ class MapPageState extends State<MapPage> {
           //     ),
           //   ),
           // ),
-
-          // TODO: PageView.builderに変更する
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Container(
-              height: 250,
-              padding: const EdgeInsets.only(top: 16, bottom: 16),
-              child: PageView(
-                controller: PageController(viewportFraction: 0.85),
-                children: const [
-                  CustomCard(
-                    hostName: '矢郷史郎 (host.displayName)',
-                    address: '神奈川県小田原市石322（最大2行まで。hostLocation.address)',
-                    jobTypes: ['農家', '農家'],
-                    details:
-                        'みかんの収穫や、その他、農作業全般の体験・お手伝いをしてくれる方を募集します！(job.description)\n内容が長くて入り切らない場合は、末尾は...にする',
-                  ),
-                  CustomCard(
-                    hostName: '矢郷史郎 (host.displayName)',
-                    address: '神奈川県小田原市石322（最大2行まで。hostLocation.address)',
-                    jobTypes: ['農家', '農家'],
-                    details:
-                        'みかんの収穫や、その他、農作業全般の体験・お手伝いをしてくれる方を募集します！(job.description)\n内容が長くて入り切らない場合は、末尾は...にする',
-                  ),
-                  CustomCard(
-                    hostName: '矢郷史郎 (host.displayName)',
-                    address: '神奈川県小田原市石322（最大2行まで。hostLocation.address)',
-                    jobTypes: ['農家', '農家'],
-                    details:
-                        'みかんの収穫や、その他、農作業全般の体験・お手伝いをしてくれる方を募集します！(job.description)\n内容が長くて入り切らない場合は、末尾は...にする',
-                  ),
-                ],
-              ),
-            ),
-          ),
         ],
       ),
     );
@@ -272,7 +291,7 @@ class MapPageState extends State<MapPage> {
 }
 
 // ===========================================
-/// ListViewで表示するCard
+/// PageViewで表示するCard
 class CustomCard extends StatelessWidget {
   const CustomCard({
     super.key,
@@ -284,7 +303,7 @@ class CustomCard extends StatelessWidget {
 
   final String hostName;
   final String address;
-  final List<String> jobTypes;
+  final Set<HostType> jobTypes;
   final String details;
 
   @override
@@ -345,6 +364,7 @@ class CustomCard extends StatelessWidget {
                             ),
 
                             // Tag Part
+                            // MEMO: ContainerではなくてtagのWidgetを使用する。
                             Row(
                               children: jobTypes.map((jobType) {
                                 return Container(
@@ -364,7 +384,7 @@ class CustomCard extends StatelessWidget {
                                         vertical: 4,
                                       ),
                                       child: Text(
-                                        jobType,
+                                        jobType.name,
                                         style: Theme.of(context)
                                             .textTheme
                                             .labelMedium!
@@ -396,181 +416,6 @@ class CustomCard extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-}
-
-/// ==============================================================
-///MEMO: testデータ登録用
-
-/// AlertDialog widget to add location data to Cloud Firestore.
-class SetOrDeleteLocationDialog extends StatelessWidget {
-  const SetOrDeleteLocationDialog({
-    super.key,
-    required this.id,
-    required this.name,
-    required this.geoFirePoint,
-  });
-
-  final String id;
-  final String name;
-  final GeoFirePoint geoFirePoint;
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      title: const Center(
-        child: Text('Enter location data'),
-      ),
-      content: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          ElevatedButton(
-            onPressed: () => null,
-            child: const Text('set location'),
-          ),
-          const SizedBox(height: 16),
-          ElevatedButton(
-            onPressed: () => null,
-            child: const Text('delete location'),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class AddLocationDialog extends StatefulWidget {
-  const AddLocationDialog({super.key, this.latLng});
-
-  final LatLng? latLng;
-
-  @override
-  AddLocationDialogState createState() => AddLocationDialogState();
-}
-
-class AddLocationDialogState extends State<AddLocationDialog> {
-  final _nameEditingController = TextEditingController();
-  final _latitudeEditingController = TextEditingController();
-  final _longitudeEditingController = TextEditingController();
-
-  @override
-  void initState() {
-    super.initState();
-    if (widget.latLng != null) {
-      _latitudeEditingController.text = widget.latLng!.latitude.toString();
-      _longitudeEditingController.text = widget.latLng!.longitude.toString();
-    }
-  }
-
-  @override
-  void dispose() {
-    _nameEditingController.dispose();
-    _latitudeEditingController.dispose();
-    _longitudeEditingController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      title: const Center(
-        child: Text('Enter location data'),
-      ),
-      content: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          TextField(
-            controller: _nameEditingController,
-            keyboardType: TextInputType.name,
-            decoration: InputDecoration(
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              label: const Text('name'),
-            ),
-          ),
-          const SizedBox(height: 16),
-          TextField(
-            controller: _latitudeEditingController,
-            keyboardType: const TextInputType.numberWithOptions(decimal: true),
-            decoration: InputDecoration(
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              label: const Text('latitude'),
-            ),
-          ),
-          const SizedBox(height: 16),
-          TextField(
-            controller: _longitudeEditingController,
-            keyboardType: const TextInputType.numberWithOptions(decimal: true),
-            decoration: InputDecoration(
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              label: const Text('longitude'),
-            ),
-          ),
-          const SizedBox(height: 16),
-          ElevatedButton(
-            onPressed: () async {
-              final navigator = Navigator.of(context);
-              final name = _nameEditingController.value.text;
-              if (name.isEmpty) {
-                throw Exception('Enter valid name');
-              }
-              final latitude =
-                  double.tryParse(_latitudeEditingController.value.text);
-              final longitude =
-                  double.tryParse(_longitudeEditingController.value.text);
-              if (latitude == null || longitude == null) {
-                throw Exception(
-                  'Enter valid values as latitude and longitude.',
-                );
-              }
-              try {
-                await _addLocation(
-                  name,
-                  latitude,
-                  longitude,
-                );
-              } on Exception catch (e) {
-                debugPrint(
-                  '🚨 An exception occurred when adding location data $e',
-                );
-              }
-              navigator.pop();
-            },
-            child: const Text('Add location data'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  /// Adds location data to Cloud Firestore.
-  Future<void> _addLocation(
-    String name,
-    double latitude,
-    double longitude,
-  ) async {
-    final geoFirePoint = GeoFirePoint(GeoPoint(latitude, longitude));
-    await GeoCollectionReference<Map<String, dynamic>>(
-      FirebaseFirestore.instance.collection('locations'),
-    ).add(<String, dynamic>{
-      'geo': geoFirePoint.data,
-      'name': name,
-      'isVisible': true,
-    });
-    debugPrint(
-      '🌍 Location data is successfully added: '
-      'name: $name'
-      'lat: $latitude, '
-      'lng: $longitude, '
-      'geohash: ${geoFirePoint.geohash}',
     );
   }
 }

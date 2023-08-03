@@ -63,7 +63,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '709197089170',
     projectId: 'mottai-app-dev-2',
     storageBucket: 'mottai-app-dev-2.appspot.com',
-    iosClientId: '709197089170-9hsmfhj3ovc79m8f982j7lot5n7iq3rh.apps.googleusercontent.com',
+    iosClientId:
+        '709197089170-9hsmfhj3ovc79m8f982j7lot5n7iq3rh.apps.googleusercontent.com',
     iosBundleId: 'com.kosukesaigusa.mottaiFlutterApp',
   );
 }

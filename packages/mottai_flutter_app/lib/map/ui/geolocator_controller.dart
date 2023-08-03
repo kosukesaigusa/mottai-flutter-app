@@ -5,14 +5,14 @@ import '../../../scaffold_messenger_controller.dart';
 import '../geolocator.dart';
 
 final currentLocationControllerProvider =
-  Provider.autoDispose<CurrentLocationController>(
-    (ref) => CurrentLocationController(
-      locationService: ref.watch(locationServiceProvider),
-      appScaffoldMessengerController: ref.watch(
-        appScaffoldMessengerControllerProvider,
-      ),
+    Provider.autoDispose<CurrentLocationController>(
+  (ref) => CurrentLocationController(
+    locationService: ref.watch(locationServiceProvider),
+    appScaffoldMessengerController: ref.watch(
+      appScaffoldMessengerControllerProvider,
     ),
-  );
+  ),
+);
 
 class CurrentLocationController {
   const CurrentLocationController({
@@ -33,7 +33,7 @@ class CurrentLocationController {
       _appScaffoldMessengerController.showSnackBar('位置情報を取得する権限を得られませんでした');
       return null;
     }
-    
+
     return _locationService.getCurrentPosition();
   }
 }

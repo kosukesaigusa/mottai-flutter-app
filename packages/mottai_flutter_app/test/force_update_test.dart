@@ -14,98 +14,97 @@ import 'force_update_test.mocks.dart';
 @GenerateNiceMocks([MockSpec<ForceUpdateConfigRepository>()])
 Future<void> main() async {
   group('データローディング中はfalseを返す', () {
-    // test('iOSの時ローディング中はfalseを返す', () async {
-    //   debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
-    //   final mockForceUpdateConfigRepository = MockForceUpdateConfigRepository
-    // ();
-    //   PackageInfo.setMockInitialValues(
-    //     appName: 'test_mottai_flutter_app',
-    //     packageName: 'packageName',
-    //     version: '0.0.1',
-    //     buildNumber: 'buildNumber',
-    //     buildSignature: 'buildSignature',
-    //   );
-    //   final container = ProviderContainer(
-    //     overrides: [
-    //       packageInfoProvider
-    //           .overrideWithValue(await PackageInfo.fromPlatform()),
-    //       forceUpdateConfigRepositoryProvider
-    //           .overrideWithValue(mockForceUpdateConfigRepository),
-    //     ],
-    //   );
-    //   // モックリポジトリにより取得するデータを変更する
-    //   when(mockForceUpdateConfigRepository.subscribeForceUpdateConfig())
-    //       .thenAnswer((_) async* {
-    //     yield const ReadForceUpdateConfig(
-    //       androidForceUpdate: false,
-    //       androidLatestVersion: '0.0.2',
-    //       androidMinRequiredVersion: '0.0.1',
-    //       forceUpdateConfigId: 'forceUpdateConfigId',
-    //       iOSForceUpdate: false,
-    //       iOSLatestVersion: '0.0.2',
-    //       iOSMinRequiredVersion: '0.0.1',
-    //       path: 'configurations',
-    //     );
-    //   });
-    //   // プロバイダーをリッスンすることで変更を反映させる
-    //   container.listen(
-    //     forceUpdateStreamProvider,
-    //     (previous, next) {},
-    //     fireImmediately: true,
-    //   );
-    //   expect(
-    //     container.read(forceUpdateStreamProvider),
-    //     const AsyncValue<ReadForceUpdateConfig?>.loading(),
-    //   );
-    //   // ローディング中はfalseを返す
-    //   expect(
-    //     container.read(isForceUpdateRequiredProvider),
-    //     false,
-    //   );
-    //   // リクエストの結果が戻るのを待つ
-    //   await container.read(forceUpdateStreamProvider.future);
-    //   // 取得したデータがmockitoで設定した値と同じであること
-    //   expect(
-    //     container.read(forceUpdateStreamProvider).value,
-    //     isA<ReadForceUpdateConfig>()
-    //         .having((s) => s.androidForceUpdate, 'androidForceUpdate', false)
-    //         .having(
-    //           (s) => s.androidLatestVersion,
-    //           'androidLatestVersion',
-    //           '0.0.2',
-    //         )
-    //         .having(
-    //           (s) => s.androidMinRequiredVersion,
-    //           'androidMinRequiredVersion',
-    //           '0.0.1',
-    //         )
-    //         .having(
-    //           (s) => s.forceUpdateConfigId,
-    //           'forceUpdateConfigId',
-    //           'forceUpdateConfigId',
-    //         )
-    //         .having(
-    //           (s) => s.iOSForceUpdate,
-    //           'iOSForceUpdate',
-    //           false,
-    //         )
-    //         .having(
-    //           (s) => s.iOSLatestVersion,
-    //           'iOSLatestVersion',
-    //           '0.0.2',
-    //         )
-    //         .having(
-    //           (s) => s.iOSMinRequiredVersion,
-    //           'iOSMinRequiredVersion',
-    //           '0.0.1',
-    //         )
-    //         .having(
-    //           (s) => s.path,
-    //           'path',
-    //           'configurations',
-    //         ),
-    //   );
-    // });
+    test('iOSの時ローディング中はfalseを返す', () async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+      final mockForceUpdateConfigRepository = MockForceUpdateConfigRepository();
+      PackageInfo.setMockInitialValues(
+        appName: 'test_mottai_flutter_app',
+        packageName: 'packageName',
+        version: '0.0.1',
+        buildNumber: 'buildNumber',
+        buildSignature: 'buildSignature',
+      );
+      final container = ProviderContainer(
+        overrides: [
+          packageInfoProvider
+              .overrideWithValue(await PackageInfo.fromPlatform()),
+          forceUpdateConfigRepositoryProvider
+              .overrideWithValue(mockForceUpdateConfigRepository),
+        ],
+      );
+      // モックリポジトリにより取得するデータを変更する
+      when(mockForceUpdateConfigRepository.subscribeForceUpdateConfig())
+          .thenAnswer((_) async* {
+        yield const ReadForceUpdateConfig(
+          androidForceUpdate: false,
+          androidLatestVersion: '0.0.2',
+          androidMinRequiredVersion: '0.0.1',
+          forceUpdateConfigId: 'forceUpdateConfigId',
+          iOSForceUpdate: false,
+          iOSLatestVersion: '0.0.2',
+          iOSMinRequiredVersion: '0.0.1',
+          path: 'configurations',
+        );
+      });
+      // プロバイダーをリッスンすることで変更を反映させる
+      container.listen(
+        forceUpdateStreamProvider,
+        (previous, next) {},
+        fireImmediately: true,
+      );
+      expect(
+        container.read(forceUpdateStreamProvider),
+        const AsyncValue<ReadForceUpdateConfig?>.loading(),
+      );
+      // ローディング中はfalseを返す
+      expect(
+        container.read(isForceUpdateRequiredProvider),
+        false,
+      );
+      // リクエストの結果が戻るのを待つ
+      await container.read(forceUpdateStreamProvider.future);
+      // 取得したデータがmockitoで設定した値と同じであること
+      expect(
+        container.read(forceUpdateStreamProvider).value,
+        isA<ReadForceUpdateConfig>()
+            .having((s) => s.androidForceUpdate, 'androidForceUpdate', false)
+            .having(
+              (s) => s.androidLatestVersion,
+              'androidLatestVersion',
+              '0.0.2',
+            )
+            .having(
+              (s) => s.androidMinRequiredVersion,
+              'androidMinRequiredVersion',
+              '0.0.1',
+            )
+            .having(
+              (s) => s.forceUpdateConfigId,
+              'forceUpdateConfigId',
+              'forceUpdateConfigId',
+            )
+            .having(
+              (s) => s.iOSForceUpdate,
+              'iOSForceUpdate',
+              false,
+            )
+            .having(
+              (s) => s.iOSLatestVersion,
+              'iOSLatestVersion',
+              '0.0.2',
+            )
+            .having(
+              (s) => s.iOSMinRequiredVersion,
+              'iOSMinRequiredVersion',
+              '0.0.1',
+            )
+            .having(
+              (s) => s.path,
+              'path',
+              'configurations',
+            ),
+      );
+    });
     test('androidの時ローディング中はfalseを返す', () async {
       debugDefaultTargetPlatformOverride = TargetPlatform.android;
       final mockForceUpdateConfigRepository = MockForceUpdateConfigRepository();

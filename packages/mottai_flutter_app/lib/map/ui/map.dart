@@ -3,7 +3,7 @@ import 'package:firebase_common/firebase_common.dart';
 import 'package:flutter/material.dart';
 import 'package:geoflutterfire_plus/geoflutterfire_plus.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:rxdart/rxdart.dart';
 
 /// 東京駅の緯度経度（テスト用）初期位置は現在地？
@@ -28,8 +28,11 @@ class MapPage extends StatefulWidget {
 }
 
 class MapPageState extends State<MapPage> {
-  /// Google Mapに記される[Marker]。
+  /// Google Mapに記される [Marker].
   Set<Marker> _markers = {};
+
+  /// 取得された [HostLocation] 一覧。
+  List<ReadHostLocation> _readHostLocations = [];
 
   /// Googleマップの初期ターゲット位置。
   static final LatLng _initialTarget = LatLng(
@@ -82,19 +85,21 @@ class MapPageState extends State<MapPage> {
     List<DocumentSnapshot<ReadHostLocation>> documentSnapshots,
   ) {
     final markers = <Marker>{};
+    final readHostLocations = <ReadHostLocation>[];
     for (final ds in documentSnapshots) {
       final id = ds.id;
-      final location = ds.data();
-      if (location == null) {
+      final readHostLocation = ds.data();
+      if (readHostLocation == null) {
         continue;
       }
-      final hostId = location.hostId;
-      final geoPoint = location.geo.geopoint;
+      final hostId = readHostLocation.hostId;
+      final geoPoint = readHostLocation.geo.geopoint;
       markers.add(_createMarker(id: id, hostId: hostId, geoPoint: geoPoint));
+      readHostLocations.add(readHostLocation);
     }
-    setState(() {
-      _markers = markers;
-    });
+    _markers = markers;
+    _readHostLocations = readHostLocations;
+    setState(() {});
   }
 
   /// 取得した位置情報で[Marker]を作成。
@@ -107,7 +112,7 @@ class MapPageState extends State<MapPage> {
         markerId: MarkerId('(${geoPoint.latitude}, ${geoPoint.longitude})'),
         position: LatLng(geoPoint.latitude, geoPoint.longitude),
         infoWindow: InfoWindow(title: hostId),
-        onTap: () => null,
+        onTap: () {},
         // MEMO: マーカーにTapした時、Card swipe処理を実装する。
       );
 
@@ -166,72 +171,16 @@ class MapPageState extends State<MapPage> {
               );
             },
           ),
-
           Align(
             alignment: Alignment.bottomCenter,
             child: Container(
               height: 250,
               padding: const EdgeInsets.only(top: 16, bottom: 16),
-              child: StreamBuilder(
-                // MEMO: 用意されてるメソッドがあるはずなのでそれを使う。
-                // StreamBuilderでPageViewを表示するのが微妙な気がする。
-                stream: readHostCollectionReference.snapshots(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Center(child: CircularProgressIndicator());
-                  } else if (snapshot.hasError) {
-                    return Center(child: Text('エラーが発生しました'));
-                  } else {
-                    return PageView.builder(
-                      // MEMO: カードスワイプした際に、カメラ位置を更新する。
-                      // onPageChanged: (index) {
-                      //   final _currentHostId =
-                      //       snapshot.data!.docs[index].data().hostId;
-                      //   // _currentHostIdと一致するドキュメントを取得する。
-                      //   _stream.listen(
-                      //     (documentSnapshots) {
-                      //       final currentHostLocation = documentSnapshots
-                      //           .firstWhere(
-                      //             (documentSnapshot) =>
-                      //                 documentSnapshot.data()!.hostId ==
-                      //                 _currentHostId,
-                      //           )
-                      //           .data();
-
-                      //       _geoQueryCondition.add(
-                      //         _GeoQueryCondition(
-                      //           radiusInKm: _radiusInKm,
-                      //           cameraPosition: CameraPosition(
-                      //             target: LatLng(
-                      //               currentHostLocation!.geo.geopoint.latitude,
-                      //               currentHostLocation.geo.geopoint.longitude,
-                      //             ),
-                      //           ),
-                      //         ),
-                      //       );
-                      //     },
-                      //   );
-                      // },
-                      controller: PageController(viewportFraction: 0.85),
-                      itemCount: snapshot.data!.docs.length,
-                      itemBuilder: (context, index) {
-                        final host = snapshot.data!.docs[index].data();
-                        return CustomCard(
-                          // MEMO: imageUrlも追加して画像を表示する。
-                          hostName: host.displayName,
-                          address: 'ああああああああ',
-                          jobTypes: host.hostTypes,
-                          details:
-                              'みかんの収穫や、その他、農作業全般の体験・お手伝いをしてくれる方を募集します！(job.description)\n内容が長くて入り切らない場合は、末尾は...にする',
-                        );
-                      },
-                    );
-                  }
-                },
+              child: _HostLocationPageView(
+                readHostLocations: _readHostLocations,
               ),
             ),
           ),
-
           // MEMO: 位置情報取得実装部分。後にMergeする。
 
           // Container(
@@ -290,24 +239,35 @@ class MapPageState extends State<MapPage> {
   }
 }
 
-// ===========================================
-/// PageViewで表示するCard
-class CustomCard extends StatelessWidget {
-  const CustomCard({
-    super.key,
-    required this.hostName,
-    required this.address,
-    required this.jobTypes,
-    required this.details,
-  });
+class _HostLocationPageView extends ConsumerWidget {
+  const _HostLocationPageView({required this.readHostLocations});
 
-  final String hostName;
-  final String address;
-  final Set<HostType> jobTypes;
-  final String details;
+  final List<ReadHostLocation> readHostLocations;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    return PageView.builder(
+      controller: PageController(viewportFraction: 0.85),
+      itemCount: readHostLocations.length,
+      itemBuilder: (context, index) {
+        final readHostLocation = readHostLocations[index];
+        return _HostLocationPageViewItem(readHostLocation: readHostLocation);
+      },
+    );
+  }
+}
+
+// ===========================================
+/// PageViewで表示するCard
+class _HostLocationPageViewItem extends ConsumerWidget {
+  const _HostLocationPageViewItem({required this.readHostLocation});
+
+  final ReadHostLocation readHostLocation;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final hostId = readHostLocation.hostId;
+    // TODO: hostId を使って、hostFutureProvider で host を取得する。
     return Container(
       margin: const EdgeInsets.only(right: 8),
       child: DecoratedBox(
@@ -320,98 +280,99 @@ class CustomCard extends StatelessWidget {
             horizontal: 16,
             vertical: 8,
           ),
-          child: Column(
+          child: const Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // ホスト名Part
-              Text(hostName, style: Theme.of(context).textTheme.titleMedium),
-              Container(
-                margin: const EdgeInsets.only(top: 8, bottom: 16),
-                child: SizedBox(
-                  height: 60,
-                  child: Row(
-                    children: [
-                      // 画像Part
-                      const SizedBox(
-                        width: 60,
-                        height: 60,
-                        child: DecoratedBox(
-                          decoration: BoxDecoration(
-                            color: Colors.red,
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(8),
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
+              Text('ダミー'),
+              // // ホスト名Part
+              // Text(hostName, style: Theme.of(context).textTheme.titleMedium),
+              // Container(
+              //   margin: const EdgeInsets.only(top: 8, bottom: 16),
+              //   child: SizedBox(
+              //     height: 60,
+              //     child: Row(
+              //       children: [
+              //         // 画像Part
+              //         const SizedBox(
+              //           width: 60,
+              //           height: 60,
+              //           child: DecoratedBox(
+              //             decoration: BoxDecoration(
+              //               color: Colors.red,
+              //               borderRadius: BorderRadius.all(
+              //                 Radius.circular(8),
+              //               ),
+              //             ),
+              //           ),
+              //         ),
+              //         const SizedBox(width: 8),
 
-                      // 住所Part
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              address,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyMedium!
-                                  .copyWith(
-                                    fontSize: 12,
-                                  ),
-                              maxLines: 2,
-                            ),
+              //         // 住所Part
+              //         Expanded(
+              //           child: Column(
+              //             crossAxisAlignment: CrossAxisAlignment.start,
+              //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //             children: [
+              //               Text(
+              //                 address,
+              //                 style: Theme.of(context)
+              //                     .textTheme
+              //                     .bodyMedium!
+              //                     .copyWith(
+              //                       fontSize: 12,
+              //                     ),
+              //                 maxLines: 2,
+              //               ),
 
-                            // Tag Part
-                            // MEMO: ContainerではなくてtagのWidgetを使用する。
-                            Row(
-                              children: jobTypes.map((jobType) {
-                                return Container(
-                                  margin: const EdgeInsets.only(
-                                    right: 8,
-                                  ),
-                                  child: DecoratedBox(
-                                    decoration: BoxDecoration(
-                                      color: Colors.purple[100],
-                                      borderRadius: const BorderRadius.all(
-                                        Radius.circular(8),
-                                      ),
-                                    ),
-                                    child: Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 8,
-                                        vertical: 4,
-                                      ),
-                                      child: Text(
-                                        jobType.name,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .labelMedium!
-                                            .copyWith(
-                                              fontSize: 12,
-                                            ),
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              }).toList(),
-                            )
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+              //               // Tag Part
+              //               // MEMO: ContainerではなくてtagのWidgetを使用する。
+              //               Row(
+              //                 children: jobTypes.map((jobType) {
+              //                   return Container(
+              //                     margin: const EdgeInsets.only(
+              //                       right: 8,
+              //                     ),
+              //                     child: DecoratedBox(
+              //                       decoration: BoxDecoration(
+              //                         color: Colors.purple[100],
+              //                         borderRadius: const BorderRadius.all(
+              //                           Radius.circular(8),
+              //                         ),
+              //                       ),
+              //                       child: Container(
+              //                         padding: const EdgeInsets.symmetric(
+              //                           horizontal: 8,
+              //                           vertical: 4,
+              //                         ),
+              //                         child: Text(
+              //                           jobType.name,
+              //                           style: Theme.of(context)
+              //                               .textTheme
+              //                               .labelMedium!
+              //                               .copyWith(
+              //                                 fontSize: 12,
+              //                               ),
+              //                         ),
+              //                       ),
+              //                     ),
+              //                   );
+              //                 }).toList(),
+              //               )
+              //             ],
+              //           ),
+              //         ),
+              //       ],
+              //     ),
+              //   ),
+              // ),
 
-              // 詳細分Part
-              Text(
-                details,
-                style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                      fontSize: 12,
-                    ),
-              ),
+              // // 詳細分Part
+              // Text(
+              //   details,
+              //   style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+              //         fontSize: 12,
+              //       ),
+              // ),
             ],
           ),
         ),

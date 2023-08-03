@@ -53,7 +53,7 @@ final isInReviewProvider = StateProvider.autoDispose<bool>(
         case TargetPlatform.linux:
         case TargetPlatform.windows:
         case TargetPlatform.macOS:
-          throw Exception('このOSは制御していません');
+          throw UnimplementedError();
       }
     } on FormatException catch (e) {
       debugPrint(e.toString());

@@ -3,11 +3,13 @@ import 'dart:async';
 import 'package:firebase_common/firebase_common.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../auth/auth.dart';
 import '../firestore_repository.dart';
 import '../user/host.dart';
 import '../user/user_mode.dart';
 import '../user/worker.dart';
 import 'chat_room_state.dart';
+import 'read_status.dart';
 
 /// 指定した [ChatRoom] を取得する [FutureProvider].
 final chatRoomFutureProvider =
@@ -46,16 +48,23 @@ final chatRoomStateNotifierProvider =
   (ref) => ChatRoomStateNotifier(
     // TODO: パスパラメータから渡せるようにする
     chatRoomId: 'aSNYpkUofu05nyasvMRx',
+    // TODO: ここの `!` は改善の余地があるかも。
+    userId: ref.watch(userIdProvider)!,
     chatMessageRepository: ref.watch(chatMessageRepositoryProvider),
+    readStatusService: ref.watch(readStatusServiceProvider),
   ),
 );
 
 class ChatRoomStateNotifier extends StateNotifier<ChatRoomState> {
   ChatRoomStateNotifier({
     required String chatRoomId,
+    required String userId,
     required ChatMessageRepository chatMessageRepository,
+    required ReadStatusService readStatusService,
   })  : _chatRoomId = chatRoomId,
+        _userId = userId,
         _chatMessageRepository = chatMessageRepository,
+        _readStatusService = readStatusService,
         super(const ChatRoomState()) {
     _newReadChatMessagesSubscription = _chatMessageRepository
         .subscribeChatMessages(
@@ -66,7 +75,10 @@ class ChatRoomStateNotifier extends StateNotifier<ChatRoomState> {
     Future<void>(() async {
       await Future.wait<void>([
         loadMore(),
-        // readStatusService.updateLastReadAt(lastReadAt: DateTime.now());
+        _readStatusService.setReadStatus(
+          chatRoomId: _chatRoomId,
+          userId: _userId,
+        ),
         // ChatPage に遷移直後のメッセージアイコンを意図的に見せるために最低でも 500 ms 待つ。
         Future<void>.delayed(const Duration(milliseconds: 500)),
       ]);
@@ -83,8 +95,14 @@ class ChatRoomStateNotifier extends StateNotifier<ChatRoomState> {
   /// [ChatMessageRepository] のインスタンス。
   late final ChatMessageRepository _chatMessageRepository;
 
-  /// チャットルームの ID。
+  /// [ReadStatusService] のインスタンス。
+  late final ReadStatusService _readStatusService;
+
+  /// チャットルームの ID.
   final String _chatRoomId;
+
+  /// ログイン中のユーザーID.
+  final String _userId;
 
   /// 無限スクロールで取得するメッセージ件数の limit 値。
   static const _limit = 10;
@@ -129,8 +147,7 @@ class ChatRoomStateNotifier extends StateNotifier<ChatRoomState> {
   void _updateNewReadChatMessages(List<ReadChatMessage> newReadChatMessages) {
     state = state.copyWith(newReadChatMessages: newReadChatMessages);
     _updateReadChatMessages();
-    // TODO: 自分の lastReadAt を現在時刻に更新する。
-    // readStatusService.updateLastReadAt(lastReadAt: DateTime.now());
+    _readStatusService.setReadStatus(chatRoomId: _chatRoomId, userId: _userId);
   }
 
   /// チャットルーム画面を遡って取得した過去のメッセージを更新した後、

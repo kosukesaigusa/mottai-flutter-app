@@ -156,6 +156,11 @@ class _ChatMessageItem extends ConsumerWidget {
         ref.watch(chatPartnerImageUrlProvider(readChatRoom));
     final partnerDisplayName =
         ref.watch(chatPartnerDisplayNameProvider(readChatRoom));
+    final partnerLastReadAt = ref.watch(
+      chatPartnerLastReadAtProvider(
+        readChatRoom,
+      ),
+    );
     return Column(
       crossAxisAlignment:
           isMyMessage ? CrossAxisAlignment.end : CrossAxisAlignment.start,
@@ -214,6 +219,13 @@ class _ChatMessageItem extends ConsumerWidget {
                         : Theme.of(context).textTheme.bodySmall,
                   ),
                 ),
+                if (isMyMessage)
+                  Text(
+                    _readStatusString(
+                      messageCreatedAt: readChatMessage.createdAt.dateTime,
+                      partnerLastReadAt: partnerLastReadAt,
+                    ),
+                  ),
               ],
             ),
           ],
@@ -230,7 +242,7 @@ class _ChatMessageItem extends ConsumerWidget {
             children: [
               if (readChatMessage.createdAt.dateTime != null)
                 Text(
-                  readChatMessage.createdAt.dateTime!.formatDate(),
+                  readChatMessage.createdAt.dateTime!.formatRelativeDate(),
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
             ],
@@ -238,6 +250,24 @@ class _ChatMessageItem extends ConsumerWidget {
         ),
       ],
     );
+  }
+
+  /// "既読" または "未読" の文字列を返す。
+  String _readStatusString({
+    required DateTime? messageCreatedAt,
+    required DateTime? partnerLastReadAt,
+  }) {
+    if (messageCreatedAt == null) {
+      return '';
+    }
+    if (partnerLastReadAt == null) {
+      return '未読';
+    }
+    if (messageCreatedAt.isBefore(partnerLastReadAt)) {
+      return '既読';
+    } else {
+      return '未読';
+    }
   }
 }
 

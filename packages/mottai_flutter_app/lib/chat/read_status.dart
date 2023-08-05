@@ -4,17 +4,16 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../firestore_repository.dart';
 import '../user/user_mode.dart';
 
-
-
+/// チャット相手の最後に読んだ時間を取得する [Provider].
 final chatPartnerLastReadAtProvider =
     Provider.family.autoDispose<DateTime?, ReadChatRoom>((ref, readChatRoom) {
   final readStatus =
-      ref.watch(chatPartnerReadStatusStreamProvider(readChatRoom)).valueOrNull;
+      ref.watch(_chatPartnerReadStatusStreamProvider(readChatRoom)).valueOrNull;
   return readStatus?.lastReadAt.dateTime;
 });
 
-
-final chatPartnerReadStatusStreamProvider =
+/// チャット相手の [ReadStatus] を取得する [StreamProvider].
+final _chatPartnerReadStatusStreamProvider =
     StreamProvider.family.autoDispose<ReadReadStatus?, ReadChatRoom>(
   (ref, readChatRoom) {
     final userMode = ref.watch(userModeStateProvider);
@@ -33,9 +32,6 @@ final chatPartnerReadStatusStreamProvider =
   },
 );
 
-/// 指定した[ReadStatus] の最終既読時間を返す [Provider]
-/// 最終既読時間を読み込みできなかった場合は
-
 final readStatusServiceProvider = Provider.autoDispose<ReadStatusService>(
   (ref) => ReadStatusService(
     readStatusRepository: ref.watch(readStatusRepositoryProvider),
@@ -48,19 +44,8 @@ class ReadStatusService {
 
   final ReadStatusRepository _readStatusRepository;
 
-  /// 指定したチャットルーム ([chatRoomId])、ユーザー ID ([userId]) の [ReadStatus]
-  /// を取得する。
-  Stream<ReadReadStatus?> subscribeReadStatus({
-    required String chatRoomId,
-    required String userId,
-  }) =>
-      _readStatusRepository.subscribeReadStatus(
-        chatRoomId: chatRoomId,
-        userId: userId,
-      );
-
-  /// [ReadStatus] を作成する.
-  Future<void> createReadStatus({
+  /// [ReadStatus] を更新する。
+  Future<void> setReadStatus({
     required String chatRoomId,
     required String userId,
   }) =>

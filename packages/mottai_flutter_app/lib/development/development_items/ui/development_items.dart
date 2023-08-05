@@ -3,7 +3,9 @@ import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../auth/auth.dart';
+import '../../../auth/ui/auth_dependent_builder.dart';
 import '../../../auth/ui/sign_in_buttons.dart';
+import '../../../chat/read_status.dart';
 import '../../../chat/ui/chat_room.dart';
 import '../../../force_update/ui/force_update.dart';
 import '../../../job/ui/job_detail.dart';
@@ -82,22 +84,31 @@ class DevelopmentItemsPage extends ConsumerWidget {
             //   ),
             // ),
           ),
-          ListTile(
-            title: const Text(
-              'チャットルームページ（AsyncNotifier, リアルタイムチャット、無限スクロール、チャット送信、未既読管理）',
-            ),
-            // TODO: 後に auto_route を採用して Navigator.pushNamed を使用する予定
-            onTap: () async {
-              await Navigator.push<void>(
-                context,
-                MaterialPageRoute<void>(
-                  builder: (context) => const ChatRoomPage(),
+          AuthDependentBuilder(
+            onAuthenticated: (userId) {
+              return ListTile(
+                title: const Text(
+                  'チャットルームページ（AsyncNotifier, リアルタイムチャット、無限スクロール、チャット送信、未既読管理）',
                 ),
+                // TODO: 後に auto_route を採用して Navigator.pushNamed を使用する予定
+                onTap: () async {
+                  await Navigator.push<void>(
+                    context,
+                    MaterialPageRoute<void>(
+                      builder: (context) => const ChatRoomPage(),
+                    ),
+                  );
+                  await ref.read(readStatusServiceProvider).setReadStatus(
+                        // TODO: 正しい chatRoomId を渡す。
+                        chatRoomId: 'aSNYpkUofu05nyasvMRx',
+                        userId: userId,
+                      );
+                },
               );
-              // TODO: 下記を実装する
-              // print('いまチャットルームをでた！');
-              // ref.read(readStatusService).updateLastReadAt(lastReadAt: DateTime.now());
             },
+            onUnAuthenticated: () => const ListTile(
+              title: Text('チャットルームページ。ログインしないと使えません。'),
+            ),
           ),
           const ListTile(
             title: Text('ユーザー詳細ページ（ワーカー）'),

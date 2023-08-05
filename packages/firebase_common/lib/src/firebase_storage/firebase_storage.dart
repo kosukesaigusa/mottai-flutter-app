@@ -26,28 +26,28 @@ class FirebaseStorageService {
     required String path,
     required FirebaseStorageResource resource,
   }) async {
-    final imageRef = _firebaseStorage.ref().child(path);
+    final storageRef = _firebaseStorage.ref().child(path);
     switch (resource) {
       case FirebaseStorageFile():
-        await imageRef.putFile(resource.file);
+        await storageRef.putFile(resource.file);
       case FirebaseStorageUrl():
-        await imageRef.putString(resource.url);
+        await storageRef.putString(resource.url);
       case FirebaseStorageRawData():
-        await imageRef.putData(resource.data);
+        await storageRef.putData(resource.data);
     }
-    return imageRef.getDownloadURL();
+    return storageRef.getDownloadURL();
   }
 
   /// 指定された [path] のリソースのダウンロードURLを取得する。
   Future<String> getDownloadURL({required String path}) async {
-    final imageRef = _firebaseStorage.ref().child(path);
-    return imageRef.getDownloadURL();
+    final storageRef = _firebaseStorage.ref().child(path);
+    return storageRef.getDownloadURL();
   }
 
   /// 指定された [path] のリソースを削除する。
   Future<void> delete({required String path}) async {
-    final imageRef = _firebaseStorage.ref().child(path);
-    return imageRef.delete();
+    final storageRef = _firebaseStorage.ref().child(path);
+    return storageRef.delete();
   }
 
   /// 指定された [path] のリソースのバイトデータを取得する。
@@ -59,8 +59,8 @@ class FirebaseStorageService {
     int byte = 1024,
   }) async {
     final megaByte = byte * byte;
-    final imageRef = _firebaseStorage.ref().child(path);
-    return imageRef.getData(megaByte);
+    final storageRef = _firebaseStorage.ref().child(path);
+    return storageRef.getData(megaByte);
   }
 
   /// 指定された [path] のすべてのリファレンス（ファイルとディレクトリ）を取得する。
@@ -74,7 +74,7 @@ class FirebaseStorageService {
   ///
   /// [maxResults] は、取得する結果の最大数を指定する。
   /// [pageToken] は、次のセットの結果を取得するためのページネーションに使用される。
-  Future<ListResult> fetchList({
+  Future<ListResult> fetchReferences({
     required String path,
     int maxResults = 100,
     String? pageToken,

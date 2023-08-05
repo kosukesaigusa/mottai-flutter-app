@@ -138,7 +138,7 @@ class _ImagePickSampleState extends ConsumerState<ImagePickSample> {
       final result = await ref
           .read(appScaffoldMessengerControllerProvider)
           .showDialogByBuilder<bool>(
-            builder: (context) => const _AccessNotDeniedDialog.gallery(),
+            builder: (context) => const AccessNotDeniedDialog.gallery(),
           );
       if (result ?? false) {
         await openAppSettings();
@@ -162,7 +162,7 @@ class _ImagePickSampleState extends ConsumerState<ImagePickSample> {
       final result = await ref
           .read(appScaffoldMessengerControllerProvider)
           .showDialogByBuilder<bool>(
-            builder: (context) => const _AccessNotDeniedDialog.camera(),
+            builder: (context) => const AccessNotDeniedDialog.camera(),
           );
       if (result ?? false) {
         await openAppSettings();
@@ -188,7 +188,7 @@ class _ImagePickSampleState extends ConsumerState<ImagePickSample> {
       final result = await ref
           .read(appScaffoldMessengerControllerProvider)
           .showDialogByBuilder<bool>(
-            builder: (context) => const _AccessNotDeniedDialog.camera(),
+            builder: (context) => const AccessNotDeniedDialog.camera(),
           );
       if (result ?? false) {
         await openAppSettings();
@@ -200,10 +200,12 @@ class _ImagePickSampleState extends ConsumerState<ImagePickSample> {
 /// 端末の画像ライブラリやカメラへのアクセスが許可されていない場合に表示する
 /// [AlertDialog]. permission_handler パッケージの [openAppSettings] メソッドで
 /// 設定画面に進ませる。
-class _AccessNotDeniedDialog extends StatelessWidget {
-  const _AccessNotDeniedDialog.gallery() : _imageSource = ImageSource.gallery;
+class AccessNotDeniedDialog extends StatelessWidget {
+  const AccessNotDeniedDialog.gallery({super.key})
+      : _imageSource = ImageSource.gallery;
 
-  const _AccessNotDeniedDialog.camera() : _imageSource = ImageSource.camera;
+  const AccessNotDeniedDialog.camera({super.key})
+      : _imageSource = ImageSource.camera;
 
   final ImageSource _imageSource;
 

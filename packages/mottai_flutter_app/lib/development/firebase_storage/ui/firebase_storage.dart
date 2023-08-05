@@ -47,7 +47,7 @@ class _FirebaseStorageSampleState
       appBar: AppBar(
         title: const Text('FirebaseStorageを使用するサンプル画面'),
       ),
-      body: Column(
+      body: ListView(
         children: [
           const Gap(8),
           SizedBox(

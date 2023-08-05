@@ -10,6 +10,7 @@ import '../../color.dart';
 import '../../error/ui/error.dart';
 import '../../user/user_mode.dart';
 import '../chat_room.dart';
+import '../read_status.dart';
 
 /// このファイルの複数箇所で指定している水平方向の Padding。
 const double _horizontalPadding = 8;
@@ -67,12 +68,14 @@ class _ChatRoomPageState extends ConsumerState<ChatRoomPage> {
       return const UnavailablePage('チャットルームの情報の取得に失敗しました。');
     }
     final state = ref.watch(chatRoomStateNotifierProvider);
+    final partnerDisplayName =
+        ref.watch(chatPartnerDisplayNameProvider(readChatRoom));
     return Scaffold(
       appBar: AppBar(
         // TODO: chatPartnerImageUrlProvider を真似して、chatPartnerNameProvider
         // を定義して（それに必要な workerNameProvider, hostNameProvider）、
         // AppBart のタイトルを適切なパートナ名にする。
-        title: const Text('相手の名前'),
+        title: Text(partnerDisplayName),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -113,10 +116,13 @@ class _ChatRoomPageState extends ConsumerState<ChatRoomPage> {
                         const Gap(24),
                       ],
                     ),
-                    const Positioned(
+                    Positioned(
                       child: Align(
                         alignment: Alignment.topCenter,
-                        child: _DebugIndicator(chatRoomId: chatRoomId),
+                        child: _DebugIndicator(
+                          chatRoomId: chatRoomId,
+                          readChatRoom: readChatRoom,
+                        ),
                       ),
                     ),
                   ],
@@ -168,13 +174,15 @@ class _ChatMessageItem extends ConsumerWidget {
                 if (!isMyMessage) ...[
                   Text(partnerDisplayName),
                   if (partnerImageUrl.isEmpty)
-                    const Icon(Icons.account_circle)
+                    const Icon(
+                      Icons.account_circle,
+                      size: _senderIconSize * 2,
+                    )
                   else
                     // TODO: 汎用的な画像ウィジェットができたら丸形に差し替える
-                    SizedBox(
-                      width: _senderIconSize,
-                      height: _senderIconSize,
-                      child: Image.network(partnerImageUrl),
+                    GenericImage.circle(
+                      imageUrl: partnerImageUrl,
+                      size: _senderIconSize * 2,
                     ),
                 ],
                 Container(
@@ -348,15 +356,25 @@ class _MessageTextFieldState extends ConsumerState<_MessageTextField> {
 // TODO: 後で消す
 /// 開発時のみ表示する、無限スクロールのデバッグ用ウィジェット。
 class _DebugIndicator extends ConsumerWidget {
-  const _DebugIndicator({required this.chatRoomId});
+  const _DebugIndicator({
+    required this.chatRoomId,
+    required this.readChatRoom,
+  });
 
   final String chatRoomId;
+
+  final ReadChatRoom readChatRoom;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(chatRoomStateNotifierProvider);
     final readChatMessages = state.readChatMessages;
     final lastReadChatMessageId = state.lastReadChatMessageId;
+    final partnerLastReadAt = ref.watch(
+      chatPartnerLastReadAtProvider(
+        readChatRoom,
+      ),
+    );
     return Container(
       width: double.infinity,
       margin: const EdgeInsets.only(top: 16, left: 16, right: 16),
@@ -407,6 +425,13 @@ class _DebugIndicator extends ConsumerWidget {
                   .bodySmall!
                   .copyWith(color: Colors.white),
             ),
+          Text(
+            'パートナーの既読時間：$partnerLastReadAt',
+            style: Theme.of(context)
+                .textTheme
+                .bodySmall!
+                .copyWith(color: Colors.white),
+          ),
           const Gap(8),
         ],
       ),

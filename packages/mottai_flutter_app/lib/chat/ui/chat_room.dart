@@ -53,7 +53,9 @@ class _ChatRoomPageState extends ConsumerState<ChatRoomPage> {
         final scrollValue = _scrollController.offset /
             _scrollController.position.maxScrollExtent;
         if (scrollValue > _scrollValueThreshold) {
-          await ref.read(chatRoomStateNotifierProvider.notifier).loadMore();
+          await ref
+              .read(chatRoomStateNotifierProvider(widget.chatRoomId).notifier)
+              .loadMore();
         }
       });
     super.initState();
@@ -75,7 +77,7 @@ class _ChatRoomPageState extends ConsumerState<ChatRoomPage> {
       // TODO: この実装だと、loading 中に UnavailablePage がちらっと見えそうなので改善したい。
       return const UnavailablePage('チャットルームの情報の取得に失敗しました。');
     }
-    final state = ref.watch(chatRoomStateNotifierProvider);
+    final state = ref.watch(chatRoomStateNotifierProvider(widget.chatRoomId));
     return Scaffold(
       appBar: AppBar(
         // TODO: chatPartnerImageUrlProvider を真似して、chatPartnerNameProvider
@@ -318,7 +320,7 @@ class _MessageTextFieldState extends ConsumerState<_MessageTextField> {
               return;
             }
             await ref
-                .read(chatRoomStateNotifierProvider.notifier)
+                .read(chatRoomStateNotifierProvider(widget.chatRoomId).notifier)
                 .sendChatMessage(
                   senderId: widget.userId,
                   chatMessageType: _chatMessageType(userMode),
@@ -363,7 +365,7 @@ class _DebugIndicator extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(chatRoomStateNotifierProvider);
+    final state = ref.watch(chatRoomStateNotifierProvider(chatRoomId));
     final readChatMessages = state.readChatMessages;
     final lastReadChatMessageId = state.lastReadChatMessageId;
     return Container(

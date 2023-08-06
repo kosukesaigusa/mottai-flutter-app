@@ -1,3 +1,4 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -20,6 +21,7 @@ import '../../sample_todo/ui/sample_todos.dart';
 import '../../web_link/web_link_stub.dart';
 
 /// 開発中の各ページへの導線を表示するページ。
+@RoutePage()
 class DevelopmentItemsPage extends ConsumerWidget {
   const DevelopmentItemsPage({super.key});
 
@@ -88,12 +90,8 @@ class DevelopmentItemsPage extends ConsumerWidget {
             title: const Text(
               'チャットルームページ（AsyncNotifier, リアルタイムチャット、無限スクロール、チャット送信、未既読管理）',
             ),
-            // TODO: 後に auto_route を採用して Navigator.pushNamed を使用する予定
-            onTap: () => Navigator.push<void>(
-              context,
-              MaterialPageRoute<void>(
-                builder: (context) => const ChatRoomPage(),
-              ),
+            onTap: () => context.router.pushNamed(
+              ChatRoomPage.location(chatRoomId: 'aSNYpkUofu05nyasvMRx'),
             ),
           ),
           const ListTile(

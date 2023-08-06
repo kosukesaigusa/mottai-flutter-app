@@ -8,6 +8,8 @@ import '../../../chat/ui/chat_room.dart';
 import '../../../chat/ui/chat_rooms.dart';
 import '../../../job/ui/job_detail.dart';
 import '../../../map/ui/map.dart';
+import '../../../package_info.dart';
+import '../../../push_notification/firebase_messaging.dart';
 import '../../../scaffold_messenger_controller.dart';
 import '../../../user/user.dart';
 import '../../../user/user_mode.dart';
@@ -23,7 +25,7 @@ import '../../web_link/ui/web_link_stub.dart';
 
 /// 開発中の各ページへの導線を表示するページ。
 @RoutePage()
-class DevelopmentItemsPage extends ConsumerWidget {
+class DevelopmentItemsPage extends StatefulHookConsumerWidget {
   const DevelopmentItemsPage({super.key});
 
   /// [AutoRoute] で指定するパス文字列。
@@ -33,7 +35,22 @@ class DevelopmentItemsPage extends ConsumerWidget {
   static const location = path;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<DevelopmentItemsPage> createState() =>
+      _DevelopmentItemsPageState();
+}
+
+class _DevelopmentItemsPageState extends ConsumerState<DevelopmentItemsPage> {
+  @override
+  void initState() {
+    super.initState();
+    Future.wait<void>([
+      ref.read(initializeFirebaseMessagingProvider)(),
+      ref.read(getFcmTokenProvider)(),
+    ]);
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('開発ページ'),
@@ -231,13 +248,14 @@ class _DrawerChildState extends ConsumerState<_DrawerChild> {
 
   @override
   Widget build(BuildContext context) {
+    final packageInfo = ref.watch(packageInfoProvider);
     return ListView(
       children: [
         DrawerHeader(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('mottai-app-dev'),
+              Text(packageInfo.packageName),
               if (ref.watch(isHostProvider)) ...[
                 const Gap(8),
                 Text(

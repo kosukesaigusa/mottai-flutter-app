@@ -5,6 +5,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 
 import 'firebase_options.dart';
 import 'package_info.dart';
+import 'push_notification/firebase_messaging.dart';
 import 'router/router.dart';
 import 'scaffold_messenger_controller.dart';
 import 'user/user.dart';
@@ -23,6 +24,8 @@ void main() async {
     ProviderScope(
       overrides: [
         packageInfoProvider.overrideWithValue(await PackageInfo.fromPlatform()),
+        firebaseMessagingProvider
+            .overrideWithValue(await getFirebaseMessagingInstance()),
         userModeStateProvider.overrideWith(
           (ref) => hostDocumentExists ? UserMode.host : UserMode.worker,
         ),

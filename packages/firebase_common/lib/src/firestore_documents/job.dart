@@ -5,7 +5,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'job.flutterfire_gen.dart';
 
-@FirestoreDocument(path: 'jobs', documentName: 'jobs')
+@FirestoreDocument(path: 'jobs', documentName: 'job')
 class Job {
   const Job({
     required this.hostId,
@@ -17,7 +17,6 @@ class Job {
     required this.belongings,
     required this.reward,
     this.comment = '',
-    this.urls = const <String>[],
     this.createdAt = const ServerTimestamp(),
     this.updatedAt = const ServerTimestamp(),
   });
@@ -45,8 +44,6 @@ class Job {
   final String reward;
 
   final String comment;
-
-  final List<String> urls;
 
   // TODO: やや冗長になってしまっているのは、flutterfire_gen と
   // flutterfire_json_converters の作りのため。それらのパッケージが更新されたら

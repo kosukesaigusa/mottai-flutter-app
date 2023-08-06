@@ -17,7 +17,6 @@ class ReadJob {
     required this.belongings,
     required this.reward,
     required this.comment,
-    required this.urls,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -44,8 +43,6 @@ class ReadJob {
 
   final String comment;
 
-  final List<String> urls;
-
   final SealedTimestamp createdAt;
 
   final SealedTimestamp updatedAt;
@@ -66,9 +63,6 @@ class ReadJob {
       belongings: json['belongings'] as String? ?? '',
       reward: json['reward'] as String? ?? '',
       comment: json['comment'] as String? ?? '',
-      urls:
-          (json['urls'] as List<dynamic>?)?.map((e) => e as String).toList() ??
-              const <String>[],
       createdAt: json['createdAt'] == null
           ? const ServerTimestamp()
           : sealedTimestampConverter.fromJson(json['createdAt'] as Object),
@@ -100,7 +94,6 @@ class CreateJob {
     required this.belongings,
     required this.reward,
     this.comment = '',
-    this.urls = const <String>[],
     this.createdAt = const ServerTimestamp(),
     this.updatedAt = const ServerTimestamp(),
   });
@@ -114,7 +107,6 @@ class CreateJob {
   final String belongings;
   final String reward;
   final String comment;
-  final List<String> urls;
   final SealedTimestamp createdAt;
   final SealedTimestamp updatedAt;
 
@@ -129,7 +121,6 @@ class CreateJob {
       'belongings': belongings,
       'reward': reward,
       'comment': comment,
-      'urls': urls,
       'createdAt': sealedTimestampConverter.toJson(createdAt),
       'updatedAt':
           alwaysUseServerTimestampSealedTimestampConverter.toJson(updatedAt),
@@ -148,7 +139,6 @@ class UpdateJob {
     this.belongings,
     this.reward,
     this.comment,
-    this.urls,
     this.createdAt,
     this.updatedAt = const ServerTimestamp(),
   });
@@ -162,7 +152,6 @@ class UpdateJob {
   final String? belongings;
   final String? reward;
   final String? comment;
-  final List<String>? urls;
   final SealedTimestamp? createdAt;
   final SealedTimestamp? updatedAt;
 
@@ -178,7 +167,6 @@ class UpdateJob {
       if (belongings != null) 'belongings': belongings,
       if (reward != null) 'reward': reward,
       if (comment != null) 'comment': comment,
-      if (urls != null) 'urls': urls,
       if (createdAt != null)
         'createdAt': sealedTimestampConverter.toJson(createdAt!),
       'updatedAt': updatedAt == null
@@ -195,7 +183,7 @@ final readJobCollectionReference =
           toFirestore: (obj, _) => throw UnimplementedError(),
         );
 
-/// A [DocumentReference] to hostLocation document to read.
+/// A [DocumentReference] to job document to read.
 DocumentReference<ReadJob> readJobDocumentReference({
   required String jobId,
 }) =>
@@ -208,7 +196,7 @@ final createJobCollectionReference =
           toFirestore: (obj, _) => obj.toJson(),
         );
 
-/// A [DocumentReference] to hostLocation document to create.
+/// A [DocumentReference] to job document to create.
 DocumentReference<CreateJob> createJobDocumentReference({
   required String jobId,
 }) =>
@@ -221,7 +209,7 @@ final updateJobCollectionReference =
           toFirestore: (obj, _) => obj.toJson(),
         );
 
-/// A [DocumentReference] to hostLocation document to update.
+/// A [DocumentReference] to job document to update.
 DocumentReference<UpdateJob> updateJobDocumentReference({
   required String jobId,
 }) =>
@@ -231,7 +219,7 @@ DocumentReference<UpdateJob> updateJobDocumentReference({
 final deleteJobCollectionReference =
     FirebaseFirestore.instance.collection('jobs');
 
-/// A [DocumentReference] to hostLocation document to delete.
+/// A [DocumentReference] to job document to delete.
 DocumentReference<Object?> deleteJobDocumentReference({
   required String jobId,
 }) =>

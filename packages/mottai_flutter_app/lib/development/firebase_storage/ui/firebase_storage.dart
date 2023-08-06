@@ -37,7 +37,6 @@ class _FirebaseStorageSampleState
     final controller = ref.watch(firebaseStorageControllerProvider);
     final pickedImageFile = ref.watch(pickedImageFileStateProvider);
     final uploadedImageUrl = ref.watch(uploadedImageUrlStateProvider);
-    final uploadedImagePath = ref.watch(uploadedImagePathStateProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -98,7 +97,9 @@ class _FirebaseStorageSampleState
             Column(
               children: [
                 ElevatedButton(
-                  onPressed: () => controller.deleteImage(uploadedImagePath),
+                  onPressed: () => controller.deleteImage(
+                    ref.watch(uploadedImagePathStateProvider),
+                  ),
                   child: const Text('DELETE'),
                 ),
                 Text(uploadedImageUrl),

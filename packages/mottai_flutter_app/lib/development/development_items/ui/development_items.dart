@@ -5,6 +5,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../auth/auth.dart';
 import '../../../chat/ui/chat_room.dart';
+import '../../../chat/ui/chat_rooms.dart';
 import '../../../job/ui/job_detail.dart';
 import '../../../map/ui/map.dart';
 import '../../../scaffold_messenger_controller.dart';
@@ -60,33 +61,17 @@ class DevelopmentItemsPage extends ConsumerWidget {
               'マップページ (geoflutterfire_plus, flutter_google_maps, '
               'geolocator, PageView)',
             ),
-            // TODO: 後に auto_route を採用して Navigator.pushNamed を使用する予定
-            onTap: () => Navigator.push<void>(
-              context,
-              MaterialPageRoute<void>(
-                builder: (context) => const MapPage(),
-              ),
-            ),
+            onTap: () => context.router.pushNamed(MapPage.location),
           ),
           ListTile(
             title: const Text('仕事詳細ページ (FutureProvider)'),
-            // TODO: 後に auto_route を採用して Navigator.pushNamed を使用する予定
-            onTap: () => Navigator.push<void>(
-              context,
-              MaterialPageRoute<void>(
-                builder: (context) => const JobDetailPage(),
-              ),
+            onTap: () => context.router.pushNamed(
+              JobDetailPage.location(jobId: 'PYRsrMSOApEgZ6lzMuUK'),
             ),
           ),
-          const ListTile(
-            title: Text('チャットルーム一覧ページ（StreamProvider、未既読管理）'),
-            // TODO: 後に auto_route を採用して Navigator.pushNamed を使用する予定
-            // onTap: () => Navigator.push<void>(
-            //   context,
-            //   MaterialPageRoute<void>(
-            //     builder: (context) => FooPage(),
-            //   ),
-            // ),
+          ListTile(
+            title: const Text('チャットルーム一覧ページ（StreamProvider、未既読管理）'),
+            onTap: () => context.router.pushNamed(ChatRoomsPage.location),
           ),
           ListTile(
             title: const Text(
@@ -97,56 +82,30 @@ class DevelopmentItemsPage extends ConsumerWidget {
             ),
           ),
           const ListTile(
-            title: Text('ユーザー詳細ページ（ワーカー）'),
-            // TODO: 後に auto_route を採用して Navigator.pushNamed を使用する予定
-            // onTap: () => Navigator.push<void>(
-            //   context,
-            //   MaterialPageRoute<void>(
-            //     builder: (context) => FooPage(),
-            //   ),
+            title: Text('ワーカーページ'),
+            // onTap: () => context.router.pushNamed(
+            //   WorkerPage.location('WORKER_ID_HERE'),
             // ),
           ),
           const ListTile(
-            title: Text('ユーザー情報編集ページ（ワーカー）'),
-            // TODO: 後に auto_route を採用して Navigator.pushNamed を使用する予定
-            // onTap: () => Navigator.push<void>(
-            //   context,
-            //   MaterialPageRoute<void>(
-            //     builder: (context) => FooPage(),
-            //   ),
+            title: Text('ワーカー情報編集ページ'),
+            // onTap: () => context.router.pushNamed(
+            //   UpdateWorkerPage.location('WORKER_ID_HERE'),
+            // ),
+          ),
+          const ListTile(
+            title: Text('ホストページ'),
+            // onTap: () => context.router.pushNamed(
+            //   HOSTPage.location('HOST_ID_HERE'),
             // ),
           ),
           const ListTile(
             title: Text(
-              'ホストとして登録ページ (Notifier, geoflutterfire_plus, '
+              'ホストとして登録ページ (StateNotifier?, geoflutterfire_plus, '
               'flutter_google_maps, geolocator)',
             ),
-            // TODO: 後に auto_route を採用して Navigator.pushNamed を使用する予定
-            // onTap: () => Navigator.push<void>(
-            //   context,
-            //   MaterialPageRoute<void>(
-            //     builder: (context) => FooPage(),
-            //   ),
-            // ),
-          ),
-          const ListTile(
-            title: Text('ユーザー詳細ページ（ホスト）'),
-            // TODO: 後に auto_route を採用して Navigator.pushNamed を使用する予定
-            // onTap: () => Navigator.push<void>(
-            //   context,
-            //   MaterialPageRoute<void>(
-            //     builder: (context) => FooPage(),
-            //   ),
-            // ),
-          ),
-          const ListTile(
-            title: Text('ユーザー情報編集ページ（ホスト）'),
-            // TODO: 後に auto_route を採用して Navigator.pushNamed を使用する予定
-            // onTap: () => Navigator.push<void>(
-            //   context,
-            //   MaterialPageRoute<void>(
-            //     builder: (context) => FooPage(),
-            //   ),
+            // onTap: () => context.router.pushNamed(
+            //   CreateOrUpdateHostPage.location('HOST_ID_HERE'),
             // ),
           ),
           const Divider(),
@@ -164,13 +123,8 @@ class DevelopmentItemsPage extends ConsumerWidget {
           ),
           const ListTile(
             title: Text('画像アップロード'),
-            // TODO: 後に auto_route を採用して Navigator.pushNamed を使用する予定
-            // onTap: () => Navigator.push<void>(
-            //   context,
-            //   MaterialPageRoute<void>(
-            //     builder: (context) => FooPage(),
-            //   ),
-            // ),
+            // onTap: () =>
+            //     context.router.pushNamed(FirebaseStorageSamplePage.location),
           ),
           ListTile(
             title: const Text('強制アップデート'),

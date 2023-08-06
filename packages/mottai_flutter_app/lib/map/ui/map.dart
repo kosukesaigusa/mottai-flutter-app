@@ -1,3 +1,4 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -5,11 +6,14 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../geolocator.dart';
 import 'geolocator_controller.dart';
 
+@RoutePage()
 class MapPage extends ConsumerWidget {
   const MapPage({super.key});
 
+  /// [AutoRoute] で指定するパス文字列。
   static const path = '/map';
-  static const name = 'MapPage';
+
+  /// [MapPage] に遷移する際に `context.router.pushNamed` で指定する文字列。
   static const location = path;
 
   @override

@@ -1,25 +1,30 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:dart_flutter_common/dart_flutter_common.dart';
 import 'package:firebase_common/firebase_common.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../firestore_repository.dart';
 import '../../user/host.dart';
+import '../job.dart';
 
-final jobFutureProvider =
-    FutureProvider.family.autoDispose<ReadJob?, String>((ref, id) async {
-  final repository = ref.watch<JobRepository>(jobRepositoryProvider);
-  return repository.fetchJob(jobId: id);
-});
-
+/// 仕事詳細ページ。
+@RoutePage()
 class JobDetailPage extends ConsumerWidget {
   const JobDetailPage({
+    @PathParam('jobId') required this.jobId,
     super.key,
   });
 
+  /// [AutoRoute] で指定するパス文字列。
+  static const path = '/jobs/:jobId';
+
+  /// [JobDetailPage] に遷移する際に `context.router.pushNamed` で指定する文字列。
+  static String location({required String jobId}) => '/jobs/$jobId';
+
+  final String jobId;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    const jobId = 'PYRsrMSOApEgZ6lzMuUK'; //TODO: URLからJobIdを取得する
     return Scaffold(
       appBar: AppBar(title: const Text('お手伝い募集')),
       // Jobの読み込み状態によって表示を変更

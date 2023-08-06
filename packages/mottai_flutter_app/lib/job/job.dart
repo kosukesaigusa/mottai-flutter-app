@@ -3,8 +3,9 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../firestore_repository.dart';
 
+/// 指定した [Job] を取得する [FutureProvider].
 final jobFutureProvider = FutureProvider.family.autoDispose<ReadJob?, String>(
-  (ref, id) => ref.watch(jobServiceProvider).fetchJob(jobId: id),
+  (ref, jobId) => ref.watch(jobServiceProvider).fetchJob(jobId: jobId),
 );
 
 final jobServiceProvider = Provider.autoDispose<JobService>(

@@ -8,7 +8,7 @@ class UserSocialLoginRepository {
       _query.subscribeDocument(userSocialLoginId: userId);
 
   /// いずれかのソーシャルログインが初めて行われた際に、 [UserSocialLogin] を作成する。
-  /// 
+  ///
   /// そのソーシャルログインにかかるプロパティのみ `true` とし、それ以外は `false` で作成する。
   /// [UserSocialLogin] が既に存在する状態で実行すると、意図せずにプロパティの値が `false` になる可能性があるため注意すること。
   Future<void> setUserSocialLogin({

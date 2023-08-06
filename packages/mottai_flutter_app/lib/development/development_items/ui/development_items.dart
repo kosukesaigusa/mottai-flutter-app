@@ -4,29 +4,31 @@ import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../auth/auth.dart';
-import '../../../auth/ui/sign_in_buttons.dart';
 import '../../../chat/ui/chat_room.dart';
-import '../../../force_update/ui/force_update.dart';
 import '../../../job/ui/job_detail.dart';
 import '../../../map/ui/map.dart';
 import '../../../scaffold_messenger_controller.dart';
 import '../../../user/user.dart';
 import '../../../user/user_mode.dart';
 import '../../color/ui/color.dart';
-import '../../generic_image/generic_image.dart';
-import '../../image_detail_view/image_detail_view_stub.dart';
+import '../../force_update/ui/force_update.dart';
+import '../../generic_image/ui/generic_images.dart';
+import '../../image_detail_view/ui/image_detail_view_stub.dart';
 import '../../image_picker/ui/image_picker_sample.dart';
 import '../../in_review/ui/in_review.dart';
 import '../../sample_todo/ui/sample_todos.dart';
-import '../../web_link/web_link_stub.dart';
+import '../../sign_in/ui/sign_in.dart';
+import '../../web_link/ui/web_link_stub.dart';
 
 /// 開発中の各ページへの導線を表示するページ。
 @RoutePage()
 class DevelopmentItemsPage extends ConsumerWidget {
   const DevelopmentItemsPage({super.key});
 
+  /// [AutoRoute] で指定するパス文字列。
   static const path = '/developmentItems';
-  static const name = 'DevelopmentItemsPage';
+
+  /// [DevelopmentItemsPage] に遷移する際に `context.router.pushNamed` で指定する文字列。
   static const location = path;
 
   @override
@@ -157,13 +159,8 @@ class DevelopmentItemsPage extends ConsumerWidget {
           ),
           ListTile(
             title: const Text('画像選択・圧縮（1 枚 or 複数）'),
-            // TODO: 後に auto_route を採用して Navigator.pushNamed を使用する予定
-            onTap: () => Navigator.push<void>(
-              context,
-              MaterialPageRoute<void>(
-                builder: (context) => const ImagePickSample(),
-              ),
-            ),
+            onTap: () =>
+                context.router.pushNamed(ImagePickerSamplePage.location),
           ),
           const ListTile(
             title: Text('画像アップロード'),
@@ -175,101 +172,46 @@ class DevelopmentItemsPage extends ConsumerWidget {
             //   ),
             // ),
           ),
-          const ListTile(
-            title: Text('強制アップデート'),
-            // TODO: 後に auto_route を採用して Navigator.pushNamed を使用する予定
-            // onTap: () => Navigator.push<void>(
-            //   context,
-            //   MaterialPageRoute<void>(
-            //     builder: (context) => FooPage(),
-            //   ),
-            // ),
-          ),
-          const ListTile(
-            title: Text('レビュー中管理'),
-            // TODO: 後に auto_route を採用して Navigator.pushNamed を使用する予定
-            // onTap: () => Navigator.push<void>(
-            //   context,
-            //   MaterialPageRoute<void>(
-            //     builder: (context) => FooPage(),
-            //   ),
-            // ),
+          ListTile(
+            title: const Text('強制アップデート'),
+            onTap: () =>
+                context.router.pushNamed(ForceUpdateSamplePage.location),
           ),
           ListTile(
-            title: const Text('サインイン (Google, Apple)'),
-            // TODO: 後に auto_route を採用して Navigator.pushNamed を使用する予定
-            onTap: () => Navigator.push<void>(
-              context,
-              MaterialPageRoute<void>(
-                builder: (context) => const GoogleAppleSignin(),
-              ),
-            ),
+            title: const Text('レビュー中かどうか'),
+            onTap: () => context.router.pushNamed(InReviewPage.location),
           ),
-          const ListTile(
-            title: Text('サインイン (LINE, Firebase Functions)'),
-            // TODO: 後に auto_route を採用して Navigator.pushNamed を使用する予定
-            // onTap: () => Navigator.push<void>(
-            //   context,
-            //   MaterialPageRoute<void>(
-            //     builder: (context) => FooPage(),
-            //   ),
-            // ),
+          ListTile(
+            title: const Text('サインイン (Google, Apple, LINE)'),
+            onTap: () => context.router.pushNamed(SignInSamplePage.location),
           ),
           const ListTile(
             title: Text('FCM トークン（トークン追加, device_info_plus）'),
-            // TODO: 後に auto_route を採用して Navigator.pushNamed を使用する予定
-            // onTap: () => Navigator.push<void>(
-            //   context,
-            //   MaterialPageRoute<void>(
-            //     builder: (context) => FooPage(),
-            //   ),
-            // ),
+            // onTap: () => context.router.pushNamed(FcmTokenPage.location),
           ),
           const ListTile(
             title: Text(
               '通知 (firebase_messaging, local_notification, dynamic_links)',
             ),
-            // TODO: 後に auto_route を採用して Navigator.pushNamed を使用する予定
-            // onTap: () => Navigator.push<void>(
-            //   context,
-            //   MaterialPageRoute<void>(
-            //     builder: (context) => FooPage(),
-            //   ),
-            // ),
+            // onTap: () =>
+            //     context.router.pushNamed(FirebaseMessagingPage.location),
           ),
           ListTile(
-            title: const Text('Components'),
-            // TODO: 後に auto_route を採用して Navigator.pushNamed を使用する予定
-            onTap: () => Navigator.push<void>(
-              context,
-              MaterialPageRoute<void>(
-                builder: (context) => const GenericImages(),
-              ),
-            ),
+            title: const Text('汎用画像ウィジェット'),
+            onTap: () => context.router.pushNamed(GenericImagesPage.location),
           ),
           ListTile(
             title: const Text(
               '画像の詳細拡大画面サンプル',
             ),
-            // TODO: 後に auto_route を採用して Navigator.pushNamed を使用する予定
-            onTap: () => Navigator.push<void>(
-              context,
-              MaterialPageRoute<void>(
-                builder: (context) => const ImageDetailViewStubPage(),
-              ),
-            ),
+            onTap: () =>
+                context.router.pushNamed(ImageDetailViewStubPage.location),
           ),
           ListTile(
             title: const Text(
               'WebLinkサンプル',
             ),
-            // TODO: 後に auto_route を採用して Navigator.pushNamed を使用する予定
-            onTap: () => Navigator.push<void>(
-              context,
-              MaterialPageRoute<void>(
-                builder: (context) => const WebLinkStubPage(),
-              ),
-            ),
+            onTap: () => context.router.pushNamed(WebLinkStubPage.location),
           ),
           const Divider(),
           Padding(
@@ -279,13 +221,7 @@ class DevelopmentItemsPage extends ConsumerWidget {
               style: Theme.of(context).textTheme.titleLarge,
             ),
           ),
-          const ListTile(
-            title: Text(
-              'ルーティング (auto_route, BottomNavigationBar, AuthGuard、権限管理)',
-            ),
-          ),
           const ListTile(title: Text('Security Rules')),
-          const ListTile(title: Text('ホスト運営登録承認')),
           const ListTile(title: Text('お問い合わせ')),
           const ListTile(title: Text('不適切 UGC の通報 or 非表示')),
           const Divider(),
@@ -300,49 +236,13 @@ class DevelopmentItemsPage extends ConsumerWidget {
             title: const Text(
               'Todo 一覧ページ',
             ),
-            // TODO: 後に auto_route を採用して Navigator.pushNamed を使用する予定
-            onTap: () => Navigator.push<void>(
-              context,
-              MaterialPageRoute<void>(
-                builder: (context) => const SampleTodosPage(),
-              ),
-            ),
+            onTap: () => context.router.pushNamed(SampleTodosPage.location),
           ),
           ListTile(
             title: const Text(
               '色の確認',
             ),
-            // TODO: 後に auto_route を採用して Navigator.pushNamed を使用する予定
-            onTap: () => Navigator.push<void>(
-              context,
-              MaterialPageRoute<void>(
-                builder: (context) => const ColorPage(),
-              ),
-            ),
-          ),
-          ListTile(
-            title: const Text(
-              'forceUpdateページ',
-            ),
-            // TODO: 後に auto_route を採用して Navigator.pushNamed を使用する予定
-            onTap: () => Navigator.push<void>(
-              context,
-              MaterialPageRoute<void>(
-                builder: (context) => const ForceUpdatePage(),
-              ),
-            ),
-          ),
-          ListTile(
-            title: const Text(
-              'inReviewページ',
-            ),
-            // TODO: 後に auto_route を採用して Navigator.pushNamed を使用する予定
-            onTap: () => Navigator.push<void>(
-              context,
-              MaterialPageRoute<void>(
-                builder: (context) => const InReviewPage(),
-              ),
-            ),
+            onTap: () => context.router.pushNamed(ColorPage.location),
           ),
         ],
       ),

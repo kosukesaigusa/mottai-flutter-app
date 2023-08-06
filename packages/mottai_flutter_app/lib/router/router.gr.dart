@@ -14,8 +14,6 @@ import 'package:mottai_flutter_app/chat/ui/chat_room.dart' as _i1;
 import 'package:mottai_flutter_app/chat/ui/chat_rooms.dart' as _i2;
 import 'package:mottai_flutter_app/development/color/ui/color.dart' as _i3;
 import 'package:mottai_flutter_app/development/development_items/ui/development_items.dart'
-    as _i4;
-import 'package:mottai_flutter_app/development/firebase_storage/ui/firebase_storage.dart'
     as _i5;
 import 'package:mottai_flutter_app/development/force_update/ui/force_update.dart'
     as _i6;
@@ -28,13 +26,14 @@ import 'package:mottai_flutter_app/development/image_picker/ui/image_picker_samp
 import 'package:mottai_flutter_app/development/in_review/ui/in_review.dart'
     as _i10;
 import 'package:mottai_flutter_app/development/sample_todo/ui/sample_todos.dart'
-    as _i14;
-import 'package:mottai_flutter_app/development/sign_in/ui/sign_in.dart' as _i15;
+    as _i13;
+import 'package:mottai_flutter_app/development/sign_in/ui/sign_in.dart' as _i14;
 import 'package:mottai_flutter_app/development/web_link/ui/web_link_stub.dart'
-    as _i16;
+    as _i15;
+import 'package:mottai_flutter_app/host/ui/create_or_update_host.dart' as _i4;
 import 'package:mottai_flutter_app/job/ui/job_detail.dart' as _i11;
 import 'package:mottai_flutter_app/map/ui/map.dart' as _i12;
-import 'package:mottai_flutter_app/root/ui/root.dart' as _i13;
+import 'package:mottai_flutter_app/worker/ui/worker.dart' as _i16;
 
 abstract class $AppRouter extends _i17.RootStackRouter {
   $AppRouter({super.navigatorKey});
@@ -66,16 +65,23 @@ abstract class $AppRouter extends _i17.RootStackRouter {
         child: const _i3.ColorPage(),
       );
     },
+    CreateOrUpdateHostRoute.name: (routeData) {
+      final pathParams = routeData.inheritedPathParams;
+      final args = routeData.argsAs<CreateOrUpdateHostRouteArgs>(
+          orElse: () => CreateOrUpdateHostRouteArgs(
+              userId: pathParams.getString('userId')));
+      return _i17.AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: _i4.CreateOrUpdateHostPage(
+          userId: args.userId,
+          key: args.key,
+        ),
+      );
+    },
     DevelopmentItemsRoute.name: (routeData) {
       return _i17.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const _i4.DevelopmentItemsPage(),
-      );
-    },
-    FirebaseStorageSampleRoute.name: (routeData) {
-      return _i17.AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const _i5.FirebaseStorageSamplePage(),
+        child: const _i5.DevelopmentItemsPage(),
       );
     },
     ForceUpdateSampleRoute.name: (routeData) {
@@ -127,28 +133,35 @@ abstract class $AppRouter extends _i17.RootStackRouter {
         child: const _i12.MapPage(),
       );
     },
-    RootRoute.name: (routeData) {
-      return _i17.AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const _i13.RootPage(),
-      );
-    },
     SampleTodosRoute.name: (routeData) {
       return _i17.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const _i14.SampleTodosPage(),
+        child: const _i13.SampleTodosPage(),
       );
     },
     SignInSampleRoute.name: (routeData) {
       return _i17.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const _i15.SignInSamplePage(),
+        child: const _i14.SignInSamplePage(),
       );
     },
     WebLinkStubRoute.name: (routeData) {
       return _i17.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const _i16.WebLinkStubPage(),
+        child: const _i15.WebLinkStubPage(),
+      );
+    },
+    WorkerRoute.name: (routeData) {
+      final pathParams = routeData.inheritedPathParams;
+      final args = routeData.argsAs<WorkerRouteArgs>(
+          orElse: () =>
+              WorkerRouteArgs(userId: pathParams.getString('userId')));
+      return _i17.AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: _i16.WorkerPage(
+          userId: args.userId,
+          key: args.key,
+        ),
       );
     },
   };
@@ -222,7 +235,47 @@ class ColorRoute extends _i17.PageRouteInfo<void> {
 }
 
 /// generated route for
-/// [_i4.DevelopmentItemsPage]
+/// [_i4.CreateOrUpdateHostPage]
+class CreateOrUpdateHostRoute
+    extends _i17.PageRouteInfo<CreateOrUpdateHostRouteArgs> {
+  CreateOrUpdateHostRoute({
+    required String userId,
+    _i18.Key? key,
+    List<_i17.PageRouteInfo>? children,
+  }) : super(
+          CreateOrUpdateHostRoute.name,
+          args: CreateOrUpdateHostRouteArgs(
+            userId: userId,
+            key: key,
+          ),
+          rawPathParams: {'userId': userId},
+          initialChildren: children,
+        );
+
+  static const String name = 'CreateOrUpdateHostRoute';
+
+  static const _i17.PageInfo<CreateOrUpdateHostRouteArgs> page =
+      _i17.PageInfo<CreateOrUpdateHostRouteArgs>(name);
+}
+
+class CreateOrUpdateHostRouteArgs {
+  const CreateOrUpdateHostRouteArgs({
+    required this.userId,
+    this.key,
+  });
+
+  final String userId;
+
+  final _i18.Key? key;
+
+  @override
+  String toString() {
+    return 'CreateOrUpdateHostRouteArgs{userId: $userId, key: $key}';
+  }
+}
+
+/// generated route for
+/// [_i5.DevelopmentItemsPage]
 class DevelopmentItemsRoute extends _i17.PageRouteInfo<void> {
   const DevelopmentItemsRoute({List<_i17.PageRouteInfo>? children})
       : super(
@@ -231,20 +284,6 @@ class DevelopmentItemsRoute extends _i17.PageRouteInfo<void> {
         );
 
   static const String name = 'DevelopmentItemsRoute';
-
-  static const _i17.PageInfo<void> page = _i17.PageInfo<void>(name);
-}
-
-/// generated route for
-/// [_i5.FirebaseStorageSamplePage]
-class FirebaseStorageSampleRoute extends _i17.PageRouteInfo<void> {
-  const FirebaseStorageSampleRoute({List<_i17.PageRouteInfo>? children})
-      : super(
-          FirebaseStorageSampleRoute.name,
-          initialChildren: children,
-        );
-
-  static const String name = 'FirebaseStorageSampleRoute';
 
   static const _i17.PageInfo<void> page = _i17.PageInfo<void>(name);
 }
@@ -373,21 +412,7 @@ class MapRoute extends _i17.PageRouteInfo<void> {
 }
 
 /// generated route for
-/// [_i13.RootPage]
-class RootRoute extends _i17.PageRouteInfo<void> {
-  const RootRoute({List<_i17.PageRouteInfo>? children})
-      : super(
-          RootRoute.name,
-          initialChildren: children,
-        );
-
-  static const String name = 'RootRoute';
-
-  static const _i17.PageInfo<void> page = _i17.PageInfo<void>(name);
-}
-
-/// generated route for
-/// [_i14.SampleTodosPage]
+/// [_i13.SampleTodosPage]
 class SampleTodosRoute extends _i17.PageRouteInfo<void> {
   const SampleTodosRoute({List<_i17.PageRouteInfo>? children})
       : super(
@@ -401,7 +426,7 @@ class SampleTodosRoute extends _i17.PageRouteInfo<void> {
 }
 
 /// generated route for
-/// [_i15.SignInSamplePage]
+/// [_i14.SignInSamplePage]
 class SignInSampleRoute extends _i17.PageRouteInfo<void> {
   const SignInSampleRoute({List<_i17.PageRouteInfo>? children})
       : super(
@@ -415,7 +440,7 @@ class SignInSampleRoute extends _i17.PageRouteInfo<void> {
 }
 
 /// generated route for
-/// [_i16.WebLinkStubPage]
+/// [_i15.WebLinkStubPage]
 class WebLinkStubRoute extends _i17.PageRouteInfo<void> {
   const WebLinkStubRoute({List<_i17.PageRouteInfo>? children})
       : super(
@@ -426,4 +451,43 @@ class WebLinkStubRoute extends _i17.PageRouteInfo<void> {
   static const String name = 'WebLinkStubRoute';
 
   static const _i17.PageInfo<void> page = _i17.PageInfo<void>(name);
+}
+
+/// generated route for
+/// [_i16.WorkerPage]
+class WorkerRoute extends _i17.PageRouteInfo<WorkerRouteArgs> {
+  WorkerRoute({
+    required String userId,
+    _i18.Key? key,
+    List<_i17.PageRouteInfo>? children,
+  }) : super(
+          WorkerRoute.name,
+          args: WorkerRouteArgs(
+            userId: userId,
+            key: key,
+          ),
+          rawPathParams: {'userId': userId},
+          initialChildren: children,
+        );
+
+  static const String name = 'WorkerRoute';
+
+  static const _i17.PageInfo<WorkerRouteArgs> page =
+      _i17.PageInfo<WorkerRouteArgs>(name);
+}
+
+class WorkerRouteArgs {
+  const WorkerRouteArgs({
+    required this.userId,
+    this.key,
+  });
+
+  final String userId;
+
+  final _i18.Key? key;
+
+  @override
+  String toString() {
+    return 'WorkerRouteArgs{userId: $userId, key: $key}';
+  }
 }

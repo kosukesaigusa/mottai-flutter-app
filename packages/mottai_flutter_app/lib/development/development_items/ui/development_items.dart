@@ -8,6 +8,7 @@ import '../../../auth/ui/auth_dependent_builder.dart';
 import '../../../chat/read_status.dart';
 import '../../../chat/ui/chat_room.dart';
 import '../../../chat/ui/chat_rooms.dart';
+import '../../../host/ui/create_or_update_host.dart';
 import '../../../job/ui/job_detail.dart';
 import '../../../map/ui/map.dart';
 import '../../../package_info.dart';
@@ -15,6 +16,7 @@ import '../../../push_notification/firebase_messaging.dart';
 import '../../../scaffold_messenger_controller.dart';
 import '../../../user/user.dart';
 import '../../../user/user_mode.dart';
+import '../../../worker/ui/worker.dart';
 import '../../color/ui/color.dart';
 import '../../firebase_storage/ui/firebase_storage.dart';
 import '../../force_update/ui/force_update.dart';
@@ -116,11 +118,11 @@ class _DevelopmentItemsPageState extends ConsumerState<DevelopmentItemsPage> {
               ),
             ),
           ),
-          const ListTile(
-            title: Text('ワーカーページ'),
-            // onTap: () => context.router.pushNamed(
-            //   WorkerPage.location('WORKER_ID_HERE'),
-            // ),
+          ListTile(
+            title: const Text('ワーカーページ'),
+            onTap: () => context.router.pushNamed(
+              WorkerPage.location(userId: 'b1M4bcp7zEVpgHXYhOVWt8BMkq23'),
+            ),
           ),
           const ListTile(
             title: Text('ワーカー情報編集ページ'),
@@ -134,14 +136,16 @@ class _DevelopmentItemsPageState extends ConsumerState<DevelopmentItemsPage> {
             //   HOSTPage.location('HOST_ID_HERE'),
             // ),
           ),
-          const ListTile(
-            title: Text(
+          ListTile(
+            title: const Text(
               'ホストとして登録ページ (StateNotifier?, geoflutterfire_plus, '
               'flutter_google_maps, geolocator)',
             ),
-            // onTap: () => context.router.pushNamed(
-            //   CreateOrUpdateHostPage.location('HOST_ID_HERE'),
-            // ),
+            onTap: () => context.router.pushNamed(
+              CreateOrUpdateHostPage.location(
+                userId: 'b1M4bcp7zEVpgHXYhOVWt8BMkq23',
+              ),
+            ),
           ),
           const Divider(),
           Padding(

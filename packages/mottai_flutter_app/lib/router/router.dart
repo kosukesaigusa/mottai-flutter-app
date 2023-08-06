@@ -13,8 +13,10 @@ import '../development/in_review/ui/in_review.dart';
 import '../development/sample_todo/ui/sample_todos.dart';
 import '../development/sign_in/ui/sign_in.dart';
 import '../development/web_link/ui/web_link_stub.dart';
+import '../host/ui/create_or_update_host.dart';
 import '../job/ui/job_detail.dart';
 import '../map/ui/map.dart';
+import '../worker/ui/worker.dart';
 import 'router.gr.dart';
 
 @AutoRouterConfig()
@@ -38,6 +40,10 @@ class AppRouter extends $AppRouter {
       path: JobDetailPage.path,
       page: JobDetailRoute.page,
     ),
+    AutoRoute(
+      path: WorkerPage.path,
+      page: WorkerRoute.page,
+    ),
     // AutoRoute(
     //   path: CreateOrUpdateJobPage.path,
     //   page: CreateOrUpdateJobRoute.page,
@@ -46,10 +52,10 @@ class AppRouter extends $AppRouter {
     //   path: UserPage.path,
     //   page: UserRoute.page,
     // ),
-    // AutoRoute(
-    //   path: CreateOrUpdateHostPage.path,
-    //   page: CreateOrUpdateHostRoute.page,
-    // ),
+    AutoRoute(
+      path: CreateOrUpdateHostPage.path,
+      page: CreateOrUpdateHostRoute.page,
+    ),
     // NOTE: 以下、開発用のページ。
     AutoRoute(
       path: ColorPage.path,

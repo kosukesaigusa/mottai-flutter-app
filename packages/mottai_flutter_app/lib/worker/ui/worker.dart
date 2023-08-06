@@ -84,26 +84,11 @@ class WorkerPage extends ConsumerWidget {
               // 投稿した感想をDBに追加する
               const Section(
                 title: '投稿した感想',
-                content: Card(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.all(12),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('矢郷農園でレモンの収穫をお手...'),
-                            Text('先週末、矢郷農園でレモンの収穫を...'),
-                          ],
-                        ),
-                      ),
-                      GenericImage.square(
-                        imageUrl:
-                            'https://www.kaku-ichi.co.jp/media/wp-content/uploads/2020/02/20200226001.jpg',
-                      )
-                    ],
-                  ),
+                content: MaterialHorizontalCard(
+                  title: '矢郷農園でレモンの収穫をお手...あああああああああああああああ',
+                  description: '先週末、矢郷農園でレモンの収穫を...あああああああああああ',
+                  imageUrl:
+                      'https://www.kaku-ichi.co.jp/media/wp-content/uploads/2020/02/20200226001.jpg',
                 ),
               ),
               if (isMatchingUserId) ...[

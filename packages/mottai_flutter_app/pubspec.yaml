@@ -40,6 +40,7 @@ dependencies:
   sign_in_with_apple: ^3.3.0
 
 dev_dependencies:
+  auto_route_generator: ^7.3.0
   build_runner: ^2.4.6
   flutter_test:
     sdk: flutter

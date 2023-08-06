@@ -21,26 +21,21 @@ class JobDetailPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     const jobId = 'PYRsrMSOApEgZ6lzMuUK'; //TODO: URLからJobIdを取得する
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('お手伝い募集'),
-      ),
+      appBar: AppBar(title: const Text('お手伝い募集')),
       // Jobの読み込み状態によって表示を変更
       body: ref.watch(jobFutureProvider(jobId)).when(
             data: (job) {
               if (job == null) {
-                return const Center(
-                  child: Text('お手伝いが存在していません。'),
-                );
+                return const Center(child: Text('お手伝いが存在していません。'));
               }
-              // ホストの読み込み状態によってレスポンス
               return ref.watch(hostFutureProvider(job.hostId)).when(
-                    data: (host) {
-                      if (host == null) {
+                    data: (readHost) {
+                      if (readHost == null) {
                         return const Center(
                           child: Text('ホストが存在していません。'),
                         );
                       }
-                      return _JobDetail(job: job, host: host);
+                      return _JobDetail(job: job, readHost: readHost);
                     },
                     loading: () =>
                         const Center(child: CircularProgressIndicator()),
@@ -61,11 +56,11 @@ class JobDetailPage extends ConsumerWidget {
 class _JobDetail extends ConsumerWidget {
   const _JobDetail({
     required this.job,
-    required this.host,
+    required this.readHost,
   });
 
   final ReadJob job;
-  final ReadHost host;
+  final ReadHost readHost;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -73,11 +68,11 @@ class _JobDetail extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (host.imageUrl.isNotEmpty)
+          if (readHost.imageUrl.isNotEmpty)
             Center(
               child: LimitedBox(
                 maxHeight: 300,
-                child: Image.network(host.imageUrl, fit: BoxFit.cover),
+                child: Image.network(readHost.imageUrl, fit: BoxFit.cover),
               ),
             ),
           Padding(
@@ -88,9 +83,8 @@ class _JobDetail extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // ホスト名 / 仕事タイトル
                 Section(
-                  title: host.displayName,
+                  title: readHost.displayName,
                   titleStyle: Theme.of(context)
                       .textTheme
                       .headlineLarge!
@@ -102,7 +96,6 @@ class _JobDetail extends ConsumerWidget {
                   ),
                   sectionPadding: const EdgeInsets.only(bottom: 32),
                 ),
-                // ホスト住所
                 Section(
                   title: 'お手伝いの場所',
                   titleStyle: Theme.of(context).textTheme.headlineMedium,
@@ -112,8 +105,6 @@ class _JobDetail extends ConsumerWidget {
                   ),
                   sectionPadding: const EdgeInsets.only(bottom: 32),
                 ),
-
-                // ホスト職種
                 Section(
                   title: 'ホスト',
                   titleStyle: Theme.of(context).textTheme.headlineMedium,
@@ -125,11 +116,9 @@ class _JobDetail extends ConsumerWidget {
                         (type) => MapEntry(type, type.label),
                       ),
                     ),
-                    enabledItems: host.hostTypes,
+                    enabledItems: readHost.hostTypes,
                   ),
                 ),
-
-                // 内容
                 Section(
                   title: '内容',
                   titleStyle: Theme.of(context).textTheme.headlineMedium,
@@ -139,8 +128,6 @@ class _JobDetail extends ConsumerWidget {
                   ),
                   sectionPadding: const EdgeInsets.only(bottom: 32),
                 ),
-
-                // 持ち物
                 Section(
                   title: '持ち物',
                   titleStyle: Theme.of(context).textTheme.headlineMedium,
@@ -150,7 +137,6 @@ class _JobDetail extends ConsumerWidget {
                   ),
                   sectionPadding: const EdgeInsets.only(bottom: 32),
                 ),
-
                 // 報酬
                 Section(
                   title: '報酬',
@@ -161,8 +147,6 @@ class _JobDetail extends ConsumerWidget {
                   ),
                   sectionPadding: const EdgeInsets.only(bottom: 32),
                 ),
-
-                // アクセス
                 Section(
                   title: 'アクセス',
                   description: job.accessDescription,
@@ -180,8 +164,6 @@ class _JobDetail extends ConsumerWidget {
                     isDisplayDisable: false,
                   ),
                 ),
-
-                // ひとこと
                 Section(
                   title: 'ひとこと',
                   titleStyle: Theme.of(context).textTheme.headlineMedium,
@@ -191,28 +173,25 @@ class _JobDetail extends ConsumerWidget {
                   ),
                   sectionPadding: const EdgeInsets.only(bottom: 32),
                 ),
-
-                // URL
-                Section(
-                  title: 'URL',
-                  titleStyle: Theme.of(context).textTheme.headlineMedium,
-                  sectionPadding: const EdgeInsets.only(bottom: 32),
-                  content: Column(
-                    //TODO: リンクウィジェットにする。
-                    children: job.urls
-                        .map(
-                          (url) => Text(
-                            url,
-                            style: Theme.of(context).textTheme.bodyLarge,
-                          ),
-                        )
-                        .toList(),
+                if (readHost.urls.isNotEmpty)
+                  Section(
+                    title: 'URL',
+                    titleStyle: Theme.of(context).textTheme.headlineMedium,
+                    sectionPadding: const EdgeInsets.only(bottom: 32),
+                    content: Column(
+                      //TODO: リンクウィジェットにする。
+                      children: readHost.urls
+                          .map(
+                            (url) => Text(
+                              url,
+                              style: Theme.of(context).textTheme.bodyLarge,
+                            ),
+                          )
+                          .toList(),
+                    ),
                   ),
-                ),
-
-                // 体験者の感想
                 Section(
-                  //TODO: 未実装
+                  // TODO: 未実装
                   title: '体験者の感想',
                   titleStyle: Theme.of(context).textTheme.headlineMedium,
                   content: Text(
@@ -228,7 +207,7 @@ class _JobDetail extends ConsumerWidget {
             padding: const EdgeInsets.only(top: 16, bottom: 32),
             child: Center(
               child: ElevatedButton(
-                onPressed: () => {}, //TODO: 未実装
+                onPressed: () {}, // TODO: 未実装
                 child: const Text('このホストに連絡する'),
               ),
             ),

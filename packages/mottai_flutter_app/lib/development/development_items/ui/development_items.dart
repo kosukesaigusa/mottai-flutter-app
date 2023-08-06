@@ -17,6 +17,7 @@ import '../../image_detail_view/image_detail_view_stub.dart';
 import '../../image_picker/ui/image_picker_sample.dart';
 import '../../in_review/ui/in_review.dart';
 import '../../sample_todo/ui/sample_todos.dart';
+import '../../web_link/web_link_stub.dart';
 
 /// 開発中の各ページへの導線を表示するページ。
 class DevelopmentItemsPage extends ConsumerWidget {
@@ -257,6 +258,18 @@ class DevelopmentItemsPage extends ConsumerWidget {
               context,
               MaterialPageRoute<void>(
                 builder: (context) => const ImageDetailViewStubPage(),
+              ),
+            ),
+          ),
+          ListTile(
+            title: const Text(
+              'WebLinkサンプル',
+            ),
+            // TODO: 後に auto_route を採用して Navigator.pushNamed を使用する予定
+            onTap: () => Navigator.push<void>(
+              context,
+              MaterialPageRoute<void>(
+                builder: (context) => const WebLinkStubPage(),
               ),
             ),
           ),

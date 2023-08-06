@@ -1,6 +1,6 @@
 name: mottai_flutter_app
 
-repository: https://github.com/KosukeSaigusa/mottai-flutter-app
+repository: https://github.com/kosukesaigusa/mottai-flutter-app
 
 packages:
   - packages/**

@@ -11,6 +11,7 @@ class ReadHost {
     required this.displayName,
     required this.imageUrl,
     required this.hostTypes,
+    required this.urls,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -25,6 +26,8 @@ class ReadHost {
 
   final Set<HostType> hostTypes;
 
+  final List<String> urls;
+
   final SealedTimestamp createdAt;
 
   final SealedTimestamp updatedAt;
@@ -38,6 +41,9 @@ class ReadHost {
       hostTypes: json['hostTypes'] == null
           ? const <HostType>{}
           : _hostTypesConverter.fromJson(json['hostTypes'] as List<dynamic>?),
+      urls:
+          (json['urls'] as List<dynamic>?)?.map((e) => e as String).toList() ??
+              const <String>[],
       createdAt: json['createdAt'] == null
           ? const ServerTimestamp()
           : sealedTimestampConverter.fromJson(json['createdAt'] as Object),
@@ -63,6 +69,7 @@ class CreateHost {
     required this.displayName,
     this.imageUrl = '',
     this.hostTypes = const <HostType>{},
+    this.urls = const <String>[],
     this.createdAt = const ServerTimestamp(),
     this.updatedAt = const ServerTimestamp(),
   });
@@ -70,6 +77,7 @@ class CreateHost {
   final String displayName;
   final String imageUrl;
   final Set<HostType> hostTypes;
+  final List<String> urls;
   final SealedTimestamp createdAt;
   final SealedTimestamp updatedAt;
 
@@ -78,6 +86,7 @@ class CreateHost {
       'displayName': displayName,
       'imageUrl': imageUrl,
       'hostTypes': _hostTypesConverter.toJson(hostTypes),
+      'urls': urls,
       'createdAt': sealedTimestampConverter.toJson(createdAt),
       'updatedAt':
           alwaysUseServerTimestampSealedTimestampConverter.toJson(updatedAt),
@@ -90,6 +99,7 @@ class UpdateHost {
     this.displayName,
     this.imageUrl,
     this.hostTypes,
+    this.urls,
     this.createdAt,
     this.updatedAt = const ServerTimestamp(),
   });
@@ -97,6 +107,7 @@ class UpdateHost {
   final String? displayName;
   final String? imageUrl;
   final Set<HostType>? hostTypes;
+  final List<String>? urls;
   final SealedTimestamp? createdAt;
   final SealedTimestamp? updatedAt;
 
@@ -106,6 +117,7 @@ class UpdateHost {
       if (imageUrl != null) 'imageUrl': imageUrl,
       if (hostTypes != null)
         'hostTypes': _hostTypesConverter.toJson(hostTypes!),
+      if (urls != null) 'urls': urls,
       if (createdAt != null)
         'createdAt': sealedTimestampConverter.toJson(createdAt!),
       'updatedAt': updatedAt == null

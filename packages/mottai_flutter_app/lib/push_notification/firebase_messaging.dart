@@ -181,7 +181,7 @@ const _androidLocalNotificationChannel = AndroidNotificationChannel(
 );
 
 /// Android におけるローカル通知のデフォルトのアイコン。
-// TODO: 適切なアイコンに変更する。
+// TODO: アイコン自体は過去の適当なアイコンからもってきた。適切なアイコンに変更する。
 const _androidLocalNotificationDefaultIcon =
     '@drawable/transparent_notification_icon';
 

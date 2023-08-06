@@ -344,6 +344,27 @@ class _DrawerChildState extends ConsumerState<_DrawerChild> {
                     child: const Text('サインイン'),
                   ),
                 ),
+                const Divider(),
+                Center(
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      final token = await ref.read(getFcmTokenProvider).call();
+                      if (token == null) {
+                        return;
+                      }
+                      debugPrint(token);
+                      await ref
+                          .read(appScaffoldMessengerControllerProvider)
+                          .showDialogByBuilder<void>(
+                            builder: (context) => AlertDialog(
+                              title: const SelectableText('FCM トークン'),
+                              content: Text(token),
+                            ),
+                          );
+                    },
+                    child: const Text('FCM トークン表示'),
+                  ),
+                ),
               ],
             ],
           ),

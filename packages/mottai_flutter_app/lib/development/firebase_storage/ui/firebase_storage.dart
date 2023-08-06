@@ -35,7 +35,7 @@ class _FirebaseStorageSampleState
   @override
   Widget build(BuildContext context) {
     final controller = ref.watch(firebaseStorageControllerProvider);
-    final pickedImage = ref.watch(pickedImageFileStateProvider);
+    final pickedImageFile = ref.watch(pickedImageFileStateProvider);
     final uploadedImageUrl = ref.watch(uploadedImageUrlStateProvider);
     final uploadedImagePath = ref.watch(uploadedImagePathStateProvider);
 
@@ -57,7 +57,7 @@ class _FirebaseStorageSampleState
                   .toList(),
             ),
           ),
-          if (pickedImage == null)
+          if (pickedImageFile == null)
             GestureDetector(
               onTap: controller.pickImageFromGallery,
               child: Center(
@@ -77,16 +77,16 @@ class _FirebaseStorageSampleState
               child: SizedBox(
                 height: 200,
                 width: 200,
-                child: Image.file(pickedImage),
+                child: Image.file(pickedImageFile),
               ),
             ),
           const Gap(8),
           ElevatedButton(
             onPressed: () {
-              if (pickedImage != null) {
+              if (pickedImageFile != null) {
                 controller.uploadImage(
                   path: _storagePath,
-                  resource: FirebaseStorageFile(pickedImage),
+                  resource: FirebaseStorageFile(pickedImageFile),
                 );
               }
             },

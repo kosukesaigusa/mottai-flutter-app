@@ -63,28 +63,37 @@ class FirebaseStorageService {
     return storageRef.getData(megaByte);
   }
 
-  /// 指定された [path] のすべてのリファレンス（ファイルとディレクトリ）を取得する。
-  Future<ListResult> fetchAllReferences({required String path}) async {
+  /// 指定された [path] のすべての画像URLを取得する。
+  Future<List<String>> fetchAllImageUrls({required String path}) async {
     final storageRef = _firebaseStorage.ref().child(path);
-    return storageRef.listAll();
+    final listResult = await storageRef.listAll();
+    final futureImageUrls = listResult.items
+        .map((reference) => reference.getDownloadURL())
+        .toList();
+    return Future.wait(futureImageUrls);
   }
 
-  /// 指定された [path] のリファレンス（ファイルとディレクトリ）のリストを取得する。
+  /// 指定された [path] の 画像URLのリスト と 次のページトークン を取得する。
   /// オプションで [maxResults] と [pageToken] の使用が可能。
   ///
   /// [maxResults] は、取得する結果の最大数を指定する。
   /// [pageToken] は、次のセットの結果を取得するためのページネーションに使用される。
-  Future<ListResult> fetchReferences({
+  Future<(List<String>, String?)> fetchReferences({
     required String path,
     int maxResults = 100,
     String? pageToken,
   }) async {
     final storageRef = _firebaseStorage.ref().child(path);
-    return storageRef.list(
+    final listResult = await storageRef.list(
       ListOptions(
         maxResults: maxResults,
         pageToken: pageToken,
       ),
     );
+    final futureImageUrls = listResult.items
+        .map((reference) => reference.getDownloadURL())
+        .toList();
+    final imageUrls = await Future.wait(futureImageUrls);
+    return (imageUrls, listResult.nextPageToken);
   }
 }

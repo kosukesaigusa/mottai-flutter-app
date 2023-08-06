@@ -8,4 +8,5 @@ export 'in_review_config.dart';
 export 'job.dart';
 export 'read_status.dart';
 export 'sample_todo.dart';
+export 'user_social_login.dart';
 export 'worker.dart';

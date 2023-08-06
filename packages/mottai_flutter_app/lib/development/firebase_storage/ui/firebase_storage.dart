@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:math';
 
+import 'package:auto_route/auto_route.dart';
 import 'package:dart_flutter_common/dart_flutter_common.dart';
 import 'package:firebase_common/firebase_common.dart';
 import 'package:flutter/material.dart';
@@ -12,8 +13,15 @@ import 'package:permission_handler/permission_handler.dart';
 import '../../../scaffold_messenger_controller.dart';
 import '../../image_picker/ui/image_picker_sample.dart';
 
+@RoutePage()
 class FirebaseStorageSamplePage extends ConsumerStatefulWidget {
   const FirebaseStorageSamplePage({super.key});
+
+  /// [AutoRoute] で指定するパス文字列。
+  static const path = '/firebaseStorageSample';
+
+  /// [FirebaseStorageSamplePage] に遷移する際に `context.router.pushNamed` で指定する文字列。
+  static const location = path;
 
   @override
   ConsumerState<FirebaseStorageSamplePage> createState() =>

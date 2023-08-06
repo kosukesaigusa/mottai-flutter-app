@@ -1,10 +1,18 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:dart_flutter_common/dart_flutter_common.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
 /// [GenericImage] ウィジェットを使用した汎用的な画像ウィジェットのサンプル。
-class GenericImages extends StatelessWidget {
-  const GenericImages({super.key});
+@RoutePage()
+class GenericImagesPage extends StatelessWidget {
+  const GenericImagesPage({super.key});
+
+  /// [AutoRoute] で指定するパス文字列。
+  static const path = '/genericImages';
+
+  /// [GenericImagesPage] に遷移する際に `context.router.pushNamed` で指定する文字列。
+  static const location = path;
 
   @override
   Widget build(BuildContext context) {

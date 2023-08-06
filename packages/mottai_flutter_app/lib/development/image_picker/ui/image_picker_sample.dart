@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:auto_route/auto_route.dart';
 import 'package:dart_flutter_common/dart_flutter_common.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,14 +9,22 @@ import 'package:permission_handler/permission_handler.dart';
 
 import '../../../scaffold_messenger_controller.dart';
 
-class ImagePickSample extends ConsumerStatefulWidget {
-  const ImagePickSample({super.key});
+@RoutePage()
+class ImagePickerSamplePage extends ConsumerStatefulWidget {
+  const ImagePickerSamplePage({super.key});
+
+  /// [AutoRoute] で指定するパス文字列。
+  static const path = '/imagePickerSample';
+
+  /// [ImagePickerSamplePage] に遷移する際に `context.router.pushNamed` で指定する文字列。
+  static const location = path;
 
   @override
-  ConsumerState<ImagePickSample> createState() => _ImagePickSampleState();
+  ConsumerState<ImagePickerSamplePage> createState() =>
+      _ImagePickerSamplePageState();
 }
 
-class _ImagePickSampleState extends ConsumerState<ImagePickSample> {
+class _ImagePickerSamplePageState extends ConsumerState<ImagePickerSamplePage> {
   /// 端末ギャラリーから選択された 1 つの画像。
   File? _pickedImageFromGallery;
 

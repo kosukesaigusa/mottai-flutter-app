@@ -1,3 +1,4 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:dart_flutter_common/dart_flutter_common.dart';
 import 'package:firebase_common/firebase_common.dart';
 import 'package:flutter/material.dart';
@@ -18,13 +19,22 @@ const double _horizontalPadding = 8;
 const double _senderIconSize = 24;
 
 /// チャットルームページ。
+@RoutePage()
 class ChatRoomPage extends ConsumerStatefulWidget {
-  const ChatRoomPage({super.key});
+  const ChatRoomPage({
+    @PathParam('chatRoomId') required this.chatRoomId,
+    super.key,
+  });
 
+  /// [AutoRoute] で指定するパス文字列。
   static const path = '/chatRooms/:chatRoomId';
-  static const name = 'ChatRoomPage';
+
+  /// [ChatRoomPage] に遷移する際に `context.router.pushNamed` で指定する文字列。
   static String location({required String chatRoomId}) =>
       '/chatRooms/$chatRoomId';
+
+  /// パスパラメータから得られるチャットルームの ID.
+  final String chatRoomId;
 
   @override
   ConsumerState<ChatRoomPage> createState() => _ChatRoomPageState();
@@ -43,7 +53,9 @@ class _ChatRoomPageState extends ConsumerState<ChatRoomPage> {
         final scrollValue = _scrollController.offset /
             _scrollController.position.maxScrollExtent;
         if (scrollValue > _scrollValueThreshold) {
-          await ref.read(chatRoomStateNotifierProvider.notifier).loadMore();
+          await ref
+              .read(chatRoomStateNotifierProvider(widget.chatRoomId).notifier)
+              .loadMore();
         }
       });
     super.initState();
@@ -59,14 +71,13 @@ class _ChatRoomPageState extends ConsumerState<ChatRoomPage> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: パスパラメータから渡せるようにする
-    const chatRoomId = 'aSNYpkUofu05nyasvMRx';
-    final readChatRoom = ref.watch(chatRoomFutureProvider(chatRoomId)).value;
+    final readChatRoom =
+        ref.watch(chatRoomFutureProvider(widget.chatRoomId)).value;
     if (readChatRoom == null) {
       // TODO: この実装だと、loading 中に UnavailablePage がちらっと見えそうなので改善したい。
       return const UnavailablePage('チャットルームの情報の取得に失敗しました。');
     }
-    final state = ref.watch(chatRoomStateNotifierProvider);
+    final state = ref.watch(chatRoomStateNotifierProvider(widget.chatRoomId));
     return Scaffold(
       appBar: AppBar(
         // TODO: chatPartnerImageUrlProvider を真似して、chatPartnerNameProvider
@@ -101,22 +112,22 @@ class _ChatRoomPageState extends ConsumerState<ChatRoomPage> {
                                 readChatRoom: readChatRoom,
                                 readChatMessage: readChatMessage,
                                 isMyMessage: readChatMessage.senderId == userId,
-                                chatRoomId: chatRoomId,
+                                chatRoomId: widget.chatRoomId,
                               );
                             },
                           ),
                         ),
                         _MessageTextField(
-                          chatRoomId: chatRoomId,
+                          chatRoomId: widget.chatRoomId,
                           userId: userId,
                         ),
                         const Gap(24),
                       ],
                     ),
-                    const Positioned(
+                    Positioned(
                       child: Align(
                         alignment: Alignment.topCenter,
-                        child: _DebugIndicator(chatRoomId: chatRoomId),
+                        child: _DebugIndicator(chatRoomId: widget.chatRoomId),
                       ),
                     ),
                   ],
@@ -309,7 +320,7 @@ class _MessageTextFieldState extends ConsumerState<_MessageTextField> {
               return;
             }
             await ref
-                .read(chatRoomStateNotifierProvider.notifier)
+                .read(chatRoomStateNotifierProvider(widget.chatRoomId).notifier)
                 .sendChatMessage(
                   senderId: widget.userId,
                   chatMessageType: _chatMessageType(userMode),
@@ -354,7 +365,7 @@ class _DebugIndicator extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(chatRoomStateNotifierProvider);
+    final state = ref.watch(chatRoomStateNotifierProvider(chatRoomId));
     final readChatMessages = state.readChatMessages;
     final lastReadChatMessageId = state.lastReadChatMessageId;
     return Container(

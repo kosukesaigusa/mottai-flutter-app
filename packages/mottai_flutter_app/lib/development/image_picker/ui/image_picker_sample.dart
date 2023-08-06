@@ -5,10 +5,9 @@ import 'package:dart_flutter_common/dart_flutter_common.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 import '../../../scaffold_messenger_controller.dart';
-import '../../../widgets/dialog/dialog.dart';
+import '../../../widgets/dialog/permission_handler_dialog.dart';
 
 @RoutePage()
 class ImagePickerSamplePage extends ConsumerStatefulWidget {
@@ -166,14 +165,11 @@ class _ImagePickerSamplePageState extends ConsumerState<ImagePickerSamplePage> {
       if (e.code != 'camera_access_denied') {
         return;
       }
-      final result = await ref
+      await ref
           .read(appScaffoldMessengerControllerProvider)
           .showDialogByBuilder<bool>(
             builder: (context) => const AccessNotDeniedDialog.camera(),
           );
-      if (result ?? false) {
-        await openAppSettings();
-      }
     }
   }
 
@@ -192,14 +188,11 @@ class _ImagePickerSamplePageState extends ConsumerState<ImagePickerSamplePage> {
       if (e.code != 'photo_access_denied') {
         return;
       }
-      final result = await ref
+      await ref
           .read(appScaffoldMessengerControllerProvider)
           .showDialogByBuilder<bool>(
             builder: (context) => const AccessNotDeniedDialog.camera(),
           );
-      if (result ?? false) {
-        await openAppSettings();
-      }
     }
   }
 }

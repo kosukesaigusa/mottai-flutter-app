@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../scaffold_messenger_controller.dart';
-import '../../../widgets/dialog/dialog.dart';
+import '../../../widgets/dialog/permission_handler_dialog.dart';
 
 final firebaseStorageServiceProvider =
     Provider.autoDispose<FirebaseStorageService>(

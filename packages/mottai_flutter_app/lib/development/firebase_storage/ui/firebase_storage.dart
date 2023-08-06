@@ -23,6 +23,7 @@ class FirebaseStorageSamplePage extends ConsumerStatefulWidget {
 
 class _FirebaseStorageSampleState
     extends ConsumerState<FirebaseStorageSamplePage> {
+  /// storageの画像を保存するフォルダのパス
   static const _storagePath = 'sample';
 
   @override

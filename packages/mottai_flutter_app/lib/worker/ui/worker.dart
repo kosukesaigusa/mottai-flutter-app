@@ -6,6 +6,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../auth/auth.dart';
 import '../../host/ui/create_or_update_host.dart';
+import '../../user/user.dart';
 import '../../user/worker.dart';
 
 /// ワーカーページ。
@@ -31,6 +32,7 @@ class WorkerPage extends ConsumerWidget {
     final workerDisplayName = ref.watch(workerDisplayNameProvider(userId));
     final loggedInUserId = ref.watch(userIdProvider);
     final isMatchingUserId = loggedInUserId == userId;
+    final isHost = ref.watch(isHostProvider);
     return Scaffold(
       appBar: AppBar(
         title: const Text('アカウント'),
@@ -81,7 +83,7 @@ class WorkerPage extends ConsumerWidget {
               const Divider(
                 height: 36,
               ),
-              // 投稿した感想をDBに追加する
+              // TODO 投稿した感想をDBに追加する
               const Section(
                 title: '投稿した感想',
                 content: MaterialHorizontalCard(
@@ -156,31 +158,32 @@ class WorkerPage extends ConsumerWidget {
                     ],
                   ),
                 ),
-                const Divider(
-                  height: 36,
-                ),
-                const Section(
-                  title: 'ホストとして登録',
-                  // ignore: lines_longer_than_80_chars
-                  content: Text(
-                    'ホスト（農家、猟師、猟師など）として登録・利用しますか？ホストとして利用すると、自分の農園や仕事の情報を掲載して、お手伝いをしてくれるワーカーとマッチングしますか？',
+                if (!isHost) ...[
+                  const Divider(
+                    height: 36,
                   ),
-                ),
-                // TODO ホストになっているかどうかで出し分けられるようにする
-                Align(
-                  child: ElevatedButton(
-                    onPressed: () => Navigator.push(
-                      context,
-                      MaterialPageRoute<Widget>(
-                        builder: (_) => CreateOrUpdateHostPage(
-                          userId: userId,
-                        ),
-                        fullscreenDialog: true, // true だとモーダル遷移になる
-                      ),
+                  const Section(
+                    title: 'ホストとして登録',
+                    // ignore: lines_longer_than_80_chars
+                    content: Text(
+                      'ホスト（農家、猟師、猟師など）として登録・利用しますか？ホストとして利用すると、自分の農園や仕事の情報を掲載して、お手伝いをしてくれるワーカーとマッチングしますか？',
                     ),
-                    child: const Text('ホストとして登録'),
                   ),
-                ),
+                  Align(
+                    child: ElevatedButton(
+                      onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute<Widget>(
+                          builder: (_) => CreateOrUpdateHostPage(
+                            userId: userId,
+                          ),
+                          fullscreenDialog: true,
+                        ),
+                      ),
+                      child: const Text('ホストとして登録'),
+                    ),
+                  ),
+                ],
               ],
             ],
           ),

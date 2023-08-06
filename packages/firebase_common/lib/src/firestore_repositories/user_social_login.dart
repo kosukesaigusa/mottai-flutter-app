@@ -4,7 +4,9 @@ class UserSocialLoginRepository {
   final _query = UserSocialLoginQuery();
 
   /// 指定した [UserSocialLogin] を購読する。
-  Stream<ReadUserSocialLogin?> subscribeWorker({required String userId}) =>
+  Stream<ReadUserSocialLogin?> subscribeUserSocialLogin({
+    required String userId,
+  }) =>
       _query.subscribeDocument(userSocialLoginId: userId);
 
   /// いずれかのソーシャルログインが初めて行われた際に、 [UserSocialLogin] を作成する。

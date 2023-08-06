@@ -7,9 +7,13 @@ class ScaffoldMessengerController {
   /// [ScaffoldMessengerController] を作成する。
   ScaffoldMessengerController({
     required GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey,
-  }) : _scaffoldMessengerKey = scaffoldMessengerKey;
+    required GlobalKey<NavigatorState> navigatorKey,
+  })  : _scaffoldMessengerKey = scaffoldMessengerKey,
+        _navigatorKey = navigatorKey;
 
   final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey;
+
+  final GlobalKey<NavigatorState> _navigatorKey;
 
   ScaffoldMessengerState get _currentState =>
       _scaffoldMessengerKey.currentState!;
@@ -26,7 +30,7 @@ class ScaffoldMessengerController {
     bool barrierDismissible = true,
   }) =>
       showDialog<T>(
-        context: _scaffoldMessengerKey.currentContext!,
+        context: _navigatorKey.currentContext!,
         barrierDismissible: barrierDismissible,
         builder: builder,
       );

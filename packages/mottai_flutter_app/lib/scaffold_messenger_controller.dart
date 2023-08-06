@@ -6,9 +6,12 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 final scaffoldMessengerKeyProvider =
     Provider((_) => GlobalKey<ScaffoldMessengerState>());
 
+final navigatorKeyProvider = Provider((_) => GlobalKey<NavigatorState>());
+
 final appScaffoldMessengerControllerProvider = Provider.autoDispose(
   (ref) => AppScaffoldMessengerController(
     scaffoldMessengerKey: ref.watch(scaffoldMessengerKeyProvider),
+    navigatorKey: ref.watch(navigatorKeyProvider),
   ),
 );
 
@@ -17,7 +20,10 @@ final appScaffoldMessengerControllerProvider = Provider.autoDispose(
 /// 当該パッケージ用に機能を追加している。
 class AppScaffoldMessengerController
     extends common.ScaffoldMessengerController {
-  AppScaffoldMessengerController({required super.scaffoldMessengerKey});
+  AppScaffoldMessengerController({
+    required super.scaffoldMessengerKey,
+    required super.navigatorKey,
+  });
 
   /// [FirebaseException] 起点で [SnackBar] を表示する。
   ScaffoldFeatureController<SnackBar,

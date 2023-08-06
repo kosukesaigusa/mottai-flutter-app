@@ -41,11 +41,10 @@ final chatPartnerDisplayNameProvider =
   }
 });
 
-final chatRoomStateNotifierProvider =
-    StateNotifierProvider.autoDispose<ChatRoomStateNotifier, ChatRoomState>(
-  (ref) => ChatRoomStateNotifier(
-    // TODO: パスパラメータから渡せるようにする
-    chatRoomId: 'aSNYpkUofu05nyasvMRx',
+final chatRoomStateNotifierProvider = StateNotifierProvider.family
+    .autoDispose<ChatRoomStateNotifier, ChatRoomState, String>(
+  (ref, chatRoomId) => ChatRoomStateNotifier(
+    chatRoomId: chatRoomId,
     chatMessageRepository: ref.watch(chatMessageRepositoryProvider),
   ),
 );

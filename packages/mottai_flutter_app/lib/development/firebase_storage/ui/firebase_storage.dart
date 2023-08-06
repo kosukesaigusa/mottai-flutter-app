@@ -1,17 +1,10 @@
-import 'dart:io';
-import 'dart:math';
-
 import 'package:auto_route/auto_route.dart';
-import 'package:dart_flutter_common/dart_flutter_common.dart';
 import 'package:firebase_common/firebase_common.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:permission_handler/permission_handler.dart';
 
-import '../../../scaffold_messenger_controller.dart';
-import '../../image_picker/ui/image_picker_sample.dart';
+import 'firebase_storage_controller.dart';
 
 @RoutePage()
 class FirebaseStorageSamplePage extends ConsumerStatefulWidget {
@@ -30,27 +23,21 @@ class FirebaseStorageSamplePage extends ConsumerStatefulWidget {
 
 class _FirebaseStorageSampleState
     extends ConsumerState<FirebaseStorageSamplePage> {
-  /// 端末ギャラリーから選択された 1 つの画像。
-  File? _pickedImageFromGallery;
-
-  /// FirebaseStorageにアップロードした画像のURL。
-  String _uploadedImageUrl = '';
-
-  /// FirebaseStorageにアップロードした画像のPath。
-  String _uploadedImagePath = '';
-
-  /// FirebaseStorageから取得した画像のURLのリスト。
-  List<String> _imageUrls = [];
-  final _firebaseStorageService = FirebaseStorageService();
+  static const _storagePath = 'sample';
 
   @override
   void initState() {
-    fetchImageUrls();
+    ref.read(firebaseStorageControllerProvider).fetchImageUrls(_storagePath);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    final controller = ref.watch(firebaseStorageControllerProvider);
+    final pickedImage = ref.watch(pickedImageFileStateProvider);
+    final uploadedImageUrl = ref.watch(uploadedImageUrlStateProvider);
+    final uploadedImagePath = ref.watch(uploadedImagePathStateProvider);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('FirebaseStorageを使用するサンプル画面'),
@@ -62,17 +49,16 @@ class _FirebaseStorageSampleState
             height: 100,
             child: GridView.count(
               crossAxisCount: 5,
-              children: _imageUrls
-                  .map(
-                    Image.network,
-                  )
+              children: ref
+                  .watch(imageUrlsStateProvider)
+                  .map(Image.network)
                   .take(5)
                   .toList(),
             ),
           ),
-          if (_pickedImageFromGallery == null)
+          if (pickedImage == null)
             GestureDetector(
-              onTap: _pickImageFromGallery,
+              onTap: controller.pickImageFromGallery,
               child: Center(
                 child: Container(
                   height: 200,
@@ -86,115 +72,48 @@ class _FirebaseStorageSampleState
             )
           else
             GestureDetector(
-              onTap: _pickImageFromGallery,
+              onTap: controller.pickImageFromGallery,
               child: SizedBox(
                 height: 200,
                 width: 200,
-                child: Image.file(_pickedImageFromGallery!),
+                child: Image.file(pickedImage),
               ),
             ),
           const Gap(8),
           ElevatedButton(
-            onPressed: _uploadImage,
+            onPressed: () {
+              if (pickedImage != null) {
+                controller.uploadImage(
+                  path: _storagePath,
+                  resource: FirebaseStorageFile(pickedImage),
+                );
+              }
+            },
             child: const Text('UPLOAD'),
           ),
           const Gap(20),
           const Text('FirebaseStorageにアップロードされた画像↓'),
-          if (_uploadedImageUrl != '')
-            Expanded(
-              child: Column(
-                children: [
-                  ElevatedButton(
-                    onPressed: _deleteImage,
-                    child: const Text('DELETE'),
-                  ),
-                  Text(_uploadedImageUrl),
-                  SizedBox(
-                    height: 200,
-                    width: 200,
-                    child: Image.network(_uploadedImageUrl),
-                  ),
-                ],
-              ),
+          if (uploadedImageUrl != '')
+            Column(
+              children: [
+                ElevatedButton(
+                  onPressed: () => controller.deleteImage(uploadedImagePath),
+                  child: const Text('DELETE'),
+                ),
+                Text(uploadedImageUrl),
+                SizedBox(
+                  height: 200,
+                  width: 200,
+                  child: Image.network(uploadedImageUrl),
+                ),
+              ],
             )
           else
-            const Expanded(
-              child: Center(
-                child: Text('未アップロード'),
-              ),
+            const Center(
+              child: Text('未アップロード'),
             )
         ],
       ),
     );
-  }
-
-  /// 画像を 1 つ端末のギャラリーから選択する。
-  Future<void> _pickImageFromGallery() async {
-    final service = ImagePickerService();
-    try {
-      final path = await service.pickImage(ImageSource.gallery);
-      if (path != null) {
-        setState(() {
-          _pickedImageFromGallery = File(path);
-        });
-      }
-    } on PlatformException catch (e) {
-      if (e.code != 'photo_access_denied') {
-        return;
-      }
-      final result = await ref
-          .read(appScaffoldMessengerControllerProvider)
-          .showDialogByBuilder<bool>(
-            builder: (context) => const AccessNotDeniedDialog.gallery(),
-          );
-      if (result ?? false) {
-        await openAppSettings();
-      }
-    }
-  }
-
-  /// 画像を FirebaseStorageに アップロードする
-  Future<void> _uploadImage() async {
-    if (_pickedImageFromGallery == null) {
-      return;
-    }
-    try {
-      _uploadedImagePath = 'sample/${Random().nextDouble()}.jpg';
-      final imageUrl = await _firebaseStorageService.upload(
-        path: _uploadedImagePath,
-        resource: FirebaseStorageFile(_pickedImageFromGallery!),
-      );
-      setState(() {
-        _uploadedImageUrl = imageUrl;
-      });
-    } on Exception {
-      return;
-    }
-  }
-
-  /// FirebaseStorage にアップロードされたファイルを削除する
-  Future<void> _deleteImage() async {
-    try {
-      await _firebaseStorageService.delete(path: _uploadedImagePath);
-      setState(() {
-        _uploadedImageUrl = '';
-        _uploadedImagePath = '';
-      });
-    } on Exception {
-      return;
-    }
-  }
-
-  /// FirebaseStorage から imageUrl のリストを取得する
-  Future<void> fetchImageUrls() async {
-    final listResult =
-        await _firebaseStorageService.fetchAllReferences(path: 'sample/');
-    final futureImageUrls = listResult.items
-        .map((reference) => reference.getDownloadURL())
-        .toList();
-    final imageUrls = await Future.wait(futureImageUrls);
-    setState(() {
-      _imageUrls = imageUrls;
-    });
   }
 }

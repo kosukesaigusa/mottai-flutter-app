@@ -1,4 +1,4 @@
-import '../firestore_documents/use_social_login.dart';
+import '../firestore_documents/user_social_login.dart';
 
 class UseSocialLoginRepository {
   final _query = UseSocialLoginQuery();

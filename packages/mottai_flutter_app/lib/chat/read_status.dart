@@ -44,19 +44,8 @@ class ReadStatusService {
 
   final ReadStatusRepository _readStatusRepository;
 
-  /// 指定したチャットルーム ([chatRoomId])、ユーザー ID ([userId]) の [ReadStatus]
-  /// を取得する。
-  Stream<ReadReadStatus?> subscribeReadStatus({
-    required String chatRoomId,
-    required String userId,
-  }) =>
-      _readStatusRepository.subscribeReadStatus(
-        chatRoomId: chatRoomId,
-        userId: userId,
-      );
-
-  /// [ReadStatus] を作成する.
-  Future<void> createReadStatus({
+  /// [ReadStatus] を更新する。
+  Future<void> setReadStatus({
     required String chatRoomId,
     required String userId,
   }) =>

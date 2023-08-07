@@ -4,6 +4,8 @@ import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../auth/auth.dart';
+import '../../../auth/ui/auth_dependent_builder.dart';
+import '../../../chat/read_status.dart';
 import '../../../chat/ui/chat_room.dart';
 import '../../../chat/ui/chat_rooms.dart';
 import '../../../job/ui/job_detail.dart';
@@ -90,12 +92,27 @@ class _DevelopmentItemsPageState extends ConsumerState<DevelopmentItemsPage> {
             title: const Text('チャットルーム一覧ページ（StreamProvider、未既読管理）'),
             onTap: () => context.router.pushNamed(ChatRoomsPage.location),
           ),
-          ListTile(
-            title: const Text(
-              'チャットルームページ（AsyncNotifier, リアルタイムチャット、無限スクロール、チャット送信、未既読管理）',
-            ),
-            onTap: () => context.router.pushNamed(
-              ChatRoomPage.location(chatRoomId: 'aSNYpkUofu05nyasvMRx'),
+          AuthDependentBuilder(
+            onAuthenticated: (userId) {
+              return ListTile(
+                title: const Text(
+                  'チャットルームページ（AsyncNotifier, リアルタイムチャット、無限スクロール、チャット送信、未既読管理）',
+                ),
+                onTap: () async {
+                  const chatRoomId = 'aSNYpkUofu05nyasvMRx';
+                  await context.router.pushNamed(
+                    ChatRoomPage.location(chatRoomId: chatRoomId),
+                  );
+                  await ref
+                      .read(readStatusServiceProvider)
+                      .setReadStatus(chatRoomId: chatRoomId, userId: userId);
+                },
+              );
+            },
+            onUnAuthenticated: () => const ListTile(
+              title: Text(
+                'チャットルームページ（ログインしないと使えません）',
+              ),
             ),
           ),
           const ListTile(

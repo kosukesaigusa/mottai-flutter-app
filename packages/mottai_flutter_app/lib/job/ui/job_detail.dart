@@ -184,12 +184,22 @@ class _JobDetail extends ConsumerWidget {
                     titleStyle: Theme.of(context).textTheme.headlineMedium,
                     sectionPadding: const EdgeInsets.only(bottom: 32),
                     content: Column(
-                      //TODO: リンクウィジェットにする。
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: readHost.urls
                           .map(
-                            (url) => Text(
-                              url,
-                              style: Theme.of(context).textTheme.bodyLarge,
+                            (url) => WebLink(
+                              urlText: url,
+                              mode: LaunchMode.externalApplication,
+                              linkStyle: Theme.of(context)
+                                  .textTheme
+                                  .bodyLarge
+                                  ?.copyWith(
+                                    color: Colors.blue,
+                                    decoration: TextDecoration.underline,
+                                    decorationColor: Colors.blue,
+                                  ),
+                              textStyle: Theme.of(context).textTheme.bodyLarge,
+                              maxLines: 1,
                             ),
                           )
                           .toList(),

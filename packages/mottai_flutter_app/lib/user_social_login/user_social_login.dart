@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_common/firebase_common.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -37,8 +38,30 @@ class UserSocialLoginService {
     await _userSocialLoginRepository.setUserSocialLogin(userId: userId);
   }
 
+  /// ログイン時に生成される `Credential` を元に、ユーザーアカウントにソーシャル認証情報をリンクし、
   /// 指定した [SignInMethod] に関連する [UserSocialLogin] のプロパティを、引数で受けた真偽値に更新する
-  Future<void> updateSignInMethodStatus({
+  Future<void> linkUserSocialLogin({
+    required AuthCredential credential,
+    required SignInMethod signInMethod,
+    required String userId,
+    required bool value,
+  }) async {
+    await _linkWithCredential(credential: credential);
+    await _updateUserSocialLoginSignInMethodStatus(
+      signInMethod: signInMethod,
+      userId: userId,
+      value: value,
+    );
+  }
+
+  /// ログイン時に生成される `Credential` を元に、ユーザーアカウントにソーシャル認証情報をリンクする
+  Future<void> _linkWithCredential({required AuthCredential credential}) async {
+    //TODO FirebaseAuth.instanceをここで再度実行するのは望ましくなさそう
+    await FirebaseAuth.instance.currentUser?.linkWithCredential(credential);
+  }
+
+  /// 指定した [SignInMethod] に関連する [UserSocialLogin] のプロパティを、引数で受けた真偽値に更新する
+  Future<void> _updateUserSocialLoginSignInMethodStatus({
     required SignInMethod signInMethod,
     required String userId,
     required bool value,

@@ -42,10 +42,12 @@ dependencies:
 dev_dependencies:
   auto_route_generator: ^7.3.0
   build_runner: ^2.4.6
+  custom_lint: ^0.4.0
   flutter_test:
     sdk: flutter
   freezed: ^2.4.1
   mockito: ^5.4.2
+  riverpod_lint: ^1.4.0
 
 flutter:
   uses-material-design: true

@@ -107,11 +107,14 @@ class _ChatRoomPageState extends ConsumerState<ChatRoomPage> {
                         controller: _scrollController,
                         itemBuilder: (context, index) {
                           final readChatMessage = state.readChatMessages[index];
-                          return _ChatMessageItem(
-                            readChatRoom: readChatRoom,
-                            readChatMessage: readChatMessage,
-                            isMyMessage: readChatMessage.senderId == userId,
-                            chatRoomId: widget.chatRoomId,
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 24),
+                            child: _ChatMessageItem(
+                              readChatRoom: readChatRoom,
+                              readChatMessage: readChatMessage,
+                              isMyMessage: readChatMessage.senderId == userId,
+                              chatRoomId: widget.chatRoomId,
+                            ),
                           );
                         },
                       ),
@@ -162,36 +165,33 @@ class _ChatMessageItem extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final partnerImageUrl =
         ref.watch(chatPartnerImageUrlProvider(readChatRoom));
-    final partnerDisplayName =
-        ref.watch(chatPartnerDisplayNameProvider(readChatRoom));
-    return Column(
-      crossAxisAlignment:
-          isMyMessage ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+    final partnerLastReadAt =
+        ref.watch(chatPartnerLastReadAtProvider(readChatRoom));
+    return Row(
+      mainAxisAlignment:
+          isMyMessage ? MainAxisAlignment.end : MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
-          mainAxisAlignment:
-              isMyMessage ? MainAxisAlignment.end : MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (!isMyMessage) ...[
-              const Gap(8),
+              if (partnerImageUrl.isEmpty)
+                const Icon(
+                  Icons.account_circle,
+                  size: _senderIconSize * 2,
+                )
+              else
+                GenericImage.circle(
+                  imageUrl: partnerImageUrl,
+                  size: _senderIconSize * 2,
+                ),
             ],
             Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: isMyMessage
+                  ? CrossAxisAlignment.end
+                  : CrossAxisAlignment.start,
               children: [
-                if (!isMyMessage) ...[
-                  Text(partnerDisplayName),
-                  if (partnerImageUrl.isEmpty)
-                    const Icon(
-                      Icons.account_circle,
-                      size: _senderIconSize * 2,
-                    )
-                  else
-                    GenericImage.circle(
-                      imageUrl: partnerImageUrl,
-                      size: _senderIconSize * 2,
-                    ),
-                ],
                 Container(
                   constraints: BoxConstraints(
                     maxWidth: (MediaQuery.of(context).size.width -
@@ -220,29 +220,85 @@ class _ChatMessageItem extends ConsumerWidget {
                         : Theme.of(context).textTheme.bodySmall,
                   ),
                 ),
+                if (isMyMessage) ...[
+                  const Gap(4),
+                  _ReadStatusText(
+                    messageCreatedAt: readChatMessage.createdAt.dateTime,
+                    partnerLastReadAt: partnerLastReadAt,
+                  ),
+                ],
+                const Gap(4),
+                _MessageCreatedAtText(
+                  readChatMessage: readChatMessage,
+                  isMyMessage: isMyMessage,
+                ),
               ],
             ),
           ],
         ),
-        Padding(
-          padding: EdgeInsets.only(
-            top: 4,
-            left: isMyMessage ? 0 : _senderIconSize + _horizontalPadding,
-            bottom: 32,
-          ),
-          child: Column(
-            crossAxisAlignment:
-                isMyMessage ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-            children: [
-              if (readChatMessage.createdAt.dateTime != null)
-                Text(
-                  readChatMessage.createdAt.dateTime!.formatDate(),
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
-            ],
-          ),
-        ),
       ],
+    );
+  }
+}
+
+/// '既読' or '未読' の文字列を表示する UI.
+class _ReadStatusText extends StatelessWidget {
+  const _ReadStatusText({
+    required this.messageCreatedAt,
+    required this.partnerLastReadAt,
+  });
+
+  final DateTime? messageCreatedAt;
+  final DateTime? partnerLastReadAt;
+
+  @override
+  Widget build(BuildContext context) {
+    final text = _readStatusString(
+      messageCreatedAt: messageCreatedAt,
+      partnerLastReadAt: partnerLastReadAt,
+    );
+    if (text.isEmpty) {
+      return const SizedBox();
+    }
+    return Text(text, style: Theme.of(context).textTheme.bodySmall);
+  }
+
+  /// メッセージの作成日時 ([messageCreatedAt]) とパートナーの最終既読時刻
+  /// ([partnerLastReadAt]) とを比較して、'既読' or '未読' の文字列を返す。
+  String _readStatusString({
+    required DateTime? messageCreatedAt,
+    required DateTime? partnerLastReadAt,
+  }) {
+    if (messageCreatedAt == null) {
+      return '';
+    }
+    if (partnerLastReadAt == null) {
+      return '未読';
+    }
+    return messageCreatedAt.isAfter(partnerLastReadAt) ? '未読' : '既読';
+  }
+}
+
+/// メッセージの送信日時（現在時刻からの相対的な時刻）を表示する UI.
+class _MessageCreatedAtText extends StatelessWidget {
+  const _MessageCreatedAtText({
+    required this.readChatMessage,
+    required this.isMyMessage,
+  });
+
+  final ReadChatMessage readChatMessage;
+
+  final bool isMyMessage;
+
+  @override
+  Widget build(BuildContext context) {
+    final createdAt = readChatMessage.createdAt.dateTime;
+    if (createdAt == null) {
+      return const SizedBox();
+    }
+    return Text(
+      createdAt.formatRelativeDate(),
+      style: Theme.of(context).textTheme.bodySmall,
     );
   }
 }

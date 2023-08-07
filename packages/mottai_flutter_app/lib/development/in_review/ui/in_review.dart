@@ -19,7 +19,9 @@ class InReviewPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('レビュー情報'),
+        title: const Text(
+          'レビュー情報',
+        ),
       ),
       body: ref.watch(inReviewStreamProvider).when(
             data: (inReviewConfig) => SingleChildScrollView(

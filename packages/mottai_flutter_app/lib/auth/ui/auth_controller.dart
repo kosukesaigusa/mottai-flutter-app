@@ -37,8 +37,6 @@ class AuthController {
 
   final AppScaffoldMessengerController _appScaffoldMessengerController;
 
-  /// 選択した [SignInMethod] でサインインする。
-  /// サインイン後、必要性を確認して [UserMode] を `UserMode.Host` にする。
   Future<void> signIn(SignInMethod signInMethod) async {
     try {
       final userCredential = await _signIn(signInMethod);
@@ -48,18 +46,12 @@ class AuthController {
     }
   }
 
-  /// 選択した [SignInMethod] でサインインする。サインインが済んだユーザーの
-  /// [UserCredential] を返す。
-  /// 各種の例外が発生した場合には適切なメッセージを入れて [AppException] を
-  /// スローする。呼び元でエラーハンドリングし、スナックバーを表示することを
-  /// 期待する。
   Future<UserCredential> _signIn(SignInMethod signInMethod) async {
     switch (signInMethod) {
       case SignInMethod.google:
         try {
           return _authService.signInWithGoogle();
         }
-        // キャンセル時
         on PlatformException catch (e) {
           if (e.code == 'network_error') {
             throw const AppException(
@@ -69,18 +61,14 @@ class AuthController {
           throw const AppException(message: 'キャンセルしました。');
         }
       case SignInMethod.apple:
-        // Apple はキャンセルやネットワークエラーの判定ができないので、try-catchしない
         return _authService.signInWithApple();
       case SignInMethod.line:
-        await _authService.signInWithLINE();
+        return _authService.signInWithLINE();
       case SignInMethod.email:
         throw UnimplementedError();
     }
   }
 
-  /// サインインで得られた [UserCredential] を与え、それに対応する
-  /// ホストドキュメントが存在するか確認し、存在する場合は [UserMode] を
-  /// `UserMode.host` にする。
   Future<void> _maybeSetUserModeToHost(UserCredential userCredential) async {
     final uid = userCredential.user?.uid;
     if (uid == null) {

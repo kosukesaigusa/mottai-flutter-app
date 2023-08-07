@@ -2,6 +2,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:cloud_functions/cloud_functions.dart';
+import 'package:flutter_line_sdk/flutter_line_sdk.dart';
 
 import 'development/development_items/ui/development_items.dart';
 import 'firebase_options.dart';
@@ -15,7 +17,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  LineSDK.instance.setup('YOUR-CHANNEL-ID-HERE').then((_) {
+  LineSDK.instance.setup(const String.fromEnvironment('LINE_CHANNEL_ID')).then((_) {
     print("LineSDK Prepared");
   });
   final container = ProviderContainer();

@@ -52,7 +52,7 @@ jobs:
       - name: Analyze project source
         run: melos exec --sdk-path=${{ runner.tool_cache }}/flutter -- "flutter analyze ."
       # テストを実行
-      - name: Run Flutter Test
+      - name: Run-Flutter-Test
         run: melos exec --sdk-path=${{ runner.tool_cache }}/flutter -- "flutter test --machine --coverage > test-report.log"
 
       # mottai_flutter_appのテスト結果を GitHub Actions に表示する
@@ -60,7 +60,7 @@ jobs:
         uses: dorny/test-reporter@v1
         # テスト結果を表示するのでテストが失敗しても実行する
         # ただし、コードフォーマットや静的解析でCIが失敗した場合は処理を行わない
-        if: steps.Run\ Flutter\ Test.outputs.return-code == '0'
+        if: steps.Run-Flutter-Test.outputs.return-code == '0'
         with:
           name: Flutter Test Report mottai_flutter_app
           path: /home/runner/work/mottai-flutter-app/mottai-flutter-app/packages/mottai_flutter_app/test-report.log
@@ -80,7 +80,7 @@ jobs:
         uses: dorny/test-reporter@v1
         # テスト結果を表示するのでテストが失敗しても実行する
         # ただし、コードフォーマットや静的解析でCIが失敗した場合は処理を行わない
-        if: steps.Run\ Flutter\ Test.outputs.return-code == '0'
+        if: steps.Run-Flutter-Test.outputs.return-code == '0'
         with:
           name: Flutter Test Report mottai_flutter_app
           path: /home/runner/work/mottai-flutter-app/mottai-flutter-app/packages/firebase_common/test-report.log
@@ -100,7 +100,7 @@ jobs:
         uses: dorny/test-reporter@v1
         # テスト結果を表示するのでテストが失敗しても実行する
         # ただし、コードフォーマットや静的解析でCIが失敗した場合は処理を行わない
-        if: steps.Run\ Flutter\ Test.outputs.return-code == '0'
+        if: steps.Run-Flutter-Test.outputs.return-code == '0'
         with:
           name: Flutter Test Report dart_flutter_common
           path: /home/runner/work/mottai-flutter-app/mottai-flutter-app/packages/dart_flutter_common/test-report.log

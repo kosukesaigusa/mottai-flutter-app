@@ -17,7 +17,6 @@ class GoogleAppleSignin extends ConsumerWidget {
       body: Center(
         child: Column(
           children: [
-            // Google
             SizedBox(
               height: 50,
               child: SignInButton(
@@ -28,7 +27,6 @@ class GoogleAppleSignin extends ConsumerWidget {
                     .signIn(SignInMethod.google),
               ),
             ),
-            // Apple
             SizedBox(
               height: 50,
               child: SignInButton(
@@ -38,19 +36,10 @@ class GoogleAppleSignin extends ConsumerWidget {
                     ref.read(authControllerProvider).signIn(SignInMethod.apple),
               ),
             ),
-            // LINE
             ElevatedButton(
               child: const Text('Line でサインイン'),
-                style: ElevatedButton.styleFrom(
-                primary: Colors.green,
-                onPrimary: Colors.white,
-                fixedSize: Size(220, 50),
-                shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(0)
-                ),
-              ),
               onPressed: () async =>
-                    ref.read(authControllerProvider).signIn(SignInMethod.line),
+                  ref.read(authControllerProvider).signIn(SignInMethod.line),
             ),
           ],
         ),

@@ -1,5 +1,5 @@
-import * as admin from 'firebase-admin'
 import axios from 'axios'
+import * as admin from 'firebase-admin'
 import * as functions from 'firebase-functions/v2'
 
 /**
@@ -14,10 +14,9 @@ export const createfirebaseauthcustomtoken = functions.https.onCall<{ accessToke
         const accessToken = callableRequest.data.accessToken
         await verifyAccessToken(accessToken)
         const { lineUserId, displayName, imageUrl } = await getLINEProfile(accessToken)
-        // const { lineUserId } = await getLINEProfile(accessToken)
         const customToken = await admin.auth().createCustomToken(lineUserId)
-        
-        await setWokerDocument({ lineUserId, displayName, imageUrl: imageUrl ?? ``})
+
+        await setWorkerDocument({ lineUserId, displayName, imageUrl: imageUrl ?? `` })
         return { customToken }
     }
 )
@@ -70,14 +69,14 @@ const getLINEProfile = async (
 }
 
 /**
- * LINE のユーザー情報を使用して Firestore に 'appUsers' ドキュメントを作成または更新する。
+ * LINE のユーザー情報を使用して Firestore に 'workers' ドキュメントを作成または更新する。
  * @param {Object} params - ユーザー情報パラメータ。
- * @param {string} params.lineUserId - LINE のユーザーID。
+ * @param {string} params.lineUserId - LINE のユーザー ID。
  * @param {string} params.displayName - LINE のユーザー名。
- * @param {string} [params.imageUrl] - LINE のユーザー画像のURL。提供されていない場合は null を設定する。
+ * @param {string} [params.imageUrl] - LINE のユーザー画像の URL.
  * @returns {Promise<void>} 作成または更新操作が完了した後に解決する Promise.
  */
-const setWokerDocument = async ({
+const setWorkerDocument = async ({
     lineUserId,
     displayName,
     imageUrl
@@ -86,10 +85,12 @@ const setWokerDocument = async ({
     displayName: string
     imageUrl: string
 }): Promise<void> => {
-    await admin
-        .firestore()
-        .collection(`workers`)
-        .doc(lineUserId)
-        .set({ displayName, imageUrl, isHost: false, createdAt: admin.firestore.FieldValue.serverTimestamp(), updatedAt:admin.firestore.FieldValue.serverTimestamp()})
+    await admin.firestore().collection(`workers`).doc(lineUserId).set({
+        displayName,
+        imageUrl,
+        isHost: false,
+        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        updatedAt: admin.firestore.FieldValue.serverTimestamp()
+    })
     functions.logger.info(`workers ドキュメントが作成されました: ${lineUserId}`)
 }

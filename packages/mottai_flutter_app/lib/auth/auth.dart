@@ -1,12 +1,12 @@
 import 'dart:convert';
 
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_line_sdk/flutter_line_sdk.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
-import 'package:cloud_functions/cloud_functions.dart';
-import 'package:flutter_line_sdk/flutter_line_sdk.dart';
 
 import '../user/worker.dart';
 
@@ -112,28 +112,29 @@ class AuthService {
   /// [FirebaseAuth] に LINE でサインインする。
   /// https://firebase.flutter.dev/docs/auth/custom-auth に従っている。
   Future<UserCredential> signInWithLINE() async {
-  final loginResult = await LineSDK.instance.login();
+    final loginResult = await LineSDK.instance.login();
+    final accessToken = loginResult.accessToken.data['access_token'] as String;
+    final callable = FirebaseFunctions.instanceFor(region: 'asia-northeast1')
+        .httpsCallable('createfirebaseauthcustomtoken');
+    final response = await callable.call<Map<String, dynamic>>(
+      <String, dynamic>{'accessToken': accessToken},
+    );
+    final customToken = response.data['customToken'] as String;
+    final userCredential =
+        await FirebaseAuth.instance.signInWithCustomToken(customToken);
+    return userCredential;
+  }
 
-  final accessToken = loginResult.accessToken.data['access_token'] as String;
-
-  final callable = FirebaseFunctions.instanceFor(region: 'asia-northeast1')
-      .httpsCallable('createfirebaseauthcustomtoken');
-  final response = await callable.call<Map<String, dynamic>>(
-    <String, dynamic>{'accessToken': accessToken},
-  );
-
-  final customToken = response.data['customToken'] as String;
-
-  final userCredential = await FirebaseAuth.instance.signInWithCustomToken(customToken);
-  return userCredential;
-}
-
+  /// 文字列から SHA-256 ハッシュを作成する。
   String _sha256ofString(String input) {
     final bytes = utf8.encode(input);
     final digest = sha256.convert(bytes);
     return digest.toString();
   }
 
+  /// サインイン時に、まだ Worker ドキュメントが存在していなければ、Firebase の
+  /// [UserCredential] をもとに生成する。
+  /// Google や Apple によるはじめてのログインのときに相当する。
   Future<void> _maybeCreateWorkerByUserCredential({
     required UserCredential userCredential,
   }) async {
@@ -151,6 +152,7 @@ class AuthService {
     );
   }
 
+  /// [FirebaseAuth] からサインアウトする。
   Future<void> signOut() async {
     await _auth.signOut();
     await GoogleSignIn().signOut();

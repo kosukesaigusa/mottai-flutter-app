@@ -11,10 +11,10 @@ class CreateOrUpdateHostPage extends ConsumerWidget {
   });
 
   /// [AutoRoute] で指定するパス文字列。
-  static const path = '/host/:userId';
+  static const path = '/host/:userId/edit';
 
   /// [CreateOrUpdateHostPage] に遷移する際に `context.router.pushNamed` で指定する文字列。
-  static String location({required String userId}) => '/host/$userId';
+  static String location({required String userId}) => '/host/$userId/edit';
 
   /// パスパラメータから得られるユーザーの ID.
   final String userId;

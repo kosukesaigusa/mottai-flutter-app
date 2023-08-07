@@ -9,6 +9,7 @@ import '../../../chat/read_status.dart';
 import '../../../chat/ui/chat_room.dart';
 import '../../../chat/ui/chat_rooms.dart';
 import '../../../host/ui/create_or_update_host.dart';
+import '../../../host/ui/host.dart';
 import '../../../job/ui/job_detail.dart';
 import '../../../map/ui/map.dart';
 import '../../../package_info.dart';
@@ -130,11 +131,11 @@ class _DevelopmentItemsPageState extends ConsumerState<DevelopmentItemsPage> {
             //   UpdateWorkerPage.location('WORKER_ID_HERE'),
             // ),
           ),
-          const ListTile(
-            title: Text('ホストページ'),
-            // onTap: () => context.router.pushNamed(
-            //   HOSTPage.location('HOST_ID_HERE'),
-            // ),
+          ListTile(
+            title: const Text('ホストページ'),
+            onTap: () => context.router.pushNamed(
+              HostPage.location(userId: 'b1M4bcp7zEVpgHXYhOVWt8BMkq23'),
+            ),
           ),
           ListTile(
             title: const Text(

@@ -14,6 +14,7 @@ import '../development/sample_todo/ui/sample_todos.dart';
 import '../development/sign_in/ui/sign_in.dart';
 import '../development/web_link/ui/web_link_stub.dart';
 import '../host/ui/create_or_update_host.dart';
+import '../host/ui/host.dart';
 import '../job/ui/job_detail.dart';
 import '../map/ui/map.dart';
 import '../worker/ui/worker.dart';
@@ -43,6 +44,10 @@ class AppRouter extends $AppRouter {
     AutoRoute(
       path: WorkerPage.path,
       page: WorkerRoute.page,
+    ),
+    AutoRoute(
+      path: HostPage.path,
+      page: HostRoute.page,
     ),
     // AutoRoute(
     //   path: CreateOrUpdateJobPage.path,

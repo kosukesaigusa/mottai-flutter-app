@@ -13,6 +13,7 @@ analyzer:
 
 linter:
   rules:
+    do_not_use_environment: false
     prefer_final_parameters: false
     public_member_api_docs: false
     discarded_futures: false

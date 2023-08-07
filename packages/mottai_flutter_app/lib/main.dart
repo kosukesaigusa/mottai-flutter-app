@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_line_sdk/flutter_line_sdk.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
@@ -16,6 +17,11 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  await LineSDK.instance
+      .setup(const String.fromEnvironment('LINE_CHANNEL_ID'))
+      .then((_) {
+    debugPrint('LineSDK Prepared');
+  });
   final container = ProviderContainer();
   final hostDocumentExists =
       await container.read(hostDocumentExistsProvider).call();

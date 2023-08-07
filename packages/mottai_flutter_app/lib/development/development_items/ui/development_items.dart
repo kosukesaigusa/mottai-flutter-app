@@ -4,6 +4,8 @@ import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../auth/auth.dart';
+import '../../../auth/ui/auth_dependent_builder.dart';
+import '../../../chat/read_status.dart';
 import '../../../chat/ui/chat_room.dart';
 import '../../../chat/ui/chat_rooms.dart';
 import '../../../job/ui/job_detail.dart';
@@ -14,6 +16,7 @@ import '../../../scaffold_messenger_controller.dart';
 import '../../../user/user.dart';
 import '../../../user/user_mode.dart';
 import '../../color/ui/color.dart';
+import '../../firebase_storage/ui/firebase_storage.dart';
 import '../../force_update/ui/force_update.dart';
 import '../../generic_image/ui/generic_images.dart';
 import '../../image_detail_view/ui/image_detail_view_stub.dart';
@@ -90,12 +93,27 @@ class _DevelopmentItemsPageState extends ConsumerState<DevelopmentItemsPage> {
             title: const Text('チャットルーム一覧ページ（StreamProvider、未既読管理）'),
             onTap: () => context.router.pushNamed(ChatRoomsPage.location),
           ),
-          ListTile(
-            title: const Text(
-              'チャットルームページ（AsyncNotifier, リアルタイムチャット、無限スクロール、チャット送信、未既読管理）',
-            ),
-            onTap: () => context.router.pushNamed(
-              ChatRoomPage.location(chatRoomId: 'aSNYpkUofu05nyasvMRx'),
+          AuthDependentBuilder(
+            onAuthenticated: (userId) {
+              return ListTile(
+                title: const Text(
+                  'チャットルームページ（AsyncNotifier, リアルタイムチャット、無限スクロール、チャット送信、未既読管理）',
+                ),
+                onTap: () async {
+                  const chatRoomId = 'aSNYpkUofu05nyasvMRx';
+                  await context.router.pushNamed(
+                    ChatRoomPage.location(chatRoomId: chatRoomId),
+                  );
+                  await ref
+                      .read(readStatusServiceProvider)
+                      .setReadStatus(chatRoomId: chatRoomId, userId: userId);
+                },
+              );
+            },
+            onUnAuthenticated: () => const ListTile(
+              title: Text(
+                'チャットルームページ（ログインしないと使えません）',
+              ),
             ),
           ),
           const ListTile(
@@ -138,10 +156,10 @@ class _DevelopmentItemsPageState extends ConsumerState<DevelopmentItemsPage> {
             onTap: () =>
                 context.router.pushNamed(ImagePickerSamplePage.location),
           ),
-          const ListTile(
-            title: Text('画像アップロード'),
-            // onTap: () =>
-            //     context.router.pushNamed(FirebaseStorageSamplePage.location),
+          ListTile(
+            title: const Text('画像アップロード'),
+            onTap: () =>
+                context.router.pushNamed(FirebaseStorageSamplePage.location),
           ),
           ListTile(
             title: const Text('強制アップデート'),

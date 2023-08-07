@@ -19,6 +19,9 @@ mixin _$ChatRoomState {
   /// チャットページに入ったときの初回ローディング中かどうか。
   bool get loading => throw _privateConstructorUsedError;
 
+  /// チャットルーム。初回ローディングで取得することを期待する。
+  ReadChatRoom? get readChatRoom => throw _privateConstructorUsedError;
+
   /// メッセージを送信中かどうか。
   bool get sending => throw _privateConstructorUsedError;
 
@@ -56,6 +59,7 @@ abstract class $ChatRoomStateCopyWith<$Res> {
   @useResult
   $Res call(
       {bool loading,
+      ReadChatRoom? readChatRoom,
       bool sending,
       List<ReadChatMessage> readChatMessages,
       List<ReadChatMessage> newReadChatMessages,
@@ -79,6 +83,7 @@ class _$ChatRoomStateCopyWithImpl<$Res, $Val extends ChatRoomState>
   @override
   $Res call({
     Object? loading = null,
+    Object? readChatRoom = freezed,
     Object? sending = null,
     Object? readChatMessages = null,
     Object? newReadChatMessages = null,
@@ -92,6 +97,10 @@ class _$ChatRoomStateCopyWithImpl<$Res, $Val extends ChatRoomState>
           ? _value.loading
           : loading // ignore: cast_nullable_to_non_nullable
               as bool,
+      readChatRoom: freezed == readChatRoom
+          ? _value.readChatRoom
+          : readChatRoom // ignore: cast_nullable_to_non_nullable
+              as ReadChatRoom?,
       sending: null == sending
           ? _value.sending
           : sending // ignore: cast_nullable_to_non_nullable
@@ -134,6 +143,7 @@ abstract class _$$_ChatRoomStateCopyWith<$Res>
   @useResult
   $Res call(
       {bool loading,
+      ReadChatRoom? readChatRoom,
       bool sending,
       List<ReadChatMessage> readChatMessages,
       List<ReadChatMessage> newReadChatMessages,
@@ -155,6 +165,7 @@ class __$$_ChatRoomStateCopyWithImpl<$Res>
   @override
   $Res call({
     Object? loading = null,
+    Object? readChatRoom = freezed,
     Object? sending = null,
     Object? readChatMessages = null,
     Object? newReadChatMessages = null,
@@ -168,6 +179,10 @@ class __$$_ChatRoomStateCopyWithImpl<$Res>
           ? _value.loading
           : loading // ignore: cast_nullable_to_non_nullable
               as bool,
+      readChatRoom: freezed == readChatRoom
+          ? _value.readChatRoom
+          : readChatRoom // ignore: cast_nullable_to_non_nullable
+              as ReadChatRoom?,
       sending: null == sending
           ? _value.sending
           : sending // ignore: cast_nullable_to_non_nullable
@@ -205,6 +220,7 @@ class __$$_ChatRoomStateCopyWithImpl<$Res>
 class _$_ChatRoomState implements _ChatRoomState {
   const _$_ChatRoomState(
       {this.loading = true,
+      this.readChatRoom,
       this.sending = false,
       final List<ReadChatMessage> readChatMessages = const <ReadChatMessage>[],
       final List<ReadChatMessage> newReadChatMessages =
@@ -222,6 +238,10 @@ class _$_ChatRoomState implements _ChatRoomState {
   @override
   @JsonKey()
   final bool loading;
+
+  /// チャットルーム。初回ローディングで取得することを期待する。
+  @override
+  final ReadChatRoom? readChatRoom;
 
   /// メッセージを送信中かどうか。
   @override
@@ -283,7 +303,7 @@ class _$_ChatRoomState implements _ChatRoomState {
 
   @override
   String toString() {
-    return 'ChatRoomState(loading: $loading, sending: $sending, readChatMessages: $readChatMessages, newReadChatMessages: $newReadChatMessages, pastReadChatMessages: $pastReadChatMessages, fetching: $fetching, hasMore: $hasMore, lastReadChatMessageId: $lastReadChatMessageId)';
+    return 'ChatRoomState(loading: $loading, readChatRoom: $readChatRoom, sending: $sending, readChatMessages: $readChatMessages, newReadChatMessages: $newReadChatMessages, pastReadChatMessages: $pastReadChatMessages, fetching: $fetching, hasMore: $hasMore, lastReadChatMessageId: $lastReadChatMessageId)';
   }
 
   @override
@@ -292,6 +312,8 @@ class _$_ChatRoomState implements _ChatRoomState {
         (other.runtimeType == runtimeType &&
             other is _$_ChatRoomState &&
             (identical(other.loading, loading) || other.loading == loading) &&
+            (identical(other.readChatRoom, readChatRoom) ||
+                other.readChatRoom == readChatRoom) &&
             (identical(other.sending, sending) || other.sending == sending) &&
             const DeepCollectionEquality()
                 .equals(other._readChatMessages, _readChatMessages) &&
@@ -310,6 +332,7 @@ class _$_ChatRoomState implements _ChatRoomState {
   int get hashCode => Object.hash(
       runtimeType,
       loading,
+      readChatRoom,
       sending,
       const DeepCollectionEquality().hash(_readChatMessages),
       const DeepCollectionEquality().hash(_newReadChatMessages),
@@ -328,6 +351,7 @@ class _$_ChatRoomState implements _ChatRoomState {
 abstract class _ChatRoomState implements ChatRoomState {
   const factory _ChatRoomState(
       {final bool loading,
+      final ReadChatRoom? readChatRoom,
       final bool sending,
       final List<ReadChatMessage> readChatMessages,
       final List<ReadChatMessage> newReadChatMessages,
@@ -340,6 +364,10 @@ abstract class _ChatRoomState implements ChatRoomState {
 
   /// チャットページに入ったときの初回ローディング中かどうか。
   bool get loading;
+  @override
+
+  /// チャットルーム。初回ローディングで取得することを期待する。
+  ReadChatRoom? get readChatRoom;
   @override
 
   /// メッセージを送信中かどうか。

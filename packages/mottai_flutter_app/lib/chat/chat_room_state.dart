@@ -9,6 +9,9 @@ class ChatRoomState with _$ChatRoomState {
     /// チャットページに入ったときの初回ローディング中かどうか。
     @Default(true) bool loading,
 
+    /// チャットルーム。初回ローディングで取得することを期待する。
+    ReadChatRoom? readChatRoom,
+
     /// メッセージを送信中かどうか。
     @Default(false) bool sending,
 

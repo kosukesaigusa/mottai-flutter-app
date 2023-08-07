@@ -1,32 +1,59 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../auth/auth.dart';
-import '../../../auth/ui/sign_in_buttons.dart';
+import '../../../auth/ui/auth_dependent_builder.dart';
+import '../../../chat/read_status.dart';
 import '../../../chat/ui/chat_room.dart';
-import '../../../force_update/ui/force_update.dart';
+import '../../../chat/ui/chat_rooms.dart';
 import '../../../job/ui/job_detail.dart';
 import '../../../map/ui/map.dart';
+import '../../../package_info.dart';
+import '../../../push_notification/firebase_messaging.dart';
 import '../../../scaffold_messenger_controller.dart';
 import '../../../user/user.dart';
 import '../../../user/user_mode.dart';
 import '../../color/ui/color.dart';
-import '../../generic_image/generic_image.dart';
-import '../../image_detail_view/image_detail_view_stub.dart';
+import '../../firebase_storage/ui/firebase_storage.dart';
+import '../../force_update/ui/force_update.dart';
+import '../../generic_image/ui/generic_images.dart';
+import '../../image_detail_view/ui/image_detail_view_stub.dart';
 import '../../image_picker/ui/image_picker_sample.dart';
+import '../../in_review/ui/in_review.dart';
 import '../../sample_todo/ui/sample_todos.dart';
+import '../../sign_in/ui/sign_in.dart';
+import '../../web_link/ui/web_link_stub.dart';
 
 /// 開発中の各ページへの導線を表示するページ。
-class DevelopmentItemsPage extends ConsumerWidget {
+@RoutePage()
+class DevelopmentItemsPage extends StatefulHookConsumerWidget {
   const DevelopmentItemsPage({super.key});
 
+  /// [AutoRoute] で指定するパス文字列。
   static const path = '/developmentItems';
-  static const name = 'DevelopmentItemsPage';
+
+  /// [DevelopmentItemsPage] に遷移する際に `context.router.pushNamed` で指定する文字列。
   static const location = path;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<DevelopmentItemsPage> createState() =>
+      _DevelopmentItemsPageState();
+}
+
+class _DevelopmentItemsPageState extends ConsumerState<DevelopmentItemsPage> {
+  @override
+  void initState() {
+    super.initState();
+    Future.wait<void>([
+      ref.read(initializeFirebaseMessagingProvider)(),
+      ref.read(getFcmTokenProvider)(),
+    ]);
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('開発ページ'),
@@ -54,97 +81,66 @@ class DevelopmentItemsPage extends ConsumerWidget {
               'マップページ (geoflutterfire_plus, flutter_google_maps, '
               'geolocator, PageView)',
             ),
-            // TODO: 後に auto_route を採用して Navigator.pushNamed を使用する予定
-            onTap: () => Navigator.push<void>(
-              context,
-              MaterialPageRoute<void>(
-                builder: (context) => const MapPage(),
-              ),
-            ),
+            onTap: () => context.router.pushNamed(MapPage.location),
           ),
           ListTile(
             title: const Text('仕事詳細ページ (FutureProvider)'),
-            // TODO: 後に auto_route を採用して Navigator.pushNamed を使用する予定
-            onTap: () => Navigator.push<void>(
-              context,
-              MaterialPageRoute<void>(
-                builder: (context) => const JobDetailPage(),
-              ),
+            onTap: () => context.router.pushNamed(
+              JobDetailPage.location(jobId: 'PYRsrMSOApEgZ6lzMuUK'),
             ),
-          ),
-          const ListTile(
-            title: Text('チャットルーム一覧ページ（StreamProvider、未既読管理）'),
-            // TODO: 後に auto_route を採用して Navigator.pushNamed を使用する予定
-            // onTap: () => Navigator.push<void>(
-            //   context,
-            //   MaterialPageRoute<void>(
-            //     builder: (context) => FooPage(),
-            //   ),
-            // ),
           ),
           ListTile(
-            title: const Text(
-              'チャットルームページ（AsyncNotifier, リアルタイムチャット、無限スクロール、チャット送信、未既読管理）',
-            ),
-            // TODO: 後に auto_route を採用して Navigator.pushNamed を使用する予定
-            onTap: () => Navigator.push<void>(
-              context,
-              MaterialPageRoute<void>(
-                builder: (context) => const ChatRoomPage(),
+            title: const Text('チャットルーム一覧ページ（StreamProvider、未既読管理）'),
+            onTap: () => context.router.pushNamed(ChatRoomsPage.location),
+          ),
+          AuthDependentBuilder(
+            onAuthenticated: (userId) {
+              return ListTile(
+                title: const Text(
+                  'チャットルームページ（AsyncNotifier, リアルタイムチャット、無限スクロール、チャット送信、未既読管理）',
+                ),
+                onTap: () async {
+                  const chatRoomId = 'aSNYpkUofu05nyasvMRx';
+                  await context.router.pushNamed(
+                    ChatRoomPage.location(chatRoomId: chatRoomId),
+                  );
+                  await ref
+                      .read(readStatusServiceProvider)
+                      .setReadStatus(chatRoomId: chatRoomId, userId: userId);
+                },
+              );
+            },
+            onUnAuthenticated: () => const ListTile(
+              title: Text(
+                'チャットルームページ（ログインしないと使えません）',
               ),
             ),
           ),
           const ListTile(
-            title: Text('ユーザー詳細ページ（ワーカー）'),
-            // TODO: 後に auto_route を採用して Navigator.pushNamed を使用する予定
-            // onTap: () => Navigator.push<void>(
-            //   context,
-            //   MaterialPageRoute<void>(
-            //     builder: (context) => FooPage(),
-            //   ),
+            title: Text('ワーカーページ'),
+            // onTap: () => context.router.pushNamed(
+            //   WorkerPage.location('WORKER_ID_HERE'),
             // ),
           ),
           const ListTile(
-            title: Text('ユーザー情報編集ページ（ワーカー）'),
-            // TODO: 後に auto_route を採用して Navigator.pushNamed を使用する予定
-            // onTap: () => Navigator.push<void>(
-            //   context,
-            //   MaterialPageRoute<void>(
-            //     builder: (context) => FooPage(),
-            //   ),
+            title: Text('ワーカー情報編集ページ'),
+            // onTap: () => context.router.pushNamed(
+            //   UpdateWorkerPage.location('WORKER_ID_HERE'),
+            // ),
+          ),
+          const ListTile(
+            title: Text('ホストページ'),
+            // onTap: () => context.router.pushNamed(
+            //   HOSTPage.location('HOST_ID_HERE'),
             // ),
           ),
           const ListTile(
             title: Text(
-              'ホストとして登録ページ (Notifier, geoflutterfire_plus, '
+              'ホストとして登録ページ (StateNotifier?, geoflutterfire_plus, '
               'flutter_google_maps, geolocator)',
             ),
-            // TODO: 後に auto_route を採用して Navigator.pushNamed を使用する予定
-            // onTap: () => Navigator.push<void>(
-            //   context,
-            //   MaterialPageRoute<void>(
-            //     builder: (context) => FooPage(),
-            //   ),
-            // ),
-          ),
-          const ListTile(
-            title: Text('ユーザー詳細ページ（ホスト）'),
-            // TODO: 後に auto_route を採用して Navigator.pushNamed を使用する予定
-            // onTap: () => Navigator.push<void>(
-            //   context,
-            //   MaterialPageRoute<void>(
-            //     builder: (context) => FooPage(),
-            //   ),
-            // ),
-          ),
-          const ListTile(
-            title: Text('ユーザー情報編集ページ（ホスト）'),
-            // TODO: 後に auto_route を採用して Navigator.pushNamed を使用する予定
-            // onTap: () => Navigator.push<void>(
-            //   context,
-            //   MaterialPageRoute<void>(
-            //     builder: (context) => FooPage(),
-            //   ),
+            // onTap: () => context.router.pushNamed(
+            //   CreateOrUpdateHostPage.location('HOST_ID_HERE'),
             // ),
           ),
           const Divider(),
@@ -157,107 +153,54 @@ class DevelopmentItemsPage extends ConsumerWidget {
           ),
           ListTile(
             title: const Text('画像選択・圧縮（1 枚 or 複数）'),
-            // TODO: 後に auto_route を採用して Navigator.pushNamed を使用する予定
-            onTap: () => Navigator.push<void>(
-              context,
-              MaterialPageRoute<void>(
-                builder: (context) => const ImagePickSample(),
-              ),
-            ),
-          ),
-          const ListTile(
-            title: Text('画像アップロード'),
-            // TODO: 後に auto_route を採用して Navigator.pushNamed を使用する予定
-            // onTap: () => Navigator.push<void>(
-            //   context,
-            //   MaterialPageRoute<void>(
-            //     builder: (context) => FooPage(),
-            //   ),
-            // ),
-          ),
-          const ListTile(
-            title: Text('強制アップデート'),
-            // TODO: 後に auto_route を採用して Navigator.pushNamed を使用する予定
-            // onTap: () => Navigator.push<void>(
-            //   context,
-            //   MaterialPageRoute<void>(
-            //     builder: (context) => FooPage(),
-            //   ),
-            // ),
-          ),
-          const ListTile(
-            title: Text('レビュー中管理'),
-            // TODO: 後に auto_route を採用して Navigator.pushNamed を使用する予定
-            // onTap: () => Navigator.push<void>(
-            //   context,
-            //   MaterialPageRoute<void>(
-            //     builder: (context) => FooPage(),
-            //   ),
-            // ),
+            onTap: () =>
+                context.router.pushNamed(ImagePickerSamplePage.location),
           ),
           ListTile(
-            title: const Text('サインイン (Google, Apple)'),
-            // TODO: 後に auto_route を採用して Navigator.pushNamed を使用する予定
-            onTap: () => Navigator.push<void>(
-              context,
-              MaterialPageRoute<void>(
-                builder: (context) => const GoogleAppleSignin(),
-              ),
-            ),
+            title: const Text('画像アップロード'),
+            onTap: () =>
+                context.router.pushNamed(FirebaseStorageSamplePage.location),
           ),
-          const ListTile(
-            title: Text('サインイン (LINE, Firebase Functions)'),
-            // TODO: 後に auto_route を採用して Navigator.pushNamed を使用する予定
-            // onTap: () => Navigator.push<void>(
-            //   context,
-            //   MaterialPageRoute<void>(
-            //     builder: (context) => FooPage(),
-            //   ),
-            // ),
+          ListTile(
+            title: const Text('強制アップデート'),
+            onTap: () =>
+                context.router.pushNamed(ForceUpdateSamplePage.location),
+          ),
+          ListTile(
+            title: const Text('レビュー中かどうか'),
+            onTap: () => context.router.pushNamed(InReviewPage.location),
+          ),
+          ListTile(
+            title: const Text('サインイン (Google, Apple, LINE)'),
+            onTap: () => context.router.pushNamed(SignInSamplePage.location),
           ),
           const ListTile(
             title: Text('FCM トークン（トークン追加, device_info_plus）'),
-            // TODO: 後に auto_route を採用して Navigator.pushNamed を使用する予定
-            // onTap: () => Navigator.push<void>(
-            //   context,
-            //   MaterialPageRoute<void>(
-            //     builder: (context) => FooPage(),
-            //   ),
-            // ),
+            // onTap: () => context.router.pushNamed(FcmTokenPage.location),
           ),
           const ListTile(
             title: Text(
               '通知 (firebase_messaging, local_notification, dynamic_links)',
             ),
-            // TODO: 後に auto_route を採用して Navigator.pushNamed を使用する予定
-            // onTap: () => Navigator.push<void>(
-            //   context,
-            //   MaterialPageRoute<void>(
-            //     builder: (context) => FooPage(),
-            //   ),
-            // ),
+            // onTap: () =>
+            //     context.router.pushNamed(FirebaseMessagingPage.location),
           ),
           ListTile(
-            title: const Text('Components'),
-            // TODO: 後に auto_route を採用して Navigator.pushNamed を使用する予定
-            onTap: () => Navigator.push<void>(
-              context,
-              MaterialPageRoute<void>(
-                builder: (context) => const GenericImages(),
-              ),
-            ),
+            title: const Text('汎用画像ウィジェット'),
+            onTap: () => context.router.pushNamed(GenericImagesPage.location),
           ),
           ListTile(
             title: const Text(
               '画像の詳細拡大画面サンプル',
             ),
-            // TODO: 後に auto_route を採用して Navigator.pushNamed を使用する予定
-            onTap: () => Navigator.push<void>(
-              context,
-              MaterialPageRoute<void>(
-                builder: (context) => const ImageDetailViewStubPage(),
-              ),
+            onTap: () =>
+                context.router.pushNamed(ImageDetailViewStubPage.location),
+          ),
+          ListTile(
+            title: const Text(
+              'WebLinkサンプル',
             ),
+            onTap: () => context.router.pushNamed(WebLinkStubPage.location),
           ),
           const Divider(),
           Padding(
@@ -267,13 +210,7 @@ class DevelopmentItemsPage extends ConsumerWidget {
               style: Theme.of(context).textTheme.titleLarge,
             ),
           ),
-          const ListTile(
-            title: Text(
-              'ルーティング (auto_route, BottomNavigationBar, AuthGuard、権限管理)',
-            ),
-          ),
           const ListTile(title: Text('Security Rules')),
-          const ListTile(title: Text('ホスト運営登録承認')),
           const ListTile(title: Text('お問い合わせ')),
           const ListTile(title: Text('不適切 UGC の通報 or 非表示')),
           const Divider(),
@@ -288,37 +225,13 @@ class DevelopmentItemsPage extends ConsumerWidget {
             title: const Text(
               'Todo 一覧ページ',
             ),
-            // TODO: 後に auto_route を採用して Navigator.pushNamed を使用する予定
-            onTap: () => Navigator.push<void>(
-              context,
-              MaterialPageRoute<void>(
-                builder: (context) => const SampleTodosPage(),
-              ),
-            ),
+            onTap: () => context.router.pushNamed(SampleTodosPage.location),
           ),
           ListTile(
             title: const Text(
               '色の確認',
             ),
-            // TODO: 後に auto_route を採用して Navigator.pushNamed を使用する予定
-            onTap: () => Navigator.push<void>(
-              context,
-              MaterialPageRoute<void>(
-                builder: (context) => const ColorPage(),
-              ),
-            ),
-          ),
-          ListTile(
-            title: const Text(
-              'forceUpdateページ',
-            ),
-            // TODO: 後に auto_route を採用して Navigator.pushNamed を使用する予定
-            onTap: () => Navigator.push<void>(
-              context,
-              MaterialPageRoute<void>(
-                builder: (context) => const ForceUpdatePage(),
-              ),
-            ),
+            onTap: () => context.router.pushNamed(ColorPage.location),
           ),
         ],
       ),
@@ -353,13 +266,14 @@ class _DrawerChildState extends ConsumerState<_DrawerChild> {
 
   @override
   Widget build(BuildContext context) {
+    final packageInfo = ref.watch(packageInfoProvider);
     return ListView(
       children: [
         DrawerHeader(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('mottai-app-dev'),
+              Text(packageInfo.packageName),
               if (ref.watch(isHostProvider)) ...[
                 const Gap(8),
                 Text(
@@ -446,6 +360,27 @@ class _DrawerChildState extends ConsumerState<_DrawerChild> {
                       navigator.pop();
                     },
                     child: const Text('サインイン'),
+                  ),
+                ),
+                const Divider(),
+                Center(
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      final token = await ref.read(getFcmTokenProvider).call();
+                      if (token == null) {
+                        return;
+                      }
+                      debugPrint(token);
+                      await ref
+                          .read(appScaffoldMessengerControllerProvider)
+                          .showDialogByBuilder<void>(
+                            builder: (context) => AlertDialog(
+                              title: const SelectableText('FCM トークン'),
+                              content: Text(token),
+                            ),
+                          );
+                    },
+                    child: const Text('FCM トークン表示'),
                   ),
                 ),
               ],

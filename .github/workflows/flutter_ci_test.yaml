@@ -1,0 +1,113 @@
+name: flutter_test
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+  push:
+    branches:
+      - main
+
+jobs:
+  flutter_test:
+    runs-on: ubuntu-latest
+    # timeout-minutesのデフォルト値は6時間
+    # タイムアウトを設定しないと処理が終わらないまま放置され、莫大な請求額になるため短めに設定する
+    timeout-minutes: 10
+    steps:
+      # ソースコードをチェックアウト
+      - name: Checkout
+        uses: actions/checkout@v3
+      # fvm のバージョンとチャネルを環境変数に設定する
+      - name: Check fvm
+        uses: kuhnroyal/flutter-fvm-config-action@v1
+      # Flutter SDK の設定
+      - name: Setup Flutter SDK
+        uses: subosito/flutter-action@v2
+        with:
+          # バージョンとチャネルは fvm の値を使う
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: ${{ env.FLUTTER_CHANNEL }}
+          # 次回以降起動を速くするためにキャッシュしておく
+          cache: true
+          cache-key: flutter
+          cache-path: ${{ runner.tool_cache }}/flutter
+          # /opt/hostedtoolcache/flutter
+      # melosの設定
+      # デフォルトでmelos bootstrapコマンドが実行される
+      - name: Setup melos
+        uses: bluefireteam/melos-action@v1
+        with:
+          run-bootstrap: false
+      # melos bootstrap
+      - name: melos bootstrap
+        run: melos bootstrap --sdk-path=${{ runner.tool_cache }}/flutter
+      # 依存関係を解決
+      - name: Install Flutter dependencies by melos
+        run: melos pg --sdk-path=${{ runner.tool_cache }}/flutter
+      # コードフォーマットを実行
+      # フォーマットの結果変更が発生した場合はエラー扱いにする
+      - name: Run Flutter format
+        run: melos exec --sdk-path=${{ runner.tool_cache }}/flutter -- "dart format --set-exit-if-changed ."
+      # 静的解析を実行
+      - name: Analyze project source
+        run: melos exec --sdk-path=${{ runner.tool_cache }}/flutter -- "flutter analyze ."
+      # テストを実行
+      - name: Run Flutter Test
+        run: melos exec --sdk-path=${{ runner.tool_cache }}/flutter -- "flutter test --machine --coverage > test-report.log"
+
+      # mottai_flutter_appのテスト結果を GitHub Actions に表示する
+      - name: Report Test mottai_flutter_app
+        uses: dorny/test-reporter@v1
+        # テスト結果を表示するのでテストが失敗しても実行する
+        if: always()
+        with:
+          name: Flutter Test Report mottai_flutter_app
+          path: /home/runner/work/mottai-flutter-app/mottai-flutter-app/packages/mottai_flutter_app/test-report.log
+          reporter: flutter-json
+      # Codecov に結果を送信
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v2
+        with:
+          token: ${{secrets.CODECOV_TOKEN}}
+          file: /home/runner/work/mottai-flutter-app/mottai-flutter-app/packages/mottai_flutter_app/coverage/lcov.info
+          fail_ci_if_error: true
+          flags: unittests_mottai_flutter_app
+          verbose: true
+
+      # firebase_commonのテスト結果を GitHub Actions に表示する
+      - name: Report Test firebase_common
+        uses: dorny/test-reporter@v1
+        # テスト結果を表示するのでテストが失敗しても実行する
+        if: always()
+        with:
+          name: Flutter Test Report mottai_flutter_app
+          path: /home/runner/work/mottai-flutter-app/mottai-flutter-app/packages/firebase_common/test-report.log
+          reporter: flutter-json
+      # Codecov に結果を送信
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v2
+        with:
+          token: ${{secrets.CODECOV_TOKEN}}
+          file: /home/runner/work/mottai-flutter-app/mottai-flutter-app/packages/firebase_common/coverage/lcov.info
+          fail_ci_if_error: true
+          flags: unittests_firebase_common
+          verbose: true
+
+      # dart_flutter_commonのテスト結果を GitHub Actions に表示する
+      - name: Report Test dart_flutter_common
+        uses: dorny/test-reporter@v1
+        # テスト結果を表示するのでテストが失敗しても実行する
+        if: always()
+        with:
+          name: Flutter Test Report dart_flutter_common
+          path: /home/runner/work/mottai-flutter-app/mottai-flutter-app/packages/dart_flutter_common/test-report.log
+          reporter: flutter-json
+      # Codecov に結果を送信
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v2
+        with:
+          token: ${{secrets.CODECOV_TOKEN}}
+          file: /home/runner/work/mottai-flutter-app/mottai-flutter-app/packages/dart_flutter_common/coverage/lcov.info
+          fail_ci_if_error: true
+          flags: unittests_dart_flutter_common
+          verbose: true

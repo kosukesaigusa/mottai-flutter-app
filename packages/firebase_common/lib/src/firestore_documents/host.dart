@@ -11,6 +11,7 @@ class Host {
     required this.displayName,
     this.imageUrl = '',
     this.hostTypes = const <HostType>{},
+    this.urls = const <String>[],
     this.createdAt = const ServerTimestamp(),
     this.updatedAt = const ServerTimestamp(),
   });
@@ -22,6 +23,8 @@ class Host {
 
   @_hostTypesConverter
   final Set<HostType> hostTypes;
+
+  final List<String> urls;
 
   // TODO: やや冗長になってしまっているのは、flutterfire_gen と
   // flutterfire_json_converters の作りのため。それらのパッケージが更新されたら

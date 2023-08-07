@@ -1,3 +1,4 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:dart_flutter_common/dart_flutter_common.dart';
 import 'package:firebase_common/firebase_common.dart';
 import 'package:flutter/material.dart';
@@ -7,8 +8,10 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../auth/ui/auth_dependent_builder.dart';
 import '../../color.dart';
+import '../../error/ui/error.dart';
 import '../../user/user_mode.dart';
 import '../chat_room.dart';
+import '../read_status.dart';
 
 /// このファイルの複数箇所で指定している水平方向の Padding。
 const double _horizontalPadding = 8;
@@ -17,13 +20,22 @@ const double _horizontalPadding = 8;
 const double _senderIconSize = 24;
 
 /// チャットルームページ。
+@RoutePage()
 class ChatRoomPage extends ConsumerStatefulWidget {
-  const ChatRoomPage({super.key});
+  const ChatRoomPage({
+    @PathParam('chatRoomId') required this.chatRoomId,
+    super.key,
+  });
 
+  /// [AutoRoute] で指定するパス文字列。
   static const path = '/chatRooms/:chatRoomId';
-  static const name = 'ChatRoomPage';
+
+  /// [ChatRoomPage] に遷移する際に `context.router.pushNamed` で指定する文字列。
   static String location({required String chatRoomId}) =>
       '/chatRooms/$chatRoomId';
+
+  /// パスパラメータから得られるチャットルームの ID.
+  final String chatRoomId;
 
   @override
   ConsumerState<ChatRoomPage> createState() => _ChatRoomPageState();
@@ -42,7 +54,9 @@ class _ChatRoomPageState extends ConsumerState<ChatRoomPage> {
         final scrollValue = _scrollController.offset /
             _scrollController.position.maxScrollExtent;
         if (scrollValue > _scrollValueThreshold) {
-          await ref.read(chatRoomStateNotifier.notifier).loadMore();
+          await ref
+              .read(chatRoomStateNotifierProvider(widget.chatRoomId).notifier)
+              .loadMore();
         }
       });
     super.initState();
@@ -58,103 +72,153 @@ class _ChatRoomPageState extends ConsumerState<ChatRoomPage> {
 
   @override
   Widget build(BuildContext context) {
-    final state = ref.watch(chatRoomStateNotifier);
-    // TODO: パスパラメータから渡せるようにする
-    const chatRoomId = 'aSNYpkUofu05nyasvMRx';
+    final state = ref.watch(chatRoomStateNotifierProvider(widget.chatRoomId));
+    final loading = state.loading;
+    final readChatRoom = state.readChatRoom;
+    final partnerDisplayName = readChatRoom == null
+        ? ''
+        : ref.watch(chatPartnerDisplayNameProvider(readChatRoom));
+    final userMode = ref.watch(userModeStateProvider);
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(title: Text(partnerDisplayName)),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8),
         child: AuthDependentBuilder(
-          onAuthenticated: (userId) => state.loading
-              ? const Center(
-                  child: FaIcon(
-                    FontAwesomeIcons.solidComment,
-                    size: 72,
-                    color: Colors.black12,
-                  ),
-                )
-              : Stack(
+          onAuthenticated: (userId) {
+            if (loading) {
+              return const Center(
+                child: FaIcon(
+                  FontAwesomeIcons.solidComment,
+                  size: 72,
+                  color: Colors.black12,
+                ),
+              );
+            }
+            if (readChatRoom == null) {
+              return const Unavailable('チャットルームの情報の取得に失敗しました。');
+            }
+            if (!_hasAccessToChatRoom(
+              userId: userId,
+              userMode: userMode,
+              readChatRoom: readChatRoom,
+            )) {
+              return const Unavailable('そのチャットルームは表示できません。');
+            }
+            return Stack(
+              children: [
+                Column(
                   children: [
-                    Column(
-                      children: [
-                        Expanded(
-                          child: ListView.builder(
-                            itemCount: state.readChatMessages.length,
-                            reverse: true,
-                            controller: _scrollController,
-                            itemBuilder: (context, index) {
-                              final readChatMessage =
-                                  state.readChatMessages[index];
-                              return _ChatMessageItem(
-                                readChatMessage: readChatMessage,
-                                isMyMessage: readChatMessage.senderId == userId,
-                              );
-                            },
-                          ),
-                        ),
-                        _MessageTextField(
-                          chatRoomId: chatRoomId,
-                          userId: userId,
-                        ),
-                        const Gap(24),
-                      ],
-                    ),
-                    const Positioned(
-                      child: Align(
-                        alignment: Alignment.topCenter,
-                        // TODO: パスパラメータから渡せるようにする
-                        child: _DebugIndicator(chatRoomId: chatRoomId),
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: state.readChatMessages.length,
+                        reverse: true,
+                        controller: _scrollController,
+                        itemBuilder: (context, index) {
+                          final readChatMessage = state.readChatMessages[index];
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 24),
+                            child: _ChatMessageItem(
+                              readChatRoom: readChatRoom,
+                              readChatMessage: readChatMessage,
+                              isMyMessage: readChatMessage.senderId == userId,
+                              chatRoomId: widget.chatRoomId,
+                            ),
+                          );
+                        },
                       ),
                     ),
+                    _MessageTextField(
+                      chatRoomId: widget.chatRoomId,
+                      userId: userId,
+                    ),
+                    const Gap(24),
                   ],
                 ),
+                Positioned(
+                  child: Align(
+                    alignment: Alignment.topCenter,
+                    child: _DebugIndicator(
+                      chatRoomId: widget.chatRoomId,
+                      readChatRoom: readChatRoom,
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
         ),
       ),
     );
+  }
+
+  /// チャットルームにアクセスできるかどうかを返す。
+  bool _hasAccessToChatRoom({
+    required String userId,
+    required UserMode userMode,
+    required ReadChatRoom readChatRoom,
+  }) {
+    switch (userMode) {
+      case UserMode.worker:
+        return readChatRoom.workerId == userId;
+      case UserMode.host:
+        return readChatRoom.hostId == userId;
+    }
   }
 }
 
 /// [ChatMessage] のひとつひとつの UI.
 class _ChatMessageItem extends ConsumerWidget {
   const _ChatMessageItem({
+    required this.readChatRoom,
     required this.readChatMessage,
     required this.isMyMessage,
+    required this.chatRoomId,
   });
+
+  final ReadChatRoom readChatRoom;
 
   final ReadChatMessage readChatMessage;
 
   final bool isMyMessage;
 
+  final String chatRoomId;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Column(
-      crossAxisAlignment:
-          isMyMessage ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+    final partnerImageUrl =
+        ref.watch(chatPartnerImageUrlProvider(readChatRoom));
+    final partnerLastReadAt =
+        ref.watch(chatPartnerLastReadAtProvider(readChatRoom));
+    return Row(
+      mainAxisAlignment:
+          isMyMessage ? MainAxisAlignment.end : MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
-          mainAxisAlignment:
-              isMyMessage ? MainAxisAlignment.end : MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (!isMyMessage) ...[
-              // TODO: readChatMessage.senderId の imageUrl を表示する。
-              // 要するにクライアントサイドジョインをする。
-              const FaIcon(FontAwesomeIcons.user, size: _senderIconSize),
-              const Gap(8),
+              if (partnerImageUrl.isEmpty)
+                const Icon(
+                  Icons.account_circle,
+                  size: _senderIconSize * 2,
+                )
+              else
+                GenericImage.circle(
+                  imageUrl: partnerImageUrl,
+                  size: _senderIconSize * 2,
+                ),
+              const Gap(_horizontalPadding),
             ],
             Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: isMyMessage
+                  ? CrossAxisAlignment.end
+                  : CrossAxisAlignment.start,
               children: [
-                if (!isMyMessage) ...[
-                  const Text('名前'),
-                  const Gap(8),
-                ],
                 Container(
                   constraints: BoxConstraints(
-                    // TODO: 計算する
                     maxWidth: (MediaQuery.of(context).size.width -
-                            _senderIconSize -
+                            _senderIconSize * 2 -
                             _horizontalPadding * 3) *
                         0.9,
                   ),
@@ -179,29 +243,85 @@ class _ChatMessageItem extends ConsumerWidget {
                         : Theme.of(context).textTheme.bodySmall,
                   ),
                 ),
+                if (isMyMessage) ...[
+                  const Gap(4),
+                  _ReadStatusText(
+                    messageCreatedAt: readChatMessage.createdAt.dateTime,
+                    partnerLastReadAt: partnerLastReadAt,
+                  ),
+                ],
+                const Gap(4),
+                _MessageCreatedAtText(
+                  readChatMessage: readChatMessage,
+                  isMyMessage: isMyMessage,
+                ),
               ],
             ),
           ],
         ),
-        Padding(
-          padding: EdgeInsets.only(
-            top: 4,
-            left: isMyMessage ? 0 : _senderIconSize + _horizontalPadding,
-            bottom: 32,
-          ),
-          child: Column(
-            crossAxisAlignment:
-                isMyMessage ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-            children: [
-              if (readChatMessage.createdAt.dateTime != null)
-                Text(
-                  readChatMessage.createdAt.dateTime!.formatDate(),
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
-            ],
-          ),
-        ),
       ],
+    );
+  }
+}
+
+/// '既読' or '未読' の文字列を表示する UI.
+class _ReadStatusText extends StatelessWidget {
+  const _ReadStatusText({
+    required this.messageCreatedAt,
+    required this.partnerLastReadAt,
+  });
+
+  final DateTime? messageCreatedAt;
+  final DateTime? partnerLastReadAt;
+
+  @override
+  Widget build(BuildContext context) {
+    final text = _readStatusString(
+      messageCreatedAt: messageCreatedAt,
+      partnerLastReadAt: partnerLastReadAt,
+    );
+    if (text.isEmpty) {
+      return const SizedBox();
+    }
+    return Text(text, style: Theme.of(context).textTheme.bodySmall);
+  }
+
+  /// メッセージの作成日時 ([messageCreatedAt]) とパートナーの最終既読時刻
+  /// ([partnerLastReadAt]) とを比較して、'既読' or '未読' の文字列を返す。
+  String _readStatusString({
+    required DateTime? messageCreatedAt,
+    required DateTime? partnerLastReadAt,
+  }) {
+    if (messageCreatedAt == null) {
+      return '';
+    }
+    if (partnerLastReadAt == null) {
+      return '未読';
+    }
+    return messageCreatedAt.isAfter(partnerLastReadAt) ? '未読' : '既読';
+  }
+}
+
+/// メッセージの送信日時（現在時刻からの相対的な時刻）を表示する UI.
+class _MessageCreatedAtText extends StatelessWidget {
+  const _MessageCreatedAtText({
+    required this.readChatMessage,
+    required this.isMyMessage,
+  });
+
+  final ReadChatMessage readChatMessage;
+
+  final bool isMyMessage;
+
+  @override
+  Widget build(BuildContext context) {
+    final createdAt = readChatMessage.createdAt.dateTime;
+    if (createdAt == null) {
+      return const SizedBox();
+    }
+    return Text(
+      createdAt.formatRelativeDate(),
+      style: Theme.of(context).textTheme.bodySmall,
     );
   }
 }
@@ -281,7 +401,9 @@ class _MessageTextFieldState extends ConsumerState<_MessageTextField> {
             if (content.isEmpty) {
               return;
             }
-            await ref.read(chatRoomStateNotifier.notifier).sendChatMessage(
+            await ref
+                .read(chatRoomStateNotifierProvider(widget.chatRoomId).notifier)
+                .sendChatMessage(
                   senderId: widget.userId,
                   chatMessageType: _chatMessageType(userMode),
                   content: content,
@@ -319,15 +441,25 @@ class _MessageTextFieldState extends ConsumerState<_MessageTextField> {
 // TODO: 後で消す
 /// 開発時のみ表示する、無限スクロールのデバッグ用ウィジェット。
 class _DebugIndicator extends ConsumerWidget {
-  const _DebugIndicator({required this.chatRoomId});
+  const _DebugIndicator({
+    required this.chatRoomId,
+    required this.readChatRoom,
+  });
 
   final String chatRoomId;
 
+  final ReadChatRoom readChatRoom;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(chatRoomStateNotifier);
+    final state = ref.watch(chatRoomStateNotifierProvider(chatRoomId));
     final readChatMessages = state.readChatMessages;
     final lastReadChatMessageId = state.lastReadChatMessageId;
+    final partnerLastReadAt = ref.watch(
+      chatPartnerLastReadAtProvider(
+        readChatRoom,
+      ),
+    );
     return Container(
       width: double.infinity,
       margin: const EdgeInsets.only(top: 16, left: 16, right: 16),
@@ -378,6 +510,13 @@ class _DebugIndicator extends ConsumerWidget {
                   .bodySmall!
                   .copyWith(color: Colors.white),
             ),
+          Text(
+            'パートナーの既読時間：$partnerLastReadAt',
+            style: Theme.of(context)
+                .textTheme
+                .bodySmall!
+                .copyWith(color: Colors.white),
+          ),
           const Gap(8),
         ],
       ),

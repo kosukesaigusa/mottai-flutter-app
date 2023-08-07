@@ -45,6 +45,7 @@ final chatRoomStateNotifierProvider = StateNotifierProvider.family
     .autoDispose<ChatRoomStateNotifier, ChatRoomState, String>(
   (ref, chatRoomId) => ChatRoomStateNotifier(
     chatRoomId: chatRoomId,
+    chatRoomRepository: ref.watch(chatRoomRepositoryProvider),
     chatMessageRepository: ref.watch(chatMessageRepositoryProvider),
   ),
 );
@@ -52,8 +53,10 @@ final chatRoomStateNotifierProvider = StateNotifierProvider.family
 class ChatRoomStateNotifier extends StateNotifier<ChatRoomState> {
   ChatRoomStateNotifier({
     required String chatRoomId,
+    required ChatRoomRepository chatRoomRepository,
     required ChatMessageRepository chatMessageRepository,
   })  : _chatRoomId = chatRoomId,
+        _chatRoomRepository = chatRoomRepository,
         _chatMessageRepository = chatMessageRepository,
         super(const ChatRoomState()) {
     _newReadChatMessagesSubscription = _chatMessageRepository
@@ -64,6 +67,7 @@ class ChatRoomStateNotifier extends StateNotifier<ChatRoomState> {
         .listen(_updateNewReadChatMessages);
     Future<void>(() async {
       await Future.wait<void>([
+        _fetchChatRoom(),
         loadMore(),
         // ChatPage に遷移直後のメッセージアイコンを意図的に見せるために最低でも 500 ms 待つ。
         Future<void>.delayed(const Duration(milliseconds: 500)),
@@ -78,10 +82,13 @@ class ChatRoomStateNotifier extends StateNotifier<ChatRoomState> {
     super.dispose();
   }
 
-  /// [ChatMessageRepository] のインスタンス。
-  late final ChatMessageRepository _chatMessageRepository;
+  /// [ChatRoomRepository] のインスタンス。
+  final ChatRoomRepository _chatRoomRepository;
 
-  /// チャットルームの ID。
+  /// [ChatMessageRepository] のインスタンス。
+  final ChatMessageRepository _chatMessageRepository;
+
+  /// チャットルームの ID.
   final String _chatRoomId;
 
   /// 無限スクロールで取得するメッセージ件数の limit 値。
@@ -94,6 +101,14 @@ class ChatRoomStateNotifier extends StateNotifier<ChatRoomState> {
   /// リスナーで state.newReadChatMessages を更新する。
   late final StreamSubscription<List<ReadChatMessage>>
       _newReadChatMessagesSubscription;
+
+  /// チャットルームを取得する。
+  Future<void> _fetchChatRoom() async {
+    final readChatRoom = await _chatRoomRepository.fetchChatRoom(
+      chatRoomId: _chatRoomId,
+    );
+    state = state.copyWith(readChatRoom: readChatRoom);
+  }
 
   /// 過去のメッセージを、最後に取得した queryDocumentSnapshot 以降の _limit 件だけ取得する。
   Future<void> loadMore() async {

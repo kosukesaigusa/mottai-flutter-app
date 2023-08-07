@@ -71,13 +71,9 @@ class _ChatRoomPageState extends ConsumerState<ChatRoomPage> {
 
   @override
   Widget build(BuildContext context) {
-    final readChatRoom =
-        ref.watch(chatRoomFutureProvider(widget.chatRoomId)).value;
-    if (readChatRoom == null) {
-      // TODO: この実装だと、loading 中に UnavailablePage がちらっと見えそうなので改善したい。
-      return const UnavailablePage('チャットルームの情報の取得に失敗しました。');
-    }
     final state = ref.watch(chatRoomStateNotifierProvider(widget.chatRoomId));
+    final loading = state.loading;
+    final readChatRoom = state.readChatRoom;
     return Scaffold(
       appBar: AppBar(
         // TODO: chatPartnerImageUrlProvider を真似して、chatPartnerNameProvider
@@ -88,50 +84,55 @@ class _ChatRoomPageState extends ConsumerState<ChatRoomPage> {
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8),
         child: AuthDependentBuilder(
-          onAuthenticated: (userId) => state.loading
-              ? const Center(
-                  child: FaIcon(
-                    FontAwesomeIcons.solidComment,
-                    size: 72,
-                    color: Colors.black12,
-                  ),
-                )
-              : Stack(
+          onAuthenticated: (userId) {
+            if (loading) {
+              return const Center(
+                child: FaIcon(
+                  FontAwesomeIcons.solidComment,
+                  size: 72,
+                  color: Colors.black12,
+                ),
+              );
+            }
+            if (readChatRoom == null) {
+              return const UnavailablePage('チャットルームの情報の取得に失敗しました。');
+            }
+            return Stack(
+              children: [
+                Column(
                   children: [
-                    Column(
-                      children: [
-                        Expanded(
-                          child: ListView.builder(
-                            itemCount: state.readChatMessages.length,
-                            reverse: true,
-                            controller: _scrollController,
-                            itemBuilder: (context, index) {
-                              final readChatMessage =
-                                  state.readChatMessages[index];
-                              return _ChatMessageItem(
-                                readChatRoom: readChatRoom,
-                                readChatMessage: readChatMessage,
-                                isMyMessage: readChatMessage.senderId == userId,
-                                chatRoomId: widget.chatRoomId,
-                              );
-                            },
-                          ),
-                        ),
-                        _MessageTextField(
-                          chatRoomId: widget.chatRoomId,
-                          userId: userId,
-                        ),
-                        const Gap(24),
-                      ],
-                    ),
-                    Positioned(
-                      child: Align(
-                        alignment: Alignment.topCenter,
-                        child: _DebugIndicator(chatRoomId: widget.chatRoomId),
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: state.readChatMessages.length,
+                        reverse: true,
+                        controller: _scrollController,
+                        itemBuilder: (context, index) {
+                          final readChatMessage = state.readChatMessages[index];
+                          return _ChatMessageItem(
+                            readChatRoom: readChatRoom,
+                            readChatMessage: readChatMessage,
+                            isMyMessage: readChatMessage.senderId == userId,
+                            chatRoomId: widget.chatRoomId,
+                          );
+                        },
                       ),
                     ),
+                    _MessageTextField(
+                      chatRoomId: widget.chatRoomId,
+                      userId: userId,
+                    ),
+                    const Gap(24),
                   ],
                 ),
+                Positioned(
+                  child: Align(
+                    alignment: Alignment.topCenter,
+                    child: _DebugIndicator(chatRoomId: widget.chatRoomId),
+                  ),
+                ),
+              ],
+            );
+          },
         ),
       ),
     );

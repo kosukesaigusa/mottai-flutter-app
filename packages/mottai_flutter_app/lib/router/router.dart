@@ -55,6 +55,7 @@ class AppRouter extends $AppRouter {
     AutoRoute(
       path: CreateOrUpdateHostPage.path,
       page: CreateOrUpdateHostRoute.page,
+      fullscreenDialog: true,
     ),
     // NOTE: 以下、開発用のページ。
     AutoRoute(

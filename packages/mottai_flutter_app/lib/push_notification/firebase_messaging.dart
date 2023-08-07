@@ -45,7 +45,14 @@ final initializeFirebaseMessagingProvider =
 
 /// FCM トークンを取得する [Provider].
 final getFcmTokenProvider = Provider.autoDispose<Future<String?> Function()>(
-  (ref) => () => ref.read(firebaseMessagingProvider).getToken(),
+  (ref) => () async {
+    final token = await ref.read(firebaseMessagingProvider).getToken();
+    if (token == null) {
+      return null;
+    }
+    debugPrint('🔥 FCM token: $token');
+    return token;
+  },
 );
 
 /// terminated (!= background) の状態から、通知によってアプリを開いた場合に非 null となる

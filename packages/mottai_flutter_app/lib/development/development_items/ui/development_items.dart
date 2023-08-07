@@ -16,6 +16,7 @@ import '../../../scaffold_messenger_controller.dart';
 import '../../../user/user.dart';
 import '../../../user/user_mode.dart';
 import '../../color/ui/color.dart';
+import '../../firebase_storage/ui/firebase_storage.dart';
 import '../../force_update/ui/force_update.dart';
 import '../../generic_image/ui/generic_images.dart';
 import '../../image_detail_view/ui/image_detail_view_stub.dart';
@@ -155,10 +156,10 @@ class _DevelopmentItemsPageState extends ConsumerState<DevelopmentItemsPage> {
             onTap: () =>
                 context.router.pushNamed(ImagePickerSamplePage.location),
           ),
-          const ListTile(
-            title: Text('画像アップロード'),
-            // onTap: () =>
-            //     context.router.pushNamed(FirebaseStorageSamplePage.location),
+          ListTile(
+            title: const Text('画像アップロード'),
+            onTap: () =>
+                context.router.pushNamed(FirebaseStorageSamplePage.location),
           ),
           ListTile(
             title: const Text('強制アップデート'),

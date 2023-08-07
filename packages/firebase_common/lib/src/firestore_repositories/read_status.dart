@@ -8,10 +8,11 @@ class ReadStatusRepository {
   Stream<ReadReadStatus?> subscribeReadStatus({
     required String chatRoomId,
     required String userId,
-  })=> _query.subscribeDocument(
-    chatRoomId: chatRoomId,
-    readStatusId: userId,
-  );
+  }) =>
+      _query.subscribeDocument(
+        chatRoomId: chatRoomId,
+        readStatusId: userId,
+      );
 
   /// 指定したチャットルーム ([chatRoomId])、ユーザー ID ([userId]) の [ReadStatus]
   /// を現在のサーバ時刻で更新する。

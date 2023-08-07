@@ -4,6 +4,7 @@ import '../chat/ui/chat_room.dart';
 import '../chat/ui/chat_rooms.dart';
 import '../development/color/ui/color.dart';
 import '../development/development_items/ui/development_items.dart';
+import '../development/firebase_storage/ui/firebase_storage.dart';
 import '../development/force_update/ui/force_update.dart';
 import '../development/generic_image/ui/generic_images.dart';
 import '../development/image_detail_view/ui/image_detail_view_stub.dart';
@@ -57,6 +58,10 @@ class AppRouter extends $AppRouter {
     AutoRoute(
       path: DevelopmentItemsPage.path,
       page: DevelopmentItemsRoute.page,
+    ),
+    AutoRoute(
+      path: FirebaseStorageSamplePage.path,
+      page: FirebaseStorageSampleRoute.page,
     ),
     AutoRoute(
       path: ForceUpdateSamplePage.path,

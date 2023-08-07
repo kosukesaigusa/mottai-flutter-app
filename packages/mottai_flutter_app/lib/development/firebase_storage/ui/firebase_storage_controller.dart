@@ -5,33 +5,11 @@ import 'package:firebase_common/firebase_common.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../../../image/firebase_storage.dart';
+import '../../../image/image_picker.dart';
 import '../../../scaffold_messenger_controller.dart';
 import '../../../widgets/dialog/permission_handler_dialog.dart';
-
-final firebaseStorageServiceProvider =
-    Provider.autoDispose<FirebaseStorageService>(
-  (_) => FirebaseStorageService(),
-);
-
-final imagePickerServiceProvider = Provider.autoDispose<ImagePickerService>(
-  (_) => ImagePickerService(),
-);
-
-/// 選択された画像ファイル。
-final pickedImageFileStateProvider =
-    StateProvider.autoDispose<File?>((_) => null);
-
-/// アップロードした画像ファイルのパスを管理。
-final uploadedImagePathStateProvider =
-    StateProvider.autoDispose<String>((_) => '');
-
-/// アップロードした画像ファイルのURLを管理。
-final uploadedImageUrlStateProvider =
-    StateProvider.autoDispose<String>((_) => '');
-
-/// 取得した画像URLのリストを管理。
-final imageUrlsStateProvider =
-    StateProvider.autoDispose<List<String>>((ref) => <String>[]);
+import '../firebase_storage.dart';
 
 final firebaseStorageControllerProvider = Provider.autoDispose(
   (ref) => FirebaseStorageController(

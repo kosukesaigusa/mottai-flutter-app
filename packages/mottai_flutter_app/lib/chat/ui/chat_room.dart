@@ -78,6 +78,7 @@ class _ChatRoomPageState extends ConsumerState<ChatRoomPage> {
     final partnerDisplayName = readChatRoom == null
         ? ''
         : ref.watch(chatPartnerDisplayNameProvider(readChatRoom));
+    final userMode = ref.watch(userModeStateProvider);
     return Scaffold(
       appBar: AppBar(title: Text(partnerDisplayName)),
       body: Padding(
@@ -94,7 +95,14 @@ class _ChatRoomPageState extends ConsumerState<ChatRoomPage> {
               );
             }
             if (readChatRoom == null) {
-              return const UnavailablePage('チャットルームの情報の取得に失敗しました。');
+              return const Unavailable('チャットルームの情報の取得に失敗しました。');
+            }
+            if (!_hasAccessToChatRoom(
+              userId: userId,
+              userMode: userMode,
+              readChatRoom: readChatRoom,
+            )) {
+              return const Unavailable('そのチャットルームは表示できません。');
             }
             return Stack(
               children: [
@@ -142,6 +150,20 @@ class _ChatRoomPageState extends ConsumerState<ChatRoomPage> {
       ),
     );
   }
+
+  /// チャットルームにアクセスできるかどうかを返す。
+  bool _hasAccessToChatRoom({
+    required String userId,
+    required UserMode userMode,
+    required ReadChatRoom readChatRoom,
+  }) {
+    switch (userMode) {
+      case UserMode.worker:
+        return readChatRoom.workerId == userId;
+      case UserMode.host:
+        return readChatRoom.hostId == userId;
+    }
+  }
 }
 
 /// [ChatMessage] のひとつひとつの UI.
@@ -186,6 +208,7 @@ class _ChatMessageItem extends ConsumerWidget {
                   imageUrl: partnerImageUrl,
                   size: _senderIconSize * 2,
                 ),
+              const Gap(_horizontalPadding),
             ],
             Column(
               crossAxisAlignment: isMyMessage
@@ -195,7 +218,7 @@ class _ChatMessageItem extends ConsumerWidget {
                 Container(
                   constraints: BoxConstraints(
                     maxWidth: (MediaQuery.of(context).size.width -
-                            _senderIconSize -
+                            _senderIconSize * 2 -
                             _horizontalPadding * 3) *
                         0.9,
                   ),

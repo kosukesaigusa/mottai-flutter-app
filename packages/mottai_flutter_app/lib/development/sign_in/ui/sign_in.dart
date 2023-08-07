@@ -46,6 +46,11 @@ class SignInSamplePage extends ConsumerWidget {
                     ref.read(authControllerProvider).signIn(SignInMethod.apple),
               ),
             ),
+            ElevatedButton(
+              child: const Text('Line でサインイン'),
+              onPressed: () async =>
+                  ref.read(authControllerProvider).signIn(SignInMethod.line),
+            ),
           ],
         ),
       ),

@@ -1,5 +1,5 @@
-import * as admin from 'firebase-admin'
 import axios from 'axios'
+import * as admin from 'firebase-admin'
 import * as functions from 'firebase-functions/v2'
 
 /**
@@ -13,10 +13,10 @@ export const createfirebaseauthcustomtoken = functions.https.onCall<{ accessToke
     async (callableRequest) => {
         const accessToken = callableRequest.data.accessToken
         await verifyAccessToken(accessToken)
-        // const { lineUserId, name, imageUrl } = await getLINEProfile(accessToken)
-        const { lineUserId } = await getLINEProfile(accessToken)
+        const { lineUserId, displayName, imageUrl } = await getLINEProfile(accessToken)
         const customToken = await admin.auth().createCustomToken(lineUserId)
-        // await setAppUserDocument({ lineUserId, name, imageUrl })
+
+        await setWorkerDocument({ lineUserId, displayName, imageUrl: imageUrl ?? `` })
         return { customToken }
     }
 )
@@ -49,12 +49,12 @@ const verifyAccessToken = async (accessToken: string): Promise<void> => {
 /**
  * LINE のプロフィール情報を取得する。
  * @param {string} accessToken - LINE のアクセストークン。
- * @returns {Promise<{ lineUserId: string; name: string; imageUrl?: string }>} ユーザーの LINE ID、名前、画像URL（存在する場合）を含むオブジェクトを返す Promise.
+ * @returns {Promise<{ lineUserId: string; displayName: string; imageUrl?: string }>} ユーザーの LINE ID、名前、画像URL（存在する場合）を含むオブジェクトを返す Promise.
  * @throws エラーが発生した場合、エラーメッセージが含まれる Error オブジェクトがスローされる。
  */
 const getLINEProfile = async (
     accessToken: string
-): Promise<{ lineUserId: string; name: string; imageUrl?: string }> => {
+): Promise<{ lineUserId: string; displayName: string; imageUrl?: string }> => {
     const response = await axios.get<LINEGetProfileResponse>(`https://api.line.me/v2/profile`, {
         headers: { Authorization: `Bearer ${accessToken}` }
     })
@@ -63,32 +63,34 @@ const getLINEProfile = async (
     }
     return {
         lineUserId: response.data.userId,
-        name: response.data.displayName,
+        displayName: response.data.displayName,
         imageUrl: response.data.pictureUrl
     }
 }
 
-// /**
-//  * LINE のユーザー情報を使用して Firestore に 'appUsers' ドキュメントを作成または更新する。
-//  * @param {Object} params - ユーザー情報パラメータ。
-//  * @param {string} params.lineUserId - LINE のユーザーID。
-//  * @param {string} params.name - LINE のユーザー名。
-//  * @param {string} [params.imageUrl] - LINE のユーザー画像のURL。提供されていない場合は null を設定する。
-//  * @returns {Promise<void>} 作成または更新操作が完了した後に解決する Promise.
-//  */
-// const setAppUserDocument = async ({
-//     lineUserId,
-//     name,
-//     imageUrl
-// }: {
-//     lineUserId: string
-//     name: string
-//     imageUrl?: string
-// }): Promise<void> => {
-//     await admin
-//         .firestore()
-//         .collection(`appUsers`)
-//         .doc(lineUserId)
-//         .set({ name: name, imageUrl: imageUrl ?? null })
-//     functions.logger.info(`appUser ドキュメントが作成されました: ${lineUserId}`)
-// }
+/**
+ * LINE のユーザー情報を使用して Firestore に 'workers' ドキュメントを作成または更新する。
+ * @param {Object} params - ユーザー情報パラメータ。
+ * @param {string} params.lineUserId - LINE のユーザー ID。
+ * @param {string} params.displayName - LINE のユーザー名。
+ * @param {string} [params.imageUrl] - LINE のユーザー画像の URL.
+ * @returns {Promise<void>} 作成または更新操作が完了した後に解決する Promise.
+ */
+const setWorkerDocument = async ({
+    lineUserId,
+    displayName,
+    imageUrl
+}: {
+    lineUserId: string
+    displayName: string
+    imageUrl: string
+}): Promise<void> => {
+    await admin.firestore().collection(`workers`).doc(lineUserId).set({
+        displayName,
+        imageUrl,
+        isHost: false,
+        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        updatedAt: admin.firestore.FieldValue.serverTimestamp()
+    })
+    functions.logger.info(`workers ドキュメントが作成されました: ${lineUserId}`)
+}

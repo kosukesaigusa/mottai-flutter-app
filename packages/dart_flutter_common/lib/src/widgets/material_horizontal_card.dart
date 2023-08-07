@@ -34,6 +34,7 @@ class MaterialHorizontalCard extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.all(12),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     title,

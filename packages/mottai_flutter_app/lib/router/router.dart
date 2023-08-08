@@ -17,6 +17,7 @@ import '../host/ui/create_or_update_host.dart';
 import '../host/ui/host.dart';
 import '../job/ui/job_detail.dart';
 import '../map/ui/map.dart';
+import '../worker/ui/create_or_update_worker.dart';
 import '../worker/ui/worker.dart';
 import 'router.gr.dart';
 
@@ -57,6 +58,11 @@ class AppRouter extends $AppRouter {
     //   path: UserPage.path,
     //   page: UserRoute.page,
     // ),
+    AutoRoute(
+      path: CreateOrUpdateWorkerPage.path,
+      page: CreateOrUpdateWorkerRoute.page,
+      fullscreenDialog: true,
+    ),
     AutoRoute(
       path: CreateOrUpdateHostPage.path,
       page: CreateOrUpdateHostRoute.page,

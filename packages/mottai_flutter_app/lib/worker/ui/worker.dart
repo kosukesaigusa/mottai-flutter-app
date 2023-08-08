@@ -8,6 +8,7 @@ import '../../auth/auth.dart';
 import '../../host/ui/create_or_update_host.dart';
 import '../../user/user.dart';
 import '../../user/worker.dart';
+import 'create_or_update_worker.dart';
 
 /// ワーカーページ。
 @RoutePage()
@@ -64,7 +65,9 @@ class WorkerPage extends ConsumerWidget {
                           backgroundColor: Theme.of(context).focusColor,
                           child: IconButton(
                             color: Theme.of(context).shadowColor,
-                            onPressed: () {},
+                            onPressed: () => context.router.pushNamed(
+                              CreateOrUpdateWorkerPage.location(userId: userId),
+                            ),
                             icon: const Icon(Icons.edit),
                           ),
                         ),

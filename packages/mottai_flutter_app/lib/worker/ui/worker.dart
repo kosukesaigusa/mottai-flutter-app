@@ -51,7 +51,10 @@ class WorkerPage extends ConsumerWidget {
                   const SizedBox(width: 12),
                   Text(
                     workerDisplayName,
-                    style: Theme.of(context).textTheme.headlineSmall,
+                    style: Theme.of(context)
+                        .textTheme
+                        .headlineLarge!
+                        .copyWith(fontWeight: FontWeight.bold),
                   ),
                   if (isMatchingUserId)
                     Expanded(
@@ -74,6 +77,7 @@ class WorkerPage extends ConsumerWidget {
               ),
               // TODO 自己紹介をDBに追加する
               const Section(
+                titleBottomMargin: 4,
                 title: '自己紹介',
                 content: Text(
                   '''
@@ -85,6 +89,7 @@ class WorkerPage extends ConsumerWidget {
               ),
               // TODO 投稿した感想をDBに追加する
               const Section(
+                titleBottomMargin: 4,
                 title: '投稿した感想',
                 content: MaterialHorizontalCard(
                   title: '矢郷農園でレモンの収穫をお手...あああああああああああああああ',
@@ -163,6 +168,7 @@ class WorkerPage extends ConsumerWidget {
                     height: 36,
                   ),
                   const Section(
+                    titleBottomMargin: 4,
                     title: 'ホストとして登録',
                     content: Text(
                       '''

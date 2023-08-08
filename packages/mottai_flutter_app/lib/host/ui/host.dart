@@ -53,7 +53,10 @@ class HostPage extends ConsumerWidget {
                   const SizedBox(width: 12),
                   Text(
                     hostDisplayName,
-                    style: Theme.of(context).textTheme.headlineSmall,
+                    style: Theme.of(context)
+                        .textTheme
+                        .headlineLarge!
+                        .copyWith(fontWeight: FontWeight.bold),
                   ),
                   if (isMatchingUserId)
                     Expanded(
@@ -78,6 +81,7 @@ class HostPage extends ConsumerWidget {
                   height: 12,
                 ),
                 Section(
+                  titleBottomMargin: 4,
                   title: 'ユーザーモード',
                   content: Text(
                     currentUserMode == UserMode.host
@@ -112,17 +116,19 @@ class HostPage extends ConsumerWidget {
                   },
                 ),
               ],
-              const SizedBox(height: 12),
+              const SizedBox(height: 24),
               // TODO 自己紹介をDBに追加する
               const Section(
+                titleBottomMargin: 4,
                 title: '自己紹介',
                 content: Text(
                   '''
 神奈川県小田原市で農家や漁師をしています。夏の時期にレモンの収穫のお手伝いをしてくれる方を募集しています。こんな感じでここには自己紹介文を表示する。表示するのは最大 8 行表くらいでいいだろうか。あいうえお、かきくけこ、さしすせそ、たちつてと、なにぬねの、はひふへほ、まみむめも、やゆよ、わをん、あいうえお、かきくけこ、さしすせそ、たちつてと、なにぬねの、はひふへほ、まみむめも、やゆよ...''',
                 ),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 24),
               const Section(
+                titleBottomMargin: 4,
                 title: 'ホストタイプ',
                 content: Text('ワーカーはホストタイプ（複数選択可）を参考にして、興味のあるお手伝いを探します。'),
               ),
@@ -148,8 +154,9 @@ class HostPage extends ConsumerWidget {
                   child: Text('通信に失敗しました。'),
                 ),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 24),
               const Section(
+                titleBottomMargin: 4,
                 title: '公開する場所・住所',
                 content: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -167,6 +174,7 @@ class HostPage extends ConsumerWidget {
               ),
               // TODO 掲載中のお手伝いを取得する
               const Section(
+                titleBottomMargin: 4,
                 title: '掲載中のお手伝い募集',
                 content: MaterialHorizontalCard(
                   title: '仕事のタイトル',

@@ -17,6 +17,7 @@ class WebLink extends StatelessWidget {
     this.textStyle,
     this.linkStyle,
     this.onFailLaunch,
+    this.maxLines,
     super.key,
   });
 
@@ -34,6 +35,9 @@ class WebLink extends StatelessWidget {
   /// [urlText]のurl部分のスタイル
   final TextStyle? linkStyle;
 
+  /// urlの表示最大行数
+  final int? maxLines;
+
   /// リンク遷移が失敗した場合のコールバック
   final void Function(String url)? onFailLaunch;
 
@@ -48,6 +52,7 @@ class WebLink extends StatelessWidget {
           onFailLaunch?.call(link.url);
         }
       },
+      maxLines: maxLines,
       text: urlText,
       style: textStyle,
       linkStyle: linkStyle,

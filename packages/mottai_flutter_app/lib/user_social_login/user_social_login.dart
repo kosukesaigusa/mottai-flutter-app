@@ -32,8 +32,30 @@ class UserSocialLoginService {
   /// 指定した [SignInMethod] に関連するプロパティのみを `true` とした [UserSocialLogin] を作成する
   Future<void> createUserSocialLogin({
     required String userId,
+    required SignInMethod signInMethod,
   }) async {
-    await _userSocialLoginRepository.setUserSocialLogin(userId: userId);
+    switch (signInMethod) {
+      case SignInMethod.google:
+        await _userSocialLoginRepository.setUserSocialLogin(
+          userId: userId,
+          isGoogleEnabled: true,
+        );
+      case SignInMethod.apple:
+        await _userSocialLoginRepository.setUserSocialLogin(
+          userId: userId,
+          isAppleEnabled: true,
+        );
+      case SignInMethod.line:
+        await _userSocialLoginRepository.setUserSocialLogin(
+          userId: userId,
+          isLINEEnabled: true,
+        );
+      //TODO emailは追って削除になる想定
+      case SignInMethod.email:
+        await _userSocialLoginRepository.setUserSocialLogin(
+          userId: userId,
+        );
+    }
   }
 
   /// ログイン時に生成される `Credential` を元に、ユーザーアカウントにソーシャル認証情報をリンクし、

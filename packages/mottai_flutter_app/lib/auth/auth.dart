@@ -9,6 +9,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 import '../user/worker.dart';
+import '../user_social_login/user_social_login.dart';
 
 /// Firebase Console の Authentication で設定できるサインイン方法の種別。
 enum SignInMethod {
@@ -47,6 +48,7 @@ final isSignedInProvider = Provider<bool>(
 final authServiceProvider = Provider.autoDispose<AuthService>(
   (ref) => AuthService(
     workerService: ref.watch(workerServiceProvider),
+    userSocialLoginService: ref.watch(userSocialLoginServiceProvider),
   ),
 );
 
@@ -54,11 +56,14 @@ final authServiceProvider = Provider.autoDispose<AuthService>(
 class AuthService {
   const AuthService({
     required WorkerService workerService,
-  }) : _workerService = workerService;
+    required UserSocialLoginService userSocialLoginService,
+  })  : _workerService = workerService,
+        _userSocialLoginService = userSocialLoginService;
 
   static final _auth = FirebaseAuth.instance;
 
   final WorkerService _workerService;
+  final UserSocialLoginService _userSocialLoginService;
 
   // TODO: 開発中のみ使用する。リリース時には消すか、あとで デバッグモード or
   // 開発環境接続時のみ使用可能にする。
@@ -80,7 +85,9 @@ class AuthService {
     );
 
     final userCredential = await _auth.signInWithCredential(credential);
-    await _maybeCreateWorkerByUserCredential(userCredential: userCredential);
+    await _createWorkerAndUserSocialLoginWhenFirstSignIn(
+      userCredential: userCredential,
+    );
     return userCredential;
   }
 
@@ -105,7 +112,8 @@ class AuthService {
 
     final userCredential =
         await FirebaseAuth.instance.signInWithCredential(oauthCredential);
-    await _maybeCreateWorkerByUserCredential(userCredential: userCredential);
+    await _createWorkerAndUserSocialLoginWhenFirstSignIn(
+        userCredential: userCredential);
     return userCredential;
   }
 
@@ -132,10 +140,10 @@ class AuthService {
     return digest.toString();
   }
 
-  /// サインイン時に、まだ Worker ドキュメントが存在していなければ、Firebase の
-  /// [UserCredential] をもとに生成する。
-  /// Google や Apple によるはじめてのログインのときに相当する。
-  Future<void> _maybeCreateWorkerByUserCredential({
+  /// Google や Apple により初めてログインする場合（=まだ `Worker` が作成されていない場合）、
+  /// Firebase の [UserCredential] をもとに
+  /// `Worker` ドキュメントと `UserSocialLogin` ドキュメントを生成する。
+  Future<void> _createWorkerAndUserSocialLoginWhenFirstSignIn({
     required UserCredential userCredential,
   }) async {
     final user = userCredential.user;
@@ -149,6 +157,9 @@ class AuthService {
     await _workerService.createWorker(
       workerId: user.uid,
       displayName: user.displayName ?? '',
+    );
+    await _userSocialLoginService.createUserSocialLoginWhenFirstSignIn(
+      userId: user.uid,
     );
   }
 

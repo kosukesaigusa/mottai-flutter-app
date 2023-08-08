@@ -158,7 +158,7 @@ class AuthService {
       workerId: user.uid,
       displayName: user.displayName ?? '',
     );
-    await _userSocialLoginService.createUserSocialLoginWhenFirstSignIn(
+    await _userSocialLoginService.createUserSocialLogin(
       userId: user.uid,
     );
   }

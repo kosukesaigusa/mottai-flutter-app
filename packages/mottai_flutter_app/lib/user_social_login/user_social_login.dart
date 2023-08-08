@@ -29,12 +29,10 @@ class UserSocialLoginService {
 
   /// [UserSocialLogin] の作成
   ///
-  /// 初めてサインインした場合に限り、
   /// 指定した [SignInMethod] に関連するプロパティのみを `true` とした [UserSocialLogin] を作成する
-  Future<void> createUserSocialLoginWhenFirstSignIn({
+  Future<void> createUserSocialLogin({
     required String userId,
   }) async {
-    //TODO auth.dartに定義されている `workerExists` を活用し、初めてサインインする場合のみ `UserSocialLogin` を作成する
     await _userSocialLoginRepository.setUserSocialLogin(userId: userId);
   }
 

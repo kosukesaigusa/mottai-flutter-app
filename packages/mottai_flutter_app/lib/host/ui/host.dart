@@ -6,6 +6,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../auth/auth.dart';
+import '../../job/job.dart';
 import '../../user/host.dart';
 import '../../user/user_mode.dart';
 import 'create_or_update_host.dart';
@@ -172,16 +173,37 @@ class HostPage extends ConsumerWidget {
               const Divider(
                 height: 36,
               ),
-              // TODO 掲載中のお手伝いを取得する
-              const Section(
+              Section(
                 titleBottomMargin: 4,
                 title: '掲載中のお手伝い募集',
-                content: MaterialHorizontalCard(
-                  title: '仕事のタイトル',
-                  description: 'みかんの収穫や、その他、農作業全...',
-                  imageUrl:
-                      'https://image.space.rakuten.co.jp/d/strg/ctrl/9/640594311698c5a7d384759ef33cd4c313b50f29.96.9.9.3.jpeg',
-                ),
+                content: ref.watch(userJobsFutureProvider(userId)).when(
+                      data: (jobs) {
+                        if (jobs.isEmpty) {
+                          return const Center(
+                            child: Text('掲載中のお手伝いがありません。'),
+                          );
+                        }
+                        final list_ = jobs.map(
+                          (job) {
+                            return MaterialHorizontalCard(
+                              title: job.title,
+                              description: job.content,
+                              // TODO 掲載中のお仕事ごとに画像があってもいいかも
+                              imageUrl:
+                                  'https://image.space.rakuten.co.jp/d/strg/ctrl/9/640594311698c5a7d384759ef33cd4c313b50f29.96.9.9.3.jpeg',
+                            );
+                          },
+                        ).toList();
+                        return Column(
+                          children: list_,
+                        );
+                      },
+                      loading: () =>
+                          const Center(child: CircularProgressIndicator()),
+                      error: (error, stackTrace) => const Center(
+                        child: Text('通信に失敗しました。'),
+                      ),
+                    ),
               ),
               if (isMatchingUserId) ...[
                 const Divider(

@@ -87,6 +87,7 @@ class AuthService {
     final userCredential = await _auth.signInWithCredential(credential);
     await _createWorkerAndUserSocialLoginWhenFirstSignIn(
       userCredential: userCredential,
+      signInMethod: SignInMethod.google,
     );
     return userCredential;
   }
@@ -113,7 +114,9 @@ class AuthService {
     final userCredential =
         await FirebaseAuth.instance.signInWithCredential(oauthCredential);
     await _createWorkerAndUserSocialLoginWhenFirstSignIn(
-        userCredential: userCredential);
+      userCredential: userCredential,
+      signInMethod: SignInMethod.apple,
+    );
     return userCredential;
   }
 
@@ -145,6 +148,7 @@ class AuthService {
   /// `Worker` ドキュメントと `UserSocialLogin` ドキュメントを生成する。
   Future<void> _createWorkerAndUserSocialLoginWhenFirstSignIn({
     required UserCredential userCredential,
+    required SignInMethod signInMethod,
   }) async {
     final user = userCredential.user;
     if (user == null) {
@@ -160,6 +164,7 @@ class AuthService {
     );
     await _userSocialLoginService.createUserSocialLogin(
       userId: user.uid,
+      signInMethod: signInMethod,
     );
   }
 

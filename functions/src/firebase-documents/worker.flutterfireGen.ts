@@ -1,3 +1,4 @@
+import * as admin from 'firebase-admin'
 import { FieldValue } from 'firebase-admin/firestore'
 
 export class ReadWorker {
@@ -153,3 +154,93 @@ export class UpdateWorker {
         return json
     }
 }
+
+const db = admin.firestore()
+db.settings({ ignoreUndefinedProperties: true })
+
+/**
+ * A CollectionReference to workers collection to read.
+ */
+export const readWorkerCollectionReference = db
+    .collection(`workers`)
+    .withConverter<ReadWorker>({
+        fromFirestore: (ds: FirebaseFirestore.DocumentSnapshot): ReadWorker => {
+            return ReadWorker.fromDocumentSnapshot(ds)
+        },
+        toFirestore: (): FirebaseFirestore.DocumentData => {
+            throw Error(`toFirestore is not implemented for ReadWorker`)
+        }
+    })
+
+/**
+ * A DocumentReference to worker document to read.
+ */
+export const readWorkerDocumentReference = ({
+    workerId
+}: {
+    workerId: string
+}): FirebaseFirestore.DocumentReference<ReadWorker> =>
+    readWorkerCollectionReference.doc(workerId)
+
+/**
+ * A CollectionReference to workers collection to create.
+ */
+export const createWorkerCollectionReference = db
+    .collection(`workers`)
+    .withConverter<CreateWorker>({
+        fromFirestore: (): CreateWorker => {
+            throw new Error(`fromFirestore is not implemented for CreateWorker`)
+        },
+        toFirestore: (obj: CreateWorker): FirebaseFirestore.DocumentData => {
+            return obj.toJson()
+        }
+    })
+
+/**
+ * A [DocumentReference] to worker document to create.
+ */
+export const createWorkerDocumentReference = ({
+    workerId
+}: {
+    workerId: string
+}): FirebaseFirestore.DocumentReference<CreateWorker> =>
+    createWorkerCollectionReference.doc(workerId)
+
+/**
+ * A CollectionReference to workers collection to update.
+ */
+export const updateWorkerCollectionReference = db
+    .collection(`workers`)
+    .withConverter<UpdateWorker>({
+        fromFirestore: (): CreateWorker => {
+            throw new Error(`fromFirestore is not implemented for CreateWorker`)
+        },
+        toFirestore: (obj: UpdateWorker): FirebaseFirestore.DocumentData => {
+            return obj.toJson()
+        }
+    })
+
+/**
+ * A DocumentReference to worker document to update.
+ */
+export const updateWorkerDocumentReference = ({
+    workerId
+}: {
+    workerId: string
+}): FirebaseFirestore.DocumentReference<UpdateWorker> =>
+    updateWorkerCollectionReference.doc(workerId)
+
+/**
+ * A CollectionReference to workers collection to delete.
+ */
+export const deleteWorkerCollectionReference = db.collection(`workers`)
+
+/**
+ * A DocumentReference to worker document to delete.
+ */
+export const deleteWorkerDocumentReference = ({
+    workerId
+}: {
+    workerId: string
+}): FirebaseFirestore.DocumentReference =>
+    deleteWorkerCollectionReference.doc(workerId)

@@ -1,3 +1,5 @@
+import { FieldValue } from 'firebase-admin/firestore'
+
 export class ReadWorker {
     constructor({
         workerId,
@@ -68,5 +70,45 @@ export class ReadWorker {
             workerId: ds.id,
             path: ds.ref.path
         })
+    }
+}
+
+export class CreateWorker {
+    constructor({
+        displayName,
+        imageUrl,
+        isHost,
+        createdAt
+    }: {
+        displayName: string
+        imageUrl: string
+        isHost: boolean
+        createdAt?: Date
+    }) {
+        this.displayName = displayName
+        this.imageUrl = imageUrl
+        this.isHost = isHost
+        this.createdAt = createdAt
+    }
+
+    readonly displayName: string
+
+    readonly imageUrl: string
+
+    readonly isHost: boolean
+
+    readonly createdAt?: Date
+
+    toJson(): Record<string, unknown> {
+        return {
+            displayName: this.displayName,
+            imageUrl: this.imageUrl,
+            isHost: this.isHost,
+            createdAt:
+                this.createdAt == null
+                    ? FieldValue.serverTimestamp()
+                    : FirebaseFirestore.Timestamp.fromDate(this.createdAt),
+            updatedAt: FieldValue.serverTimestamp()
+        }
     }
 }

@@ -9,17 +9,23 @@ import * as functions from 'firebase-functions/v2'
  * @returns {Promise<{customToken: string}>} 生成された Firebase Auth のカスタムトークンを含むオブジェクト。
  * @throws {Error} LINE アクセストークンの検証に失敗した場合、または LINE プロフィール情報の取得に失敗した場合、またはカスタムトークンの生成に失敗した場合、またはユーザードキュメントの設定に失敗した場合にエラーをスローする。
  */
-export const createfirebaseauthcustomtoken = functions.https.onCall<{ accessToken: string }>(
-    async (callableRequest) => {
-        const accessToken = callableRequest.data.accessToken
-        await verifyAccessToken(accessToken)
-        const { lineUserId, displayName, imageUrl } = await getLINEProfile(accessToken)
-        const customToken = await admin.auth().createCustomToken(lineUserId)
+export const createfirebaseauthcustomtoken = functions.https.onCall<{
+    accessToken: string
+}>(async (callableRequest) => {
+    const accessToken = callableRequest.data.accessToken
+    await verifyAccessToken(accessToken)
+    const { lineUserId, displayName, imageUrl } = await getLINEProfile(
+        accessToken
+    )
+    const customToken = await admin.auth().createCustomToken(lineUserId)
 
-        await setWorkerDocument({ lineUserId, displayName, imageUrl: imageUrl ?? `` })
-        return { customToken }
-    }
-)
+    await setWorkerDocument({
+        lineUserId,
+        displayName,
+        imageUrl: imageUrl ?? ``
+    })
+    return { customToken }
+})
 
 /**
  * LINE の Verify API を呼び出して、アクセストークンの有効性を確認する。
@@ -55,9 +61,12 @@ const verifyAccessToken = async (accessToken: string): Promise<void> => {
 const getLINEProfile = async (
     accessToken: string
 ): Promise<{ lineUserId: string; displayName: string; imageUrl?: string }> => {
-    const response = await axios.get<LINEGetProfileResponse>(`https://api.line.me/v2/profile`, {
-        headers: { Authorization: `Bearer ${accessToken}` }
-    })
+    const response = await axios.get<LINEGetProfileResponse>(
+        `https://api.line.me/v2/profile`,
+        {
+            headers: { Authorization: `Bearer ${accessToken}` }
+        }
+    )
     if (response.status !== 200) {
         throw new Error(`[${response.status}]: GET /v2/profile`)
     }

@@ -75,11 +75,14 @@ abstract class $AppRouter extends _i21.RootStackRouter {
       final pathParams = routeData.inheritedPathParams;
       final args = routeData.argsAs<CreateOrUpdateHostRouteArgs>(
           orElse: () => CreateOrUpdateHostRouteArgs(
-              userId: pathParams.getString('userId')));
+                userId: pathParams.getString('userId'),
+                actionType: pathParams.getString('actionType'),
+              ));
       return _i21.AutoRoutePage<dynamic>(
         routeData: routeData,
         child: _i4.CreateOrUpdateHostPage(
           userId: args.userId,
+          actionType: args.actionType,
           key: args.key,
         ),
       );
@@ -283,15 +286,20 @@ class CreateOrUpdateHostRoute
     extends _i21.PageRouteInfo<CreateOrUpdateHostRouteArgs> {
   CreateOrUpdateHostRoute({
     required String userId,
+    required String actionType,
     _i22.Key? key,
     List<_i21.PageRouteInfo>? children,
   }) : super(
           CreateOrUpdateHostRoute.name,
           args: CreateOrUpdateHostRouteArgs(
             userId: userId,
+            actionType: actionType,
             key: key,
           ),
-          rawPathParams: {'userId': userId},
+          rawPathParams: {
+            'userId': userId,
+            'actionType': actionType,
+          },
           initialChildren: children,
         );
 
@@ -304,16 +312,19 @@ class CreateOrUpdateHostRoute
 class CreateOrUpdateHostRouteArgs {
   const CreateOrUpdateHostRouteArgs({
     required this.userId,
+    required this.actionType,
     this.key,
   });
 
   final String userId;
 
+  final String actionType;
+
   final _i22.Key? key;
 
   @override
   String toString() {
-    return 'CreateOrUpdateHostRouteArgs{userId: $userId, key: $key}';
+    return 'CreateOrUpdateHostRouteArgs{userId: $userId, actionType: $actionType, key: $key}';
   }
 }
 

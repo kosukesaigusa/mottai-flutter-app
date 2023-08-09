@@ -68,7 +68,10 @@ class HostPage extends ConsumerWidget {
                           child: IconButton(
                             color: Theme.of(context).shadowColor,
                             onPressed: () => context.router.pushNamed(
-                              CreateOrUpdateHostPage.location(userId: userId),
+                              CreateOrUpdateHostPage.location(
+                                userId: userId,
+                                actionType: ActionType.update.name,
+                              ),
                             ),
                             icon: const Icon(Icons.edit),
                           ),

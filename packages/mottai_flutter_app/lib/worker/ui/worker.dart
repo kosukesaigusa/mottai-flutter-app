@@ -181,7 +181,10 @@ class WorkerPage extends ConsumerWidget {
                   Align(
                     child: ElevatedButton(
                       onPressed: () => context.router.pushNamed(
-                        CreateOrUpdateHostPage.location(userId: userId),
+                        CreateOrUpdateHostPage.location(
+                          userId: userId,
+                          actionType: ActionType.create.name,
+                        ),
                       ),
                       child: const Text('ホストとして登録'),
                     ),

@@ -145,6 +145,7 @@ class _DevelopmentItemsPageState extends ConsumerState<DevelopmentItemsPage> {
             onTap: () => context.router.pushNamed(
               CreateOrUpdateHostPage.location(
                 userId: 'b1M4bcp7zEVpgHXYhOVWt8BMkq23',
+                actionType: ActionType.create.name,
               ),
             ),
           ),

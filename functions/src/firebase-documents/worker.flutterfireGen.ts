@@ -244,3 +244,124 @@ export const deleteWorkerDocumentReference = ({
     workerId: string
 }): FirebaseFirestore.DocumentReference =>
     deleteWorkerCollectionReference.doc(workerId)
+
+/**
+ * A query manager to execute queries against the Worker collection.
+ */
+export class WorkerQuery {
+    /**
+     * Fetches ReadWorker documents.
+     * @param {Object} options - Options for the query.
+     * @param {Function} options.queryBuilder - A function to build the query.
+     * @param {Function} options.compare - A function to compare the results.
+     * @returns {Promise<ReadWorker[]>}
+     */
+    async fetchDocuments({
+        queryBuilder,
+        compare
+    }: {
+        queryBuilder?: (
+            query: FirebaseFirestore.Query<ReadWorker>
+        ) => FirebaseFirestore.Query<ReadWorker>
+        compare?: (lhs: ReadWorker, rhs: ReadWorker) => number
+    } = {}): Promise<ReadWorker[]> {
+        let query: FirebaseFirestore.Query<ReadWorker> =
+            readWorkerCollectionReference
+        if (queryBuilder != undefined) {
+            query = queryBuilder(query)
+        }
+        const qs: QuerySnapshot<ReadWorker> = await query.get()
+        let result = qs.docs.map((qds: QueryDocumentSnapshot<ReadWorker>) =>
+            qds.data()
+        )
+        if (compare != undefined) {
+            result = result.sort(compare)
+        }
+        return result
+    }
+
+    /**
+     * Fetches a specified ReadWorker document.
+     * @param {Object} options - Options for the query.
+     * @param {string} options.workerId - The ID of the worker document to fetch.
+     * @returns {Promise<ReadWorker | undefined>}
+     */
+    async fetchDocument({
+        workerId
+    }: {
+        workerId: string
+    }): Promise<ReadWorker | undefined> {
+        const ds = await readWorkerDocumentReference({ workerId }).get()
+        return ds.data()
+    }
+
+    /**
+     * Adds a Worker document.
+     * @param {Object} options - Options for the query.
+     * @param {CreateWorker} options.createWorker - The worker document to add.
+     * @returns {Promise<DocumentReference<CreateWorker>>}
+     */
+    async add({
+        createWorker
+    }: {
+        createWorker: CreateWorker
+    }): Promise<DocumentReference<CreateWorker>> {
+        return createWorkerCollectionReference.add(createWorker)
+    }
+
+    /**
+     * Sets a Worker document.
+     * @param {Object} options - Options for the query.
+     * @param {string} options.workerId - The ID of the worker document to set.
+     * @param {CreateWorker} options.createWorker - The worker document to set.
+     * @param {FirebaseFirestore.SetOptions} options.options - Options for the set operation.
+     * @returns {Promise<WriteResult>}
+     */
+    async set({
+        workerId,
+        createWorker,
+        options
+    }: {
+        workerId: string
+        createWorker: CreateWorker
+        options?: FirebaseFirestore.SetOptions
+    }): Promise<WriteResult> {
+        if (options == undefined) {
+            return createWorkerDocumentReference({ workerId }).set(createWorker)
+        } else {
+            return createWorkerDocumentReference({ workerId }).set(
+                createWorker,
+                options
+            )
+        }
+    }
+
+    /**
+     * Updates a specified Worker document.
+     * @param {Object} options - Options for the query.
+     * @param {string} options.workerId - The ID of the worker document to update.
+     * @param {UpdateWorker} options.updateWorker - The worker document to update.
+     * @returns {Promise<WriteResult>}
+     */
+    async update({
+        workerId,
+        updateWorker
+    }: {
+        workerId: string
+        updateWorker: UpdateWorker
+    }): Promise<WriteResult> {
+        return updateWorkerDocumentReference({ workerId }).update(
+            updateWorker.toJson()
+        )
+    }
+
+    /**
+     * Deletes a specified Worker document.
+     * @param {Object} options - Options for the query.
+     * @param {string} options.workerId - The ID of the worker document to delete.
+     * @returns {Promise<WriteResult>}
+     */
+    async delete({ workerId }: { workerId: string }): Promise<WriteResult> {
+        return deleteWorkerDocumentReference({ workerId }).delete()
+    }
+}

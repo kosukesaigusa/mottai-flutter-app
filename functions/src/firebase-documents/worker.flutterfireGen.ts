@@ -1,28 +1,58 @@
 export class ReadWorker {
-    constructor(
-        public readonly workerId: string,
-        public readonly path: string,
-        public readonly displayName: string,
-        public readonly imageUrl: string,
-        public readonly isHost: boolean,
-        public readonly createdAt?: Date,
-        public readonly updatedAt?: Date
-    ) {}
+    constructor({
+        workerId,
+        path,
+        displayName,
+        imageUrl,
+        isHost,
+        createdAt,
+        updatedAt
+    }: {
+        workerId: string
+        path: string
+        displayName: string
+        imageUrl: string
+        isHost: boolean
+        createdAt?: Date
+        updatedAt?: Date
+    }) {
+        this.workerId = workerId
+        this.path = path
+        this.displayName = displayName
+        this.imageUrl = imageUrl
+        this.isHost = isHost
+        this.createdAt = createdAt
+        this.updatedAt = updatedAt
+    }
+
+    readonly workerId: string
+
+    readonly path: string
+
+    readonly displayName: string
+
+    readonly imageUrl: string
+
+    readonly isHost: boolean
+
+    readonly createdAt?: Date
+
+    readonly updatedAt?: Date
 
     private static fromJson(json: Record<string, unknown>): ReadWorker {
-        return new ReadWorker(
-            json[`workerId`] as string,
-            json[`path`] as string,
-            (json[`displayName`] as string | undefined) ?? ``,
-            (json[`imageUrl`] as string | undefined) ?? ``,
-            (json[`isHost`] as boolean | undefined) ?? false,
-            (
+        return new ReadWorker({
+            workerId: json[`workerId`] as string,
+            path: json[`path`] as string,
+            displayName: (json[`displayName`] as string | undefined) ?? ``,
+            imageUrl: (json[`imageUrl`] as string | undefined) ?? ``,
+            isHost: (json[`isHost`] as boolean | undefined) ?? false,
+            createdAt: (
                 json[`createdAt`] as FirebaseFirestore.Timestamp | undefined
             )?.toDate(),
-            (
+            updatedAt: (
                 json[`updatedAt`] as FirebaseFirestore.Timestamp | undefined
             )?.toDate()
-        )
+        })
     }
 
     static fromDocumentSnapshot(

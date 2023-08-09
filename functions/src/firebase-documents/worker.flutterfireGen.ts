@@ -1,5 +1,11 @@
 import * as admin from 'firebase-admin'
-import { FieldValue } from 'firebase-admin/firestore'
+import {
+    DocumentReference,
+    FieldValue,
+    QueryDocumentSnapshot,
+    QuerySnapshot,
+    WriteResult
+} from 'firebase-admin/firestore'
 
 export class ReadWorker {
     constructor({
@@ -155,11 +161,15 @@ export class UpdateWorker {
     }
 }
 
+/**
+ * A Cloud Firestore object which ignores `undefined` properties.
+ */
 const db = admin.firestore()
 db.settings({ ignoreUndefinedProperties: true })
 
 /**
- * A CollectionReference to workers collection to read.
+ * A CollectionReference to the workers collection for reading.
+ * @type {FirebaseFirestore.CollectionReference<ReadWorker>}
  */
 export const readWorkerCollectionReference = db
     .collection(`workers`)
@@ -173,7 +183,9 @@ export const readWorkerCollectionReference = db
     })
 
 /**
- * A DocumentReference to worker document to read.
+ * A DocumentReference to a worker document for reading.
+ * @param {string} workerId - The ID of the worker document to read.
+ * @returns {FirebaseFirestore.DocumentReference<ReadWorker>}
  */
 export const readWorkerDocumentReference = ({
     workerId
@@ -183,7 +195,8 @@ export const readWorkerDocumentReference = ({
     readWorkerCollectionReference.doc(workerId)
 
 /**
- * A CollectionReference to workers collection to create.
+ * A CollectionReference to the workers collection for creating.
+ * @type {FirebaseFirestore.CollectionReference<CreateWorker>}
  */
 export const createWorkerCollectionReference = db
     .collection(`workers`)
@@ -197,7 +210,9 @@ export const createWorkerCollectionReference = db
     })
 
 /**
- * A [DocumentReference] to worker document to create.
+ * A DocumentReference to a worker document for creating.
+ * @param {string} workerId - The ID of the worker document to create.
+ * @returns {FirebaseFirestore.DocumentReference<CreateWorker>}
  */
 export const createWorkerDocumentReference = ({
     workerId
@@ -207,7 +222,8 @@ export const createWorkerDocumentReference = ({
     createWorkerCollectionReference.doc(workerId)
 
 /**
- * A CollectionReference to workers collection to update.
+ * A CollectionReference to the workers collection for updating.
+ * @type {FirebaseFirestore.CollectionReference<UpdateWorker>}
  */
 export const updateWorkerCollectionReference = db
     .collection(`workers`)
@@ -221,7 +237,9 @@ export const updateWorkerCollectionReference = db
     })
 
 /**
- * A DocumentReference to worker document to update.
+ * A DocumentReference to a worker document for updating.
+ * @param {string} workerId - The ID of the worker document to update.
+ * @returns {FirebaseFirestore.DocumentReference<UpdateWorker>}
  */
 export const updateWorkerDocumentReference = ({
     workerId
@@ -231,12 +249,15 @@ export const updateWorkerDocumentReference = ({
     updateWorkerCollectionReference.doc(workerId)
 
 /**
- * A CollectionReference to workers collection to delete.
+ * A CollectionReference to the workers collection for deleting.
+ * @type {FirebaseFirestore.CollectionReference}
  */
 export const deleteWorkerCollectionReference = db.collection(`workers`)
 
 /**
- * A DocumentReference to worker document to delete.
+ * A DocumentReference to a worker document for deleting.
+ * @param {string} workerId - The ID of the worker document to delete.
+ * @returns {FirebaseFirestore.DocumentReference}
  */
 export const deleteWorkerDocumentReference = ({
     workerId

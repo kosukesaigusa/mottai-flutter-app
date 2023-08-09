@@ -13,7 +13,6 @@ interface LINEGetVerifyAPIResponse {
     expires_in: number
 }
 
-/** GET https://api.line.me/v2/profile のレスポンス。 */
 /**
  * GET https://api.line.me/v2/profile のレスポンス。
  * https://developers.line.biz/ja/reference/line-login/#get-user-profile

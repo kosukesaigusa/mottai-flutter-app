@@ -77,18 +77,15 @@ export class CreateWorker {
     constructor({
         displayName,
         imageUrl,
-        isHost,
-        createdAt
+        isHost
     }: {
         displayName: string
         imageUrl: string
         isHost: boolean
-        createdAt?: Date
     }) {
         this.displayName = displayName
         this.imageUrl = imageUrl
         this.isHost = isHost
-        this.createdAt = createdAt
     }
 
     readonly displayName: string
@@ -104,11 +101,55 @@ export class CreateWorker {
             displayName: this.displayName,
             imageUrl: this.imageUrl,
             isHost: this.isHost,
-            createdAt:
-                this.createdAt == null
-                    ? FieldValue.serverTimestamp()
-                    : FirebaseFirestore.Timestamp.fromDate(this.createdAt),
+            createdAt: FieldValue.serverTimestamp(),
             updatedAt: FieldValue.serverTimestamp()
         }
+    }
+}
+
+export class UpdateWorker {
+    constructor({
+        displayName,
+        imageUrl,
+        isHost,
+        createdAt
+    }: {
+        displayName?: string
+        imageUrl?: string
+        isHost?: boolean
+        createdAt?: Date
+    }) {
+        this.displayName = displayName
+        this.imageUrl = imageUrl
+        this.isHost = isHost
+        this.createdAt = createdAt
+    }
+
+    readonly displayName?: string
+
+    readonly imageUrl?: string
+
+    readonly isHost?: boolean
+
+    readonly createdAt?: Date
+
+    toJson(): Record<string, unknown> {
+        const json: Record<string, unknown> = {}
+        if (this.displayName != undefined) {
+            json[`displayName`] = this.displayName
+        }
+        if (this.imageUrl != undefined) {
+            json[`imageUrl`] = this.imageUrl
+        }
+        if (this.isHost != undefined) {
+            json[`isHost`] = this.isHost
+        }
+        if (this.createdAt != undefined) {
+            json[`createdAt`] = FirebaseFirestore.Timestamp.fromDate(
+                this.createdAt
+            )
+        }
+        json[`updatedAt`] = FieldValue.serverTimestamp()
+        return json
     }
 }

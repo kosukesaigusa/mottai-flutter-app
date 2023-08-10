@@ -85,14 +85,12 @@ class AuthService {
       _auth.signInWithEmailAndPassword(email: email, password: password);
 
   /// [FirebaseAuth] に Google でサインインする。
-  /// https://firebase.flutter.dev/docs/auth/social/#google に従っている。
+  ///
+  /// https://firebase.flutter.dev/docs/auth/social/#google に従っているが、
+  /// [AuthCredential] を取得するまでの処理は、
+  /// [_linkWithCredential] でも使用するため、別メソッドして定義している
   Future<UserCredential> signInWithGoogle() async {
-    final googleUser = await GoogleSignIn().signIn(); // サインインダイアログの表示
-    final googleAuth = await googleUser?.authentication; // アカウントからトークン生成
-    final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth?.accessToken,
-      idToken: googleAuth?.idToken,
-    );
+    final credential = await _getGoogleCredential();
 
     final userCredential = await _auth.signInWithCredential(credential);
     await _createWorkerAndUserSocialLoginWhenFirstSignIn(
@@ -267,5 +265,19 @@ class AuthService {
       case SignInMethod.email:
         throw UnimplementedError();
     }
+  }
+
+  /// Google認証から [AuthCredential] を取得する
+  ///
+  /// [GoogleSignIn] ライブラリを使用してユーザーにGoogleでのログインを求め、
+  /// 成功した場合はその認証情報からFirebase用の [AuthCredential] オブジェクトを生成して返す
+  Future<AuthCredential> _getGoogleCredential() async {
+    final googleUser = await GoogleSignIn().signIn(); // サインインダイアログの表示
+    final googleAuth = await googleUser?.authentication; // アカウントからトークン生成
+
+    return GoogleAuthProvider.credential(
+      accessToken: googleAuth?.accessToken,
+      idToken: googleAuth?.idToken,
+    );
   }
 }

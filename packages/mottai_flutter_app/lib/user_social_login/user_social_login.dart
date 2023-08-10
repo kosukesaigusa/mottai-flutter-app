@@ -58,9 +58,7 @@ class UserSocialLoginService {
         );
       //TODO emailは追って削除になる想定
       case SignInMethod.email:
-        await _userSocialLoginRepository.setUserSocialLogin(
-          userId: userId,
-        );
+        throw UnimplementedError();
     }
   }
 
@@ -87,11 +85,10 @@ class UserSocialLoginService {
       SignInMethod.apple => await _getAppleCredential(),
       SignInMethod.line => await _getLineCredential(),
       //TODO emailは追って削除される想定
-      SignInMethod.email => null,
+      SignInMethod.email => throw UnimplementedError(),
     };
     //TODO FirebaseAuth.instanceをここで再度実行するのは望ましくなさそう？
-    //TODO credentialの `!` は追って修正が必要
-    await FirebaseAuth.instance.currentUser?.linkWithCredential(credential!);
+    await FirebaseAuth.instance.currentUser?.linkWithCredential(credential);
   }
 
   //TODO 以下のcredential取得系メソッド群はauth.dartと重複している箇所が多いが、問題ないか？
@@ -171,8 +168,9 @@ class UserSocialLoginService {
           userId: userId,
           value: value,
         );
+      //TODO emailはなくなる想定
       case SignInMethod.email:
-      //TODO emailはなくなる？
+        throw UnimplementedError();
     }
   }
 }

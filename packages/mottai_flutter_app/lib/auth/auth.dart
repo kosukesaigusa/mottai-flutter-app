@@ -11,7 +11,6 @@ import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 import '../firestore_repository.dart';
 import '../user/worker.dart';
-import '../user_social_login/user_social_login.dart';
 
 /// Firebase Console の Authentication で設定できるサインイン方法の種別。
 enum SignInMethod {
@@ -55,11 +54,10 @@ final userSocialLoginStreamProvider =
       .subscribeUserSocialLogin(userId: userId),
 );
 
-
 final authServiceProvider = Provider.autoDispose<AuthService>(
   (ref) => AuthService(
     workerService: ref.watch(workerServiceProvider),
-    userSocialLoginService: ref.watch(userSocialLoginServiceProvider),
+    userSocialLoginRepository: ref.watch(userSocialLoginRepositoryProvider),
   ),
 );
 
@@ -67,14 +65,15 @@ final authServiceProvider = Provider.autoDispose<AuthService>(
 class AuthService {
   const AuthService({
     required WorkerService workerService,
-    required UserSocialLoginService userSocialLoginService,
+    required UserSocialLoginRepository userSocialLoginRepository,
   })  : _workerService = workerService,
-        _userSocialLoginService = userSocialLoginService;
+        _userSocialLoginRepository = userSocialLoginRepository;
 
   static final _auth = FirebaseAuth.instance;
 
   final WorkerService _workerService;
-  final UserSocialLoginService _userSocialLoginService;
+
+  final UserSocialLoginRepository _userSocialLoginRepository;
 
   // TODO: 開発中のみ使用する。リリース時には消すか、あとで デバッグモード or
   // 開発環境接続時のみ使用可能にする。
@@ -173,7 +172,7 @@ class AuthService {
       workerId: user.uid,
       displayName: user.displayName ?? '',
     );
-    await _userSocialLoginService.createUserSocialLogin(
+    await _createUserSocialLogin(
       userId: user.uid,
       signInMethod: signInMethod,
     );
@@ -185,10 +184,10 @@ class AuthService {
     await GoogleSignIn().signOut();
   }
 
-    /// [UserSocialLogin] の作成
+  /// [UserSocialLogin] の作成
   ///
   /// 指定した [SignInMethod] に関連するプロパティのみを `true` とした [UserSocialLogin] を作成する
-  Future<void> createUserSocialLogin({
+  Future<void> _createUserSocialLogin({
     required String userId,
     required SignInMethod signInMethod,
   }) async {
@@ -239,11 +238,10 @@ class AuthService {
       //TODO emailは追って削除される想定
       SignInMethod.email => throw UnimplementedError(),
     };
-    //TODO FirebaseAuth.instanceをここで再度実行するのは望ましくなさそう？
-    await FirebaseAuth.instance.currentUser?.linkWithCredential(credential);
+    await _auth.currentUser?.linkWithCredential(credential);
   }
 
-    /// 指定した [SignInMethod] に関連する [UserSocialLogin] のプロパティを、引数で受けた真偽値に更新する
+  /// 指定した [SignInMethod] に関連する [UserSocialLogin] のプロパティを、引数で受けた真偽値に更新する
   Future<void> _updateUserSocialLoginSignInMethodStatus({
     required SignInMethod signInMethod,
     required String userId,
@@ -270,5 +268,4 @@ class AuthService {
         throw UnimplementedError();
     }
   }
-
 }

@@ -1,10 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dart_flutter_common/dart_flutter_common.dart';
 import 'package:firebase_common/firebase_common.dart';
 import 'package:flutter/material.dart';
 import 'package:geoflutterfire_plus/geoflutterfire_plus.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:rxdart/rxdart.dart';
+
+import '../../user/host.dart';
 
 /// 東京駅の緯度経度（テスト用）初期位置は現在地？
 const _tokyoStation = LatLng(35.681236, 139.767125);
@@ -174,7 +177,7 @@ class MapPageState extends State<MapPage> {
           Align(
             alignment: Alignment.bottomCenter,
             child: Container(
-              height: 250,
+              height: 220,
               padding: const EdgeInsets.only(top: 16, bottom: 16),
               child: _HostLocationPageView(
                 readHostLocations: _readHostLocations,
@@ -267,116 +270,105 @@ class _HostLocationPageViewItem extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final hostId = readHostLocation.hostId;
-    // TODO: hostId を使って、hostFutureProvider で host を取得する。
-    return Container(
-      margin: const EdgeInsets.only(right: 8),
-      child: DecoratedBox(
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.all(Radius.circular(8)),
-        ),
-        child: Container(
-          margin: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 8,
+
+    final host = ref.watch(hostFutureProvider(hostId)).whenOrNull(
+          data: (host) => host,
+        );
+
+    if (host == null) {
+      // MEMO: リフレッシュ動作か、取得に失敗したことを表示する？
+      return const SizedBox();
+    } else {
+      return Container(
+        margin: const EdgeInsets.only(right: 8),
+        child: DecoratedBox(
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.all(Radius.circular(8)),
           ),
-          child: const Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('ダミー'),
-              // // ホスト名Part
-              // Text(hostName, style: Theme.of(context).textTheme.titleMedium),
-              // Container(
-              //   margin: const EdgeInsets.only(top: 8, bottom: 16),
-              //   child: SizedBox(
-              //     height: 60,
-              //     child: Row(
-              //       children: [
-              //         // 画像Part
-              //         const SizedBox(
-              //           width: 60,
-              //           height: 60,
-              //           child: DecoratedBox(
-              //             decoration: BoxDecoration(
-              //               color: Colors.red,
-              //               borderRadius: BorderRadius.all(
-              //                 Radius.circular(8),
-              //               ),
-              //             ),
-              //           ),
-              //         ),
-              //         const SizedBox(width: 8),
+          child: Container(
+            margin: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 8,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // ホスト名
+                Text(
+                  host.displayName,
+                  style: Theme.of(context).textTheme.titleMedium,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                ),
 
-              //         // 住所Part
-              //         Expanded(
-              //           child: Column(
-              //             crossAxisAlignment: CrossAxisAlignment.start,
-              //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //             children: [
-              //               Text(
-              //                 address,
-              //                 style: Theme.of(context)
-              //                     .textTheme
-              //                     .bodyMedium!
-              //                     .copyWith(
-              //                       fontSize: 12,
-              //                     ),
-              //                 maxLines: 2,
-              //               ),
+                Container(
+                  margin: const EdgeInsets.only(top: 8, bottom: 16),
+                  child: SizedBox(
+                    height: 70,
+                    child: Row(
+                      children: [
+                        // ホスト画像
+                        GenericImage.square(
+                          imageUrl: host.imageUrl,
+                          size: 70,
+                          borderRadius: 8,
+                        ),
 
-              //               // Tag Part
-              //               // MEMO: ContainerではなくてtagのWidgetを使用する。
-              //               Row(
-              //                 children: jobTypes.map((jobType) {
-              //                   return Container(
-              //                     margin: const EdgeInsets.only(
-              //                       right: 8,
-              //                     ),
-              //                     child: DecoratedBox(
-              //                       decoration: BoxDecoration(
-              //                         color: Colors.purple[100],
-              //                         borderRadius: const BorderRadius.all(
-              //                           Radius.circular(8),
-              //                         ),
-              //                       ),
-              //                       child: Container(
-              //                         padding: const EdgeInsets.symmetric(
-              //                           horizontal: 8,
-              //                           vertical: 4,
-              //                         ),
-              //                         child: Text(
-              //                           jobType.name,
-              //                           style: Theme.of(context)
-              //                               .textTheme
-              //                               .labelMedium!
-              //                               .copyWith(
-              //                                 fontSize: 12,
-              //                               ),
-              //                         ),
-              //                       ),
-              //                     ),
-              //                   );
-              //                 }).toList(),
-              //               )
-              //             ],
-              //           ),
-              //         ),
-              //       ],
-              //     ),
-              //   ),
-              // ),
+                        const SizedBox(width: 8),
 
-              // // 詳細分Part
-              // Text(
-              //   details,
-              //   style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-              //         fontSize: 12,
-              //       ),
-              // ),
-            ],
+                        // 住所
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                readHostLocation.address,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium!
+                                    .copyWith(
+                                      fontSize: 12,
+                                    ),
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 2,
+                              ),
+
+                              // ホストType
+                              SelectableChips<HostType>(
+                                padding: 0,
+                                allItems: host.hostTypes,
+                                labels: Map.fromEntries(
+                                  host.hostTypes.map(
+                                    (type) => MapEntry(type, type.label),
+                                  ),
+                                ),
+                                enabledItems: host.hostTypes,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
+                // 詳細分
+                // TODO: job.jobDetail を取得して表示する
+                Text(
+                  'job.jobDetail \njob.jobDetail \njob.jobDetail ddgegegegegegegegegegegegegeggegegegegege ',
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                        fontSize: 12,
+                      ),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 3,
+                ),
+              ],
+            ),
           ),
         ),
-      ),
-    );
+      );
+    }
   }
 }

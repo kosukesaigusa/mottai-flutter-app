@@ -3,11 +3,13 @@ import 'dart:convert';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_common/firebase_common.dart';
 import 'package:flutter_line_sdk/flutter_line_sdk.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
+import '../firestore_repository.dart';
 import '../user/worker.dart';
 import '../user_social_login/user_social_login.dart';
 
@@ -44,6 +46,15 @@ final userIdProvider = Provider<String?>((ref) {
 final isSignedInProvider = Provider<bool>(
   (ref) => ref.watch(userIdProvider) != null,
 );
+
+/// 指定した [UserSocialLogin] ドキュメントを購読する [StreamProvider].
+final userSocialLoginStreamProvider =
+    StreamProvider.family.autoDispose<ReadUserSocialLogin?, String>(
+  (ref, userId) => ref
+      .watch(userSocialLoginRepositoryProvider)
+      .subscribeUserSocialLogin(userId: userId),
+);
+
 
 final authServiceProvider = Provider.autoDispose<AuthService>(
   (ref) => AuthService(
@@ -173,4 +184,91 @@ class AuthService {
     await _auth.signOut();
     await GoogleSignIn().signOut();
   }
+
+    /// [UserSocialLogin] の作成
+  ///
+  /// 指定した [SignInMethod] に関連するプロパティのみを `true` とした [UserSocialLogin] を作成する
+  Future<void> createUserSocialLogin({
+    required String userId,
+    required SignInMethod signInMethod,
+  }) async {
+    switch (signInMethod) {
+      case SignInMethod.google:
+        await _userSocialLoginRepository.setUserSocialLogin(
+          userId: userId,
+          isGoogleEnabled: true,
+        );
+      case SignInMethod.apple:
+        await _userSocialLoginRepository.setUserSocialLogin(
+          userId: userId,
+          isAppleEnabled: true,
+        );
+      case SignInMethod.line:
+        await _userSocialLoginRepository.setUserSocialLogin(
+          userId: userId,
+          isLINEEnabled: true,
+        );
+      //TODO emailは追って削除になる想定
+      case SignInMethod.email:
+        throw UnimplementedError();
+    }
+  }
+
+  /// ログイン時に生成される `Credential` を元に、ユーザーアカウントにソーシャル認証情報をリンクし、
+  /// 指定した [SignInMethod] に関連する [UserSocialLogin] のプロパティを引数で受けた真偽値に更新する
+  Future<void> linkUserSocialLogin({
+    required SignInMethod signInMethod,
+    //TODO userIdは引数で受けるで問題ないか？auth.dartで定義されているProviderから取得すべきか？
+    required String userId,
+    required bool value,
+  }) async {
+    await _linkWithCredential(signInMethod: signInMethod);
+    await _updateUserSocialLoginSignInMethodStatus(
+      signInMethod: signInMethod,
+      userId: userId,
+      value: value,
+    );
+  }
+
+  /// ログイン時に生成される `Credential` を元に、ユーザーアカウントにソーシャル認証情報をリンクする
+  Future<void> _linkWithCredential({required SignInMethod signInMethod}) async {
+    final credential = switch (signInMethod) {
+      SignInMethod.google => await _getGoogleCredential(),
+      SignInMethod.apple => await _getAppleCredential(),
+      SignInMethod.line => await _getLineCredential(),
+      //TODO emailは追って削除される想定
+      SignInMethod.email => throw UnimplementedError(),
+    };
+    //TODO FirebaseAuth.instanceをここで再度実行するのは望ましくなさそう？
+    await FirebaseAuth.instance.currentUser?.linkWithCredential(credential);
+  }
+
+    /// 指定した [SignInMethod] に関連する [UserSocialLogin] のプロパティを、引数で受けた真偽値に更新する
+  Future<void> _updateUserSocialLoginSignInMethodStatus({
+    required SignInMethod signInMethod,
+    required String userId,
+    required bool value,
+  }) async {
+    switch (signInMethod) {
+      case SignInMethod.google:
+        await _userSocialLoginRepository.updateIsGoogleEnabled(
+          userId: userId,
+          value: value,
+        );
+      case SignInMethod.apple:
+        await _userSocialLoginRepository.updateIsAppleEnabled(
+          userId: userId,
+          value: value,
+        );
+      case SignInMethod.line:
+        await _userSocialLoginRepository.updateIsLINEEnabled(
+          userId: userId,
+          value: value,
+        );
+      //TODO emailはなくなる想定
+      case SignInMethod.email:
+        throw UnimplementedError();
+    }
+  }
+
 }

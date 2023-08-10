@@ -101,23 +101,12 @@ class AuthService {
   }
 
   /// [FirebaseAuth] に Apple でサインインする。
-  /// https://firebase.flutter.dev/docs/auth/social/#apple に従っている。
+  /// 
+  /// https://firebase.flutter.dev/docs/auth/social/#apple に従っているが、
+  /// [AuthCredential] を取得するまでの処理は、
+  /// [_linkWithCredential] でも使用するため、別メソッドして定義している
   Future<UserCredential> signInWithApple() async {
-    final rawNonce = generateNonce();
-    final nonce = _sha256ofString(rawNonce);
-
-    final appleCredential = await SignInWithApple.getAppleIDCredential(
-      scopes: [
-        AppleIDAuthorizationScopes.email,
-        AppleIDAuthorizationScopes.fullName,
-      ],
-      nonce: nonce,
-    );
-
-    final oauthCredential = OAuthProvider('apple.com').credential(
-      idToken: appleCredential.identityToken,
-      rawNonce: rawNonce,
-    );
+    final oauthCredential = await _getAppleCredential();
 
     final userCredential =
         await FirebaseAuth.instance.signInWithCredential(oauthCredential);
@@ -278,6 +267,28 @@ class AuthService {
     return GoogleAuthProvider.credential(
       accessToken: googleAuth?.accessToken,
       idToken: googleAuth?.idToken,
+    );
+  }
+
+  /// Apple認証から [AuthCredential] を取得する
+  ///
+  /// Appleでのログインを求め、
+  /// 成功した場合はその認証情報からFirebase用の [AuthCredential] オブジェクトを生成して返す。
+  Future<AuthCredential> _getAppleCredential() async {
+    final rawNonce = generateNonce();
+    final nonce = _sha256ofString(rawNonce);
+
+    final appleCredential = await SignInWithApple.getAppleIDCredential(
+      scopes: [
+        AppleIDAuthorizationScopes.email,
+        AppleIDAuthorizationScopes.fullName,
+      ],
+      nonce: nonce,
+    );
+
+    return OAuthProvider('apple.com').credential(
+      idToken: appleCredential.identityToken,
+      rawNonce: rawNonce,
     );
   }
 }

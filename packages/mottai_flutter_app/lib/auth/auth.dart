@@ -221,7 +221,8 @@ class AuthService {
     final credential = switch (signInMethod) {
       SignInMethod.google => await _getGoogleCredential(),
       SignInMethod.apple => await _getAppleCredential(),
-      SignInMethod.line => await _getLineCredential(),
+      //TODO LINEの AuthCredential を取得する処理がまだわかっていないため未実装
+      SignInMethod.line => throw UnimplementedError(),
       //TODO emailは追って削除される想定
       SignInMethod.email => throw UnimplementedError(),
     };

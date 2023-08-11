@@ -59,10 +59,19 @@ final _unReadCountStreamProvider =
       .map((messages) => messages.length);
 });
 
-/// 指定した `chatRoomId` の未読メッセージを取得する [Provider].
-/// `_unReadCountStreamProvider` で取得した未読メッセージ数を利用します。
-final unReadCountProvider =
-    Provider.autoDispose.family<int, String>((ref, chatRoomId) {
-  final unReadCount = ref.watch(_unReadCountStreamProvider(chatRoomId)).value;
-  return unReadCount ?? 0;
+/// 指定した `readChatRoom` における自分の未読メッセージ数を表す文字列を取得する [Provider].
+/// [_unReadCountStreamProvider] で取得した未読メッセージ数を利用する。
+/// 未読メッセージ数が 0 の場合は空文字列を返す。
+/// 未読メッセージ数が [_maxUnReadCount] を超える場合は `${_maxUnReadCount}+` を返す。
+final unReadCountStringProvider =
+    Provider.autoDispose.family<String, ReadChatRoom>((ref, readChatRoom) {
+  final unReadCount =
+      ref.watch(_unReadCountStreamProvider(readChatRoom)).value ?? 0;
+  if (unReadCount == 0) {
+    return '';
+  }
+  if (unReadCount > _maxUnReadCount) {
+    return '$_maxUnReadCount+';
+  }
+  return unReadCount.toString();
 });

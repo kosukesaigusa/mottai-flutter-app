@@ -233,7 +233,7 @@ class _ChatMessageItem extends ConsumerWidget {
                         ? Theme.of(context).primaryColor
                         : backgroundGrey,
                   ),
-                  child: Text(
+                  child: SelectableText(
                     readChatMessage.content,
                     style: isMyMessage
                         ? Theme.of(context)

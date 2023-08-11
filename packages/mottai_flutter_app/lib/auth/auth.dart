@@ -101,7 +101,7 @@ class AuthService {
   }
 
   /// [FirebaseAuth] に Apple でサインインする。
-  /// 
+  ///
   /// https://firebase.flutter.dev/docs/auth/social/#apple に従っているが、
   /// [AuthCredential] を取得するまでの処理は、
   /// [_linkWithCredential] でも使用するため、別メソッドして定義している
@@ -204,7 +204,6 @@ class AuthService {
   /// 指定した [SignInMethod] に関連する [UserSocialLogin] のプロパティを引数で受けた真偽値に更新する
   Future<void> linkUserSocialLogin({
     required SignInMethod signInMethod,
-    //TODO userIdは引数で受けるで問題ないか？auth.dartで定義されているProviderから取得すべきか？
     required String userId,
     required bool value,
   }) async {
@@ -213,6 +212,22 @@ class AuthService {
       signInMethod: signInMethod,
       userId: userId,
       value: value,
+    );
+  }
+
+  /// 指定されたソーシャル認証情報のリンクを解除する
+  /// 
+  /// 指定された [SignInMethod] のソーシャル認証情報のリンクを解除し、
+  /// 指定された [SignInMethod] に関連する [UserSocialLogin] のプロパティを `false` に更新する
+  Future<void> unLinkUserSocialLogin({
+    required SignInMethod signInMethod,
+    required String userId,
+  }) async {
+    await _unlinkWithProviderId(signInMethod: signInMethod);
+    await _updateUserSocialLoginSignInMethodStatus(
+      signInMethod: signInMethod,
+      userId: userId,
+      value: false,
     );
   }
 
@@ -291,5 +306,35 @@ class AuthService {
       idToken: appleCredential.identityToken,
       rawNonce: rawNonce,
     );
+  }
+
+  /// ログインユーザーが持つ `providerId` を元に、指定された [SignInMethod] のリンクを解除する
+  Future<void> _unlinkWithProviderId({
+    required SignInMethod signInMethod,
+  }) async {
+    const googleProviderId = 'google.com';
+    const appleProviderId = 'apple.com';
+
+    final user = _auth.currentUser;
+
+    if (user == null) {
+      return;
+    }
+
+    final providerIdToUnlink = switch (signInMethod) {
+      SignInMethod.google => googleProviderId,
+      SignInMethod.apple => appleProviderId,
+      //TODO LINE用の実装
+      SignInMethod.line => throw UnimplementedError(),
+      //TODO emailは削除される想定
+      SignInMethod.email => throw UnimplementedError(),
+    };
+
+    for (final userInfo in user.providerData) {
+      if (userInfo.providerId == providerIdToUnlink) {
+        await user.unlink(providerIdToUnlink);
+        return;
+      }
+    }
   }
 }

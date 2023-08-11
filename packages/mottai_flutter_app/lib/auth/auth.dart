@@ -200,18 +200,19 @@ class AuthService {
     }
   }
 
-  /// ログイン時に生成される `Credential` を元に、ユーザーアカウントにソーシャル認証情報をリンクし、
-  /// 指定した [SignInMethod] に関連する [UserSocialLogin] のプロパティを引数で受けた真偽値に更新する
+  /// 指定されたソーシャル認証情報をリンクする
+  /// 
+  /// 指定された [SignInMethod] のソーシャル認証情報をアカウントにリンクし、
+  /// 指定した [SignInMethod] に関連する [UserSocialLogin] のプロパティを `true` に更新する
   Future<void> linkUserSocialLogin({
     required SignInMethod signInMethod,
     required String userId,
-    required bool value,
   }) async {
     await _linkWithCredential(signInMethod: signInMethod);
     await _updateUserSocialLoginSignInMethodStatus(
       signInMethod: signInMethod,
       userId: userId,
-      value: value,
+      value: true,
     );
   }
 

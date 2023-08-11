@@ -91,22 +91,30 @@ class AuthController {
     }
   }
 
-  /// ユーザーアクションに伴い、 [AuthService] に定義された、
-  /// ソーシャルログインを既存のアカウントに link する or リンクを解除する処理を呼び出す
+  /// [SignInMethod] に基づいて、[AuthService] に定義されたソーシャルログインのリンク処理またはリンク解除処理を実行する。
+  ///
+  /// - `signInMethod` : リンクまたはリンク解除を行うソーシャルログインの方法。
+  /// - `userId` : 操作対象のユーザーID。
+  /// - `shouldLink` : `true` の場合、ソーシャルログインをアカウントにリンクする。
+  ///                 `false` の場合、ソーシャルログインのリンクを解除する。
   Future<void> updateUserSocialLogin({
     required SignInMethod signInMethod,
     required String userId,
-    // リンクするか解除するかを判定する 
-    required bool value,
+    required bool shouldLink,
   }) async {
     try {
-      await _authService.linkUserSocialLogin(
+      if (shouldLink) {
+        return _authService.linkUserSocialLogin(
+          signInMethod: signInMethod,
+          userId: userId,
+        );
+      }
+      await _authService.unLinkUserSocialLogin(
         signInMethod: signInMethod,
         userId: userId,
-        value: value,
       );
-    } on FirebaseAuthException {
-      //TODO
+    } on FirebaseException catch (e) {
+      _appScaffoldMessengerController.showSnackBarByFirebaseException(e);
     }
   }
 }

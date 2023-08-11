@@ -90,4 +90,23 @@ class AuthController {
       _userModeStateController.update((state) => UserMode.host);
     }
   }
+
+  /// ユーザーアクションに伴い、 [AuthService] に定義された、
+  /// ソーシャルログインを既存のアカウントに link する or リンクを解除する処理を呼び出す
+  Future<void> updateUserSocialLogin({
+    required SignInMethod signInMethod,
+    required String userId,
+    // リンクするか解除するかを判定する 
+    required bool value,
+  }) async {
+    try {
+      await _authService.linkUserSocialLogin(
+        signInMethod: signInMethod,
+        userId: userId,
+        value: value,
+      );
+    } on FirebaseAuthException {
+      //TODO
+    }
+  }
 }

@@ -1,9 +1,9 @@
 import 'package:firebase_common/firebase_common.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../auth/auth.dart';
 import '../firestore_repository.dart';
 import '../user/user_mode.dart';
+import 'read_status.dart';
 
 /// 自分のチャットルーム一覧画面に表示するべき [ChatRoom] 一覧を取得する
 /// [StreamProvider].
@@ -40,33 +40,21 @@ final latestMessageProvider =
   return latestMessages.firstOrNull;
 });
 
-/// 指定した `chatRoomId` の最後に読んだ日を取得する [StreamProvider].
-final _readStatusProvider = StreamProvider.family
-    .autoDispose<ReadReadStatus?, String>((ref, chatRoomId) {
-  final userId = ref.watch(userIdProvider);
-  if (userId == null) {
-    throw UnimplementedError();
-  }
-  return ref
-      .watch(readStatusRepositoryProvider)
-      .subscribeReadStatus(chatRoomId: chatRoomId, userId: userId);
-});
-
 /// 未読メッセージ数の最大値。
-const maxUnReadCount = 10;
+const _maxUnReadCount = 10;
 
-/// 指定した `chatRoomId` の未読メッセージ数を最大 `maxUnReadCount` 件まで取得する
-/// [StreamProvider].
+/// 指定した `chatRoomId` における自分の未読メッセージ数を最大 [_maxUnReadCount] 件取得
+/// する [StreamProvider].
 final _unReadCountStreamProvider =
-    StreamProvider.autoDispose.family<int, String>((ref, chatRoomId) {
-  final readStatus = ref.watch(_readStatusProvider(chatRoomId)).value;
+    StreamProvider.autoDispose.family<int, ReadChatRoom>((ref, readChatRoom) {
+  final readStatus = ref.watch(myReadStatusStreamProvider(readChatRoom)).value;
   final lastReadAt = readStatus?.lastReadAt.dateTime;
   return ref
       .watch(chatMessageRepositoryProvider)
       .subscribeUnReadChatMessages(
-        chatRoomId: chatRoomId,
+        chatRoomId: readChatRoom.chatRoomId,
         lastReadAt: lastReadAt,
-        limit: maxUnReadCount,
+        limit: _maxUnReadCount,
       )
       .map((messages) => messages.length);
 });

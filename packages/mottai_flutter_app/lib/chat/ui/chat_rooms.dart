@@ -44,9 +44,6 @@ class ChatRoomsPage extends ConsumerWidget {
                 );
                 final unReadCountString =
                     ref.watch(unReadCountStringProvider(readChatRoom));
-                if (index == chatRooms.length) {
-                  return const Divider(height: 1);
-                }
                 return InkWell(
                   onTap: () => context.router.pushNamed(
                     ChatRoomPage.location(
@@ -54,7 +51,6 @@ class ChatRoomsPage extends ConsumerWidget {
                     ),
                   ),
                   child: SizedBox(
-                    height: 100,
                     child: Padding(
                       padding: const EdgeInsets.all(16),
                       child: Row(
@@ -68,10 +64,7 @@ class ChatRoomsPage extends ConsumerWidget {
                           else
                             const CircleAvatar(
                               radius: 32,
-                              child: Icon(
-                                Icons.person,
-                                // size: 64,
-                              ),
+                              child: Icon(Icons.person),
                             ),
                           Expanded(
                             child: Padding(
@@ -87,14 +80,22 @@ class ChatRoomsPage extends ConsumerWidget {
                                       style: Theme.of(context)
                                           .textTheme
                                           .labelSmall,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
                                     ),
                                   Text(
                                     chatPartnerDisplayName,
                                     style:
                                         Theme.of(context).textTheme.titleMedium,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                   if (latestChatMessage != null)
-                                    Text(latestChatMessage.content),
+                                    Text(
+                                      latestChatMessage.content,
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
                                 ],
                               ),
                             ),

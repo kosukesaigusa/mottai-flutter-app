@@ -23,6 +23,7 @@ class SampleTodoRepository {
           title: title,
           description: description,
           dueDateTime: dueDateTime,
+          isDone: false,
         ),
       );
 

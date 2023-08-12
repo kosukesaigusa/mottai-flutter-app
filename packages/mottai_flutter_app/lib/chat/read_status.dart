@@ -29,7 +29,7 @@ final chatPartnerLastReadAtProvider =
     Provider.family.autoDispose<DateTime?, ReadChatRoom>((ref, readChatRoom) {
   final readStatus =
       ref.watch(_chatPartnerReadStatusStreamProvider(readChatRoom)).valueOrNull;
-  return readStatus?.lastReadAt.dateTime;
+  return readStatus?.lastReadAt;
 });
 
 /// 指定した `ReadChatRoom` におけるチャット相手の [ReadStatus] を購読する [StreamProvider].

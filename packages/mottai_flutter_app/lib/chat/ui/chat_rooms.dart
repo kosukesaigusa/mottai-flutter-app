@@ -73,9 +73,9 @@ class ChatRoomsPage extends ConsumerWidget {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  if (latestChatMessage != null)
+                                  if (latestChatMessage?.createdAt != null)
                                     Text(
-                                      latestChatMessage.createdAt.dateTime!
+                                      latestChatMessage!.createdAt!
                                           .formatRelativeDate(),
                                       style: Theme.of(context)
                                           .textTheme

@@ -246,7 +246,7 @@ class _ChatMessageItem extends ConsumerWidget {
                 if (isMyMessage) ...[
                   const Gap(4),
                   _ReadStatusText(
-                    messageCreatedAt: readChatMessage.createdAt.dateTime,
+                    messageCreatedAt: readChatMessage.createdAt,
                     partnerLastReadAt: partnerLastReadAt,
                   ),
                 ],
@@ -315,7 +315,7 @@ class _MessageCreatedAtText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final createdAt = readChatMessage.createdAt.dateTime;
+    final createdAt = readChatMessage.createdAt;
     if (createdAt == null) {
       return const SizedBox();
     }

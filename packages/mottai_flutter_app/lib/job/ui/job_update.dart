@@ -4,6 +4,7 @@ import 'package:firebase_common/firebase_common.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../../development/firebase_storage/ui/firebase_storage_controller.dart';
 import '../job.dart';
 
 //TODO: jobのhostIdとログイン中のhostIdを比較する。
@@ -55,17 +56,36 @@ class _JobUpdate extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final controller = ref.watch(firebaseStorageControllerProvider);
+
+    late final Widget imageWidget;
+    // 画像が選択されている場合は画像を表示
+    // 選択されていない場合は画像アイコンを表示
+    if (job.imageUrl != '') {
+      imageWidget = GenericImage.rectangle(
+        showDetailOnTap: false,
+        imageUrl: job.imageUrl,
+        height: 300,
+        width: null,
+      );
+    } else {
+      imageWidget = Container(
+        height: 300,
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.black38),
+        ),
+        child: const Center(child: Icon(Icons.image)),
+      );
+    }
+
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // if (readHost.imageUrl.isNotEmpty)
-          //   Center(
-          //     child: LimitedBox(
-          //       maxHeight: 300,
-          //       child: Image.network(readHost.imageUrl, fit: BoxFit.cover),
-          //     ),
-          //   ),
+          GestureDetector(
+            onTap: controller.pickImageFromGallery,
+            child: imageWidget,
+          ),
           Padding(
             padding: const EdgeInsets.symmetric(
               vertical: 8,

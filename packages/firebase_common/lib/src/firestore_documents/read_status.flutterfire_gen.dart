@@ -15,15 +15,13 @@ class ReadReadStatus {
 
   final String path;
 
-  final SealedTimestamp lastReadAt;
+  final DateTime? lastReadAt;
 
   factory ReadReadStatus._fromJson(Map<String, dynamic> json) {
     return ReadReadStatus(
       readStatusId: json['readStatusId'] as String,
       path: json['path'] as String,
-      lastReadAt: json['lastReadAt'] == null
-          ? const ServerTimestamp()
-          : sealedTimestampConverter.fromJson(json['lastReadAt'] as Object),
+      lastReadAt: (json['lastReadAt'] as Timestamp?)?.toDate(),
     );
   }
 
@@ -38,36 +36,28 @@ class ReadReadStatus {
 }
 
 class CreateReadStatus {
-  const CreateReadStatus({
-    this.lastReadAt = const ServerTimestamp(),
-  });
-
-  final SealedTimestamp lastReadAt;
+  const CreateReadStatus();
 
   Map<String, dynamic> toJson() {
     return {
-      'lastReadAt': sealedTimestampConverter.toJson(lastReadAt),
+      'lastReadAt': FieldValue.serverTimestamp(),
     };
   }
 }
 
 class UpdateReadStatus {
-  const UpdateReadStatus({
-    this.lastReadAt = const ServerTimestamp(),
-  });
-
-  final SealedTimestamp? lastReadAt;
+  const UpdateReadStatus();
 
   Map<String, dynamic> toJson() {
     return {
-      'lastReadAt': lastReadAt == null
-          ? const ServerTimestamp()
-          : sealedTimestampConverter.toJson(lastReadAt!),
+      'lastReadAt': FieldValue.serverTimestamp(),
     };
   }
 }
 
-/// A [CollectionReference] to readStatuses collection to read.
+class DeleteReadStatus {}
+
+/// Provides a reference to the readStatuses collection for reading.
 CollectionReference<ReadReadStatus> readReadStatusCollectionReference({
   required String chatRoomId,
 }) =>
@@ -77,17 +67,17 @@ CollectionReference<ReadReadStatus> readReadStatusCollectionReference({
         .collection('readStatuses')
         .withConverter<ReadReadStatus>(
           fromFirestore: (ds, _) => ReadReadStatus.fromDocumentSnapshot(ds),
-          toFirestore: (obj, _) => throw UnimplementedError(),
+          toFirestore: (_, __) => throw UnimplementedError(),
         );
 
-/// A [DocumentReference] to readStatus document to read.
+/// Provides a reference to a readStatus document for reading.
 DocumentReference<ReadReadStatus> readReadStatusDocumentReference({
   required String chatRoomId,
   required String readStatusId,
 }) =>
     readReadStatusCollectionReference(chatRoomId: chatRoomId).doc(readStatusId);
 
-/// A [CollectionReference] to readStatuses collection to create.
+/// Provides a reference to the readStatuses collection for creating.
 CollectionReference<CreateReadStatus> createReadStatusCollectionReference({
   required String chatRoomId,
 }) =>
@@ -96,11 +86,11 @@ CollectionReference<CreateReadStatus> createReadStatusCollectionReference({
         .doc(chatRoomId)
         .collection('readStatuses')
         .withConverter<CreateReadStatus>(
-          fromFirestore: (ds, _) => throw UnimplementedError(),
+          fromFirestore: (_, __) => throw UnimplementedError(),
           toFirestore: (obj, _) => obj.toJson(),
         );
 
-/// A [DocumentReference] to readStatus document to create.
+/// Provides a reference to a readStatus document for creating.
 DocumentReference<CreateReadStatus> createReadStatusDocumentReference({
   required String chatRoomId,
   required String readStatusId,
@@ -108,7 +98,7 @@ DocumentReference<CreateReadStatus> createReadStatusDocumentReference({
     createReadStatusCollectionReference(chatRoomId: chatRoomId)
         .doc(readStatusId);
 
-/// A [CollectionReference] to readStatuses collection to update.
+/// Provides a reference to the readStatuses collection for updating.
 CollectionReference<UpdateReadStatus> updateReadStatusCollectionReference({
   required String chatRoomId,
 }) =>
@@ -117,11 +107,11 @@ CollectionReference<UpdateReadStatus> updateReadStatusCollectionReference({
         .doc(chatRoomId)
         .collection('readStatuses')
         .withConverter<UpdateReadStatus>(
-          fromFirestore: (ds, _) => throw UnimplementedError(),
+          fromFirestore: (_, __) => throw UnimplementedError(),
           toFirestore: (obj, _) => obj.toJson(),
         );
 
-/// A [DocumentReference] to readStatus document to update.
+/// Provides a reference to a readStatus document for updating.
 DocumentReference<UpdateReadStatus> updateReadStatusDocumentReference({
   required String chatRoomId,
   required String readStatusId,
@@ -129,24 +119,28 @@ DocumentReference<UpdateReadStatus> updateReadStatusDocumentReference({
     updateReadStatusCollectionReference(chatRoomId: chatRoomId)
         .doc(readStatusId);
 
-/// A [CollectionReference] to readStatuses collection to delete.
-CollectionReference<Object?> deleteReadStatusCollectionReference({
+/// Provides a reference to the readStatuses collection for deleting.
+CollectionReference<DeleteReadStatus> deleteReadStatusCollectionReference({
   required String chatRoomId,
 }) =>
     FirebaseFirestore.instance
         .collection('chatRooms')
         .doc(chatRoomId)
-        .collection('readStatuses');
+        .collection('readStatuses')
+        .withConverter<DeleteReadStatus>(
+          fromFirestore: (_, __) => throw UnimplementedError(),
+          toFirestore: (_, __) => throw UnimplementedError(),
+        );
 
-/// A [DocumentReference] to readStatus document to delete.
-DocumentReference<Object?> deleteReadStatusDocumentReference({
+/// Provides a reference to a readStatus document for deleting.
+DocumentReference<DeleteReadStatus> deleteReadStatusDocumentReference({
   required String chatRoomId,
   required String readStatusId,
 }) =>
     deleteReadStatusCollectionReference(chatRoomId: chatRoomId)
         .doc(readStatusId);
 
-/// A query manager to execute query against [ReadStatus].
+/// Manages queries against the readStatuses collection.
 class ReadStatusQuery {
   /// Fetches [ReadReadStatus] documents.
   Future<List<ReadReadStatus>> fetchDocuments({
@@ -195,7 +189,7 @@ class ReadStatusQuery {
     });
   }
 
-  /// Fetches a specified [ReadReadStatus] document.
+  /// Fetches a specific [ReadReadStatus] document.
   Future<ReadReadStatus?> fetchDocument({
     required String chatRoomId,
     required String readStatusId,
@@ -208,7 +202,7 @@ class ReadStatusQuery {
     return ds.data();
   }
 
-  /// Subscribes a specified [ReadStatus] document.
+  /// Subscribes a specific [ReadStatus] document.
   Stream<ReadReadStatus?> subscribeDocument({
     required String chatRoomId,
     required String readStatusId,
@@ -245,7 +239,7 @@ class ReadStatusQuery {
         readStatusId: readStatusId,
       ).set(createReadStatus, options);
 
-  /// Updates a specified [ReadStatus] document.
+  /// Updates a specific [ReadStatus] document.
   Future<void> update({
     required String chatRoomId,
     required String readStatusId,
@@ -256,7 +250,7 @@ class ReadStatusQuery {
         readStatusId: readStatusId,
       ).update(updateReadStatus.toJson());
 
-  /// Deletes a specified [ReadStatus] document.
+  /// Deletes a specific [ReadStatus] document.
   Future<void> delete({
     required String chatRoomId,
     required String readStatusId,

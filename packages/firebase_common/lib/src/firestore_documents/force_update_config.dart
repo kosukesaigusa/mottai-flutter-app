@@ -8,21 +8,23 @@ class ForceUpdateConfig {
   const ForceUpdateConfig({
     required this.iOSLatestVersion,
     required this.iOSMinRequiredVersion,
-    this.iOSForceUpdate = false,
+    required this.iOSForceUpdate,
     required this.androidLatestVersion,
     required this.androidMinRequiredVersion,
-    this.androidForceUpdate = false,
+    required this.androidForceUpdate,
   });
 
   final String iOSLatestVersion;
 
   final String iOSMinRequiredVersion;
 
+  @ReadDefault(false)
   final bool iOSForceUpdate;
 
   final String androidLatestVersion;
 
   final String androidMinRequiredVersion;
 
+  @ReadDefault(false)
   final bool androidForceUpdate;
 }

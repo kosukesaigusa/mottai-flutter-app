@@ -25,9 +25,9 @@ class ReadHostLocation {
 
   final Geo geo;
 
-  final SealedTimestamp createdAt;
+  final DateTime? createdAt;
 
-  final SealedTimestamp updatedAt;
+  final DateTime? updatedAt;
 
   factory ReadHostLocation._fromJson(Map<String, dynamic> json) {
     return ReadHostLocation(
@@ -36,13 +36,8 @@ class ReadHostLocation {
       hostId: json['hostId'] as String,
       address: json['address'] as String? ?? '',
       geo: _geoConverter.fromJson(json['geo'] as Map<String, dynamic>),
-      createdAt: json['createdAt'] == null
-          ? const ServerTimestamp()
-          : sealedTimestampConverter.fromJson(json['createdAt'] as Object),
-      updatedAt: json['updatedAt'] == null
-          ? const ServerTimestamp()
-          : alwaysUseServerTimestampSealedTimestampConverter
-              .fromJson(json['updatedAt'] as Object),
+      createdAt: (json['createdAt'] as Timestamp?)?.toDate(),
+      updatedAt: (json['updatedAt'] as Timestamp?)?.toDate(),
     );
   }
 
@@ -61,24 +56,19 @@ class CreateHostLocation {
     required this.hostId,
     required this.address,
     required this.geo,
-    this.createdAt = const ServerTimestamp(),
-    this.updatedAt = const ServerTimestamp(),
   });
 
   final String hostId;
   final String address;
   final Geo geo;
-  final SealedTimestamp createdAt;
-  final SealedTimestamp updatedAt;
 
   Map<String, dynamic> toJson() {
     return {
       'hostId': hostId,
       'address': address,
       'geo': _geoConverter.toJson(geo),
-      'createdAt': sealedTimestampConverter.toJson(createdAt),
-      'updatedAt':
-          alwaysUseServerTimestampSealedTimestampConverter.toJson(updatedAt),
+      'createdAt': FieldValue.serverTimestamp(),
+      'updatedAt': FieldValue.serverTimestamp(),
     };
   }
 }
@@ -89,82 +79,83 @@ class UpdateHostLocation {
     this.address,
     this.geo,
     this.createdAt,
-    this.updatedAt = const ServerTimestamp(),
   });
 
   final String? hostId;
   final String? address;
   final Geo? geo;
-  final SealedTimestamp? createdAt;
-  final SealedTimestamp? updatedAt;
+  final DateTime? createdAt;
 
   Map<String, dynamic> toJson() {
     return {
       if (hostId != null) 'hostId': hostId,
       if (address != null) 'address': address,
       if (geo != null) 'geo': _geoConverter.toJson(geo!),
-      if (createdAt != null)
-        'createdAt': sealedTimestampConverter.toJson(createdAt!),
-      'updatedAt': updatedAt == null
-          ? const ServerTimestamp()
-          : alwaysUseServerTimestampSealedTimestampConverter.toJson(updatedAt!),
+      if (createdAt != null) 'createdAt': createdAt,
+      'updatedAt': FieldValue.serverTimestamp(),
     };
   }
 }
 
-/// A [CollectionReference] to hostLocations collection to read.
+class DeleteHostLocation {}
+
+/// Provides a reference to the hostLocations collection for reading.
 final readHostLocationCollectionReference = FirebaseFirestore.instance
     .collection('hostLocations')
     .withConverter<ReadHostLocation>(
       fromFirestore: (ds, _) => ReadHostLocation.fromDocumentSnapshot(ds),
-      toFirestore: (obj, _) => throw UnimplementedError(),
+      toFirestore: (_, __) => throw UnimplementedError(),
     );
 
-/// A [DocumentReference] to hostLocation document to read.
+/// Provides a reference to a hostLocation document for reading.
 DocumentReference<ReadHostLocation> readHostLocationDocumentReference({
   required String hostLocationId,
 }) =>
     readHostLocationCollectionReference.doc(hostLocationId);
 
-/// A [CollectionReference] to hostLocations collection to create.
+/// Provides a reference to the hostLocations collection for creating.
 final createHostLocationCollectionReference = FirebaseFirestore.instance
     .collection('hostLocations')
     .withConverter<CreateHostLocation>(
-      fromFirestore: (ds, _) => throw UnimplementedError(),
+      fromFirestore: (_, __) => throw UnimplementedError(),
       toFirestore: (obj, _) => obj.toJson(),
     );
 
-/// A [DocumentReference] to hostLocation document to create.
+/// Provides a reference to a hostLocation document for creating.
 DocumentReference<CreateHostLocation> createHostLocationDocumentReference({
   required String hostLocationId,
 }) =>
     createHostLocationCollectionReference.doc(hostLocationId);
 
-/// A [CollectionReference] to hostLocations collection to update.
+/// Provides a reference to the hostLocations collection for updating.
 final updateHostLocationCollectionReference = FirebaseFirestore.instance
     .collection('hostLocations')
     .withConverter<UpdateHostLocation>(
-      fromFirestore: (ds, _) => throw UnimplementedError(),
+      fromFirestore: (_, __) => throw UnimplementedError(),
       toFirestore: (obj, _) => obj.toJson(),
     );
 
-/// A [DocumentReference] to hostLocation document to update.
+/// Provides a reference to a hostLocation document for updating.
 DocumentReference<UpdateHostLocation> updateHostLocationDocumentReference({
   required String hostLocationId,
 }) =>
     updateHostLocationCollectionReference.doc(hostLocationId);
 
-/// A [CollectionReference] to hostLocations collection to delete.
-final deleteHostLocationCollectionReference =
-    FirebaseFirestore.instance.collection('hostLocations');
+/// Provides a reference to the hostLocations collection for deleting.
+final deleteHostLocationCollectionReference = FirebaseFirestore.instance
+    .collection('hostLocations')
+    .withConverter<DeleteHostLocation>(
+      fromFirestore: (_, __) => throw UnimplementedError(),
+      toFirestore: (_, __) => throw UnimplementedError(),
+    );
 
-/// A [DocumentReference] to hostLocation document to delete.
-DocumentReference<Object?> deleteHostLocationDocumentReference({
+/// Provides a reference to a hostLocation document for deleting.
+DocumentReference<DeleteHostLocation> deleteHostLocationDocumentReference({
   required String hostLocationId,
 }) =>
     deleteHostLocationCollectionReference.doc(hostLocationId);
 
-/// A query manager to execute query against [HostLocation].
+/// Manages queries against the hostLocations collection.
 class HostLocationQuery {
   /// Fetches [ReadHostLocation] documents.
   Future<List<ReadHostLocation>> fetchDocuments({
@@ -211,7 +202,7 @@ class HostLocationQuery {
     });
   }
 
-  /// Fetches a specified [ReadHostLocation] document.
+  /// Fetches a specific [ReadHostLocation] document.
   Future<ReadHostLocation?> fetchDocument({
     required String hostLocationId,
     GetOptions? options,
@@ -222,7 +213,7 @@ class HostLocationQuery {
     return ds.data();
   }
 
-  /// Subscribes a specified [HostLocation] document.
+  /// Subscribes a specific [HostLocation] document.
   Stream<ReadHostLocation?> subscribeDocument({
     required String hostLocationId,
     bool includeMetadataChanges = false,
@@ -253,7 +244,7 @@ class HostLocationQuery {
         hostLocationId: hostLocationId,
       ).set(createHostLocation, options);
 
-  /// Updates a specified [HostLocation] document.
+  /// Updates a specific [HostLocation] document.
   Future<void> update({
     required String hostLocationId,
     required UpdateHostLocation updateHostLocation,
@@ -262,7 +253,7 @@ class HostLocationQuery {
         hostLocationId: hostLocationId,
       ).update(updateHostLocation.toJson());
 
-  /// Deletes a specified [HostLocation] document.
+  /// Deletes a specific [HostLocation] document.
   Future<void> delete({
     required String hostLocationId,
   }) =>

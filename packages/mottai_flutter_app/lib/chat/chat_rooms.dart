@@ -48,7 +48,7 @@ const _maxUnReadCount = 10;
 final _unReadCountStreamProvider =
     StreamProvider.autoDispose.family<int, ReadChatRoom>((ref, readChatRoom) {
   final readStatus = ref.watch(myReadStatusStreamProvider(readChatRoom)).value;
-  final lastReadAt = readStatus?.lastReadAt.dateTime;
+  final lastReadAt = readStatus?.lastReadAt;
   return ref
       .watch(chatMessageRepositoryProvider)
       .subscribeUnReadChatMessages(

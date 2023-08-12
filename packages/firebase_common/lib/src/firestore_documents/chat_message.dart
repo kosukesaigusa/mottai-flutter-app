@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutterfire_gen_annotation/flutterfire_gen_annotation.dart';
-import 'package:flutterfire_json_converters/flutterfire_json_converters.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'chat_message.flutterfire_gen.dart';
@@ -14,10 +13,10 @@ class ChatMessage {
     required this.senderId,
     required this.chatMessageType,
     required this.content,
-    this.imageUrls = const <String>[],
-    this.isDeleted = false,
-    this.createdAt = const ServerTimestamp(),
-    this.updatedAt = const ServerTimestamp(),
+    required this.imageUrls,
+    required this.isDeleted,
+    this.createdAt,
+    this.updatedAt,
   });
 
   final String senderId;
@@ -28,24 +27,20 @@ class ChatMessage {
   @ReadDefault('')
   final String content;
 
+  @ReadDefault(<String>[])
+  @CreateDefault(<String>[])
   final List<String> imageUrls;
 
+  @ReadDefault(false)
+  @CreateDefault(false)
   final bool isDeleted;
 
-  // TODO: やや冗長になってしまっているのは、flutterfire_gen と
-  // flutterfire_json_converters の作りのため。それらのパッケージが更新されたら
-  // この実装も変更する。
-  @sealedTimestampConverter
-  @CreateDefault(ServerTimestamp())
-  final SealedTimestamp createdAt;
+  @AlwaysUseFieldValueServerTimestampWhenCreating()
+  final DateTime? createdAt;
 
-  // TODO: やや冗長になってしまっているのは、flutterfire_gen と
-  // flutterfire_json_converters の作りのため。それらのパッケージが更新されたら
-  // この実装も変更する。
-  @alwaysUseServerTimestampSealedTimestampConverter
-  @CreateDefault(ServerTimestamp())
-  @UpdateDefault(ServerTimestamp())
-  final SealedTimestamp updatedAt;
+  @AlwaysUseFieldValueServerTimestampWhenCreating()
+  @AlwaysUseFieldValueServerTimestampWhenUpdating()
+  final DateTime? updatedAt;
 }
 
 enum ChatMessageType {

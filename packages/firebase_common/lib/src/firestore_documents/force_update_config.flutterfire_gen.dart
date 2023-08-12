@@ -59,10 +59,10 @@ class CreateForceUpdateConfig {
   const CreateForceUpdateConfig({
     required this.iOSLatestVersion,
     required this.iOSMinRequiredVersion,
-    this.iOSForceUpdate = false,
+    required this.iOSForceUpdate,
     required this.androidLatestVersion,
     required this.androidMinRequiredVersion,
-    this.androidForceUpdate = false,
+    required this.androidForceUpdate,
   });
 
   final String iOSLatestVersion;
@@ -116,62 +116,69 @@ class UpdateForceUpdateConfig {
   }
 }
 
-/// A [CollectionReference] to configurations collection to read.
+class DeleteForceUpdateConfig {}
+
+/// Provides a reference to the configurations collection for reading.
 final readForceUpdateConfigCollectionReference = FirebaseFirestore.instance
     .collection('configurations')
     .withConverter<ReadForceUpdateConfig>(
       fromFirestore: (ds, _) => ReadForceUpdateConfig.fromDocumentSnapshot(ds),
-      toFirestore: (obj, _) => throw UnimplementedError(),
+      toFirestore: (_, __) => throw UnimplementedError(),
     );
 
-/// A [DocumentReference] to forceUpdateConfig document to read.
+/// Provides a reference to a forceUpdateConfig document for reading.
 DocumentReference<ReadForceUpdateConfig>
     readForceUpdateConfigDocumentReference({
   required String forceUpdateConfigId,
 }) =>
         readForceUpdateConfigCollectionReference.doc(forceUpdateConfigId);
 
-/// A [CollectionReference] to configurations collection to create.
+/// Provides a reference to the configurations collection for creating.
 final createForceUpdateConfigCollectionReference = FirebaseFirestore.instance
     .collection('configurations')
     .withConverter<CreateForceUpdateConfig>(
-      fromFirestore: (ds, _) => throw UnimplementedError(),
+      fromFirestore: (_, __) => throw UnimplementedError(),
       toFirestore: (obj, _) => obj.toJson(),
     );
 
-/// A [DocumentReference] to forceUpdateConfig document to create.
+/// Provides a reference to a forceUpdateConfig document for creating.
 DocumentReference<CreateForceUpdateConfig>
     createForceUpdateConfigDocumentReference({
   required String forceUpdateConfigId,
 }) =>
         createForceUpdateConfigCollectionReference.doc(forceUpdateConfigId);
 
-/// A [CollectionReference] to configurations collection to update.
+/// Provides a reference to the configurations collection for updating.
 final updateForceUpdateConfigCollectionReference = FirebaseFirestore.instance
     .collection('configurations')
     .withConverter<UpdateForceUpdateConfig>(
-      fromFirestore: (ds, _) => throw UnimplementedError(),
+      fromFirestore: (_, __) => throw UnimplementedError(),
       toFirestore: (obj, _) => obj.toJson(),
     );
 
-/// A [DocumentReference] to forceUpdateConfig document to update.
+/// Provides a reference to a forceUpdateConfig document for updating.
 DocumentReference<UpdateForceUpdateConfig>
     updateForceUpdateConfigDocumentReference({
   required String forceUpdateConfigId,
 }) =>
         updateForceUpdateConfigCollectionReference.doc(forceUpdateConfigId);
 
-/// A [CollectionReference] to configurations collection to delete.
-final deleteForceUpdateConfigCollectionReference =
-    FirebaseFirestore.instance.collection('configurations');
+/// Provides a reference to the configurations collection for deleting.
+final deleteForceUpdateConfigCollectionReference = FirebaseFirestore.instance
+    .collection('configurations')
+    .withConverter<DeleteForceUpdateConfig>(
+      fromFirestore: (_, __) => throw UnimplementedError(),
+      toFirestore: (_, __) => throw UnimplementedError(),
+    );
 
-/// A [DocumentReference] to forceUpdateConfig document to delete.
-DocumentReference<Object?> deleteForceUpdateConfigDocumentReference({
+/// Provides a reference to a forceUpdateConfig document for deleting.
+DocumentReference<DeleteForceUpdateConfig>
+    deleteForceUpdateConfigDocumentReference({
   required String forceUpdateConfigId,
 }) =>
-    deleteForceUpdateConfigCollectionReference.doc(forceUpdateConfigId);
+        deleteForceUpdateConfigCollectionReference.doc(forceUpdateConfigId);
 
-/// A query manager to execute query against [ForceUpdateConfig].
+/// Manages queries against the configurations collection.
 class ForceUpdateConfigQuery {
   /// Fetches [ReadForceUpdateConfig] documents.
   Future<List<ReadForceUpdateConfig>> fetchDocuments({
@@ -220,7 +227,7 @@ class ForceUpdateConfigQuery {
     });
   }
 
-  /// Fetches a specified [ReadForceUpdateConfig] document.
+  /// Fetches a specific [ReadForceUpdateConfig] document.
   Future<ReadForceUpdateConfig?> fetchDocument({
     required String forceUpdateConfigId,
     GetOptions? options,
@@ -231,7 +238,7 @@ class ForceUpdateConfigQuery {
     return ds.data();
   }
 
-  /// Subscribes a specified [ForceUpdateConfig] document.
+  /// Subscribes a specific [ForceUpdateConfig] document.
   Stream<ReadForceUpdateConfig?> subscribeDocument({
     required String forceUpdateConfigId,
     bool includeMetadataChanges = false,
@@ -262,7 +269,7 @@ class ForceUpdateConfigQuery {
         forceUpdateConfigId: forceUpdateConfigId,
       ).set(createForceUpdateConfig, options);
 
-  /// Updates a specified [ForceUpdateConfig] document.
+  /// Updates a specific [ForceUpdateConfig] document.
   Future<void> update({
     required String forceUpdateConfigId,
     required UpdateForceUpdateConfig updateForceUpdateConfig,
@@ -271,7 +278,7 @@ class ForceUpdateConfigQuery {
         forceUpdateConfigId: forceUpdateConfigId,
       ).update(updateForceUpdateConfig.toJson());
 
-  /// Deletes a specified [ForceUpdateConfig] document.
+  /// Deletes a specific [ForceUpdateConfig] document.
   Future<void> delete({
     required String forceUpdateConfigId,
   }) =>

@@ -16,6 +16,7 @@ import '../development/web_link/ui/web_link_stub.dart';
 import '../host/ui/create_or_update_host.dart';
 import '../host/ui/host.dart';
 import '../job/ui/job_detail.dart';
+import '../job/ui/job_update.dart';
 import '../map/ui/map.dart';
 import '../worker/ui/create_or_update_worker.dart';
 import '../worker/ui/worker.dart';
@@ -50,10 +51,10 @@ class AppRouter extends $AppRouter {
       path: HostPage.path,
       page: HostRoute.page,
     ),
-    // AutoRoute(
-    //   path: CreateOrUpdateJobPage.path,
-    //   page: CreateOrUpdateJobRoute.page,
-    // ),
+    AutoRoute(
+      path: JobUpdatePage.path,
+      page: JobUpdateRoute.page,
+    ),
     // AutoRoute(
     //   path: UserPage.path,
     //   page: UserRoute.page,

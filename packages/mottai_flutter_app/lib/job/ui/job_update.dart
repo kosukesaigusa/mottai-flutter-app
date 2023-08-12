@@ -1,0 +1,193 @@
+import 'package:auto_route/auto_route.dart';
+import 'package:dart_flutter_common/dart_flutter_common.dart';
+import 'package:firebase_common/firebase_common.dart';
+import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+
+import '../job.dart';
+
+//TODO: jobのhostIdとログイン中のhostIdを比較する。
+
+/// 仕事情報更新ページ。
+@RoutePage()
+class JobUpdatePage extends ConsumerWidget {
+  const JobUpdatePage({
+    @PathParam('jobId') required this.jobId,
+    super.key,
+  });
+
+  static const path = '/jobs/:jobId/update';
+
+  /// [JobUpdatePage] に遷移する際に `context.router.pushNamed` で指定する文字列。
+  static String location({required String jobId}) => '/jobs/$jobId/update';
+
+  final String jobId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('お手伝い募集内容を入力')),
+      // Jobの読み込み状態によって表示を変更
+      body: ref.watch(jobFutureProvider(jobId)).when(
+            data: (job) {
+              if (job == null) {
+                return const Center(child: Text('お手伝いが存在していません。'));
+              }
+              return _JobUpdate(
+                job: job,
+              );
+            },
+            loading: () => const Center(child: CircularProgressIndicator()),
+            error: (error, stackTrace) => const Center(
+              child: Text('通信に失敗しました。'),
+            ),
+          ),
+    );
+  }
+}
+
+class _JobUpdate extends ConsumerWidget {
+  const _JobUpdate({
+    required this.job,
+  });
+
+  final ReadJob job;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // if (readHost.imageUrl.isNotEmpty)
+          //   Center(
+          //     child: LimitedBox(
+          //       maxHeight: 300,
+          //       child: Image.network(readHost.imageUrl, fit: BoxFit.cover),
+          //     ),
+          //   ),
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              vertical: 8,
+              horizontal: 24,
+            ),
+            child: Form(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const _TextInputSection(
+                    title: 'お手伝いのタイトル',
+                    description: 'お手伝いのタイトルを最大2行程度で入力してください。',
+                    maxLines: 2,
+                    defaultDisplayLines: 2,
+                  ),
+                  const _TextInputSection(
+                    title: 'お手伝いの場所',
+                    description:
+                        'お手伝いを行う場所（農場や作業場所など）を入力してください。作業内容や曜日によって複数の場所の可能性がある場合は、それも入力してください。',
+                  ),
+                  const _TextInputSection(
+                    title: 'お手伝いの内容',
+                    description:
+                        'お手伝いの作業内容、作業時間帯やその他の情報をできるだけ詳しくを入力してください。お手伝い可能な曜日や時間帯、時期や季節が限られている場合や、その他に事前にお知らせするべき条件や情報などがあれば、その内容も入力してください。',
+                    defaultDisplayLines: 10,
+                  ),
+                  const _TextInputSection(
+                    title: '持ち物',
+                    description:
+                        'お手伝いに必要な服装や持ち物などを書いてください。特に必要ない場合や貸出を行う場合はその内容も入力してください。',
+                  ),
+                  const _TextInputSection(
+                    title: '報酬',
+                    description: 'お手伝いをしてくれたワーカーにお渡しする報酬（食べ物など）を入力してください。',
+                  ),
+                  _TextInputSection(
+                    title: 'アクセス',
+                    description:
+                        'お手伝いの場所までのアクセス方法について補足説明をしてください。最寄りの駅やバス停まで送迎ができる場合などは、その内容も入力してください。',
+                    choices: {
+                      for (final v in AccessType.values) v: v.label,
+                    },
+                  ),
+                  const _TextInputSection(
+                    title: 'ひとこと',
+                    description:
+                        'お手伝いを検討してくれるワーカーの方が、ぜひお手伝いをしてみたくなるようひとことや、募集するお手伝いの魅力を入力しましょう！',
+                    defaultDisplayLines: 5,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 16, bottom: 32),
+                    child: Center(
+                      child: ElevatedButton(
+                        onPressed: () {}, // TODO: 未実装
+                        child: const Text('この内容で登録する'),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// タイトルと説明、テキストフィールドからなるセクション
+/// [Section]を使用し、contentにフィールドを与えている
+class _TextInputSection extends StatelessWidget {
+  const _TextInputSection({
+    required this.title,
+    this.description,
+    this.maxLines,
+    this.defaultDisplayLines = 1,
+    this.choices,
+  });
+
+  /// セクションのタイトル。
+  final String title;
+
+  /// セクションの説明。
+  final String? description;
+
+  /// テキストフィールドの最大行数
+  final int? maxLines;
+
+  /// 初期表示時のテキストフィールドの行数
+  final int defaultDisplayLines;
+
+  /// テキストフィールドの下に表示する選択肢
+  /// 選択された際の値がkeyで、表示する値がvalueの[Map]で受け取る。
+  final Map<dynamic, String>? choices;
+
+  @override
+  Widget build(BuildContext context) {
+    return Section(
+      title: title,
+      titleStyle: Theme.of(context).textTheme.titleLarge,
+      description: description,
+      descriptionStyle: Theme.of(context).textTheme.bodyMedium,
+      sectionPadding: const EdgeInsets.only(bottom: 32),
+      content: Column(
+        children: [
+          TextFormField(
+            // onSaved: ,
+
+            maxLines: maxLines,
+            decoration: InputDecoration(
+              hintText: List.filled(defaultDisplayLines - 1, '\n').join(),
+              border: const OutlineInputBorder(),
+            ),
+          ),
+          if (choices != null)
+            SelectableChips(
+              allItems: choices!.keys,
+              labels: choices!,
+              enabledItems: choices!.keys,
+            )
+        ],
+      ),
+    );
+  }
+}

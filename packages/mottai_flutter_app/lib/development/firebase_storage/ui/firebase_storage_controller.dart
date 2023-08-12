@@ -70,7 +70,7 @@ class FirebaseStorageController {
         return;
       }
       await _appScaffoldMessengerController.showDialogByBuilder<bool>(
-        builder: (context) => const AccessNotDeniedDialog.gallery(),
+        builder: (context) => const AccessDeniedDialog.gallery(),
       );
     }
   }

@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutterfire_gen_annotation/flutterfire_gen_annotation.dart';
-import 'package:flutterfire_json_converters/flutterfire_json_converters.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'host.flutterfire_gen.dart';
@@ -8,38 +7,39 @@ part 'host.flutterfire_gen.dart';
 @FirestoreDocument(path: 'hosts', documentName: 'host')
 class Host {
   const Host({
+    required this.imageUrl,
     required this.displayName,
-    this.imageUrl = '',
-    this.hostTypes = const <HostType>{},
-    this.urls = const <String>[],
-    this.createdAt = const ServerTimestamp(),
-    this.updatedAt = const ServerTimestamp(),
+    required this.introduction,
+    required this.hostTypes,
+    required this.urls,
+    this.createdAt,
+    this.updatedAt,
   });
+
+  @ReadDefault('')
+  @CreateDefault('')
+  final String imageUrl;
 
   @ReadDefault('')
   final String displayName;
 
-  final String imageUrl;
+  @ReadDefault('')
+  final String introduction;
 
+  @ReadDefault(<HostType>{})
   @_hostTypesConverter
   final Set<HostType> hostTypes;
 
+  @ReadDefault(<String>[])
+  @CreateDefault(<String>[])
   final List<String> urls;
 
-  // TODO: やや冗長になってしまっているのは、flutterfire_gen と
-  // flutterfire_json_converters の作りのため。それらのパッケージが更新されたら
-  // この実装も変更する。
-  @sealedTimestampConverter
-  @CreateDefault(ServerTimestamp())
-  final SealedTimestamp createdAt;
+  @AlwaysUseFieldValueServerTimestampWhenCreating()
+  final DateTime? createdAt;
 
-  // TODO: やや冗長になってしまっているのは、flutterfire_gen と
-  // flutterfire_json_converters の作りのため。それらのパッケージが更新されたら
-  // この実装も変更する。
-  @alwaysUseServerTimestampSealedTimestampConverter
-  @CreateDefault(ServerTimestamp())
-  @UpdateDefault(ServerTimestamp())
-  final SealedTimestamp updatedAt;
+  @AlwaysUseFieldValueServerTimestampWhenCreating()
+  @AlwaysUseFieldValueServerTimestampWhenUpdating()
+  final DateTime? updatedAt;
 }
 
 enum HostType {

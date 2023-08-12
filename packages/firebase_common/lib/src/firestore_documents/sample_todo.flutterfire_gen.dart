@@ -27,7 +27,7 @@ class ReadSampleTodo {
 
   final DateTime dueDateTime;
 
-  final SealedTimestamp updatedAt;
+  final DateTime? updatedAt;
 
   factory ReadSampleTodo._fromJson(Map<String, dynamic> json) {
     return ReadSampleTodo(
@@ -37,10 +37,7 @@ class ReadSampleTodo {
       description: json['description'] as String? ?? '',
       isDone: json['isDone'] as bool? ?? false,
       dueDateTime: (json['dueDateTime'] as Timestamp).toDate(),
-      updatedAt: json['updatedAt'] == null
-          ? const ServerTimestamp()
-          : alwaysUseServerTimestampSealedTimestampConverter
-              .fromJson(json['updatedAt'] as Object),
+      updatedAt: (json['updatedAt'] as Timestamp?)?.toDate(),
     );
   }
 
@@ -58,16 +55,14 @@ class CreateSampleTodo {
   const CreateSampleTodo({
     required this.title,
     required this.description,
-    this.isDone = false,
+    required this.isDone,
     required this.dueDateTime,
-    this.updatedAt = const ServerTimestamp(),
   });
 
   final String title;
   final String description;
   final bool isDone;
   final DateTime dueDateTime;
-  final SealedTimestamp updatedAt;
 
   Map<String, dynamic> toJson() {
     return {
@@ -75,8 +70,7 @@ class CreateSampleTodo {
       'description': description,
       'isDone': isDone,
       'dueDateTime': dueDateTime,
-      'updatedAt':
-          alwaysUseServerTimestampSealedTimestampConverter.toJson(updatedAt),
+      'updatedAt': FieldValue.serverTimestamp(),
     };
   }
 }
@@ -87,14 +81,12 @@ class UpdateSampleTodo {
     this.description,
     this.isDone,
     this.dueDateTime,
-    this.updatedAt = const ServerTimestamp(),
   });
 
   final String? title;
   final String? description;
   final bool? isDone;
   final DateTime? dueDateTime;
-  final SealedTimestamp? updatedAt;
 
   Map<String, dynamic> toJson() {
     return {
@@ -102,66 +94,70 @@ class UpdateSampleTodo {
       if (description != null) 'description': description,
       if (isDone != null) 'isDone': isDone,
       if (dueDateTime != null) 'dueDateTime': dueDateTime,
-      'updatedAt': updatedAt == null
-          ? const ServerTimestamp()
-          : alwaysUseServerTimestampSealedTimestampConverter.toJson(updatedAt!),
+      'updatedAt': FieldValue.serverTimestamp(),
     };
   }
 }
 
-/// A [CollectionReference] to sampleTodos collection to read.
+class DeleteSampleTodo {}
+
+/// Provides a reference to the sampleTodos collection for reading.
 final readSampleTodoCollectionReference = FirebaseFirestore.instance
     .collection('sampleTodos')
     .withConverter<ReadSampleTodo>(
       fromFirestore: (ds, _) => ReadSampleTodo.fromDocumentSnapshot(ds),
-      toFirestore: (obj, _) => throw UnimplementedError(),
+      toFirestore: (_, __) => throw UnimplementedError(),
     );
 
-/// A [DocumentReference] to sampleTodo document to read.
+/// Provides a reference to a sampleTodo document for reading.
 DocumentReference<ReadSampleTodo> readSampleTodoDocumentReference({
   required String sampleTodoId,
 }) =>
     readSampleTodoCollectionReference.doc(sampleTodoId);
 
-/// A [CollectionReference] to sampleTodos collection to create.
+/// Provides a reference to the sampleTodos collection for creating.
 final createSampleTodoCollectionReference = FirebaseFirestore.instance
     .collection('sampleTodos')
     .withConverter<CreateSampleTodo>(
-      fromFirestore: (ds, _) => throw UnimplementedError(),
+      fromFirestore: (_, __) => throw UnimplementedError(),
       toFirestore: (obj, _) => obj.toJson(),
     );
 
-/// A [DocumentReference] to sampleTodo document to create.
+/// Provides a reference to a sampleTodo document for creating.
 DocumentReference<CreateSampleTodo> createSampleTodoDocumentReference({
   required String sampleTodoId,
 }) =>
     createSampleTodoCollectionReference.doc(sampleTodoId);
 
-/// A [CollectionReference] to sampleTodos collection to update.
+/// Provides a reference to the sampleTodos collection for updating.
 final updateSampleTodoCollectionReference = FirebaseFirestore.instance
     .collection('sampleTodos')
     .withConverter<UpdateSampleTodo>(
-      fromFirestore: (ds, _) => throw UnimplementedError(),
+      fromFirestore: (_, __) => throw UnimplementedError(),
       toFirestore: (obj, _) => obj.toJson(),
     );
 
-/// A [DocumentReference] to sampleTodo document to update.
+/// Provides a reference to a sampleTodo document for updating.
 DocumentReference<UpdateSampleTodo> updateSampleTodoDocumentReference({
   required String sampleTodoId,
 }) =>
     updateSampleTodoCollectionReference.doc(sampleTodoId);
 
-/// A [CollectionReference] to sampleTodos collection to delete.
-final deleteSampleTodoCollectionReference =
-    FirebaseFirestore.instance.collection('sampleTodos');
+/// Provides a reference to the sampleTodos collection for deleting.
+final deleteSampleTodoCollectionReference = FirebaseFirestore.instance
+    .collection('sampleTodos')
+    .withConverter<DeleteSampleTodo>(
+      fromFirestore: (_, __) => throw UnimplementedError(),
+      toFirestore: (_, __) => throw UnimplementedError(),
+    );
 
-/// A [DocumentReference] to sampleTodo document to delete.
-DocumentReference<Object?> deleteSampleTodoDocumentReference({
+/// Provides a reference to a sampleTodo document for deleting.
+DocumentReference<DeleteSampleTodo> deleteSampleTodoDocumentReference({
   required String sampleTodoId,
 }) =>
     deleteSampleTodoCollectionReference.doc(sampleTodoId);
 
-/// A query manager to execute query against [SampleTodo].
+/// Manages queries against the sampleTodos collection.
 class SampleTodoQuery {
   /// Fetches [ReadSampleTodo] documents.
   Future<List<ReadSampleTodo>> fetchDocuments({
@@ -206,7 +202,7 @@ class SampleTodoQuery {
     });
   }
 
-  /// Fetches a specified [ReadSampleTodo] document.
+  /// Fetches a specific [ReadSampleTodo] document.
   Future<ReadSampleTodo?> fetchDocument({
     required String sampleTodoId,
     GetOptions? options,
@@ -217,7 +213,7 @@ class SampleTodoQuery {
     return ds.data();
   }
 
-  /// Subscribes a specified [SampleTodo] document.
+  /// Subscribes a specific [SampleTodo] document.
   Stream<ReadSampleTodo?> subscribeDocument({
     required String sampleTodoId,
     bool includeMetadataChanges = false,
@@ -248,7 +244,7 @@ class SampleTodoQuery {
         sampleTodoId: sampleTodoId,
       ).set(createSampleTodo, options);
 
-  /// Updates a specified [SampleTodo] document.
+  /// Updates a specific [SampleTodo] document.
   Future<void> update({
     required String sampleTodoId,
     required UpdateSampleTodo updateSampleTodo,
@@ -257,7 +253,7 @@ class SampleTodoQuery {
         sampleTodoId: sampleTodoId,
       ).update(updateSampleTodo.toJson());
 
-  /// Deletes a specified [SampleTodo] document.
+  /// Deletes a specific [SampleTodo] document.
   Future<void> delete({
     required String sampleTodoId,
   }) =>

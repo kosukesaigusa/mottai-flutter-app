@@ -22,9 +22,9 @@ class ReadChatRoom {
 
   final String hostId;
 
-  final SealedTimestamp createdAt;
+  final DateTime? createdAt;
 
-  final SealedTimestamp updatedAt;
+  final DateTime? updatedAt;
 
   factory ReadChatRoom._fromJson(Map<String, dynamic> json) {
     return ReadChatRoom(
@@ -32,13 +32,8 @@ class ReadChatRoom {
       path: json['path'] as String,
       workerId: json['workerId'] as String,
       hostId: json['hostId'] as String,
-      createdAt: json['createdAt'] == null
-          ? const ServerTimestamp()
-          : sealedTimestampConverter.fromJson(json['createdAt'] as Object),
-      updatedAt: json['updatedAt'] == null
-          ? const ServerTimestamp()
-          : alwaysUseServerTimestampSealedTimestampConverter
-              .fromJson(json['updatedAt'] as Object),
+      createdAt: (json['createdAt'] as Timestamp?)?.toDate(),
+      updatedAt: (json['updatedAt'] as Timestamp?)?.toDate(),
     );
   }
 
@@ -56,22 +51,17 @@ class CreateChatRoom {
   const CreateChatRoom({
     required this.workerId,
     required this.hostId,
-    this.createdAt = const ServerTimestamp(),
-    this.updatedAt = const ServerTimestamp(),
   });
 
   final String workerId;
   final String hostId;
-  final SealedTimestamp createdAt;
-  final SealedTimestamp updatedAt;
 
   Map<String, dynamic> toJson() {
     return {
       'workerId': workerId,
       'hostId': hostId,
-      'createdAt': sealedTimestampConverter.toJson(createdAt),
-      'updatedAt':
-          alwaysUseServerTimestampSealedTimestampConverter.toJson(updatedAt),
+      'createdAt': FieldValue.serverTimestamp(),
+      'updatedAt': FieldValue.serverTimestamp(),
     };
   }
 }
@@ -81,80 +71,81 @@ class UpdateChatRoom {
     this.workerId,
     this.hostId,
     this.createdAt,
-    this.updatedAt = const ServerTimestamp(),
   });
 
   final String? workerId;
   final String? hostId;
-  final SealedTimestamp? createdAt;
-  final SealedTimestamp? updatedAt;
+  final DateTime? createdAt;
 
   Map<String, dynamic> toJson() {
     return {
       if (workerId != null) 'workerId': workerId,
       if (hostId != null) 'hostId': hostId,
-      if (createdAt != null)
-        'createdAt': sealedTimestampConverter.toJson(createdAt!),
-      'updatedAt': updatedAt == null
-          ? const ServerTimestamp()
-          : alwaysUseServerTimestampSealedTimestampConverter.toJson(updatedAt!),
+      if (createdAt != null) 'createdAt': createdAt,
+      'updatedAt': FieldValue.serverTimestamp(),
     };
   }
 }
 
-/// A [CollectionReference] to chatRooms collection to read.
+class DeleteChatRoom {}
+
+/// Provides a reference to the chatRooms collection for reading.
 final readChatRoomCollectionReference = FirebaseFirestore.instance
     .collection('chatRooms')
     .withConverter<ReadChatRoom>(
       fromFirestore: (ds, _) => ReadChatRoom.fromDocumentSnapshot(ds),
-      toFirestore: (obj, _) => throw UnimplementedError(),
+      toFirestore: (_, __) => throw UnimplementedError(),
     );
 
-/// A [DocumentReference] to chatRoom document to read.
+/// Provides a reference to a chatRoom document for reading.
 DocumentReference<ReadChatRoom> readChatRoomDocumentReference({
   required String chatRoomId,
 }) =>
     readChatRoomCollectionReference.doc(chatRoomId);
 
-/// A [CollectionReference] to chatRooms collection to create.
+/// Provides a reference to the chatRooms collection for creating.
 final createChatRoomCollectionReference = FirebaseFirestore.instance
     .collection('chatRooms')
     .withConverter<CreateChatRoom>(
-      fromFirestore: (ds, _) => throw UnimplementedError(),
+      fromFirestore: (_, __) => throw UnimplementedError(),
       toFirestore: (obj, _) => obj.toJson(),
     );
 
-/// A [DocumentReference] to chatRoom document to create.
+/// Provides a reference to a chatRoom document for creating.
 DocumentReference<CreateChatRoom> createChatRoomDocumentReference({
   required String chatRoomId,
 }) =>
     createChatRoomCollectionReference.doc(chatRoomId);
 
-/// A [CollectionReference] to chatRooms collection to update.
+/// Provides a reference to the chatRooms collection for updating.
 final updateChatRoomCollectionReference = FirebaseFirestore.instance
     .collection('chatRooms')
     .withConverter<UpdateChatRoom>(
-      fromFirestore: (ds, _) => throw UnimplementedError(),
+      fromFirestore: (_, __) => throw UnimplementedError(),
       toFirestore: (obj, _) => obj.toJson(),
     );
 
-/// A [DocumentReference] to chatRoom document to update.
+/// Provides a reference to a chatRoom document for updating.
 DocumentReference<UpdateChatRoom> updateChatRoomDocumentReference({
   required String chatRoomId,
 }) =>
     updateChatRoomCollectionReference.doc(chatRoomId);
 
-/// A [CollectionReference] to chatRooms collection to delete.
-final deleteChatRoomCollectionReference =
-    FirebaseFirestore.instance.collection('chatRooms');
+/// Provides a reference to the chatRooms collection for deleting.
+final deleteChatRoomCollectionReference = FirebaseFirestore.instance
+    .collection('chatRooms')
+    .withConverter<DeleteChatRoom>(
+      fromFirestore: (_, __) => throw UnimplementedError(),
+      toFirestore: (_, __) => throw UnimplementedError(),
+    );
 
-/// A [DocumentReference] to chatRoom document to delete.
-DocumentReference<Object?> deleteChatRoomDocumentReference({
+/// Provides a reference to a chatRoom document for deleting.
+DocumentReference<DeleteChatRoom> deleteChatRoomDocumentReference({
   required String chatRoomId,
 }) =>
     deleteChatRoomCollectionReference.doc(chatRoomId);
 
-/// A query manager to execute query against [ChatRoom].
+/// Manages queries against the chatRooms collection.
 class ChatRoomQuery {
   /// Fetches [ReadChatRoom] documents.
   Future<List<ReadChatRoom>> fetchDocuments({
@@ -199,7 +190,7 @@ class ChatRoomQuery {
     });
   }
 
-  /// Fetches a specified [ReadChatRoom] document.
+  /// Fetches a specific [ReadChatRoom] document.
   Future<ReadChatRoom?> fetchDocument({
     required String chatRoomId,
     GetOptions? options,
@@ -210,7 +201,7 @@ class ChatRoomQuery {
     return ds.data();
   }
 
-  /// Subscribes a specified [ChatRoom] document.
+  /// Subscribes a specific [ChatRoom] document.
   Stream<ReadChatRoom?> subscribeDocument({
     required String chatRoomId,
     bool includeMetadataChanges = false,
@@ -241,7 +232,7 @@ class ChatRoomQuery {
         chatRoomId: chatRoomId,
       ).set(createChatRoom, options);
 
-  /// Updates a specified [ChatRoom] document.
+  /// Updates a specific [ChatRoom] document.
   Future<void> update({
     required String chatRoomId,
     required UpdateChatRoom updateChatRoom,
@@ -250,7 +241,7 @@ class ChatRoomQuery {
         chatRoomId: chatRoomId,
       ).update(updateChatRoom.toJson());
 
-  /// Deletes a specified [ChatRoom] document.
+  /// Deletes a specific [ChatRoom] document.
   Future<void> delete({
     required String chatRoomId,
   }) =>

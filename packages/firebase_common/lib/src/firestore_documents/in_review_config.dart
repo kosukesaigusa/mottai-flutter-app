@@ -7,18 +7,20 @@ part 'in_review_config.flutterfire_gen.dart';
 class InReviewConfig {
   const InReviewConfig({
     required this.iOSInReviewVersion,
-    this.enableIOSInReviewMode = false,
+    required this.enableIOSInReviewMode,
     required this.androidInReviewVersion,
-    this.enableAndroidInReviewMode = false,
+    required this.enableAndroidInReviewMode,
   });
 
   @ReadDefault('1.0.0')
   final String iOSInReviewVersion;
 
+  @ReadDefault(false)
   final bool enableIOSInReviewMode;
 
   @ReadDefault('1.0.0')
   final String androidInReviewVersion;
 
+  @ReadDefault(false)
   final bool enableAndroidInReviewMode;
 }

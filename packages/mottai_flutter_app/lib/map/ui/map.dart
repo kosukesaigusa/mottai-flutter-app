@@ -12,6 +12,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:rxdart/rxdart.dart';
 
 import '../../job/job.dart';
+import '../../job/ui/job_detail.dart';
 import '../../user/host.dart';
 import 'geolocator_controller.dart';
 
@@ -34,7 +35,7 @@ class MapPage extends ConsumerStatefulWidget {
   const MapPage({super.key});
 
   /// [AutoRoute] で指定するパス文字列。
-  static const path = '/map';
+  static const path = 'map';
 
   /// [MapPage] に遷移する際に `context.router.pushNamed` で指定する文字列。
   static const location = path;
@@ -156,7 +157,6 @@ class MapPageState extends ConsumerState<MapPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('探す')),
       body: Stack(
         children: [
           GoogleMap(
@@ -317,11 +317,24 @@ class _HostLocationPageViewItem extends ConsumerWidget {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    readHost.displayName,
-                    style: Theme.of(context).textTheme.titleLarge,
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 1,
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          readHost.displayName,
+                          style: Theme.of(context).textTheme.titleLarge,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                        ),
+                      ),
+                      if (readJob != null)
+                        ElevatedButton(
+                          onPressed: () => context.router.pushNamed(
+                            JobDetailPage.location(jobId: readJob.jobId),
+                          ),
+                          child: const Text('もっと見る'),
+                        ),
+                    ],
                   ),
                   const Gap(8),
                   Row(
@@ -366,7 +379,7 @@ class _HostLocationPageViewItem extends ConsumerWidget {
                       readJob.content,
                       style: Theme.of(context).textTheme.bodyMedium,
                       overflow: TextOverflow.ellipsis,
-                      maxLines: 3,
+                      maxLines: 2,
                     )
                   else
                     const Text('まだこのホストのお手伝いは募集されていません。'),

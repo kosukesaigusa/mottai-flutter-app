@@ -1,6 +1,6 @@
 name: mottai_flutter_app
 
-repository: https://github.com/KosukeSaigusa/mottai-flutter-app
+repository: https://github.com/kosukesaigusa/mottai-flutter-app
 
 packages:
   - packages/**
@@ -22,3 +22,9 @@ scripts:
 
   test:
     run: melos exec -- "flutter test"
+
+  analyze:
+    run: melos exec -- "flutter analyze ."
+
+  format:
+    run: melos exec -- "dart format ."

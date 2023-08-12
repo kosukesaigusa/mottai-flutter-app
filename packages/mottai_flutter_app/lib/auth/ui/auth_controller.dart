@@ -59,7 +59,7 @@ class AuthController {
         try {
           return _authService.signInWithGoogle();
         }
-        // キャンセル時
+        // NOTE: この例外は、ユーザーがログインをキャンセルした場合に発生する。
         on PlatformException catch (e) {
           if (e.code == 'network_error') {
             throw const AppException(
@@ -69,9 +69,10 @@ class AuthController {
           throw const AppException(message: 'キャンセルしました。');
         }
       case SignInMethod.apple:
-        // Apple はキャンセルやネットワークエラーの判定ができないので、try-catchしない
+        // NOTE: Apple はキャンセルやネットワークエラーの判定ができないので、try-catchしない。
         return _authService.signInWithApple();
       case SignInMethod.line:
+        return _authService.signInWithLINE();
       case SignInMethod.email:
         throw UnimplementedError();
     }

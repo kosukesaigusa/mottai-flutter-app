@@ -17,6 +17,7 @@ class Job {
     required this.belongings,
     required this.reward,
     this.comment = '',
+    this.imageUrl = '',
     this.createdAt = const ServerTimestamp(),
     this.updatedAt = const ServerTimestamp(),
   });
@@ -44,6 +45,8 @@ class Job {
   final String reward;
 
   final String comment;
+
+  final String imageUrl;
 
   // TODO: やや冗長になってしまっているのは、flutterfire_gen と
   // flutterfire_json_converters の作りのため。それらのパッケージが更新されたら

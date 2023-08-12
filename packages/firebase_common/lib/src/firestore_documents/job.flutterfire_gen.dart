@@ -17,6 +17,7 @@ class ReadJob {
     required this.belongings,
     required this.reward,
     required this.comment,
+    required this.imageUrl,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -43,6 +44,8 @@ class ReadJob {
 
   final String comment;
 
+  final String imageUrl;
+
   final SealedTimestamp createdAt;
 
   final SealedTimestamp updatedAt;
@@ -63,6 +66,7 @@ class ReadJob {
       belongings: json['belongings'] as String? ?? '',
       reward: json['reward'] as String? ?? '',
       comment: json['comment'] as String? ?? '',
+      imageUrl: json['imageUrl'] as String? ?? '',
       createdAt: json['createdAt'] == null
           ? const ServerTimestamp()
           : sealedTimestampConverter.fromJson(json['createdAt'] as Object),
@@ -94,6 +98,7 @@ class CreateJob {
     required this.belongings,
     required this.reward,
     this.comment = '',
+    this.imageUrl = '',
     this.createdAt = const ServerTimestamp(),
     this.updatedAt = const ServerTimestamp(),
   });
@@ -107,6 +112,7 @@ class CreateJob {
   final String belongings;
   final String reward;
   final String comment;
+  final String imageUrl;
   final SealedTimestamp createdAt;
   final SealedTimestamp updatedAt;
 
@@ -121,6 +127,7 @@ class CreateJob {
       'belongings': belongings,
       'reward': reward,
       'comment': comment,
+      'imageUrl': imageUrl,
       'createdAt': sealedTimestampConverter.toJson(createdAt),
       'updatedAt':
           alwaysUseServerTimestampSealedTimestampConverter.toJson(updatedAt),
@@ -139,6 +146,7 @@ class UpdateJob {
     this.belongings,
     this.reward,
     this.comment,
+    this.imageUrl,
     this.createdAt,
     this.updatedAt = const ServerTimestamp(),
   });
@@ -152,6 +160,7 @@ class UpdateJob {
   final String? belongings;
   final String? reward;
   final String? comment;
+  final String? imageUrl;
   final SealedTimestamp? createdAt;
   final SealedTimestamp? updatedAt;
 
@@ -167,6 +176,7 @@ class UpdateJob {
       if (belongings != null) 'belongings': belongings,
       if (reward != null) 'reward': reward,
       if (comment != null) 'comment': comment,
+      if (imageUrl != null) 'imageUrl': imageUrl,
       if (createdAt != null)
         'createdAt': sealedTimestampConverter.toJson(createdAt!),
       'updatedAt': updatedAt == null

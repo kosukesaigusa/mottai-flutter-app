@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dart_flutter_common/dart_flutter_common.dart';
@@ -11,6 +13,7 @@ import 'package:rxdart/rxdart.dart';
 
 import '../../job/job.dart';
 import '../../user/host.dart';
+import 'geolocator_controller.dart';
 
 /// 東京駅の緯度経度（テスト用）初期位置は現在地？
 const _tokyoStation = LatLng(35.681236, 139.767125);
@@ -27,7 +30,7 @@ class _GeoQueryCondition {
 }
 
 @RoutePage()
-class MapPage extends StatefulWidget {
+class MapPage extends ConsumerStatefulWidget {
   const MapPage({super.key});
 
   /// [AutoRoute] で指定するパス文字列。
@@ -40,7 +43,10 @@ class MapPage extends StatefulWidget {
   MapPageState createState() => MapPageState();
 }
 
-class MapPageState extends State<MapPage> {
+class MapPageState extends ConsumerState<MapPage> {
+  /// [GoogleMap] ウィジェットの `onMapCreated` で得られるコントローラインスタンス。
+  late final GoogleMapController _googleMapController;
+
   /// Google Mapに記される [Marker].
   Set<Marker> _markers = {};
 
@@ -93,6 +99,12 @@ class MapPageState extends State<MapPage> {
     ),
   );
 
+  /// [HostLocation] の取得結果の [StreamSubscription].
+  /// [GoogleMap] ウィジェットの `onMapCreated` で初期化され、[dispose] メソッド
+  /// でキャンセルされる。
+  StreamSubscription<List<DocumentSnapshot<ReadHostLocation>>>?
+      _streamSubscription;
+
   /// 取得された位置情報 [DocumentSnapshot] によって [_markers] を更新する。
   void _updateMarkersByDocumentSnapshots(
     List<DocumentSnapshot<ReadHostLocation>> documentSnapshots,
@@ -137,6 +149,7 @@ class MapPageState extends State<MapPage> {
   @override
   void dispose() {
     _geoQueryCondition.close();
+    _streamSubscription?.cancel();
     super.dispose();
   }
 
@@ -150,8 +163,11 @@ class MapPageState extends State<MapPage> {
             zoomControlsEnabled: false,
             myLocationButtonEnabled: false,
             initialCameraPosition: _initialCameraPosition,
-            onMapCreated: (_) =>
-                _stream.listen(_updateMarkersByDocumentSnapshots),
+            onMapCreated: (controller) {
+              _googleMapController = controller;
+              _streamSubscription =
+                  _stream.listen(_updateMarkersByDocumentSnapshots);
+            },
             markers: _markers,
             circles: {
               Circle(
@@ -182,6 +198,69 @@ class MapPageState extends State<MapPage> {
               margin: const EdgeInsets.only(bottom: 32),
               child: _HostLocationPageView(
                 readHostLocations: _readHostLocations,
+              ),
+            ),
+          ),
+          // TODO: 検出半径を変更する UI/UX はどうあるべきか考えて、実装する。
+          Positioned(
+            top: 16,
+            left: 0,
+            right: 0,
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: MediaQuery.of(context).size.width * 0.075,
+              ),
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: Colors.black26,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          children: [
+                            Slider(
+                              value: _radiusInKm,
+                              min: 1,
+                              max: 10,
+                              divisions: 9,
+                              label: _radiusInKm.toStringAsFixed(1),
+                              onChanged: (value) => _geoQueryCondition.add(
+                                _GeoQueryCondition(
+                                  radiusInKm: value,
+                                  cameraPosition: _cameraPosition,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const Gap(16),
+                      IconButton(
+                        onPressed: () async {
+                          final position = await ref
+                              .read(currentLocationControllerProvider)
+                              .getCurrentPosition();
+                          if (position == null) {
+                            return;
+                          }
+                          await _googleMapController.animateCamera(
+                            CameraUpdate.newLatLng(
+                              LatLng(
+                                position.latitude,
+                                position.longitude,
+                              ),
+                            ),
+                          );
+                        },
+                        icon: const Icon(Icons.near_me),
+                      )
+                    ],
+                  ),
+                ),
               ),
             ),
           ),
@@ -297,56 +376,3 @@ class _HostLocationPageViewItem extends ConsumerWidget {
     );
   }
 }
-
-// MEMO: 位置情報取得実装部分。後にMergeする。
-
-// Container(
-//   margin: EdgeInsets.only(
-//     bottom: MediaQuery.of(context).size.height * 0.1,
-//   ),
-//   child: Align(
-//     alignment: Alignment.bottomCenter,
-//     child: GestureDetector(
-//       onTap: () {
-//         ref
-//             .read(
-//               currentLocationControllerProvider,
-//             )
-//             .getCurrentPosition();
-//       },
-//       child: Container(
-//         padding: const EdgeInsets.symmetric(
-//           horizontal: 15,
-//           vertical: 5,
-//         ),
-//         decoration: BoxDecoration(
-//           color: Colors.yellow,
-//           border: Border.all(
-//             color: Colors.white,
-//           ),
-//           borderRadius: BorderRadius.circular(25),
-//         ),
-//         child: Column(
-//           mainAxisSize: MainAxisSize.min,
-//           children: [
-//             const Text(
-//               '現在地を取得',
-//               style: TextStyle(
-//                 fontWeight: FontWeight.bold,
-//               ),
-//             ),
-//             ref.watch(currentPositionProvider).when(
-//                   data: (position) => Text('''
-//                     緯度: ${position.latitude}, 経度: ${position.longitude}
-//                   '''),
-//                   error: (_, __) => const SizedBox(),
-//                   loading: () => const Center(
-//                     child: CircularProgressIndicator(),
-//                   ),
-//                 ),
-//           ],
-//         ),
-//       ),
-//     ),
-//   ),
-// ),

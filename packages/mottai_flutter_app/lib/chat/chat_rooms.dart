@@ -43,8 +43,8 @@ final latestMessageProvider =
 /// 未読メッセージ数の最大値。
 const _maxUnReadCount = 10;
 
-/// 指定した `chatRoomId` における自分の未読メッセージ数を最大 [_maxUnReadCount] 件取得
-/// する [StreamProvider].
+/// 指定した `chatRoomId` における自分の未読メッセージ数を最大 [_maxUnReadCount] + 1 件
+/// 取得する [StreamProvider].
 final _unReadCountStreamProvider =
     StreamProvider.autoDispose.family<int, ReadChatRoom>((ref, readChatRoom) {
   final readStatus = ref.watch(myReadStatusStreamProvider(readChatRoom)).value;
@@ -54,7 +54,7 @@ final _unReadCountStreamProvider =
       .subscribeUnReadChatMessages(
         chatRoomId: readChatRoom.chatRoomId,
         lastReadAt: lastReadAt,
-        limit: _maxUnReadCount,
+        limit: _maxUnReadCount + 1,
       )
       .map((messages) => messages.length);
 });

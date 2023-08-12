@@ -16,6 +16,7 @@ class SelectableChips<T> extends StatelessWidget {
     this.direction = Axis.horizontal,
     this.alignment = WrapAlignment.start,
     this.crossAxisAlignment = WrapCrossAlignment.start,
+    this.padding = 8.0,
     super.key,
   });
 
@@ -43,6 +44,9 @@ class SelectableChips<T> extends StatelessWidget {
   /// [direction] と垂直方向の並び方。
   final WrapCrossAlignment crossAxisAlignment;
 
+  /// [padding] チップの余白。
+  final double padding;
+
   @override
   Widget build(BuildContext context) {
     return Wrap(
@@ -59,6 +63,7 @@ class SelectableChips<T> extends StatelessWidget {
               child: _SwitchingChip(
                 label: labels[item] ?? '',
                 isEnabled: enabledItems.contains(item),
+                padding: padding,
               ),
             ),
           )
@@ -70,19 +75,23 @@ class SelectableChips<T> extends StatelessWidget {
 class _SwitchingChip extends StatelessWidget {
   const _SwitchingChip({
     required this.label,
+    required this.padding,
     this.isEnabled = false,
   });
 
-  final bool isEnabled;
   final String label;
+  final double padding;
+  final bool isEnabled;
 
   @override
   Widget build(BuildContext context) {
     return InputChip(
       onPressed: () => {},
+      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
       isEnabled: isEnabled,
       side: isEnabled ? BorderSide.none : null,
       label: Text(label),
+      padding: EdgeInsets.all(padding),
     );
   }
 }

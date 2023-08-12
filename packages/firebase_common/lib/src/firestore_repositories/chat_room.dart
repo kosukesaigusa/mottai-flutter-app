@@ -26,4 +26,28 @@ class ChatRoomRepository {
             .where('hostId', isEqualTo: hostId)
             .orderBy('updatedAt', descending: true),
       );
+
+  /// 指定した [workerId], [hostId] のチャットルームを作成し、その ID を返す。
+  Future<String> createChatRoom({
+    required String workerId,
+    required String hostId,
+  }) async {
+    final documentReference = await _query.add(
+      createChatRoom: CreateChatRoom(workerId: workerId, hostId: hostId),
+    );
+    return documentReference.id;
+  }
+
+  /// 指定した [workerId], [hostId] のチャットルームが存在するかどうかを返す。
+  Future<bool> chatRoomExists({
+    required String workerId,
+    required String hostId,
+  }) async {
+    final qs = await _query.fetchDocuments(
+      queryBuilder: (query) => query
+          .where('workerId', isEqualTo: workerId)
+          .where('hostId', isEqualTo: hostId),
+    );
+    return qs.isNotEmpty;
+  }
 }

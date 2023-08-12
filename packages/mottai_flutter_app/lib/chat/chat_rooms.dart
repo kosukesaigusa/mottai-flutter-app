@@ -1,6 +1,7 @@
 import 'package:firebase_common/firebase_common.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../auth/auth.dart';
 import '../firestore_repository.dart';
 import '../user/user_mode.dart';
 import 'read_status.dart';
@@ -75,3 +76,37 @@ final unReadCountStringProvider =
   }
   return unReadCount.toString();
 });
+
+/// 指定した `partnerId` とサインイン中のユーザーとのチャットルームが存在するかどうかを取得する
+/// [FutureProvider].
+final chatRoomExistsProvider =
+    Provider.family.autoDispose<bool, String>((ref, partnerId) {
+  final myUserId = ref.watch(userIdProvider);
+  if (myUserId == null) {
+    return false;
+  }
+  final userMode = ref.watch(userModeStateProvider);
+  switch (userMode) {
+    case UserMode.worker:
+      return ref
+              .watch(_chatRoomExistsFutureProvider((myUserId, partnerId)))
+              .valueOrNull ??
+          false;
+    case UserMode.host:
+      return ref
+              .watch(_chatRoomExistsFutureProvider((partnerId, myUserId)))
+              .valueOrNull ??
+          false;
+  }
+});
+
+/// 指定した `workerId`, `hostId` とのチャットルームが存在するかどうかを取得する
+/// [FutureProvider].
+final _chatRoomExistsFutureProvider =
+    FutureProvider.family.autoDispose<bool, (String, String)>(
+  (ref, workerIdAndHostId) =>
+      ref.watch(chatRoomRepositoryProvider).chatRoomExists(
+            workerId: workerIdAndHostId.$1,
+            hostId: workerIdAndHostId.$2,
+          ),
+);

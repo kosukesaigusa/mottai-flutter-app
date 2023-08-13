@@ -7,6 +7,7 @@ import '../../auth/auth.dart';
 import '../../auth/ui/auth_controller.dart';
 import '../../development/development_items/ui/development_items.dart';
 import '../../development/email_and_password_sign_in/ui/email_and_password_sign_in.dart';
+import '../../development/sign_in/ui/sign_in.dart';
 import '../../package_info.dart';
 import '../../push_notification/firebase_messaging.dart';
 import '../../router/router.gr.dart';
@@ -139,9 +140,14 @@ class _DrawerChild extends ConsumerWidget {
         ] else ...[
           ListTile(
             leading: const Icon(Icons.login),
-            title: const Text('サインイン'),
+            title: const Text('サインイン（メールアドレスとパスワード）'),
             onTap: () =>
                 context.router.pushNamed(EmailAndPasswordSignInPage.location),
+          ),
+          ListTile(
+            leading: const Icon(Icons.login),
+            title: const Text('サインイン（ソーシャル）'),
+            onTap: () => context.router.pushNamed(SignInSamplePage.location),
           )
         ],
         ListTile(

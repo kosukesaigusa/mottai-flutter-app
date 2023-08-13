@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:sign_in_button/sign_in_button.dart';
 
@@ -24,10 +25,10 @@ class SignInSamplePage extends ConsumerWidget {
       ),
       body: Center(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Google
             SizedBox(
-              height: 50,
+              height: 48,
               child: SignInButton(
                 Buttons.google,
                 text: 'Google でサインイン',
@@ -36,9 +37,9 @@ class SignInSamplePage extends ConsumerWidget {
                     .signIn(SignInMethod.google),
               ),
             ),
-            // Apple
+            const Gap(32),
             SizedBox(
-              height: 50,
+              height: 48,
               child: SignInButton(
                 Buttons.apple,
                 text: 'Apple でサインイン',
@@ -46,8 +47,9 @@ class SignInSamplePage extends ConsumerWidget {
                     ref.read(authControllerProvider).signIn(SignInMethod.apple),
               ),
             ),
+            const Gap(32),
             ElevatedButton(
-              child: const Text('Line でサインイン'),
+              child: const Text('LINE でサインイン'),
               onPressed: () async =>
                   ref.read(authControllerProvider).signIn(SignInMethod.line),
             ),

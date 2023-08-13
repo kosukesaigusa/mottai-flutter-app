@@ -16,6 +16,7 @@ class SelectableChips<T> extends StatelessWidget {
     this.direction = Axis.horizontal,
     this.alignment = WrapAlignment.start,
     this.crossAxisAlignment = WrapCrossAlignment.start,
+    this.onTap,
     super.key,
   });
 
@@ -43,6 +44,9 @@ class SelectableChips<T> extends StatelessWidget {
   /// [direction] と垂直方向の並び方。
   final WrapCrossAlignment crossAxisAlignment;
 
+  /// チップが押されたときのコールバック
+  final void Function(T item)? onTap;
+
   @override
   Widget build(BuildContext context) {
     return Wrap(
@@ -59,6 +63,7 @@ class SelectableChips<T> extends StatelessWidget {
               child: _SwitchingChip(
                 label: labels[item] ?? '',
                 isEnabled: enabledItems.contains(item),
+                onTap: () => onTap?.call(item),
               ),
             ),
           )
@@ -71,18 +76,23 @@ class _SwitchingChip extends StatelessWidget {
   const _SwitchingChip({
     required this.label,
     this.isEnabled = false,
+    this.onTap,
   });
 
   final bool isEnabled;
   final String label;
+  final void Function()? onTap;
 
   @override
   Widget build(BuildContext context) {
-    return InputChip(
-      onPressed: () => {},
-      isEnabled: isEnabled,
-      side: isEnabled ? BorderSide.none : null,
-      label: Text(label),
+    return GestureDetector(
+      onTap: onTap,
+      child: InputChip(
+        onPressed: onTap, // コールバックを設定しないとデザインが変わるので、設定している
+        isEnabled: isEnabled,
+        side: isEnabled ? BorderSide.none : null,
+        label: Text(label),
+      ),
     );
   }
 }

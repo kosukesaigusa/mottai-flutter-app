@@ -131,6 +131,19 @@ class JobForm extends ConsumerWidget {
                     choices: {
                       for (final v in AccessType.values) v: v.label,
                     },
+                    enableChoices: ref.watch(selectedAccessTypeStateProvider),
+                    onChoiceSelected: (item) {
+                      final selectedList = ref
+                          .read(selectedAccessTypeStateProvider.notifier)
+                          .state;
+                      if (selectedList.contains(item)) {
+                        selectedList.remove(item);
+                      } else {
+                        selectedList.add(item as AccessType);
+                      }
+                      ref.read(selectedAccessTypeStateProvider.notifier).state =
+                          List.from(selectedList);
+                    },
                   ),
                   _TextInputSection(
                     title: 'ひとこと',
@@ -149,6 +162,10 @@ class JobForm extends ConsumerWidget {
                             return;
                           }
 
+                          final accessTypes = ref
+                              .watch(selectedAccessTypeStateProvider)
+                              .toSet();
+
                           if (jobId != null) {
                             controller.updateJob(
                               jobId: jobId,
@@ -161,6 +178,7 @@ class JobForm extends ConsumerWidget {
                                   accessDiscriptionController.text,
                               comment: commentController.text,
                               imageFile: pickedImageFile,
+                              accessTypes: accessTypes,
                             );
                           } else {
                             controller.create(
@@ -173,7 +191,7 @@ class JobForm extends ConsumerWidget {
                                   accessDiscriptionController.text,
                               comment: commentController.text,
                               imageFile: pickedImageFile,
-                              accessTypes: {AccessType.busAvailable},
+                              accessTypes: accessTypes,
                             );
                           }
                         },
@@ -200,9 +218,14 @@ class _TextInputSection extends StatelessWidget {
     this.maxLines,
     this.defaultDisplayLines = 1,
     this.choices,
+    this.enableChoices,
+    this.onChoiceSelected,
     this.controller,
     this.isRequired = false,
-  });
+  }) : assert(
+          (choices != null) == (enableChoices != null),
+          'choicesとenableChoicesのどちらかのみをnullにすることはできません。',
+        );
 
   /// セクションのタイトル。
   final String title;
@@ -219,6 +242,12 @@ class _TextInputSection extends StatelessWidget {
   /// テキストフィールドの下に表示する選択肢
   /// 選択された際の値がkeyで、表示する値がvalueの[Map]で受け取る。
   final Map<dynamic, String>? choices;
+
+  /// [choices] の有効な値のリスト
+  final List<dynamic>? enableChoices;
+
+  /// [choices] が選択された際のコールバック
+  final void Function(dynamic item)? onChoiceSelected;
 
   /// テキストフィールドのコントローラー
   final TextEditingController? controller;
@@ -258,7 +287,8 @@ class _TextInputSection extends StatelessWidget {
             SelectableChips(
               allItems: choices!.keys,
               labels: choices!,
-              enabledItems: choices!.keys,
+              enabledItems: enableChoices!,
+              onTap: onChoiceSelected,
             )
         ],
       ),

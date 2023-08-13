@@ -7,6 +7,10 @@ import '../../auth/auth.dart';
 import '../../image/firebase_storage.dart';
 import '../job.dart';
 
+/// 現在選択中の [AccessType] を保持する [StateProvider].
+final selectedAccessTypeStateProvider = StateProvider<List<AccessType>>(
+    (_) => <AccessType>[AccessType.busAvailable]);
+
 final jobControllerProvider = Provider.autoDispose<JobController>(
   (ref) => JobController(
     jobService: ref.watch(jobServiceProvider),

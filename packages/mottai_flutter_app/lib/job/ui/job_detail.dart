@@ -82,11 +82,10 @@ class _JobDetail extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (readHost.imageUrl.isNotEmpty)
-            Center(
-              child: LimitedBox(
-                maxHeight: 300,
-                child: Image.network(readHost.imageUrl, fit: BoxFit.cover),
-              ),
+            GenericImage.rectangle(
+              imageUrl: readHost.imageUrl,
+              height: 300,
+              width: MediaQuery.of(context).size.width,
             ),
           Padding(
             padding: const EdgeInsets.symmetric(

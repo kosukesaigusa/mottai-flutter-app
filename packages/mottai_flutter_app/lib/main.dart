@@ -56,11 +56,9 @@ class MainApp extends ConsumerWidget {
           overlayShape: SliderComponentShape.noOverlay,
         ),
         appBarTheme: Theme.of(context).appBarTheme.copyWith(
+              centerTitle: true,
               elevation: 4,
               shadowColor: Theme.of(context).shadowColor,
-            ),
-        chipTheme: Theme.of(context).chipTheme.copyWith(
-              backgroundColor: const Color(0xFFE8DEF8),
             ),
       ),
       debugShowCheckedModeBanner: false,

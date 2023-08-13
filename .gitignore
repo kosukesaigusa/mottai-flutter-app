@@ -55,3 +55,7 @@ app.*.map.json
 
 # Melos related
 pubspec_overrides.yaml
+
+# dart-define-from-file related
+**/android/app/src/main/res/mipmap*/
+**/android/app/google-services.json

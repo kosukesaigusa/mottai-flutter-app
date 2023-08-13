@@ -10,6 +10,7 @@ import '../../../chat/ui/chat_room.dart';
 import '../../../chat/ui/chat_rooms.dart';
 import '../../../host/ui/create_or_update_host.dart';
 import '../../../host/ui/host.dart';
+import '../../../job/ui/job_create.dart';
 import '../../../job/ui/job_detail.dart';
 import '../../../job/ui/job_update.dart';
 import '../../../map/ui/map.dart';
@@ -91,6 +92,12 @@ class _DevelopmentItemsPageState extends ConsumerState<DevelopmentItemsPage> {
             title: const Text('仕事詳細ページ (FutureProvider)'),
             onTap: () => context.router.pushNamed(
               JobDetailPage.location(jobId: 'PYRsrMSOApEgZ6lzMuUK'),
+            ),
+          ),
+          ListTile(
+            title: const Text('仕事情報作成ページ'),
+            onTap: () => context.router.pushNamed(
+              JobCreatePage.location(),
             ),
           ),
           ListTile(

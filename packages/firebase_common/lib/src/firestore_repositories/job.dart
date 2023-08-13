@@ -15,6 +15,34 @@ class JobRepository {
         queryBuilder: (query) => query.where('hostId', isEqualTo: userId),
       );
 
+  /// [Job] の情報を作成する。
+  Future<void> create({
+    required String hostId,
+    required String title,
+    required String content,
+    required String place,
+    required Set<AccessType> accessTypes,
+    required String accessDescription,
+    required String belongings,
+    required String reward,
+    required String comment,
+    required String imageUrl,
+  }) =>
+      _query.add(
+        createJob: CreateJob(
+          hostId: hostId,
+          title: title,
+          content: content,
+          place: place,
+          accessTypes: accessTypes,
+          accessDescription: accessDescription,
+          belongings: belongings,
+          reward: reward,
+          comment: comment,
+          imageUrl: imageUrl,
+        ),
+      );
+
   /// [Job] の情報を更新する。
   Future<void> update({
     required String jobId,

@@ -144,9 +144,9 @@ class AuthService {
     return digest.toString();
   }
 
-  /// Google や Apple により初めてログインする場合（=まだ `Worker` が作成されていない場合）、
+  /// Google / Apple / LINE により初めてログインする場合（=まだ [Worker] が作成されていない場合）、
   /// Firebase の [UserCredential] をもとに
-  /// `Worker` ドキュメントと `UserSocialLogin` ドキュメントを生成する。
+  /// [Worker] ドキュメントと [UserSocialLogin] ドキュメントを生成する。
   Future<void> _createWorkerAndUserSocialLoginWhenFirstSignIn({
     required UserCredential userCredential,
     required SignInMethod signInMethod,
@@ -207,10 +207,10 @@ class AuthService {
     }
   }
 
-  /// 指定されたソーシャル認証情報をリンクする
+  /// 指定されたソーシャル認証情報をアカウントにリンクする
   ///
   /// 指定された [SignInMethod] のソーシャル認証情報をアカウントにリンクし、
-  /// 指定した [SignInMethod] に関連する [UserSocialLogin] のプロパティを `true` に更新する
+  /// 指定された [SignInMethod] に関連する [UserSocialLogin] のプロパティを `true` に更新する
   Future<void> linkUserSocialLogin({
     required SignInMethod signInMethod,
     required String userId,
@@ -239,7 +239,7 @@ class AuthService {
     );
   }
 
-  /// ログイン時に生成される `Credential` を元に、ユーザーアカウントにソーシャル認証情報をリンクする
+  /// ログイン時に取得される [AuthCredential] を元に、ユーザーアカウントにソーシャル認証情報をリンクする
   Future<void> _linkWithCredential({required SignInMethod signInMethod}) async {
     final credential = switch (signInMethod) {
       SignInMethod.google => await _getGoogleCredential(),
@@ -252,7 +252,7 @@ class AuthService {
     await _auth.currentUser?.linkWithCredential(credential);
   }
 
-  /// 指定した [SignInMethod] に関連する [UserSocialLogin] のプロパティを、引数で受けた真偽値に更新する
+  /// 指定された [SignInMethod] に関連する [UserSocialLogin] のプロパティを、引数で受けた真偽値に更新する
   Future<void> _updateUserSocialLoginSignInMethodStatus({
     required SignInMethod signInMethod,
     required String userId,

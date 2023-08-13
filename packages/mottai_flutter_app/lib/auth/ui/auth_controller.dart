@@ -135,6 +135,7 @@ class AuthController {
       _appScaffoldMessengerController.showSnackBarByFirebaseException(e);
     }
   }
+
   /// [FirebaseAuth] からサインアウトする。
   Future<void> signOut() => _authService.signOut();
 }

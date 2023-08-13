@@ -109,9 +109,6 @@ class AuthController {
     }
   }
 
-  /// [FirebaseAuth] からサインアウトして、[UserMode] を `UserMode.worker` にする。
-  Future<void> signOut() async {
-    await _authService.signOut();
-    _userModeStateController.update((state) => UserMode.worker);
-  }
+  /// [FirebaseAuth] からサインアウトする。
+  Future<void> signOut() => _authService.signOut();
 }

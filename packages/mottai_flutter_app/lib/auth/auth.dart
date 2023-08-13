@@ -8,6 +8,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
+import '../user/user_mode.dart';
 import '../user/worker.dart';
 
 /// Firebase Console の Authentication で設定できるサインイン方法の種別。
@@ -47,6 +48,7 @@ final isSignedInProvider = Provider<bool>(
 final authServiceProvider = Provider.autoDispose<AuthService>(
   (ref) => AuthService(
     workerService: ref.watch(workerServiceProvider),
+    userModeStateController: ref.watch(userModeStateProvider.notifier),
   ),
 );
 
@@ -54,11 +56,15 @@ final authServiceProvider = Provider.autoDispose<AuthService>(
 class AuthService {
   const AuthService({
     required WorkerService workerService,
-  }) : _workerService = workerService;
+    required StateController<UserMode> userModeStateController,
+  })  : _workerService = workerService,
+        _userModeStateController = userModeStateController;
 
   static final _auth = FirebaseAuth.instance;
 
   final WorkerService _workerService;
+
+  final StateController<UserMode> _userModeStateController;
 
   // TODO: 開発中のみ使用する。リリース時には消すか、あとで デバッグモード or
   // 開発環境接続時のみ使用可能にする。
@@ -72,8 +78,8 @@ class AuthService {
   /// [FirebaseAuth] に Google でサインインする。
   /// https://firebase.flutter.dev/docs/auth/social/#google に従っている。
   Future<UserCredential> signInWithGoogle() async {
-    final googleUser = await GoogleSignIn().signIn(); // サインインダイアログの表示
-    final googleAuth = await googleUser?.authentication; // アカウントからトークン生成
+    final googleUser = await GoogleSignIn().signIn();
+    final googleAuth = await googleUser?.authentication;
     final credential = GoogleAuthProvider.credential(
       accessToken: googleAuth?.accessToken,
       idToken: googleAuth?.idToken,
@@ -153,8 +159,11 @@ class AuthService {
   }
 
   /// [FirebaseAuth] からサインアウトする。
+  /// [GoogleSignIn] からもサインアウトする。
+  /// また、[UserMode] を `UserMode.worker` に戻す。
   Future<void> signOut() async {
     await _auth.signOut();
     await GoogleSignIn().signOut();
+    _userModeStateController.update((state) => UserMode.worker);
   }
 }

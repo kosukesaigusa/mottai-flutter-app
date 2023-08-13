@@ -11,12 +11,13 @@ class SelectableChips<T> extends StatelessWidget {
     required this.allItems,
     required this.labels,
     required this.enabledItems,
-    this.chipPadding = const EdgeInsets.only(right: 8),
     this.isDisplayDisable = true,
     this.direction = Axis.horizontal,
     this.alignment = WrapAlignment.start,
+    this.spacing = 8,
+    this.runSpacing = 0,
     this.crossAxisAlignment = WrapCrossAlignment.start,
-    this.padding = 8.0,
+    this.chipPadding = const EdgeInsets.all(8),
     super.key,
   });
 
@@ -29,9 +30,6 @@ class SelectableChips<T> extends StatelessWidget {
   /// 有効な選択肢。
   final Iterable<T> enabledItems;
 
-  /// チップ一つのパディング。
-  final EdgeInsetsGeometry chipPadding;
-
   /// [enabledItems] に含まれていないチップを非表示にするか否か。
   final bool isDisplayDisable;
 
@@ -41,30 +39,35 @@ class SelectableChips<T> extends StatelessWidget {
   /// [direction] 方向の並び方。
   final WrapAlignment alignment;
 
+  /// 主軸方向の各要素の余白。
+  final double spacing;
+
+  /// 主軸に垂直方向の各要素の余白。
+  final double runSpacing;
+
   /// [direction] と垂直方向の並び方。
   final WrapCrossAlignment crossAxisAlignment;
 
-  /// [padding] チップの余白。
-  final double padding;
+  /// チップの余白。
+  final EdgeInsetsGeometry chipPadding;
 
   @override
   Widget build(BuildContext context) {
     return Wrap(
       direction: direction,
       alignment: alignment,
+      spacing: spacing,
+      runSpacing: runSpacing,
       crossAxisAlignment: crossAxisAlignment,
       children: allItems
           .where(
             (item) => enabledItems.contains(item) || isDisplayDisable,
           )
           .map(
-            (item) => Padding(
+            (item) => _SwitchingChip(
+              label: labels[item] ?? '',
+              isEnabled: enabledItems.contains(item),
               padding: chipPadding,
-              child: _SwitchingChip(
-                label: labels[item] ?? '',
-                isEnabled: enabledItems.contains(item),
-                padding: padding,
-              ),
             ),
           )
           .toList(),
@@ -80,7 +83,7 @@ class _SwitchingChip extends StatelessWidget {
   });
 
   final String label;
-  final double padding;
+  final EdgeInsetsGeometry padding;
   final bool isEnabled;
 
   @override
@@ -90,8 +93,14 @@ class _SwitchingChip extends StatelessWidget {
       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
       isEnabled: isEnabled,
       side: isEnabled ? BorderSide.none : null,
-      label: Text(label),
-      padding: EdgeInsets.all(padding),
+      label: Text(
+        label,
+        style: TextStyle(
+          color: Theme.of(context).colorScheme.onSecondaryContainer,
+        ),
+      ),
+      padding: padding,
+      backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
     );
   }
 }

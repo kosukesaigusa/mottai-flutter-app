@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../../assets.dart';
 import '../../auth/auth.dart';
 import '../../auth/ui/auth_controller.dart';
 import '../../development/development_items/ui/development_items.dart';
@@ -44,8 +45,7 @@ class _RootPageState extends ConsumerState<RootPage> {
   Widget build(BuildContext context) {
     return AutoTabsScaffold(
       appBarBuilder: (_, __) => AppBar(
-        // TODO: MOTTAI のロゴを表示する
-        title: const Text('MOTTAI'),
+        title: Image.asset(MottaiAssets.appBarLogo, height: 40),
       ),
       drawer: const Drawer(child: _DrawerChild()),
       routes: const [

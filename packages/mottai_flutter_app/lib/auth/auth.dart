@@ -208,7 +208,7 @@ class AuthService {
   }
 
   /// 指定されたソーシャル認証情報をリンクする
-  /// 
+  ///
   /// 指定された [SignInMethod] のソーシャル認証情報をアカウントにリンクし、
   /// 指定した [SignInMethod] に関連する [UserSocialLogin] のプロパティを `true` に更新する
   Future<void> linkUserSocialLogin({
@@ -224,7 +224,7 @@ class AuthService {
   }
 
   /// 指定されたソーシャル認証情報のリンクを解除する
-  /// 
+  ///
   /// 指定された [SignInMethod] のソーシャル認証情報のリンクを解除し、
   /// 指定された [SignInMethod] に関連する [UserSocialLogin] のプロパティを `false` に更新する
   Future<void> unLinkUserSocialLogin({

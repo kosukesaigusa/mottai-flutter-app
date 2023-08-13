@@ -8,12 +8,13 @@ import '../../development/firebase_storage/ui/firebase_storage_controller.dart';
 import 'job_controller.dart';
 
 class JobForm extends ConsumerWidget {
-  const JobForm({
+  JobForm({
     this.job,
     super.key,
   });
 
   final ReadJob? job;
+  final formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -82,6 +83,7 @@ class JobForm extends ConsumerWidget {
               horizontal: 24,
             ),
             child: Form(
+              key: formKey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -142,6 +144,11 @@ class JobForm extends ConsumerWidget {
                     child: Center(
                       child: ElevatedButton(
                         onPressed: () {
+                          final isValidate = formKey.currentState?.validate();
+                          if (!(isValidate ?? true)) {
+                            return;
+                          }
+
                           if (jobId != null) {
                             controller.updateJob(
                               jobId: jobId,
@@ -236,6 +243,12 @@ class _TextInputSection extends StatelessWidget {
           TextFormField(
             controller: controller,
             maxLines: maxLines,
+            validator: (value) {
+              if (isRequired && value == '') {
+                return '入力してください。';
+              }
+              return null;
+            },
             decoration: InputDecoration(
               hintText: List.filled(defaultDisplayLines - 1, '\n').join(),
               border: const OutlineInputBorder(),

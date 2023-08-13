@@ -8,7 +8,6 @@ environment:
 
 dependencies:
   auto_route: ^7.7.0
-  cached_network_image: ^3.2.3
   # TODO: mottai_flutter_app で geoflutterfire_plus の DocumentSnapshot 型を使用する
   # 必要がなくなるようにリファクタする or geoflutterfire_plus 自体を改善する。
   cloud_firestore: ^4.8.4

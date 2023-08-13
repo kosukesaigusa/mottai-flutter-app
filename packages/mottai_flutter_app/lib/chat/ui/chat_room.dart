@@ -2,7 +2,6 @@ import 'package:auto_route/auto_route.dart';
 import 'package:dart_flutter_common/dart_flutter_common.dart';
 import 'package:firebase_common/firebase_common.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -87,9 +86,9 @@ class _ChatRoomPageState extends ConsumerState<ChatRoomPage> {
           onAuthenticated: (userId) {
             if (loading) {
               return const Center(
-                child: FaIcon(
-                  FontAwesomeIcons.solidComment,
-                  size: 72,
+                child: Icon(
+                  Icons.chat,
+                  size: 80,
                   color: Colors.black12,
                 ),
               );
@@ -233,7 +232,7 @@ class _ChatMessageItem extends ConsumerWidget {
                         ? Theme.of(context).primaryColor
                         : backgroundGrey,
                   ),
-                  child: Text(
+                  child: SelectableText(
                     readChatMessage.content,
                     style: isMyMessage
                         ? Theme.of(context)
@@ -246,7 +245,7 @@ class _ChatMessageItem extends ConsumerWidget {
                 if (isMyMessage) ...[
                   const Gap(4),
                   _ReadStatusText(
-                    messageCreatedAt: readChatMessage.createdAt.dateTime,
+                    messageCreatedAt: readChatMessage.createdAt,
                     partnerLastReadAt: partnerLastReadAt,
                   ),
                 ],
@@ -315,7 +314,7 @@ class _MessageCreatedAtText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final createdAt = readChatMessage.createdAt.dateTime;
+    final createdAt = readChatMessage.createdAt;
     if (createdAt == null) {
       return const SizedBox();
     }

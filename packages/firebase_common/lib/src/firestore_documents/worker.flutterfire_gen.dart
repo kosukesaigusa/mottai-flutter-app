@@ -25,9 +25,9 @@ class ReadWorker {
 
   final bool isHost;
 
-  final SealedTimestamp createdAt;
+  final DateTime? createdAt;
 
-  final SealedTimestamp updatedAt;
+  final DateTime? updatedAt;
 
   factory ReadWorker._fromJson(Map<String, dynamic> json) {
     return ReadWorker(
@@ -36,13 +36,8 @@ class ReadWorker {
       displayName: json['displayName'] as String? ?? '',
       imageUrl: json['imageUrl'] as String? ?? '',
       isHost: json['isHost'] as bool? ?? false,
-      createdAt: json['createdAt'] == null
-          ? const ServerTimestamp()
-          : sealedTimestampConverter.fromJson(json['createdAt'] as Object),
-      updatedAt: json['updatedAt'] == null
-          ? const ServerTimestamp()
-          : alwaysUseServerTimestampSealedTimestampConverter
-              .fromJson(json['updatedAt'] as Object),
+      createdAt: (json['createdAt'] as Timestamp?)?.toDate(),
+      updatedAt: (json['updatedAt'] as Timestamp?)?.toDate(),
     );
   }
 
@@ -60,25 +55,20 @@ class CreateWorker {
   const CreateWorker({
     required this.displayName,
     this.imageUrl = '',
-    this.isHost = false,
-    this.createdAt = const ServerTimestamp(),
-    this.updatedAt = const ServerTimestamp(),
+    required this.isHost,
   });
 
   final String displayName;
   final String imageUrl;
   final bool isHost;
-  final SealedTimestamp createdAt;
-  final SealedTimestamp updatedAt;
 
   Map<String, dynamic> toJson() {
     return {
       'displayName': displayName,
       'imageUrl': imageUrl,
       'isHost': isHost,
-      'createdAt': sealedTimestampConverter.toJson(createdAt),
-      'updatedAt':
-          alwaysUseServerTimestampSealedTimestampConverter.toJson(updatedAt),
+      'createdAt': FieldValue.serverTimestamp(),
+      'updatedAt': FieldValue.serverTimestamp(),
     };
   }
 }
@@ -89,81 +79,82 @@ class UpdateWorker {
     this.imageUrl,
     this.isHost,
     this.createdAt,
-    this.updatedAt = const ServerTimestamp(),
   });
 
   final String? displayName;
   final String? imageUrl;
   final bool? isHost;
-  final SealedTimestamp? createdAt;
-  final SealedTimestamp? updatedAt;
+  final DateTime? createdAt;
 
   Map<String, dynamic> toJson() {
     return {
       if (displayName != null) 'displayName': displayName,
       if (imageUrl != null) 'imageUrl': imageUrl,
       if (isHost != null) 'isHost': isHost,
-      if (createdAt != null)
-        'createdAt': sealedTimestampConverter.toJson(createdAt!),
-      'updatedAt': updatedAt == null
-          ? const ServerTimestamp()
-          : alwaysUseServerTimestampSealedTimestampConverter.toJson(updatedAt!),
+      if (createdAt != null) 'createdAt': createdAt,
+      'updatedAt': FieldValue.serverTimestamp(),
     };
   }
 }
 
-/// A [CollectionReference] to workers collection to read.
+class DeleteWorker {}
+
+/// Provides a reference to the workers collection for reading.
 final readWorkerCollectionReference =
     FirebaseFirestore.instance.collection('workers').withConverter<ReadWorker>(
           fromFirestore: (ds, _) => ReadWorker.fromDocumentSnapshot(ds),
-          toFirestore: (obj, _) => throw UnimplementedError(),
+          toFirestore: (_, __) => throw UnimplementedError(),
         );
 
-/// A [DocumentReference] to worker document to read.
+/// Provides a reference to a worker document for reading.
 DocumentReference<ReadWorker> readWorkerDocumentReference({
   required String workerId,
 }) =>
     readWorkerCollectionReference.doc(workerId);
 
-/// A [CollectionReference] to workers collection to create.
+/// Provides a reference to the workers collection for creating.
 final createWorkerCollectionReference = FirebaseFirestore.instance
     .collection('workers')
     .withConverter<CreateWorker>(
-      fromFirestore: (ds, _) => throw UnimplementedError(),
+      fromFirestore: (_, __) => throw UnimplementedError(),
       toFirestore: (obj, _) => obj.toJson(),
     );
 
-/// A [DocumentReference] to worker document to create.
+/// Provides a reference to a worker document for creating.
 DocumentReference<CreateWorker> createWorkerDocumentReference({
   required String workerId,
 }) =>
     createWorkerCollectionReference.doc(workerId);
 
-/// A [CollectionReference] to workers collection to update.
+/// Provides a reference to the workers collection for updating.
 final updateWorkerCollectionReference = FirebaseFirestore.instance
     .collection('workers')
     .withConverter<UpdateWorker>(
-      fromFirestore: (ds, _) => throw UnimplementedError(),
+      fromFirestore: (_, __) => throw UnimplementedError(),
       toFirestore: (obj, _) => obj.toJson(),
     );
 
-/// A [DocumentReference] to worker document to update.
+/// Provides a reference to a worker document for updating.
 DocumentReference<UpdateWorker> updateWorkerDocumentReference({
   required String workerId,
 }) =>
     updateWorkerCollectionReference.doc(workerId);
 
-/// A [CollectionReference] to workers collection to delete.
-final deleteWorkerCollectionReference =
-    FirebaseFirestore.instance.collection('workers');
+/// Provides a reference to the workers collection for deleting.
+final deleteWorkerCollectionReference = FirebaseFirestore.instance
+    .collection('workers')
+    .withConverter<DeleteWorker>(
+      fromFirestore: (_, __) => throw UnimplementedError(),
+      toFirestore: (_, __) => throw UnimplementedError(),
+    );
 
-/// A [DocumentReference] to worker document to delete.
-DocumentReference<Object?> deleteWorkerDocumentReference({
+/// Provides a reference to a worker document for deleting.
+DocumentReference<DeleteWorker> deleteWorkerDocumentReference({
   required String workerId,
 }) =>
     deleteWorkerCollectionReference.doc(workerId);
 
-/// A query manager to execute query against [Worker].
+/// Manages queries against the workers collection.
 class WorkerQuery {
   /// Fetches [ReadWorker] documents.
   Future<List<ReadWorker>> fetchDocuments({
@@ -208,7 +199,7 @@ class WorkerQuery {
     });
   }
 
-  /// Fetches a specified [ReadWorker] document.
+  /// Fetches a specific [ReadWorker] document.
   Future<ReadWorker?> fetchDocument({
     required String workerId,
     GetOptions? options,
@@ -219,7 +210,7 @@ class WorkerQuery {
     return ds.data();
   }
 
-  /// Subscribes a specified [Worker] document.
+  /// Subscribes a specific [Worker] document.
   Stream<ReadWorker?> subscribeDocument({
     required String workerId,
     bool includeMetadataChanges = false,
@@ -250,7 +241,7 @@ class WorkerQuery {
         workerId: workerId,
       ).set(createWorker, options);
 
-  /// Updates a specified [Worker] document.
+  /// Updates a specific [Worker] document.
   Future<void> update({
     required String workerId,
     required UpdateWorker updateWorker,
@@ -259,7 +250,7 @@ class WorkerQuery {
         workerId: workerId,
       ).update(updateWorker.toJson());
 
-  /// Deletes a specified [Worker] document.
+  /// Deletes a specific [Worker] document.
   Future<void> delete({
     required String workerId,
   }) =>

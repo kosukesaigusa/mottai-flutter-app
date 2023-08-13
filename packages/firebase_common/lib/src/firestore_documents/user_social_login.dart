@@ -3,17 +3,24 @@ import 'package:flutterfire_gen_annotation/flutterfire_gen_annotation.dart';
 
 part 'user_social_login.flutterfire_gen.dart';
 
+// ドキュメント ID はユーザー ID と一致する。
 @FirestoreDocument(path: 'userSocialLogins', documentName: 'userSocialLogin')
 class UserSocialLogin {
   const UserSocialLogin({
-    this.isGoogleEnabled = false,
-    this.isLINEEnabled = false,
-    this.isAppleEnabled = false,
+    required this.isGoogleEnabled,
+    required this.isAppleEnabled,
+    required this.isLINEEnabled,
   });
 
+  @ReadDefault(false)
+  @CreateDefault(false)
   final bool isGoogleEnabled;
 
-  final bool isLINEEnabled;
-
+  @ReadDefault(false)
+  @CreateDefault(false)
   final bool isAppleEnabled;
+
+  @ReadDefault(false)
+  @CreateDefault(false)
+  final bool isLINEEnabled;
 }

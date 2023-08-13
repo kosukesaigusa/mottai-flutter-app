@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutterfire_gen_annotation/flutterfire_gen_annotation.dart';
-import 'package:flutterfire_json_converters/flutterfire_json_converters.dart';
 
 part 'chat_room.flutterfire_gen.dart';
 
@@ -9,26 +8,18 @@ class ChatRoom {
   const ChatRoom({
     required this.workerId,
     required this.hostId,
-    this.createdAt = const ServerTimestamp(),
-    this.updatedAt = const ServerTimestamp(),
+    this.createdAt,
+    this.updatedAt,
   });
 
   final String workerId;
 
   final String hostId;
 
-  // TODO: やや冗長になってしまっているのは、flutterfire_gen と
-  // flutterfire_json_converters の作りのため。それらのパッケージが更新されたら
-  // この実装も変更する。
-  @sealedTimestampConverter
-  @CreateDefault(ServerTimestamp())
-  final SealedTimestamp createdAt;
+  @AlwaysUseFieldValueServerTimestampWhenCreating()
+  final DateTime? createdAt;
 
-  // TODO: やや冗長になってしまっているのは、flutterfire_gen と
-  // flutterfire_json_converters の作りのため。それらのパッケージが更新されたら
-  // この実装も変更する。
-  @alwaysUseServerTimestampSealedTimestampConverter
-  @CreateDefault(ServerTimestamp())
-  @UpdateDefault(ServerTimestamp())
-  final SealedTimestamp updatedAt;
+  @AlwaysUseFieldValueServerTimestampWhenCreating()
+  @AlwaysUseFieldValueServerTimestampWhenUpdating()
+  final DateTime? updatedAt;
 }

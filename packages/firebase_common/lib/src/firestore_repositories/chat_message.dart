@@ -84,4 +84,37 @@ class ChatMessageRepository {
           imageUrls: imageUrls,
         ),
       );
+
+  /// 指定した [chatRoomId] の [ChatMessage] 一覧の最新を最大 1 件返す。
+  Stream<List<ReadChatMessage>> subscribeLatestChatMessages({
+    required String chatRoomId,
+  }) =>
+      _query.subscribeDocuments(
+        chatRoomId: chatRoomId,
+        queryBuilder: (query) => query
+            .where('isDeleted', isNotEqualTo: true)
+            .orderBy('isDeleted')
+            .orderBy('createdAt', descending: true)
+            .limit(1),
+      );
+
+  /// 指定した [chatRoomId] の（指定している場合は）[lastReadAt] 以降の [ChatMessage]
+  /// を最大 [limit] 件購読する。
+  Stream<List<ReadChatMessage>> subscribeUnReadChatMessages({
+    required String chatRoomId,
+    required DateTime? lastReadAt,
+    required int limit,
+  }) =>
+      _query.subscribeDocuments(
+        chatRoomId: chatRoomId,
+        queryBuilder: (query) => lastReadAt != null
+            ? query
+                .where(
+                  'createdAt',
+                  isGreaterThan: lastReadAt,
+                )
+                .orderBy('createdAt', descending: true)
+                .limit(limit)
+            : query.orderBy('createAt', descending: true).limit(limit),
+      );
 }

@@ -9,8 +9,8 @@ class ReadUserSocialLogin {
     required this.userSocialLoginId,
     required this.path,
     required this.isGoogleEnabled,
-    required this.isLINEEnabled,
     required this.isAppleEnabled,
+    required this.isLINEEnabled,
   });
 
   final String userSocialLoginId;
@@ -19,17 +19,17 @@ class ReadUserSocialLogin {
 
   final bool isGoogleEnabled;
 
-  final bool isLINEEnabled;
-
   final bool isAppleEnabled;
+
+  final bool isLINEEnabled;
 
   factory ReadUserSocialLogin._fromJson(Map<String, dynamic> json) {
     return ReadUserSocialLogin(
       userSocialLoginId: json['userSocialLoginId'] as String,
       path: json['path'] as String,
       isGoogleEnabled: json['isGoogleEnabled'] as bool? ?? false,
-      isLINEEnabled: json['isLINEEnabled'] as bool? ?? false,
       isAppleEnabled: json['isAppleEnabled'] as bool? ?? false,
+      isLINEEnabled: json['isLINEEnabled'] as bool? ?? false,
     );
   }
 
@@ -46,19 +46,19 @@ class ReadUserSocialLogin {
 class CreateUserSocialLogin {
   const CreateUserSocialLogin({
     this.isGoogleEnabled = false,
-    this.isLINEEnabled = false,
     this.isAppleEnabled = false,
+    this.isLINEEnabled = false,
   });
 
   final bool isGoogleEnabled;
-  final bool isLINEEnabled;
   final bool isAppleEnabled;
+  final bool isLINEEnabled;
 
   Map<String, dynamic> toJson() {
     return {
       'isGoogleEnabled': isGoogleEnabled,
-      'isLINEEnabled': isLINEEnabled,
       'isAppleEnabled': isAppleEnabled,
+      'isLINEEnabled': isLINEEnabled,
     };
   }
 }
@@ -66,78 +66,85 @@ class CreateUserSocialLogin {
 class UpdateUserSocialLogin {
   const UpdateUserSocialLogin({
     this.isGoogleEnabled,
-    this.isLINEEnabled,
     this.isAppleEnabled,
+    this.isLINEEnabled,
   });
 
   final bool? isGoogleEnabled;
-  final bool? isLINEEnabled;
   final bool? isAppleEnabled;
+  final bool? isLINEEnabled;
 
   Map<String, dynamic> toJson() {
     return {
       if (isGoogleEnabled != null) 'isGoogleEnabled': isGoogleEnabled,
-      if (isLINEEnabled != null) 'isLINEEnabled': isLINEEnabled,
       if (isAppleEnabled != null) 'isAppleEnabled': isAppleEnabled,
+      if (isLINEEnabled != null) 'isLINEEnabled': isLINEEnabled,
     };
   }
 }
 
-/// A [CollectionReference] to userSocialLogins collection to read.
+class DeleteUserSocialLogin {}
+
+/// Provides a reference to the userSocialLogins collection for reading.
 final readUserSocialLoginCollectionReference = FirebaseFirestore.instance
     .collection('userSocialLogins')
     .withConverter<ReadUserSocialLogin>(
       fromFirestore: (ds, _) => ReadUserSocialLogin.fromDocumentSnapshot(ds),
-      toFirestore: (obj, _) => throw UnimplementedError(),
+      toFirestore: (_, __) => throw UnimplementedError(),
     );
 
-/// A [DocumentReference] to userSocialLogin document to read.
+/// Provides a reference to a userSocialLogin document for reading.
 DocumentReference<ReadUserSocialLogin> readUserSocialLoginDocumentReference({
   required String userSocialLoginId,
 }) =>
     readUserSocialLoginCollectionReference.doc(userSocialLoginId);
 
-/// A [CollectionReference] to userSocialLogins collection to create.
+/// Provides a reference to the userSocialLogins collection for creating.
 final createUserSocialLoginCollectionReference = FirebaseFirestore.instance
     .collection('userSocialLogins')
     .withConverter<CreateUserSocialLogin>(
-      fromFirestore: (ds, _) => throw UnimplementedError(),
+      fromFirestore: (_, __) => throw UnimplementedError(),
       toFirestore: (obj, _) => obj.toJson(),
     );
 
-/// A [DocumentReference] to userSocialLogin document to create.
+/// Provides a reference to a userSocialLogin document for creating.
 DocumentReference<CreateUserSocialLogin>
     createUserSocialLoginDocumentReference({
   required String userSocialLoginId,
 }) =>
         createUserSocialLoginCollectionReference.doc(userSocialLoginId);
 
-/// A [CollectionReference] to userSocialLogins collection to update.
+/// Provides a reference to the userSocialLogins collection for updating.
 final updateUserSocialLoginCollectionReference = FirebaseFirestore.instance
     .collection('userSocialLogins')
     .withConverter<UpdateUserSocialLogin>(
-      fromFirestore: (ds, _) => throw UnimplementedError(),
+      fromFirestore: (_, __) => throw UnimplementedError(),
       toFirestore: (obj, _) => obj.toJson(),
     );
 
-/// A [DocumentReference] to userSocialLogin document to update.
+/// Provides a reference to a userSocialLogin document for updating.
 DocumentReference<UpdateUserSocialLogin>
     updateUserSocialLoginDocumentReference({
   required String userSocialLoginId,
 }) =>
         updateUserSocialLoginCollectionReference.doc(userSocialLoginId);
 
-/// A [CollectionReference] to userSocialLogins collection to delete.
-final deleteUserSocialLoginCollectionReference =
-    FirebaseFirestore.instance.collection('userSocialLogins');
+/// Provides a reference to the userSocialLogins collection for deleting.
+final deleteUserSocialLoginCollectionReference = FirebaseFirestore.instance
+    .collection('userSocialLogins')
+    .withConverter<DeleteUserSocialLogin>(
+      fromFirestore: (_, __) => throw UnimplementedError(),
+      toFirestore: (_, __) => throw UnimplementedError(),
+    );
 
-/// A [DocumentReference] to userSocialLogin document to delete.
-DocumentReference<Object?> deleteUserSocialLoginDocumentReference({
+/// Provides a reference to a userSocialLogin document for deleting.
+DocumentReference<DeleteUserSocialLogin>
+    deleteUserSocialLoginDocumentReference({
   required String userSocialLoginId,
 }) =>
-    deleteUserSocialLoginCollectionReference.doc(userSocialLoginId);
+        deleteUserSocialLoginCollectionReference.doc(userSocialLoginId);
 
-/// A query manager to execute query against [UserSocialLogin].
+/// Manages queries against the userSocialLogins collection.
 class UserSocialLoginQuery {
   /// Fetches [ReadUserSocialLogin] documents.
   Future<List<ReadUserSocialLogin>> fetchDocuments({
@@ -184,7 +191,7 @@ class UserSocialLoginQuery {
     });
   }
 
-  /// Fetches a specified [ReadUserSocialLogin] document.
+  /// Fetches a specific [ReadUserSocialLogin] document.
   Future<ReadUserSocialLogin?> fetchDocument({
     required String userSocialLoginId,
     GetOptions? options,
@@ -195,7 +202,7 @@ class UserSocialLoginQuery {
     return ds.data();
   }
 
-  /// Subscribes a specified [UserSocialLogin] document.
+  /// Subscribes a specific [UserSocialLogin] document.
   Stream<ReadUserSocialLogin?> subscribeDocument({
     required String userSocialLoginId,
     bool includeMetadataChanges = false,
@@ -226,7 +233,7 @@ class UserSocialLoginQuery {
         userSocialLoginId: userSocialLoginId,
       ).set(createUserSocialLogin, options);
 
-  /// Updates a specified [UserSocialLogin] document.
+  /// Updates a specific [UserSocialLogin] document.
   Future<void> update({
     required String userSocialLoginId,
     required UpdateUserSocialLogin updateUserSocialLogin,
@@ -235,7 +242,7 @@ class UserSocialLoginQuery {
         userSocialLoginId: userSocialLoginId,
       ).update(updateUserSocialLogin.toJson());
 
-  /// Deletes a specified [UserSocialLogin] document.
+  /// Deletes a specific [UserSocialLogin] document.
   Future<void> delete({
     required String userSocialLoginId,
   }) =>

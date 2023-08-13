@@ -4,6 +4,7 @@ import '../chat/ui/chat_room.dart';
 import '../chat/ui/chat_rooms.dart';
 import '../development/color/ui/color.dart';
 import '../development/development_items/ui/development_items.dart';
+import '../development/email_and_password_sign_in/ui/email_and_password_sign_in.dart';
 import '../development/firebase_storage/ui/firebase_storage.dart';
 import '../development/force_update/ui/force_update.dart';
 import '../development/generic_image/ui/generic_images.dart';
@@ -18,6 +19,9 @@ import '../host/ui/create_or_update_host.dart';
 import '../host/ui/host.dart';
 import '../job/ui/job_detail.dart';
 import '../map/ui/map.dart';
+import '../my_account/ui/my_account.dart';
+import '../review/ui/reviews.dart';
+import '../root/ui/root.dart';
 import '../worker/ui/create_or_update_worker.dart';
 import '../worker/ui/worker.dart';
 import 'router.gr.dart';
@@ -26,14 +30,27 @@ import 'router.gr.dart';
 class AppRouter extends $AppRouter {
   @override
   final List<AutoRoute> routes = [
-    RedirectRoute(path: '/', redirectTo: DevelopmentItemsPage.path),
     AutoRoute(
-      path: MapPage.path,
-      page: MapRoute.page,
-    ),
-    AutoRoute(
-      path: ChatRoomsPage.path,
-      page: ChatRoomsRoute.page,
+      path: RootPage.path,
+      page: RootRoute.page,
+      children: [
+        AutoRoute(
+          path: MapPage.path,
+          page: MapRoute.page,
+        ),
+        AutoRoute(
+          path: ChatRoomsPage.path,
+          page: ChatRoomsRoute.page,
+        ),
+        AutoRoute(
+          path: ReviewsPage.path,
+          page: ReviewsRoute.page,
+        ),
+        AutoRoute(
+          path: MyAccountPage.path,
+          page: MyAccountRoute.page,
+        ),
+      ],
     ),
     AutoRoute(
       path: ChatRoomPage.path,
@@ -77,6 +94,10 @@ class AppRouter extends $AppRouter {
     AutoRoute(
       path: DevelopmentItemsPage.path,
       page: DevelopmentItemsRoute.page,
+    ),
+    AutoRoute(
+      path: EmailAndPasswordSignInPage.path,
+      page: EmailAndPasswordSignInRoute.page,
     ),
     AutoRoute(
       path: FirebaseStorageSamplePage.path,

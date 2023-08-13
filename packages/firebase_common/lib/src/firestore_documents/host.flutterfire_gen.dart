@@ -8,8 +8,9 @@ class ReadHost {
   const ReadHost({
     required this.hostId,
     required this.path,
-    required this.displayName,
     required this.imageUrl,
+    required this.displayName,
+    required this.introduction,
     required this.hostTypes,
     required this.urls,
     required this.createdAt,
@@ -20,37 +21,35 @@ class ReadHost {
 
   final String path;
 
+  final String imageUrl;
+
   final String displayName;
 
-  final String imageUrl;
+  final String introduction;
 
   final Set<HostType> hostTypes;
 
   final List<String> urls;
 
-  final SealedTimestamp createdAt;
+  final DateTime? createdAt;
 
-  final SealedTimestamp updatedAt;
+  final DateTime? updatedAt;
 
   factory ReadHost._fromJson(Map<String, dynamic> json) {
     return ReadHost(
       hostId: json['hostId'] as String,
       path: json['path'] as String,
-      displayName: json['displayName'] as String? ?? '',
       imageUrl: json['imageUrl'] as String? ?? '',
+      displayName: json['displayName'] as String? ?? '',
+      introduction: json['introduction'] as String? ?? '',
       hostTypes: json['hostTypes'] == null
           ? const <HostType>{}
           : _hostTypesConverter.fromJson(json['hostTypes'] as List<dynamic>?),
       urls:
           (json['urls'] as List<dynamic>?)?.map((e) => e as String).toList() ??
               const <String>[],
-      createdAt: json['createdAt'] == null
-          ? const ServerTimestamp()
-          : sealedTimestampConverter.fromJson(json['createdAt'] as Object),
-      updatedAt: json['updatedAt'] == null
-          ? const ServerTimestamp()
-          : alwaysUseServerTimestampSealedTimestampConverter
-              .fromJson(json['updatedAt'] as Object),
+      createdAt: (json['createdAt'] as Timestamp?)?.toDate(),
+      updatedAt: (json['updatedAt'] as Timestamp?)?.toDate(),
     );
   }
 
@@ -66,117 +65,118 @@ class ReadHost {
 
 class CreateHost {
   const CreateHost({
-    required this.displayName,
     this.imageUrl = '',
-    this.hostTypes = const <HostType>{},
+    required this.displayName,
+    required this.introduction,
+    required this.hostTypes,
     this.urls = const <String>[],
-    this.createdAt = const ServerTimestamp(),
-    this.updatedAt = const ServerTimestamp(),
   });
 
-  final String displayName;
   final String imageUrl;
+  final String displayName;
+  final String introduction;
   final Set<HostType> hostTypes;
   final List<String> urls;
-  final SealedTimestamp createdAt;
-  final SealedTimestamp updatedAt;
 
   Map<String, dynamic> toJson() {
     return {
-      'displayName': displayName,
       'imageUrl': imageUrl,
+      'displayName': displayName,
+      'introduction': introduction,
       'hostTypes': _hostTypesConverter.toJson(hostTypes),
       'urls': urls,
-      'createdAt': sealedTimestampConverter.toJson(createdAt),
-      'updatedAt':
-          alwaysUseServerTimestampSealedTimestampConverter.toJson(updatedAt),
+      'createdAt': FieldValue.serverTimestamp(),
+      'updatedAt': FieldValue.serverTimestamp(),
     };
   }
 }
 
 class UpdateHost {
   const UpdateHost({
-    this.displayName,
     this.imageUrl,
+    this.displayName,
+    this.introduction,
     this.hostTypes,
     this.urls,
     this.createdAt,
-    this.updatedAt = const ServerTimestamp(),
   });
 
-  final String? displayName;
   final String? imageUrl;
+  final String? displayName;
+  final String? introduction;
   final Set<HostType>? hostTypes;
   final List<String>? urls;
-  final SealedTimestamp? createdAt;
-  final SealedTimestamp? updatedAt;
+  final DateTime? createdAt;
 
   Map<String, dynamic> toJson() {
     return {
-      if (displayName != null) 'displayName': displayName,
       if (imageUrl != null) 'imageUrl': imageUrl,
+      if (displayName != null) 'displayName': displayName,
+      if (introduction != null) 'introduction': introduction,
       if (hostTypes != null)
         'hostTypes': _hostTypesConverter.toJson(hostTypes!),
       if (urls != null) 'urls': urls,
-      if (createdAt != null)
-        'createdAt': sealedTimestampConverter.toJson(createdAt!),
-      'updatedAt': updatedAt == null
-          ? const ServerTimestamp()
-          : alwaysUseServerTimestampSealedTimestampConverter.toJson(updatedAt!),
+      if (createdAt != null) 'createdAt': createdAt,
+      'updatedAt': FieldValue.serverTimestamp(),
     };
   }
 }
 
-/// A [CollectionReference] to hosts collection to read.
+class DeleteHost {}
+
+/// Provides a reference to the hosts collection for reading.
 final readHostCollectionReference =
     FirebaseFirestore.instance.collection('hosts').withConverter<ReadHost>(
           fromFirestore: (ds, _) => ReadHost.fromDocumentSnapshot(ds),
-          toFirestore: (obj, _) => throw UnimplementedError(),
+          toFirestore: (_, __) => throw UnimplementedError(),
         );
 
-/// A [DocumentReference] to host document to read.
+/// Provides a reference to a host document for reading.
 DocumentReference<ReadHost> readHostDocumentReference({
   required String hostId,
 }) =>
     readHostCollectionReference.doc(hostId);
 
-/// A [CollectionReference] to hosts collection to create.
+/// Provides a reference to the hosts collection for creating.
 final createHostCollectionReference =
     FirebaseFirestore.instance.collection('hosts').withConverter<CreateHost>(
-          fromFirestore: (ds, _) => throw UnimplementedError(),
+          fromFirestore: (_, __) => throw UnimplementedError(),
           toFirestore: (obj, _) => obj.toJson(),
         );
 
-/// A [DocumentReference] to host document to create.
+/// Provides a reference to a host document for creating.
 DocumentReference<CreateHost> createHostDocumentReference({
   required String hostId,
 }) =>
     createHostCollectionReference.doc(hostId);
 
-/// A [CollectionReference] to hosts collection to update.
+/// Provides a reference to the hosts collection for updating.
 final updateHostCollectionReference =
     FirebaseFirestore.instance.collection('hosts').withConverter<UpdateHost>(
-          fromFirestore: (ds, _) => throw UnimplementedError(),
+          fromFirestore: (_, __) => throw UnimplementedError(),
           toFirestore: (obj, _) => obj.toJson(),
         );
 
-/// A [DocumentReference] to host document to update.
+/// Provides a reference to a host document for updating.
 DocumentReference<UpdateHost> updateHostDocumentReference({
   required String hostId,
 }) =>
     updateHostCollectionReference.doc(hostId);
 
-/// A [CollectionReference] to hosts collection to delete.
+/// Provides a reference to the hosts collection for deleting.
 final deleteHostCollectionReference =
-    FirebaseFirestore.instance.collection('hosts');
+    FirebaseFirestore.instance.collection('hosts').withConverter<DeleteHost>(
+          fromFirestore: (_, __) => throw UnimplementedError(),
+          toFirestore: (_, __) => throw UnimplementedError(),
+        );
 
-/// A [DocumentReference] to host document to delete.
-DocumentReference<Object?> deleteHostDocumentReference({
+/// Provides a reference to a host document for deleting.
+DocumentReference<DeleteHost> deleteHostDocumentReference({
   required String hostId,
 }) =>
     deleteHostCollectionReference.doc(hostId);
 
-/// A query manager to execute query against [Host].
+/// Manages queries against the hosts collection.
 class HostQuery {
   /// Fetches [ReadHost] documents.
   Future<List<ReadHost>> fetchDocuments({
@@ -221,7 +221,7 @@ class HostQuery {
     });
   }
 
-  /// Fetches a specified [ReadHost] document.
+  /// Fetches a specific [ReadHost] document.
   Future<ReadHost?> fetchDocument({
     required String hostId,
     GetOptions? options,
@@ -232,7 +232,7 @@ class HostQuery {
     return ds.data();
   }
 
-  /// Subscribes a specified [Host] document.
+  /// Subscribes a specific [Host] document.
   Stream<ReadHost?> subscribeDocument({
     required String hostId,
     bool includeMetadataChanges = false,
@@ -263,7 +263,7 @@ class HostQuery {
         hostId: hostId,
       ).set(createHost, options);
 
-  /// Updates a specified [Host] document.
+  /// Updates a specific [Host] document.
   Future<void> update({
     required String hostId,
     required UpdateHost updateHost,
@@ -272,7 +272,7 @@ class HostQuery {
         hostId: hostId,
       ).update(updateHost.toJson());
 
-  /// Deletes a specified [Host] document.
+  /// Deletes a specific [Host] document.
   Future<void> delete({
     required String hostId,
   }) =>

@@ -4,15 +4,35 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../firestore_repository.dart';
 import '../user/user_mode.dart';
 
+/// 指定した `ReadChatRoom` における自分の [ReadStatus] を購読する [StreamProvider].
+final myReadStatusStreamProvider =
+    StreamProvider.family.autoDispose<ReadReadStatus?, ReadChatRoom>(
+  (ref, readChatRoom) {
+    final userMode = ref.watch(userModeStateProvider);
+    switch (userMode) {
+      case UserMode.worker:
+        return ref.watch(readStatusRepositoryProvider).subscribeReadStatus(
+              chatRoomId: readChatRoom.chatRoomId,
+              userId: readChatRoom.workerId,
+            );
+      case UserMode.host:
+        return ref.watch(readStatusRepositoryProvider).subscribeReadStatus(
+              chatRoomId: readChatRoom.chatRoomId,
+              userId: readChatRoom.hostId,
+            );
+    }
+  },
+);
+
 /// チャット相手が最後に読んだ日時を取得する [Provider].
 final chatPartnerLastReadAtProvider =
     Provider.family.autoDispose<DateTime?, ReadChatRoom>((ref, readChatRoom) {
   final readStatus =
       ref.watch(_chatPartnerReadStatusStreamProvider(readChatRoom)).valueOrNull;
-  return readStatus?.lastReadAt.dateTime;
+  return readStatus?.lastReadAt;
 });
 
-/// チャット相手の [ReadStatus] を購読する [StreamProvider].
+/// 指定した `ReadChatRoom` におけるチャット相手の [ReadStatus] を購読する [StreamProvider].
 final _chatPartnerReadStatusStreamProvider =
     StreamProvider.family.autoDispose<ReadReadStatus?, ReadChatRoom>(
   (ref, readChatRoom) {

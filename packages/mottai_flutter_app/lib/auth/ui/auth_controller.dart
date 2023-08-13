@@ -48,6 +48,24 @@ class AuthController {
     }
   }
 
+  /// メールアドレスとパスワードでサインする。
+  /// サインイン後、必要性を確認して [UserMode] を `UserMode.Host` にする。
+  /// デバッグ目的でのみ使用する。
+  Future<void> signInWithEmailAndPassword({
+    required String email,
+    required String password,
+  }) async {
+    try {
+      final userCredential = await _authService.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      await _maybeSetUserModeToHost(userCredential);
+    } on AppException catch (e) {
+      _appScaffoldMessengerController.showSnackBarByException(e);
+    }
+  }
+
   /// 選択した [SignInMethod] でサインインする。サインインが済んだユーザーの
   /// [UserCredential] を返す。
   /// 各種の例外が発生した場合には適切なメッセージを入れて [AppException] を
@@ -117,4 +135,6 @@ class AuthController {
       _appScaffoldMessengerController.showSnackBarByFirebaseException(e);
     }
   }
+  /// [FirebaseAuth] からサインアウトする。
+  Future<void> signOut() => _authService.signOut();
 }

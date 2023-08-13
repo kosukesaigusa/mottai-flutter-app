@@ -9,13 +9,14 @@ class ReadJob {
     required this.jobId,
     required this.path,
     required this.hostId,
+    required this.imageUrl,
     required this.title,
-    required this.content,
     required this.place,
-    required this.accessTypes,
-    required this.accessDescription,
+    required this.content,
     required this.belongings,
     required this.reward,
+    required this.accessDescription,
+    required this.accessTypes,
     required this.comment,
     required this.createdAt,
     required this.updatedAt,
@@ -27,49 +28,47 @@ class ReadJob {
 
   final String hostId;
 
-  final String title;
+  final String imageUrl;
 
-  final String content;
+  final String title;
 
   final String place;
 
-  final Set<AccessType> accessTypes;
-
-  final String accessDescription;
+  final String content;
 
   final String belongings;
 
   final String reward;
 
+  final String accessDescription;
+
+  final Set<AccessType> accessTypes;
+
   final String comment;
 
-  final SealedTimestamp createdAt;
+  final DateTime? createdAt;
 
-  final SealedTimestamp updatedAt;
+  final DateTime? updatedAt;
 
   factory ReadJob._fromJson(Map<String, dynamic> json) {
     return ReadJob(
       jobId: json['jobId'] as String,
       path: json['path'] as String,
       hostId: json['hostId'] as String,
+      imageUrl: json['imageUrl'] as String? ?? '',
       title: json['title'] as String? ?? '',
-      content: json['content'] as String? ?? '',
       place: json['place'] as String? ?? '',
+      content: json['content'] as String? ?? '',
+      belongings: json['belongings'] as String? ?? '',
+      reward: json['reward'] as String? ?? '',
+      accessDescription: json['accessDescription'] as String? ?? '',
       accessTypes: json['accessTypes'] == null
           ? const <AccessType>{}
           : _accessTypesConverter
               .fromJson(json['accessTypes'] as List<dynamic>?),
-      accessDescription: json['accessDescription'] as String? ?? '',
-      belongings: json['belongings'] as String? ?? '',
-      reward: json['reward'] as String? ?? '',
       comment: json['comment'] as String? ?? '',
-      createdAt: json['createdAt'] == null
-          ? const ServerTimestamp()
-          : sealedTimestampConverter.fromJson(json['createdAt'] as Object),
-      updatedAt: json['updatedAt'] == null
-          ? const ServerTimestamp()
-          : alwaysUseServerTimestampSealedTimestampConverter
-              .fromJson(json['updatedAt'] as Object),
+      createdAt: (json['createdAt'] as Timestamp?)?.toDate(),
+      updatedAt: (json['updatedAt'] as Timestamp?)?.toDate(),
     );
   }
 
@@ -86,44 +85,42 @@ class ReadJob {
 class CreateJob {
   const CreateJob({
     required this.hostId,
+    this.imageUrl = '',
     required this.title,
-    required this.content,
     required this.place,
-    this.accessTypes = const <AccessType>{},
-    this.accessDescription = '',
+    required this.content,
     required this.belongings,
     required this.reward,
+    this.accessDescription = '',
+    this.accessTypes = const <AccessType>{},
     this.comment = '',
-    this.createdAt = const ServerTimestamp(),
-    this.updatedAt = const ServerTimestamp(),
   });
 
   final String hostId;
+  final String imageUrl;
   final String title;
-  final String content;
   final String place;
-  final Set<AccessType> accessTypes;
-  final String accessDescription;
+  final String content;
   final String belongings;
   final String reward;
+  final String accessDescription;
+  final Set<AccessType> accessTypes;
   final String comment;
-  final SealedTimestamp createdAt;
-  final SealedTimestamp updatedAt;
 
   Map<String, dynamic> toJson() {
     return {
       'hostId': hostId,
+      'imageUrl': imageUrl,
       'title': title,
-      'content': content,
       'place': place,
-      'accessTypes': _accessTypesConverter.toJson(accessTypes),
-      'accessDescription': accessDescription,
+      'content': content,
       'belongings': belongings,
       'reward': reward,
+      'accessDescription': accessDescription,
+      'accessTypes': _accessTypesConverter.toJson(accessTypes),
       'comment': comment,
-      'createdAt': sealedTimestampConverter.toJson(createdAt),
-      'updatedAt':
-          alwaysUseServerTimestampSealedTimestampConverter.toJson(updatedAt),
+      'createdAt': FieldValue.serverTimestamp(),
+      'updatedAt': FieldValue.serverTimestamp(),
     };
   }
 }
@@ -131,101 +128,104 @@ class CreateJob {
 class UpdateJob {
   const UpdateJob({
     this.hostId,
+    this.imageUrl,
     this.title,
-    this.content,
     this.place,
-    this.accessTypes,
-    this.accessDescription,
+    this.content,
     this.belongings,
     this.reward,
+    this.accessDescription,
+    this.accessTypes,
     this.comment,
     this.createdAt,
-    this.updatedAt = const ServerTimestamp(),
   });
 
   final String? hostId;
+  final String? imageUrl;
   final String? title;
-  final String? content;
   final String? place;
-  final Set<AccessType>? accessTypes;
-  final String? accessDescription;
+  final String? content;
   final String? belongings;
   final String? reward;
+  final String? accessDescription;
+  final Set<AccessType>? accessTypes;
   final String? comment;
-  final SealedTimestamp? createdAt;
-  final SealedTimestamp? updatedAt;
+  final DateTime? createdAt;
 
   Map<String, dynamic> toJson() {
     return {
       if (hostId != null) 'hostId': hostId,
+      if (imageUrl != null) 'imageUrl': imageUrl,
       if (title != null) 'title': title,
-      if (content != null) 'content': content,
       if (place != null) 'place': place,
-      if (accessTypes != null)
-        'accessTypes': _accessTypesConverter.toJson(accessTypes!),
-      if (accessDescription != null) 'accessDescription': accessDescription,
+      if (content != null) 'content': content,
       if (belongings != null) 'belongings': belongings,
       if (reward != null) 'reward': reward,
+      if (accessDescription != null) 'accessDescription': accessDescription,
+      if (accessTypes != null)
+        'accessTypes': _accessTypesConverter.toJson(accessTypes!),
       if (comment != null) 'comment': comment,
-      if (createdAt != null)
-        'createdAt': sealedTimestampConverter.toJson(createdAt!),
-      'updatedAt': updatedAt == null
-          ? const ServerTimestamp()
-          : alwaysUseServerTimestampSealedTimestampConverter.toJson(updatedAt!),
+      if (createdAt != null) 'createdAt': createdAt,
+      'updatedAt': FieldValue.serverTimestamp(),
     };
   }
 }
 
-/// A [CollectionReference] to jobs collection to read.
+class DeleteJob {}
+
+/// Provides a reference to the jobs collection for reading.
 final readJobCollectionReference =
     FirebaseFirestore.instance.collection('jobs').withConverter<ReadJob>(
           fromFirestore: (ds, _) => ReadJob.fromDocumentSnapshot(ds),
-          toFirestore: (obj, _) => throw UnimplementedError(),
+          toFirestore: (_, __) => throw UnimplementedError(),
         );
 
-/// A [DocumentReference] to job document to read.
+/// Provides a reference to a job document for reading.
 DocumentReference<ReadJob> readJobDocumentReference({
   required String jobId,
 }) =>
     readJobCollectionReference.doc(jobId);
 
-/// A [CollectionReference] to jobs collection to create.
+/// Provides a reference to the jobs collection for creating.
 final createJobCollectionReference =
     FirebaseFirestore.instance.collection('jobs').withConverter<CreateJob>(
-          fromFirestore: (ds, _) => throw UnimplementedError(),
+          fromFirestore: (_, __) => throw UnimplementedError(),
           toFirestore: (obj, _) => obj.toJson(),
         );
 
-/// A [DocumentReference] to job document to create.
+/// Provides a reference to a job document for creating.
 DocumentReference<CreateJob> createJobDocumentReference({
   required String jobId,
 }) =>
     createJobCollectionReference.doc(jobId);
 
-/// A [CollectionReference] to jobs collection to update.
+/// Provides a reference to the jobs collection for updating.
 final updateJobCollectionReference =
     FirebaseFirestore.instance.collection('jobs').withConverter<UpdateJob>(
-          fromFirestore: (ds, _) => throw UnimplementedError(),
+          fromFirestore: (_, __) => throw UnimplementedError(),
           toFirestore: (obj, _) => obj.toJson(),
         );
 
-/// A [DocumentReference] to job document to update.
+/// Provides a reference to a job document for updating.
 DocumentReference<UpdateJob> updateJobDocumentReference({
   required String jobId,
 }) =>
     updateJobCollectionReference.doc(jobId);
 
-/// A [CollectionReference] to jobs collection to delete.
+/// Provides a reference to the jobs collection for deleting.
 final deleteJobCollectionReference =
-    FirebaseFirestore.instance.collection('jobs');
+    FirebaseFirestore.instance.collection('jobs').withConverter<DeleteJob>(
+          fromFirestore: (_, __) => throw UnimplementedError(),
+          toFirestore: (_, __) => throw UnimplementedError(),
+        );
 
-/// A [DocumentReference] to job document to delete.
-DocumentReference<Object?> deleteJobDocumentReference({
+/// Provides a reference to a job document for deleting.
+DocumentReference<DeleteJob> deleteJobDocumentReference({
   required String jobId,
 }) =>
     deleteJobCollectionReference.doc(jobId);
 
-/// A query manager to execute query against [Job].
+/// Manages queries against the jobs collection.
 class JobQuery {
   /// Fetches [ReadJob] documents.
   Future<List<ReadJob>> fetchDocuments({
@@ -270,7 +270,7 @@ class JobQuery {
     });
   }
 
-  /// Fetches a specified [ReadJob] document.
+  /// Fetches a specific [ReadJob] document.
   Future<ReadJob?> fetchDocument({
     required String jobId,
     GetOptions? options,
@@ -281,7 +281,7 @@ class JobQuery {
     return ds.data();
   }
 
-  /// Subscribes a specified [Job] document.
+  /// Subscribes a specific [Job] document.
   Stream<ReadJob?> subscribeDocument({
     required String jobId,
     bool includeMetadataChanges = false,
@@ -312,7 +312,7 @@ class JobQuery {
         jobId: jobId,
       ).set(createJob, options);
 
-  /// Updates a specified [Job] document.
+  /// Updates a specific [Job] document.
   Future<void> update({
     required String jobId,
     required UpdateJob updateJob,
@@ -321,7 +321,7 @@ class JobQuery {
         jobId: jobId,
       ).update(updateJob.toJson());
 
-  /// Deletes a specified [Job] document.
+  /// Deletes a specific [Job] document.
   Future<void> delete({
     required String jobId,
   }) =>

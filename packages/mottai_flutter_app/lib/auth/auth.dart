@@ -10,6 +10,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 import '../firestore_repository.dart';
+import '../user/user_mode.dart';
 import '../user/worker.dart';
 
 /// Firebase Console の Authentication で設定できるサインイン方法の種別。
@@ -58,6 +59,7 @@ final authServiceProvider = Provider.autoDispose<AuthService>(
   (ref) => AuthService(
     workerService: ref.watch(workerServiceProvider),
     userSocialLoginRepository: ref.watch(userSocialLoginRepositoryProvider),
+    userModeStateController: ref.watch(userModeStateProvider.notifier),
   ),
 );
 
@@ -66,14 +68,16 @@ class AuthService {
   const AuthService({
     required WorkerService workerService,
     required UserSocialLoginRepository userSocialLoginRepository,
+    required StateController<UserMode> userModeStateController,
   })  : _workerService = workerService,
-        _userSocialLoginRepository = userSocialLoginRepository;
+        _userSocialLoginRepository = userSocialLoginRepository,
+        _userModeStateController = userModeStateController;
 
   static final _auth = FirebaseAuth.instance;
 
   final WorkerService _workerService;
-
   final UserSocialLoginRepository _userSocialLoginRepository;
+  final StateController<UserMode> _userModeStateController;
 
   // TODO: 開発中のみ使用する。リリース時には消すか、あとで デバッグモード or
   // 開発環境接続時のみ使用可能にする。
@@ -166,9 +170,12 @@ class AuthService {
   }
 
   /// [FirebaseAuth] からサインアウトする。
+  /// [GoogleSignIn] からもサインアウトする。
+  /// また、[UserMode] を `UserMode.worker` に戻す。
   Future<void> signOut() async {
     await _auth.signOut();
     await GoogleSignIn().signOut();
+    _userModeStateController.update((state) => UserMode.worker);
   }
 
   /// [UserSocialLogin] の作成

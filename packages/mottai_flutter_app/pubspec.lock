@@ -658,26 +658,18 @@ packages:
     dependency: transitive
     description:
       name: flutterfire_gen_annotation
-      sha256: "2ef9ad19c429faffb7963066086a1cbbfebda871b1d40f10344046ba62511d30"
+      sha256: f4a18f11697bf2070ac14bcedd1f32fb89d564e5c6cadcaef6c7e32dbf19c596
       url: "https://pub.dev"
     source: hosted
-    version: "0.1.0-dev.2"
+    version: "0.1.0-dev.3"
   flutterfire_gen_utils:
     dependency: transitive
     description:
       name: flutterfire_gen_utils
-      sha256: bd0e6c0228671660ee2b0432c5700b2c42016e706b789e8ed47f4e65055d1b4d
+      sha256: "7e19de6ec3f0bbbb067be2f245b4e0a2cc2051b481f9312b6aa15f9a726a86e0"
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.1-dev.2"
-  flutterfire_json_converters:
-    dependency: transitive
-    description:
-      name: flutterfire_json_converters
-      sha256: fef0ed633d4b8b31e097698a4c6112f6fe59bcfa9ab0e408ecc824cd8fc1c467
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.0.6"
+    version: "0.0.1-dev.3"
   font_awesome_flutter:
     dependency: "direct main"
     description:

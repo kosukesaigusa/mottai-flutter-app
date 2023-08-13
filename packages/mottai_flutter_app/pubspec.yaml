@@ -13,7 +13,7 @@ dependencies:
   # 必要がなくなるようにリファクタする or geoflutterfire_plus 自体を改善する。
   cloud_firestore: ^4.8.4
   cloud_functions: ^4.3.4
-  crypto: ^3.0.3
+  crypto: ^3.0.1
   dart_flutter_common:
     path: ../dart_flutter_common
   firebase_auth: ^4.7.2

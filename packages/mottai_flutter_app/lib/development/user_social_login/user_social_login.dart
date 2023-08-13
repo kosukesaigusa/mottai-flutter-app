@@ -49,7 +49,8 @@ class UserSocialLoginSamplePage extends ConsumerWidget {
                             shouldLink: !data.isGoogleEnabled,
                           );
                     },
-                    child: Text(data.isGoogleEnabled ? '解除' : 'Google連携する'),
+                    child:
+                        Text(data.isGoogleEnabled ? 'Google解除' : 'Google連携する'),
                   ),
                   ElevatedButton(
                     onPressed: () {
@@ -59,7 +60,7 @@ class UserSocialLoginSamplePage extends ConsumerWidget {
                             shouldLink: !data.isAppleEnabled,
                           );
                     },
-                    child: Text(data.isAppleEnabled ? '解除' : 'Apple連携する'),
+                    child: Text(data.isAppleEnabled ? 'Apple解除' : 'Apple連携する'),
                   ),
                   ElevatedButton(
                     onPressed: () {
@@ -69,7 +70,7 @@ class UserSocialLoginSamplePage extends ConsumerWidget {
                             shouldLink: !data.isLINEEnabled,
                           );
                     },
-                    child: Text(data.isLINEEnabled ? '解除' : 'LINE連携する'),
+                    child: Text(data.isLINEEnabled ? 'LINE解除' : 'LINE連携する'),
                   ),
                 ],
               );

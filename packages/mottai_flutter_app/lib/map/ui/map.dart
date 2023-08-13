@@ -359,7 +359,6 @@ class _HostLocationPageViewItem extends ConsumerWidget {
                             ),
                             const Gap(4),
                             SelectableChips<HostType>(
-                              padding: EdgeInsets.zero,
                               allItems: readHost.hostTypes,
                               labels: Map.fromEntries(
                                 readHost.hostTypes.map(

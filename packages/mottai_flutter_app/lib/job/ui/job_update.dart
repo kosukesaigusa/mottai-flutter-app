@@ -4,9 +4,9 @@ import 'package:firebase_common/firebase_common.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../../auth/auth.dart';
 import '../../development/firebase_storage/firebase_storage.dart';
 import '../../development/firebase_storage/ui/firebase_storage_controller.dart';
-import '../../user/user.dart' as my_user;
 import '../job.dart';
 import 'job_controller.dart';
 
@@ -36,8 +36,7 @@ class JobUpdatePage extends ConsumerWidget {
                 return const Center(child: Text('お手伝いが存在していません。'));
               }
               // UrlのhostIdとログイン中のユーザーのhostIdが違う場合
-              if (job.hostId !=
-                  ref.watch(my_user.hostStreamProvider).valueOrNull?.hostId) {
+              if (job.hostId != ref.watch(userIdProvider)) {
                 return const Center(
                   child: Text('編集の権限がありません。'),
                 );

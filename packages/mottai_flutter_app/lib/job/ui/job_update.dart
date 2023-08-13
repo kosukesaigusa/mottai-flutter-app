@@ -6,10 +6,9 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../development/firebase_storage/firebase_storage.dart';
 import '../../development/firebase_storage/ui/firebase_storage_controller.dart';
+import '../../user/user.dart' as my_user;
 import '../job.dart';
 import 'job_controller.dart';
-
-//TODO: jobのhostIdとログイン中のhostIdを比較する。
 
 /// 仕事情報更新ページ。
 @RoutePage()
@@ -36,13 +35,20 @@ class JobUpdatePage extends ConsumerWidget {
               if (job == null) {
                 return const Center(child: Text('お手伝いが存在していません。'));
               }
+              // UrlのhostIdとログイン中のユーザーのhostIdが違う場合
+              if (job.hostId !=
+                  ref.watch(my_user.hostStreamProvider).valueOrNull?.hostId) {
+                return const Center(
+                  child: Text('編集の権限がありません。'),
+                );
+              }
               return _JobUpdate(
                 job: job,
               );
             },
             loading: () => const Center(child: CircularProgressIndicator()),
             error: (error, stackTrace) => const Center(
-              child: Text('通信に失敗しました。'),
+              child: Text('仕事情報が取得できませんでした。'),
             ),
           ),
     );

@@ -4,7 +4,8 @@ import 'package:flutter_line_sdk/flutter_line_sdk.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
-import 'firebase_options.dart';
+import 'environment/src/firebase_options.dart';
+import 'environment/src/flavor_type.dart';
 import 'package_info.dart';
 import 'push_notification/firebase_messaging.dart';
 import 'router/router.dart';
@@ -13,10 +14,13 @@ import 'user/user.dart';
 import 'user/user_mode.dart';
 
 void main() async {
+  // 実行されている環境名を取得する
+  const flavorName = String.fromEnvironment('flavor');
+  final flavor = Flavor.values.byName(flavorName);
+
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  // 環境ごとに読み込むfirebase情報を分ける
+  await Firebase.initializeApp(options: firebaseOptionsWithFlavor(flavor));
   await LineSDK.instance
       .setup(const String.fromEnvironment('LINE_CHANNEL_ID'))
       .then((_) {

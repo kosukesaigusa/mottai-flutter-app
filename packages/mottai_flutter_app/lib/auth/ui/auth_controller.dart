@@ -118,10 +118,10 @@ class AuthController {
     required String userId,
   }) async {
     try {
-        await _authService.linkUserSocialLogin(
-          signInMethod: signInMethod,
-          userId: userId,
-        );
+      await _authService.linkUserSocialLogin(
+        signInMethod: signInMethod,
+        userId: userId,
+      );
     } on FirebaseException catch (e) {
       _appScaffoldMessengerController.showSnackBarByFirebaseException(e);
     }

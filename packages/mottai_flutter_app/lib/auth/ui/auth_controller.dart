@@ -109,24 +109,34 @@ class AuthController {
     }
   }
 
-  /// [SignInMethod] に基づいて、[AuthService] に定義されたソーシャルログインのリンク処理またはリンク解除処理を実行する。
+  /// [SignInMethod] に基づいて、[AuthService] に定義されたソーシャルログインのリンク処理を実行する。
   ///
   /// - `signInMethod` : リンクまたはリンク解除を行うソーシャルログインの方法。
   /// - `userId` : 操作対象のユーザーID。
-  /// - `shouldLink` : `true` の場合、ソーシャルログインをアカウントにリンクする。
-  ///                 `false` の場合、ソーシャルログインのリンクを解除する。
-  Future<void> updateUserSocialLogin({
+  Future<void> linkUserSocialLogin({
     required SignInMethod signInMethod,
     required String userId,
-    required bool shouldLink,
   }) async {
     try {
-      if (shouldLink) {
-        return _authService.linkUserSocialLogin(
+        await _authService.linkUserSocialLogin(
           signInMethod: signInMethod,
           userId: userId,
         );
-      }
+    } on FirebaseException catch (e) {
+      _appScaffoldMessengerController.showSnackBarByFirebaseException(e);
+    }
+    //TODO ログインをキャンセルした際のエラーハンドリングが適切にできていない。
+  }
+
+  /// [SignInMethod] に基づいて、[AuthService] に定義されたソーシャルログインのリンク解除処理を実行する。
+  ///
+  /// - `signInMethod` : リンクまたはリンク解除を行うソーシャルログインの方法。
+  /// - `userId` : 操作対象のユーザーID。
+  Future<void> unLinkUserSocialLogin({
+    required SignInMethod signInMethod,
+    required String userId,
+  }) async {
+    try {
       await _authService.unLinkUserSocialLogin(
         signInMethod: signInMethod,
         userId: userId,

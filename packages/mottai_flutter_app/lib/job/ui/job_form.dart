@@ -20,12 +20,44 @@ class JobForm extends ConsumerStatefulWidget {
 }
 
 class JobFormState extends ConsumerState<JobForm> {
+  /// フォームのグローバルキー
   final formKey = GlobalKey<FormState>();
+
+  /// 選択中のアクセスタイプ
   final List<AccessType> _selectedAccessTypes = [];
+
+  /// [Job.title] のテキストフィールド用コントローラー
+  late final TextEditingController _titleController;
+
+  /// [Job.place] のテキストフィールド用コントローラー
+  late final TextEditingController _locationController;
+
+  /// [Job.content] のテキストフィールド用コントローラー
+  late final TextEditingController _contentController;
+
+  /// [Job.belongings] のテキストフィールド用コントローラー
+  late final TextEditingController _belongingsController;
+
+  /// [Job.reward] のテキストフィールド用コントローラー
+  late final TextEditingController _rewardController;
+
+  /// [Job.accessDescription] のテキストフィールド用コントローラー
+  late final TextEditingController _accessDiscriptionController;
+
+  /// [Job.comment] のテキストフィールド用コントローラー
+  late final TextEditingController _commentController;
 
   @override
   void initState() {
     super.initState();
+    _titleController = TextEditingController(text: widget.job?.title);
+    _locationController = TextEditingController(text: widget.job?.place);
+    _contentController = TextEditingController(text: widget.job?.content);
+    _belongingsController = TextEditingController(text: widget.job?.belongings);
+    _rewardController = TextEditingController(text: widget.job?.reward);
+    _accessDiscriptionController =
+        TextEditingController(text: widget.job?.accessDescription);
+    _commentController = TextEditingController(text: widget.job?.comment);
     if (widget.job != null) {
       _selectedAccessTypes.addAll(widget.job!.accessTypes.toList());
     }
@@ -37,19 +69,6 @@ class JobFormState extends ConsumerState<JobForm> {
         ref.watch(firebaseStorageControllerProvider);
     final pickedImageFile = ref.watch(pickedImageFileStateProvider);
     final controller = ref.watch(jobControllerProvider);
-    final titleController = TextEditingController(text: widget.job?.title);
-    final locationController = TextEditingController(text: widget.job?.place);
-    final contentController = TextEditingController(text: widget.job?.content);
-    final belongingsController =
-        TextEditingController(text: widget.job?.belongings);
-    final rewardController = TextEditingController(text: widget.job?.reward);
-    final accessDiscriptionController =
-        TextEditingController(text: widget.job?.accessDescription);
-    final commentController = TextEditingController(text: widget.job?.comment);
-
-    final imageUrlProvider = StateProvider.autoDispose<String>(
-      (ref) => widget.job?.imageUrl ?? '',
-    );
     final jobId = widget.job?.jobId;
     late final Widget imageWidget;
 
@@ -66,11 +85,11 @@ class JobFormState extends ConsumerState<JobForm> {
     }
     // 画像が選択されている場合は画像を表示
     // 選択されていない場合は画像アイコンを表示
-    else if (ref.watch(imageUrlProvider) != '') {
+    else if (widget.job != null && widget.job?.imageUrl != '') {
       imageWidget = GenericImage.rectangle(
         onTap: firebaseStorageController.pickImageFromGallery,
         showDetailOnTap: false,
-        imageUrl: pickedImageFile?.path ?? ref.watch(imageUrlProvider),
+        imageUrl: pickedImageFile?.path ?? widget.job!.imageUrl,
         height: 300,
         width: null,
       );
@@ -107,14 +126,14 @@ class JobFormState extends ConsumerState<JobForm> {
                     description: 'お手伝いのタイトルを最大2行程度で入力してください。',
                     maxLines: 2,
                     defaultDisplayLines: 2,
-                    controller: titleController,
+                    controller: _titleController,
                     isRequired: true,
                   ),
                   _TextInputSection(
                     title: 'お手伝いの場所',
                     description:
                         'お手伝いを行う場所（農場や作業場所など）を入力してください。作業内容や曜日によって複数の場所の可能性がある場合は、それも入力してください。',
-                    controller: locationController,
+                    controller: _locationController,
                     isRequired: true,
                   ),
                   _TextInputSection(
@@ -122,27 +141,27 @@ class JobFormState extends ConsumerState<JobForm> {
                     description:
                         'お手伝いの作業内容、作業時間帯やその他の情報をできるだけ詳しくを入力してください。お手伝い可能な曜日や時間帯、時期や季節が限られている場合や、その他に事前にお知らせするべき条件や情報などがあれば、その内容も入力してください。',
                     defaultDisplayLines: 10,
-                    controller: contentController,
+                    controller: _contentController,
                     isRequired: true,
                   ),
                   _TextInputSection(
                     title: '持ち物',
                     description:
                         'お手伝いに必要な服装や持ち物などを書いてください。特に必要ない場合や貸出を行う場合はその内容も入力してください。',
-                    controller: belongingsController,
+                    controller: _belongingsController,
                     isRequired: true,
                   ),
                   _TextInputSection(
                     title: '報酬',
                     description: 'お手伝いをしてくれたワーカーにお渡しする報酬（食べ物など）を入力してください。',
-                    controller: rewardController,
+                    controller: _rewardController,
                     isRequired: true,
                   ),
                   _TextInputSection(
                     title: 'アクセス',
                     description:
                         'お手伝いの場所までのアクセス方法について補足説明をしてください。最寄りの駅やバス停まで送迎ができる場合などは、その内容も入力してください。',
-                    controller: accessDiscriptionController,
+                    controller: _accessDiscriptionController,
                     choices: {
                       for (final v in AccessType.values) v: v.label,
                     },
@@ -161,7 +180,7 @@ class JobFormState extends ConsumerState<JobForm> {
                     description:
                         'お手伝いを検討してくれるワーカーの方が、ぜひお手伝いをしてみたくなるようひとことや、募集するお手伝いの魅力を入力しましょう！',
                     defaultDisplayLines: 5,
-                    controller: commentController,
+                    controller: _commentController,
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 16, bottom: 32),
@@ -176,27 +195,27 @@ class JobFormState extends ConsumerState<JobForm> {
                           if (jobId != null) {
                             controller.updateJob(
                               jobId: jobId,
-                              title: titleController.text,
-                              place: locationController.text,
-                              content: contentController.text,
-                              belongings: belongingsController.text,
-                              reward: rewardController.text,
+                              title: _titleController.text,
+                              place: _locationController.text,
+                              content: _contentController.text,
+                              belongings: _belongingsController.text,
+                              reward: _rewardController.text,
                               accessDescription:
-                                  accessDiscriptionController.text,
-                              comment: commentController.text,
+                                  _accessDiscriptionController.text,
+                              comment: _commentController.text,
                               imageFile: pickedImageFile,
                               accessTypes: _selectedAccessTypes.toSet(),
                             );
                           } else {
                             controller.create(
-                              title: titleController.text,
-                              place: locationController.text,
-                              content: contentController.text,
-                              belongings: belongingsController.text,
-                              reward: rewardController.text,
+                              title: _titleController.text,
+                              place: _locationController.text,
+                              content: _contentController.text,
+                              belongings: _belongingsController.text,
+                              reward: _rewardController.text,
                               accessDescription:
-                                  accessDiscriptionController.text,
-                              comment: commentController.text,
+                                  _accessDiscriptionController.text,
+                              comment: _commentController.text,
                               imageFile: pickedImageFile,
                               accessTypes: _selectedAccessTypes.toSet(),
                             );

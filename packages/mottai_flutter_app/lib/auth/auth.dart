@@ -134,6 +134,10 @@ class AuthService {
     final customToken = response.data['customToken'] as String;
     final userCredential =
         await FirebaseAuth.instance.signInWithCustomToken(customToken);
+    await _createWorkerAndUserSocialLoginWhenFirstSignIn(
+      userCredential: userCredential,
+      signInMethod: SignInMethod.line,
+    );
     return userCredential;
   }
 

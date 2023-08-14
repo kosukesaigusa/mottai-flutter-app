@@ -7,10 +7,6 @@ import '../../auth/auth.dart';
 import '../../image/firebase_storage.dart';
 import '../job.dart';
 
-/// 現在選択中の [AccessType] を保持する [StateProvider].
-final selectedAccessTypeStateProvider = StateProvider<List<AccessType>>(
-    (_) => <AccessType>[AccessType.busAvailable]);
-
 final jobControllerProvider = Provider.autoDispose<JobController>(
   (ref) => JobController(
     jobService: ref.watch(jobServiceProvider),
@@ -35,7 +31,6 @@ class JobController {
   final FirebaseStorageService _firebaseStorageService;
   final String? _userId;
 
-  //TODO: 必須入力のバリデーション
   /// [Job] の情報を作成する。
   Future<void> create({
     required String title,

@@ -7,35 +7,50 @@ import '../../development/firebase_storage/firebase_storage.dart';
 import '../../development/firebase_storage/ui/firebase_storage_controller.dart';
 import 'job_controller.dart';
 
-class JobForm extends ConsumerWidget {
-  JobForm({
+class JobForm extends ConsumerStatefulWidget {
+  const JobForm({
     this.job,
     super.key,
   });
 
   final ReadJob? job;
-  final formKey = GlobalKey<FormState>();
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  JobFormState createState() => JobFormState();
+}
+
+class JobFormState extends ConsumerState<JobForm> {
+  final formKey = GlobalKey<FormState>();
+  final List<AccessType> _selectedAccessTypes = [];
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.job != null) {
+      _selectedAccessTypes.addAll(widget.job!.accessTypes.toList());
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final firebaseStorageController =
         ref.watch(firebaseStorageControllerProvider);
     final pickedImageFile = ref.watch(pickedImageFileStateProvider);
     final controller = ref.watch(jobControllerProvider);
-    final titleController = TextEditingController(text: job?.title);
-    final locationController = TextEditingController(text: job?.place);
-    final contentController = TextEditingController(text: job?.content);
-    final belongingsController = TextEditingController(text: job?.belongings);
-    final rewardController = TextEditingController(text: job?.reward);
+    final titleController = TextEditingController(text: widget.job?.title);
+    final locationController = TextEditingController(text: widget.job?.place);
+    final contentController = TextEditingController(text: widget.job?.content);
+    final belongingsController =
+        TextEditingController(text: widget.job?.belongings);
+    final rewardController = TextEditingController(text: widget.job?.reward);
     final accessDiscriptionController =
-        TextEditingController(text: job?.accessDescription);
-    final commentController = TextEditingController(text: job?.comment);
+        TextEditingController(text: widget.job?.accessDescription);
+    final commentController = TextEditingController(text: widget.job?.comment);
 
     final imageUrlProvider = StateProvider.autoDispose<String>(
-      (ref) => job?.imageUrl ?? '',
+      (ref) => widget.job?.imageUrl ?? '',
     );
-    final jobId = job?.jobId;
-
+    final jobId = widget.job?.jobId;
     late final Widget imageWidget;
 
     if (pickedImageFile != null) {
@@ -131,18 +146,14 @@ class JobForm extends ConsumerWidget {
                     choices: {
                       for (final v in AccessType.values) v: v.label,
                     },
-                    enableChoices: ref.watch(selectedAccessTypeStateProvider),
+                    enableChoices: _selectedAccessTypes,
                     onChoiceSelected: (item) {
-                      final selectedList = ref
-                          .read(selectedAccessTypeStateProvider.notifier)
-                          .state;
-                      if (selectedList.contains(item)) {
-                        selectedList.remove(item);
+                      if (_selectedAccessTypes.contains(item)) {
+                        _selectedAccessTypes.remove(item);
                       } else {
-                        selectedList.add(item as AccessType);
+                        _selectedAccessTypes.add(item as AccessType);
                       }
-                      ref.read(selectedAccessTypeStateProvider.notifier).state =
-                          List.from(selectedList);
+                      setState(() {});
                     },
                   ),
                   _TextInputSection(
@@ -162,10 +173,6 @@ class JobForm extends ConsumerWidget {
                             return;
                           }
 
-                          final accessTypes = ref
-                              .watch(selectedAccessTypeStateProvider)
-                              .toSet();
-
                           if (jobId != null) {
                             controller.updateJob(
                               jobId: jobId,
@@ -178,7 +185,7 @@ class JobForm extends ConsumerWidget {
                                   accessDiscriptionController.text,
                               comment: commentController.text,
                               imageFile: pickedImageFile,
-                              accessTypes: accessTypes,
+                              accessTypes: _selectedAccessTypes.toSet(),
                             );
                           } else {
                             controller.create(
@@ -191,7 +198,7 @@ class JobForm extends ConsumerWidget {
                                   accessDiscriptionController.text,
                               comment: commentController.text,
                               imageFile: pickedImageFile,
-                              accessTypes: accessTypes,
+                              accessTypes: _selectedAccessTypes.toSet(),
                             );
                           }
                         },

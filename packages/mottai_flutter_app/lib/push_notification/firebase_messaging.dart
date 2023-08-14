@@ -224,8 +224,8 @@ final _initializeLocalNotificationProvider = Provider.autoDispose(
   },
 );
 
-/// Map<String, dynamic> 型の通知から得られるデータから location や data を取り出して
-/// 画面遷移する共通処理を提供する Provider。
+/// `Map<String, dynamic>` 型の通知から得られるデータから location や data を取り出して
+/// 画面遷移する共通処理を提供する [Provider].
 final _handleNotificationDataProvider =
     Provider.autoDispose<Future<void> Function(Map<String, dynamic>)>(
   (ref) => (data) async {

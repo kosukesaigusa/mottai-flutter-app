@@ -42,32 +42,59 @@ class UserSocialLoginSamplePage extends ConsumerWidget {
               return Column(
                 children: [
                   ElevatedButton(
-                    onPressed: () {
-                      ref.read(authControllerProvider).updateUserSocialLogin(
+                    onPressed: () async {
+                      if (data.isGoogleEnabled) {
+                        return ref
+                            .read(authControllerProvider)
+                            .unLinkUserSocialLogin(
+                              signInMethod: SignInMethod.google,
+                              userId: userId,
+                            );
+                      }
+                      await ref
+                          .read(authControllerProvider)
+                          .linkUserSocialLogin(
                             signInMethod: SignInMethod.google,
                             userId: userId,
-                            shouldLink: !data.isGoogleEnabled,
                           );
                     },
                     child:
                         Text(data.isGoogleEnabled ? 'Google解除' : 'Google連携する'),
                   ),
                   ElevatedButton(
-                    onPressed: () {
-                      ref.read(authControllerProvider).updateUserSocialLogin(
+                    onPressed: () async {
+                      if (data.isAppleEnabled) {
+                        return ref
+                            .read(authControllerProvider)
+                            .unLinkUserSocialLogin(
+                              signInMethod: SignInMethod.apple,
+                              userId: userId,
+                            );
+                      }
+                      await ref
+                          .read(authControllerProvider)
+                          .linkUserSocialLogin(
                             signInMethod: SignInMethod.apple,
                             userId: userId,
-                            shouldLink: !data.isAppleEnabled,
                           );
                     },
                     child: Text(data.isAppleEnabled ? 'Apple解除' : 'Apple連携する'),
                   ),
                   ElevatedButton(
-                    onPressed: () {
-                      ref.read(authControllerProvider).updateUserSocialLogin(
+                    onPressed: () async {
+                      if (data.isLINEEnabled) {
+                        return ref
+                            .read(authControllerProvider)
+                            .unLinkUserSocialLogin(
+                              signInMethod: SignInMethod.line,
+                              userId: userId,
+                            );
+                      }
+                      await ref
+                          .read(authControllerProvider)
+                          .linkUserSocialLogin(
                             signInMethod: SignInMethod.line,
                             userId: userId,
-                            shouldLink: !data.isLINEEnabled,
                           );
                     },
                     child: Text(data.isLINEEnabled ? 'LINE解除' : 'LINE連携する'),

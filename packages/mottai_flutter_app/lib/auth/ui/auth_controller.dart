@@ -125,7 +125,7 @@ class AuthController {
     } on FirebaseException catch (e) {
       _appScaffoldMessengerController.showSnackBarByFirebaseException(e);
     }
-    //TODO ログインをキャンセルした際のエラーハンドリングが適切にできていない。
+    //TODO リンク処理の過程でログインをキャンセルした際のエラーハンドリングが適切にできていない。
   }
 
   /// [SignInMethod] に基づいて、[AuthService] に定義されたソーシャルログインのリンク解除処理を実行する。

@@ -6,9 +6,9 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../auth/auth.dart';
 import '../../job/job.dart';
 import '../../user/host.dart';
+import '../../user/ui/identity_dependent_builder.dart';
 import '../../user/ui/user_mode.dart';
 import 'create_or_update_host.dart';
 
@@ -50,8 +50,6 @@ class HostPageBody extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final hostImageUrl = ref.watch(hostImageUrlProvider(userId));
     final hostDisplayName = ref.watch(hostDisplayNameProvider(userId));
-    final loggedInUserId = ref.watch(userIdProvider);
-    final isMatchingUserId = loggedInUserId == userId;
     final readHost = ref.watch(hostFutureProvider(userId));
     return SingleChildScrollView(
       // TODO: Divider は横いっぱいに表示したいので Padding の水平方向の全体適用はやめたい。
@@ -74,26 +72,37 @@ class HostPageBody extends ConsumerWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                if (isMatchingUserId)
-                  CircleAvatar(
-                    backgroundColor: Theme.of(context).focusColor,
-                    child: IconButton(
-                      color: Theme.of(context).shadowColor,
-                      onPressed: () => context.router.pushNamed(
-                        CreateOrUpdateHostPage.location(
-                          userId: userId,
-                          actionType: ActionType.update.name,
+                IdentityDependentBuilder(
+                  buildForIdentity: () {
+                    return CircleAvatar(
+                      backgroundColor: Theme.of(context).focusColor,
+                      child: IconButton(
+                        color: Theme.of(context).shadowColor,
+                        onPressed: () => context.router.pushNamed(
+                          CreateOrUpdateHostPage.location(
+                            userId: userId,
+                            actionType: ActionType.update.name,
+                          ),
                         ),
+                        icon: const Icon(Icons.edit),
                       ),
-                      icon: const Icon(Icons.edit),
-                    ),
-                  ),
+                    );
+                  },
+                  targetUserId: userId,
+                ),
               ],
             ),
-            if (isMatchingUserId) ...[
-              const Gap(16),
-              const UserModeSection(),
-            ],
+            IdentityDependentBuilder(
+              buildForIdentity: () {
+                return const Column(
+                  children: [
+                    Gap(16),
+                    UserModeSection(),
+                  ],
+                );
+              },
+              targetUserId: userId,
+            ),
             const SizedBox(height: 24),
             // TODO 自己紹介をDBに追加する
             Section(
@@ -186,71 +195,78 @@ class HostPageBody extends ConsumerWidget {
                     ),
                   ),
             ),
-            if (isMatchingUserId) ...[
-              const Divider(height: 36),
-              Section(
-                title: 'ソーシャル連携',
-                titleStyle: Theme.of(context).textTheme.titleLarge,
-                content: const Column(
+            IdentityDependentBuilder(
+              buildForIdentity: () {
+                return Column(
                   children: [
-                    Row(
-                      children: [
-                        FaIcon(
-                          FontAwesomeIcons.google,
-                          size: 30,
-                        ),
-                        SizedBox(width: 10),
-                        Text('Google'),
-                        // TODO google連携済みかどうかで出し分けられるようにする
-                        Expanded(
-                          child: Align(
-                            alignment: Alignment.centerRight,
-                            child: Text('連携済み'),
+                    const Divider(height: 36),
+                    Section(
+                      title: 'ソーシャル連携',
+                      titleStyle: Theme.of(context).textTheme.titleLarge,
+                      content: const Column(
+                        children: [
+                          Row(
+                            children: [
+                              FaIcon(
+                                FontAwesomeIcons.google,
+                                size: 30,
+                              ),
+                              SizedBox(width: 10),
+                              Text('Google'),
+                              // TODO google連携済みかどうかで出し分けられるようにする
+                              Expanded(
+                                child: Align(
+                                  alignment: Alignment.centerRight,
+                                  child: Text('連携済み'),
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
-                      ],
+                          SizedBox(height: 12),
+                          Row(
+                            children: [
+                              FaIcon(
+                                FontAwesomeIcons.apple,
+                                size: 40,
+                              ),
+                              SizedBox(width: 10),
+                              Text('Apple'),
+                              // TODO apple連携済みかどうかで出し分けられるようにする
+                              Expanded(
+                                child: Align(
+                                  alignment: Alignment.centerRight,
+                                  child: Text('連携済み'),
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 12),
+                          Row(
+                            children: [
+                              FaIcon(
+                                FontAwesomeIcons.line,
+                                color: Color(0xff06c755),
+                                size: 30,
+                              ),
+                              SizedBox(width: 10),
+                              Text('LINE'),
+                              // TODO line連携済みかどうかで出し分けられるようにする
+                              Expanded(
+                                child: Align(
+                                  alignment: Alignment.centerRight,
+                                  child: Text('連携済み'),
+                                ),
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
                     ),
-                    SizedBox(height: 12),
-                    Row(
-                      children: [
-                        FaIcon(
-                          FontAwesomeIcons.apple,
-                          size: 40,
-                        ),
-                        SizedBox(width: 10),
-                        Text('Apple'),
-                        // TODO apple連携済みかどうかで出し分けられるようにする
-                        Expanded(
-                          child: Align(
-                            alignment: Alignment.centerRight,
-                            child: Text('連携済み'),
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 12),
-                    Row(
-                      children: [
-                        FaIcon(
-                          FontAwesomeIcons.line,
-                          color: Color(0xff06c755),
-                          size: 30,
-                        ),
-                        SizedBox(width: 10),
-                        Text('LINE'),
-                        // TODO line連携済みかどうかで出し分けられるようにする
-                        Expanded(
-                          child: Align(
-                            alignment: Alignment.centerRight,
-                            child: Text('連携済み'),
-                          ),
-                        ),
-                      ],
-                    )
                   ],
-                ),
-              ),
-            ],
+                );
+              },
+              targetUserId: userId,
+            ),
             const Gap(32),
           ],
         ),

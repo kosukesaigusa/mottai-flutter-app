@@ -1,6 +1,6 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 @RoutePage()
@@ -31,8 +31,24 @@ class _FirebaseStorageSampleState extends ConsumerState<FirebaseMessagingPage> {
         title: const Text('プッシュ通知のサンプル画面'),
       ),
       body: ListView(
-        children: const [
-          Gap(8),
+        children: [
+          const Padding(
+            padding: EdgeInsets.all(16),
+            child: Text(
+              'testNotificationsコレクションに適当なドキュメントを追加しそれをトリガーとしてプッシュ通知を送る',
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 48),
+            child: ElevatedButton(
+              onPressed: () {
+                FirebaseFirestore.instance
+                    .collection('testNotificatons')
+                    .add({'createdAt': Timestamp.now()});
+              },
+              child: const Text('Add testNotification collection'),
+            ),
+          ),
         ],
       ),
     );

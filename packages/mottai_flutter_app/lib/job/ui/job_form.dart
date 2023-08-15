@@ -131,23 +131,24 @@ class JobFormState extends ConsumerState<JobForm> {
                   ),
                   _TextInputSection(
                     title: 'お手伝いの場所',
-                    description:
-                        'お手伝いを行う場所（農場や作業場所など）を入力してください。作業内容や曜日によって複数の場所の可能性がある場合は、それも入力してください。',
+                    description: 'お手伝いを行う場所（農場や作業場所など）を入力してください。'
+                        '作業内容や曜日によって複数の場所の可能性がある場合は、それも入力してください。',
                     controller: _locationController,
                     isRequired: true,
                   ),
                   _TextInputSection(
                     title: 'お手伝いの内容',
-                    description:
-                        'お手伝いの作業内容、作業時間帯やその他の情報をできるだけ詳しくを入力してください。お手伝い可能な曜日や時間帯、時期や季節が限られている場合や、その他に事前にお知らせするべき条件や情報などがあれば、その内容も入力してください。',
+                    description: 'お手伝いの作業内容、作業時間帯やその他の情報をできるだけ詳しくを入力してください。'
+                        'お手伝い可能な曜日や時間帯、時期や季節が限られている場合や、'
+                        'その他に事前にお知らせするべき条件や情報などがあれば、その内容も入力してください。',
                     defaultDisplayLines: 10,
                     controller: _contentController,
                     isRequired: true,
                   ),
                   _TextInputSection(
                     title: '持ち物',
-                    description:
-                        'お手伝いに必要な服装や持ち物などを書いてください。特に必要ない場合や貸出を行う場合はその内容も入力してください。',
+                    description: 'お手伝いに必要な服装や持ち物などを書いてください。'
+                        '特に必要ない場合や貸出を行う場合はその内容も入力してください。',
                     controller: _belongingsController,
                     isRequired: true,
                   ),
@@ -159,8 +160,8 @@ class JobFormState extends ConsumerState<JobForm> {
                   ),
                   _TextInputSection(
                     title: 'アクセス',
-                    description:
-                        'お手伝いの場所までのアクセス方法について補足説明をしてください。最寄りの駅やバス停まで送迎ができる場合などは、その内容も入力してください。',
+                    description: 'お手伝いの場所までのアクセス方法について補足説明をしてください。'
+                        '最寄りの駅やバス停まで送迎ができる場合などは、その内容も入力してください。',
                     controller: _accessDiscriptionController,
                     choices: {
                       for (final v in AccessType.values) v: v.label,
@@ -177,8 +178,8 @@ class JobFormState extends ConsumerState<JobForm> {
                   ),
                   _TextInputSection(
                     title: 'ひとこと',
-                    description:
-                        'お手伝いを検討してくれるワーカーの方が、ぜひお手伝いをしてみたくなるようひとことや、募集するお手伝いの魅力を入力しましょう！',
+                    description: 'お手伝いを検討してくれるワーカーの方が、ぜひお手伝いをしてみたくなるようひとことや、'
+                        '募集するお手伝いの魅力を入力しましょう！',
                     defaultDisplayLines: 5,
                     controller: _commentController,
                   ),

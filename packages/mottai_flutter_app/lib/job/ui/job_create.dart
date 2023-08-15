@@ -20,7 +20,7 @@ class JobCreatePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(title: const Text('お手伝い募集内容を入力')),
-      body: JobForm(),
+      body: const JobForm(),
     );
   }
 }

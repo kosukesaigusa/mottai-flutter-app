@@ -1,5 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 import '../firestore_documents/job.dart';
 
 class JobRepository {

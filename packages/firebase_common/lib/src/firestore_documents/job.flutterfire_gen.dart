@@ -18,7 +18,6 @@ class ReadJob {
     required this.accessDescription,
     required this.accessTypes,
     required this.comment,
-    required this.imageUrl,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -138,7 +137,6 @@ class UpdateJob {
     this.accessDescription,
     this.accessTypes,
     this.comment,
-    this.imageUrl,
     this.createdAt,
   });
 

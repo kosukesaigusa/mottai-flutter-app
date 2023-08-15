@@ -105,6 +105,8 @@ class JobService {
         comment: comment,
         imageUrl: imageUrl,
       );
+
+  /// 指定したユーザーの [Job] を全件取得する。
   Future<List<ReadJob>> fetchUserJobs({required String hostId}) =>
       _jobRepository.fetchUserJobs(hostId: hostId);
 

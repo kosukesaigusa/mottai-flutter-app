@@ -9,6 +9,7 @@ class Section extends StatelessWidget {
   /// [Section] を作成する。
   const Section({
     required this.title,
+    this.titleBadge,
     this.titleStyle,
     this.titleMaxLines = 1,
     this.titleBottomMargin = 16,
@@ -23,6 +24,9 @@ class Section extends StatelessWidget {
 
   /// セクションのタイトル。
   final String title;
+
+  /// タイトルの横に配置されるバッジ
+  final Widget? titleBadge;
 
   /// [title] のスタイル。
   final TextStyle? titleStyle;
@@ -58,10 +62,15 @@ class Section extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            title,
-            style: titleStyle,
-            maxLines: titleMaxLines,
+          Row(
+            children: [
+              Text(
+                title,
+                style: titleStyle,
+                maxLines: titleMaxLines,
+              ),
+              if (titleBadge != null) titleBadge!,
+            ],
           ),
           SizedBox(height: titleBottomMargin),
           if (description != null) ...[

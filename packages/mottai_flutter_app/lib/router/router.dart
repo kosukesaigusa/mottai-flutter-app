@@ -17,7 +17,9 @@ import '../development/user_social_login/user_social_login.dart';
 import '../development/web_link/ui/web_link_stub.dart';
 import '../host/ui/create_or_update_host.dart';
 import '../host/ui/host.dart';
+import '../job/ui/job_create.dart';
 import '../job/ui/job_detail.dart';
+import '../job/ui/job_update.dart';
 import '../map/ui/map.dart';
 import '../my_account/ui/my_account.dart';
 import '../review/ui/reviews.dart';
@@ -57,8 +59,16 @@ class AppRouter extends $AppRouter {
       page: ChatRoomRoute.page,
     ),
     AutoRoute(
+      path: JobCreatePage.path,
+      page: JobCreateRoute.page,
+    ),
+    AutoRoute(
       path: JobDetailPage.path,
       page: JobDetailRoute.page,
+    ),
+    AutoRoute(
+      path: JobUpdatePage.path,
+      page: JobUpdateRoute.page,
     ),
     AutoRoute(
       path: WorkerPage.path,
@@ -68,10 +78,6 @@ class AppRouter extends $AppRouter {
       path: HostPage.path,
       page: HostRoute.page,
     ),
-    // AutoRoute(
-    //   path: CreateOrUpdateJobPage.path,
-    //   page: CreateOrUpdateJobRoute.page,
-    // ),
     // AutoRoute(
     //   path: UserPage.path,
     //   page: UserRoute.page,

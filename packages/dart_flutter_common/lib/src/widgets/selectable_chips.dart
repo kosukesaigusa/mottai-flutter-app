@@ -17,6 +17,7 @@ class SelectableChips<T> extends StatelessWidget {
     this.spacing = 8,
     this.runSpacing = 0,
     this.crossAxisAlignment = WrapCrossAlignment.start,
+    this.onTap,
     this.chipPadding = const EdgeInsets.all(8),
     super.key,
   });
@@ -48,6 +49,9 @@ class SelectableChips<T> extends StatelessWidget {
   /// [direction] と垂直方向の並び方。
   final WrapCrossAlignment crossAxisAlignment;
 
+  /// チップが押されたときのコールバック
+  final void Function(T item)? onTap;
+
   /// チップの余白。
   final EdgeInsetsGeometry chipPadding;
 
@@ -68,6 +72,7 @@ class SelectableChips<T> extends StatelessWidget {
               label: labels[item] ?? '',
               isEnabled: enabledItems.contains(item),
               padding: chipPadding,
+              onTap: () => onTap?.call(item),
             ),
           )
           .toList(),
@@ -80,27 +85,32 @@ class _SwitchingChip extends StatelessWidget {
     required this.label,
     required this.padding,
     this.isEnabled = false,
+    this.onTap,
   });
 
   final String label;
   final EdgeInsetsGeometry padding;
   final bool isEnabled;
+  final void Function()? onTap;
 
   @override
   Widget build(BuildContext context) {
-    return InputChip(
-      onPressed: () => {},
-      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-      isEnabled: isEnabled,
-      side: isEnabled ? BorderSide.none : null,
-      label: Text(
-        label,
-        style: TextStyle(
-          color: Theme.of(context).colorScheme.onSecondaryContainer,
+    return GestureDetector(
+      onTap: onTap,
+      child: InputChip(
+        onPressed: onTap, // コールバックを設定しないとデザインが変わるので、設定している
+        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        isEnabled: isEnabled,
+        side: isEnabled ? BorderSide.none : null,
+        label: Text(
+          label,
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.onSecondaryContainer,
+          ),
         ),
+        padding: padding,
+        backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
       ),
-      padding: padding,
-      backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
     );
   }
 }

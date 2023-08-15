@@ -16,7 +16,7 @@ final firebaseStorageControllerProvider = Provider.autoDispose(
     firebaseStorageService: ref.watch(firebaseStorageServiceProvider),
     imagePickerService: ref.watch(imagePickerServiceProvider),
     imageUrlsController: ref.watch(imageUrlsStateProvider.notifier),
-    uploadedimagePathController:
+    uploadedImagePathController:
         ref.watch(uploadedImagePathStateProvider.notifier),
     uploadedImageUrlController:
         ref.watch(uploadedImageUrlStateProvider.notifier),
@@ -32,14 +32,14 @@ class FirebaseStorageController {
     required FirebaseStorageService firebaseStorageService,
     required ImagePickerService imagePickerService,
     required StateController<File?> pickedImageFromGalleryController,
-    required StateController<String> uploadedimagePathController,
+    required StateController<String> uploadedImagePathController,
     required StateController<String> uploadedImageUrlController,
     required StateController<List<String>> imageUrlsController,
     required AppScaffoldMessengerController appScaffoldMessengerController,
   })  : _firebaseStorageService = firebaseStorageService,
         _imagePickerService = imagePickerService,
-        _uploadedimagePathController = uploadedimagePathController,
-        _uploadedimageUrlController = uploadedImageUrlController,
+        _uploadedImagePathController = uploadedImagePathController,
+        _uploadedImageUrlController = uploadedImageUrlController,
         _pickedImageFromGalleryController = pickedImageFromGalleryController,
         _imageUrlsController = imageUrlsController,
         _appScaffoldMessengerController = appScaffoldMessengerController;
@@ -48,9 +48,9 @@ class FirebaseStorageController {
 
   final ImagePickerService _imagePickerService;
 
-  final StateController<String> _uploadedimageUrlController;
+  final StateController<String> _uploadedImageUrlController;
 
-  final StateController<String> _uploadedimagePathController;
+  final StateController<String> _uploadedImagePathController;
 
   final StateController<List<String>> _imageUrlsController;
 
@@ -70,7 +70,7 @@ class FirebaseStorageController {
         return;
       }
       await _appScaffoldMessengerController.showDialogByBuilder<bool>(
-        builder: (context) => const AccessNotDeniedDialog.gallery(),
+        builder: (context) => const AccessDeniedDialog.gallery(),
       );
     }
   }
@@ -86,8 +86,8 @@ class FirebaseStorageController {
         path: imagePath,
         resource: resource,
       );
-      _uploadedimagePathController.update((_) => imagePath);
-      _uploadedimageUrlController.update((_) => imageUrl);
+      _uploadedImagePathController.update((_) => imagePath);
+      _uploadedImageUrlController.update((_) => imageUrl);
     } on Exception catch (e) {
       _appScaffoldMessengerController.showSnackBarByException(e);
     }
@@ -97,8 +97,8 @@ class FirebaseStorageController {
   Future<void> deleteImage(String path) async {
     try {
       await _firebaseStorageService.delete(path: path);
-      _uploadedimagePathController.update((_) => '');
-      _uploadedimageUrlController.update((_) => '');
+      _uploadedImagePathController.update((_) => '');
+      _uploadedImageUrlController.update((_) => '');
     } on Exception catch (e) {
       _appScaffoldMessengerController.showSnackBarByException(e);
     }

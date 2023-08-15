@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutterfire_gen_annotation/flutterfire_gen_annotation.dart';
-import 'package:flutterfire_json_converters/flutterfire_json_converters.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'job.flutterfire_gen.dart';
@@ -9,34 +8,33 @@ part 'job.flutterfire_gen.dart';
 class Job {
   const Job({
     required this.hostId,
+    required this.imageUrl,
     required this.title,
-    required this.content,
     required this.place,
-    this.accessTypes = const <AccessType>{},
-    this.accessDescription = '',
+    required this.content,
     required this.belongings,
     required this.reward,
+    required this.accessDescription,
+    required this.accessTypes,
     this.comment = '',
-    this.imageUrl = '',
-    this.createdAt = const ServerTimestamp(),
-    this.updatedAt = const ServerTimestamp(),
+    this.createdAt,
+    this.updatedAt,
   });
 
   final String hostId;
 
   @ReadDefault('')
-  final String title;
+  @CreateDefault('')
+  final String imageUrl;
 
   @ReadDefault('')
-  final String content;
+  final String title;
 
   @ReadDefault('')
   final String place;
 
-  @_accessTypesConverter
-  final Set<AccessType> accessTypes;
-
-  final String accessDescription;
+  @ReadDefault('')
+  final String content;
 
   @ReadDefault('')
   final String belongings;
@@ -44,24 +42,25 @@ class Job {
   @ReadDefault('')
   final String reward;
 
+  @ReadDefault('')
+  @CreateDefault('')
+  final String accessDescription;
+
+  @ReadDefault(<AccessType>{})
+  @CreateDefault(<AccessType>{})
+  @_accessTypesConverter
+  final Set<AccessType> accessTypes;
+
+  @ReadDefault('')
+  @CreateDefault('')
   final String comment;
 
-  final String imageUrl;
+  @AlwaysUseFieldValueServerTimestampWhenCreating()
+  final DateTime? createdAt;
 
-  // TODO: やや冗長になってしまっているのは、flutterfire_gen と
-  // flutterfire_json_converters の作りのため。それらのパッケージが更新されたら
-  // この実装も変更する。
-  @sealedTimestampConverter
-  @CreateDefault(ServerTimestamp())
-  final SealedTimestamp createdAt;
-
-  // TODO: やや冗長になってしまっているのは、flutterfire_gen と
-  // flutterfire_json_converters の作りのため。それらのパッケージが更新されたら
-  // この実装も変更する。
-  @alwaysUseServerTimestampSealedTimestampConverter
-  @CreateDefault(ServerTimestamp())
-  @UpdateDefault(ServerTimestamp())
-  final SealedTimestamp updatedAt;
+  @AlwaysUseFieldValueServerTimestampWhenCreating()
+  @AlwaysUseFieldValueServerTimestampWhenUpdating()
+  final DateTime? updatedAt;
 }
 
 /// 仕事の場所へのアクセスの種類。

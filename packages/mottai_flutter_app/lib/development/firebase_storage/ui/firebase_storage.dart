@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:dart_flutter_common/dart_flutter_common.dart';
 import 'package:firebase_common/firebase_common.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -52,7 +53,12 @@ class _FirebaseStorageSampleState
               crossAxisCount: 5,
               children: ref
                   .watch(imageUrlsStateProvider)
-                  .map(Image.network)
+                  .map(
+                    (imageUrl) => GenericImage.circle(
+                      imageUrl: imageUrl,
+                      size: 100,
+                    ),
+                  )
                   .take(5)
                   .toList(),
             ),
@@ -104,11 +110,7 @@ class _FirebaseStorageSampleState
                   child: const Text('DELETE'),
                 ),
                 Text(uploadedImageUrl),
-                SizedBox(
-                  height: 200,
-                  width: 200,
-                  child: Image.network(uploadedImageUrl),
-                ),
+                GenericImage.square(imageUrl: uploadedImageUrl, size: 200),
               ],
             )
           else

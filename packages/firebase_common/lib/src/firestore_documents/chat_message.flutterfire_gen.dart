@@ -31,9 +31,9 @@ class ReadChatMessage {
 
   final bool isDeleted;
 
-  final SealedTimestamp createdAt;
+  final DateTime? createdAt;
 
-  final SealedTimestamp updatedAt;
+  final DateTime? updatedAt;
 
   factory ReadChatMessage._fromJson(Map<String, dynamic> json) {
     return ReadChatMessage(
@@ -48,13 +48,8 @@ class ReadChatMessage {
               .toList() ??
           const <String>[],
       isDeleted: json['isDeleted'] as bool? ?? false,
-      createdAt: json['createdAt'] == null
-          ? const ServerTimestamp()
-          : sealedTimestampConverter.fromJson(json['createdAt'] as Object),
-      updatedAt: json['updatedAt'] == null
-          ? const ServerTimestamp()
-          : alwaysUseServerTimestampSealedTimestampConverter
-              .fromJson(json['updatedAt'] as Object),
+      createdAt: (json['createdAt'] as Timestamp?)?.toDate(),
+      updatedAt: (json['updatedAt'] as Timestamp?)?.toDate(),
     );
   }
 
@@ -75,8 +70,6 @@ class CreateChatMessage {
     required this.content,
     this.imageUrls = const <String>[],
     this.isDeleted = false,
-    this.createdAt = const ServerTimestamp(),
-    this.updatedAt = const ServerTimestamp(),
   });
 
   final String senderId;
@@ -84,8 +77,6 @@ class CreateChatMessage {
   final String content;
   final List<String> imageUrls;
   final bool isDeleted;
-  final SealedTimestamp createdAt;
-  final SealedTimestamp updatedAt;
 
   Map<String, dynamic> toJson() {
     return {
@@ -94,9 +85,8 @@ class CreateChatMessage {
       'content': content,
       'imageUrls': imageUrls,
       'isDeleted': isDeleted,
-      'createdAt': sealedTimestampConverter.toJson(createdAt),
-      'updatedAt':
-          alwaysUseServerTimestampSealedTimestampConverter.toJson(updatedAt),
+      'createdAt': FieldValue.serverTimestamp(),
+      'updatedAt': FieldValue.serverTimestamp(),
     };
   }
 }
@@ -109,7 +99,6 @@ class UpdateChatMessage {
     this.imageUrls,
     this.isDeleted,
     this.createdAt,
-    this.updatedAt = const ServerTimestamp(),
   });
 
   final String? senderId;
@@ -117,8 +106,7 @@ class UpdateChatMessage {
   final String? content;
   final List<String>? imageUrls;
   final bool? isDeleted;
-  final SealedTimestamp? createdAt;
-  final SealedTimestamp? updatedAt;
+  final DateTime? createdAt;
 
   Map<String, dynamic> toJson() {
     return {
@@ -128,16 +116,15 @@ class UpdateChatMessage {
       if (content != null) 'content': content,
       if (imageUrls != null) 'imageUrls': imageUrls,
       if (isDeleted != null) 'isDeleted': isDeleted,
-      if (createdAt != null)
-        'createdAt': sealedTimestampConverter.toJson(createdAt!),
-      'updatedAt': updatedAt == null
-          ? const ServerTimestamp()
-          : alwaysUseServerTimestampSealedTimestampConverter.toJson(updatedAt!),
+      if (createdAt != null) 'createdAt': createdAt,
+      'updatedAt': FieldValue.serverTimestamp(),
     };
   }
 }
 
-/// A [CollectionReference] to chatMessages collection to read.
+class DeleteChatMessage {}
+
+/// Provides a reference to the chatMessages collection for reading.
 CollectionReference<ReadChatMessage> readChatMessageCollectionReference({
   required String chatRoomId,
 }) =>
@@ -147,10 +134,10 @@ CollectionReference<ReadChatMessage> readChatMessageCollectionReference({
         .collection('chatMessages')
         .withConverter<ReadChatMessage>(
           fromFirestore: (ds, _) => ReadChatMessage.fromDocumentSnapshot(ds),
-          toFirestore: (obj, _) => throw UnimplementedError(),
+          toFirestore: (_, __) => throw UnimplementedError(),
         );
 
-/// A [DocumentReference] to chatMessage document to read.
+/// Provides a reference to a chatMessage document for reading.
 DocumentReference<ReadChatMessage> readChatMessageDocumentReference({
   required String chatRoomId,
   required String chatMessageId,
@@ -158,7 +145,7 @@ DocumentReference<ReadChatMessage> readChatMessageDocumentReference({
     readChatMessageCollectionReference(chatRoomId: chatRoomId)
         .doc(chatMessageId);
 
-/// A [CollectionReference] to chatMessages collection to create.
+/// Provides a reference to the chatMessages collection for creating.
 CollectionReference<CreateChatMessage> createChatMessageCollectionReference({
   required String chatRoomId,
 }) =>
@@ -167,11 +154,11 @@ CollectionReference<CreateChatMessage> createChatMessageCollectionReference({
         .doc(chatRoomId)
         .collection('chatMessages')
         .withConverter<CreateChatMessage>(
-          fromFirestore: (ds, _) => throw UnimplementedError(),
+          fromFirestore: (_, __) => throw UnimplementedError(),
           toFirestore: (obj, _) => obj.toJson(),
         );
 
-/// A [DocumentReference] to chatMessage document to create.
+/// Provides a reference to a chatMessage document for creating.
 DocumentReference<CreateChatMessage> createChatMessageDocumentReference({
   required String chatRoomId,
   required String chatMessageId,
@@ -179,7 +166,7 @@ DocumentReference<CreateChatMessage> createChatMessageDocumentReference({
     createChatMessageCollectionReference(chatRoomId: chatRoomId)
         .doc(chatMessageId);
 
-/// A [CollectionReference] to chatMessages collection to update.
+/// Provides a reference to the chatMessages collection for updating.
 CollectionReference<UpdateChatMessage> updateChatMessageCollectionReference({
   required String chatRoomId,
 }) =>
@@ -188,11 +175,11 @@ CollectionReference<UpdateChatMessage> updateChatMessageCollectionReference({
         .doc(chatRoomId)
         .collection('chatMessages')
         .withConverter<UpdateChatMessage>(
-          fromFirestore: (ds, _) => throw UnimplementedError(),
+          fromFirestore: (_, __) => throw UnimplementedError(),
           toFirestore: (obj, _) => obj.toJson(),
         );
 
-/// A [DocumentReference] to chatMessage document to update.
+/// Provides a reference to a chatMessage document for updating.
 DocumentReference<UpdateChatMessage> updateChatMessageDocumentReference({
   required String chatRoomId,
   required String chatMessageId,
@@ -200,24 +187,28 @@ DocumentReference<UpdateChatMessage> updateChatMessageDocumentReference({
     updateChatMessageCollectionReference(chatRoomId: chatRoomId)
         .doc(chatMessageId);
 
-/// A [CollectionReference] to chatMessages collection to delete.
-CollectionReference<Object?> deleteChatMessageCollectionReference({
+/// Provides a reference to the chatMessages collection for deleting.
+CollectionReference<DeleteChatMessage> deleteChatMessageCollectionReference({
   required String chatRoomId,
 }) =>
     FirebaseFirestore.instance
         .collection('chatRooms')
         .doc(chatRoomId)
-        .collection('chatMessages');
+        .collection('chatMessages')
+        .withConverter<DeleteChatMessage>(
+          fromFirestore: (_, __) => throw UnimplementedError(),
+          toFirestore: (_, __) => throw UnimplementedError(),
+        );
 
-/// A [DocumentReference] to chatMessage document to delete.
-DocumentReference<Object?> deleteChatMessageDocumentReference({
+/// Provides a reference to a chatMessage document for deleting.
+DocumentReference<DeleteChatMessage> deleteChatMessageDocumentReference({
   required String chatRoomId,
   required String chatMessageId,
 }) =>
     deleteChatMessageCollectionReference(chatRoomId: chatRoomId)
         .doc(chatMessageId);
 
-/// A query manager to execute query against [ChatMessage].
+/// Manages queries against the chatMessages collection.
 class ChatMessageQuery {
   /// Fetches [ReadChatMessage] documents.
   Future<List<ReadChatMessage>> fetchDocuments({
@@ -268,7 +259,7 @@ class ChatMessageQuery {
     });
   }
 
-  /// Fetches a specified [ReadChatMessage] document.
+  /// Fetches a specific [ReadChatMessage] document.
   Future<ReadChatMessage?> fetchDocument({
     required String chatRoomId,
     required String chatMessageId,
@@ -281,7 +272,7 @@ class ChatMessageQuery {
     return ds.data();
   }
 
-  /// Subscribes a specified [ChatMessage] document.
+  /// Subscribes a specific [ChatMessage] document.
   Stream<ReadChatMessage?> subscribeDocument({
     required String chatRoomId,
     required String chatMessageId,
@@ -318,7 +309,7 @@ class ChatMessageQuery {
         chatMessageId: chatMessageId,
       ).set(createChatMessage, options);
 
-  /// Updates a specified [ChatMessage] document.
+  /// Updates a specific [ChatMessage] document.
   Future<void> update({
     required String chatRoomId,
     required String chatMessageId,
@@ -329,7 +320,7 @@ class ChatMessageQuery {
         chatMessageId: chatMessageId,
       ).update(updateChatMessage.toJson());
 
-  /// Deletes a specified [ChatMessage] document.
+  /// Deletes a specific [ChatMessage] document.
   Future<void> delete({
     required String chatRoomId,
     required String chatMessageId,

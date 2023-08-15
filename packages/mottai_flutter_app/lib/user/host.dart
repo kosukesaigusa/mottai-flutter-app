@@ -27,7 +27,7 @@ final hostDisplayNameProvider =
 
 /// 指定した [Host] を返す [FutureProvider].
 final hostFutureProvider = FutureProvider.family.autoDispose<ReadHost?, String>(
-  (ref, id) => ref.watch(hostServiceProvider).fetchHost(hostId: id),
+  (ref, hostId) => ref.watch(hostServiceProvider).fetchHost(hostId: hostId),
 );
 
 final hostServiceProvider = Provider.autoDispose<HostService>(

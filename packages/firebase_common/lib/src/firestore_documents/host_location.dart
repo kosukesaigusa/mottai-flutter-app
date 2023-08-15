@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutterfire_gen_annotation/flutterfire_gen_annotation.dart';
-import 'package:flutterfire_json_converters/flutterfire_json_converters.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'host_location.flutterfire_gen.dart';
@@ -11,8 +10,8 @@ class HostLocation {
     required this.hostId,
     required this.address,
     required this.geo,
-    this.createdAt = const ServerTimestamp(),
-    this.updatedAt = const ServerTimestamp(),
+    this.createdAt,
+    this.updatedAt,
   });
 
   final String hostId;
@@ -23,20 +22,12 @@ class HostLocation {
   @_geoConverter
   final Geo geo;
 
-  // TODO: やや冗長になってしまっているのは、flutterfire_gen と
-  // flutterfire_json_converters の作りのため。それらのパッケージが更新されたら
-  // この実装も変更する。
-  @sealedTimestampConverter
-  @CreateDefault(ServerTimestamp())
-  final SealedTimestamp createdAt;
+  @AlwaysUseFieldValueServerTimestampWhenCreating()
+  final DateTime? createdAt;
 
-  // TODO: やや冗長になってしまっているのは、flutterfire_gen と
-  // flutterfire_json_converters の作りのため。それらのパッケージが更新されたら
-  // この実装も変更する。
-  @alwaysUseServerTimestampSealedTimestampConverter
-  @CreateDefault(ServerTimestamp())
-  @UpdateDefault(ServerTimestamp())
-  final SealedTimestamp updatedAt;
+  @AlwaysUseFieldValueServerTimestampWhenCreating()
+  @AlwaysUseFieldValueServerTimestampWhenUpdating()
+  final DateTime? updatedAt;
 }
 
 class Geo {

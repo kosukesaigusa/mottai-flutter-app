@@ -199,3 +199,45 @@ class ChatRoomStateNotifier extends StateNotifier<ChatRoomState> {
         imageUrls: imageUrls,
       );
 }
+
+final startChatProvider = Provider.autoDispose<StartChat>(
+  (ref) => StartChat(
+    chatRoomRepository: ref.watch(chatRoomRepositoryProvider),
+    chatMessageRepository: ref.watch(chatMessageRepositoryProvider),
+  ),
+);
+
+class StartChat {
+  StartChat({
+    required ChatRoomRepository chatRoomRepository,
+    required ChatMessageRepository chatMessageRepository,
+  })  : _chatRoomRepository = chatRoomRepository,
+        _chatMessageRepository = chatMessageRepository;
+
+  final ChatRoomRepository _chatRoomRepository;
+
+  final ChatMessageRepository _chatMessageRepository;
+
+  /// 指定した [workerId], [hostId] との間のチャットルームを作成する。
+  /// ワーカーからの最初のメッセージ [content] も送信する。
+  /// 作成した [ChatRoom] の ID を返す。
+  /// すでにそのホストとチャットルームを作成済みの場合は、例外をスローする。
+  Future<String> invoke({
+    required String workerId,
+    required String hostId,
+    required String content,
+  }) async {
+    // TODO: 本当はバッチ書き込みするのが望ましい
+    final chatRoomId = await _chatRoomRepository.createChatRoom(
+      workerId: workerId,
+      hostId: hostId,
+    );
+    await _chatMessageRepository.addChatMessage(
+      chatRoomId: chatRoomId,
+      senderId: workerId,
+      chatMessageType: ChatMessageType.host,
+      content: content,
+    );
+    return chatRoomId;
+  }
+}

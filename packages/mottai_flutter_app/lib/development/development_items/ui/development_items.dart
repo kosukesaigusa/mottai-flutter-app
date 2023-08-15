@@ -1,9 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../../auth/auth.dart';
 import '../../../auth/ui/auth_dependent_builder.dart';
 import '../../../chat/read_status.dart';
 import '../../../chat/ui/chat_room.dart';
@@ -14,11 +12,6 @@ import '../../../job/ui/job_create.dart';
 import '../../../job/ui/job_detail.dart';
 import '../../../job/ui/job_update.dart';
 import '../../../map/ui/map.dart';
-import '../../../package_info.dart';
-import '../../../push_notification/firebase_messaging.dart';
-import '../../../scaffold_messenger_controller.dart';
-import '../../../user/user.dart';
-import '../../../user/user_mode.dart';
 import '../../../worker/ui/worker.dart';
 import '../../color/ui/color.dart';
 import '../../firebase_storage/ui/firebase_storage.dart';
@@ -29,11 +22,12 @@ import '../../image_picker/ui/image_picker_sample.dart';
 import '../../in_review/ui/in_review.dart';
 import '../../sample_todo/ui/sample_todos.dart';
 import '../../sign_in/ui/sign_in.dart';
+import '../../user_social_login/user_social_login.dart';
 import '../../web_link/ui/web_link_stub.dart';
 
 /// 開発中の各ページへの導線を表示するページ。
 @RoutePage()
-class DevelopmentItemsPage extends StatefulHookConsumerWidget {
+class DevelopmentItemsPage extends ConsumerWidget {
   const DevelopmentItemsPage({super.key});
 
   /// [AutoRoute] で指定するパス文字列。
@@ -43,35 +37,9 @@ class DevelopmentItemsPage extends StatefulHookConsumerWidget {
   static const location = path;
 
   @override
-  ConsumerState<DevelopmentItemsPage> createState() =>
-      _DevelopmentItemsPageState();
-}
-
-class _DevelopmentItemsPageState extends ConsumerState<DevelopmentItemsPage> {
-  @override
-  void initState() {
-    super.initState();
-    Future.wait<void>([
-      ref.read(initializeFirebaseMessagingProvider)(),
-      ref.read(getFcmTokenProvider)(),
-    ]);
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('開発ページ'),
-        actions: [
-          IconButton(
-            onPressed: () => ref
-                .read(appScaffoldMessengerControllerProvider)
-                .showSnackBar('SnackBar を表示します。'),
-            icon: const Icon(Icons.notifications_on),
-          )
-        ],
-      ),
-      drawer: const Drawer(child: _DrawerChild()),
+      appBar: AppBar(title: const Text('開発ページ')),
       body: ListView(
         children: [
           Padding(
@@ -194,6 +162,11 @@ class _DevelopmentItemsPageState extends ConsumerState<DevelopmentItemsPage> {
             title: const Text('サインイン (Google, Apple, LINE)'),
             onTap: () => context.router.pushNamed(SignInSamplePage.location),
           ),
+          ListTile(
+            title: const Text('ソーシャル認証連携 (Google, Apple, LINE)'),
+            onTap: () =>
+                context.router.pushNamed(UserSocialLoginSamplePage.location),
+          ),
           const ListTile(
             title: Text('FCM トークン（トークン追加, device_info_plus）'),
             // onTap: () => context.router.pushNamed(FcmTokenPage.location),
@@ -255,159 +228,6 @@ class _DevelopmentItemsPageState extends ConsumerState<DevelopmentItemsPage> {
           ),
         ],
       ),
-    );
-  }
-}
-
-class _DrawerChild extends ConsumerStatefulWidget {
-  const _DrawerChild();
-
-  @override
-  ConsumerState<_DrawerChild> createState() => _DrawerChildState();
-}
-
-class _DrawerChildState extends ConsumerState<_DrawerChild> {
-  late final TextEditingController _emailTextEditingController;
-  late final TextEditingController _passwordTextEditingController;
-
-  @override
-  void initState() {
-    _emailTextEditingController = TextEditingController();
-    _passwordTextEditingController = TextEditingController();
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    _emailTextEditingController.dispose();
-    _passwordTextEditingController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final packageInfo = ref.watch(packageInfoProvider);
-    return ListView(
-      children: [
-        DrawerHeader(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(packageInfo.packageName),
-              if (ref.watch(isHostProvider)) ...[
-                const Gap(8),
-                Text(
-                  'ユーザーモード',
-                  style: Theme.of(context).textTheme.labelSmall,
-                ),
-                ToggleButtons(
-                  onPressed: (index) {
-                    final notifier = ref.read(userModeStateProvider.notifier);
-                    if (index == 0) {
-                      notifier.update((_) => UserMode.worker);
-                    } else if (index == 1) {
-                      notifier.update((_) => UserMode.host);
-                    }
-                  },
-                  borderRadius: const BorderRadius.all(Radius.circular(8)),
-                  constraints: const BoxConstraints(
-                    minHeight: 32,
-                    minWidth: 80,
-                  ),
-                  isSelected: UserMode.values
-                      .map((mode) => mode == ref.watch(userModeStateProvider))
-                      .toList(),
-                  children: UserMode.values
-                      .map((userMode) => Text(userMode.name))
-                      .toList(),
-                ),
-              ],
-            ],
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (ref.watch(isSignedInProvider)) ...[
-                Text(
-                  'ユーザー ID',
-                  style: Theme.of(context).textTheme.labelSmall,
-                ),
-                const Gap(8),
-                Text(ref.watch(userIdProvider)!),
-                const Gap(16),
-                Center(
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      final navigator = Navigator.of(context);
-                      await ref.read(authServiceProvider).signOut();
-                      navigator.pop();
-                    },
-                    child: const Text('サインアウト'),
-                  ),
-                ),
-              ] else ...[
-                TextField(
-                  controller: _emailTextEditingController,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: 'メールアドレス',
-                  ),
-                  keyboardType: TextInputType.emailAddress,
-                ),
-                const Gap(16),
-                TextField(
-                  controller: _passwordTextEditingController,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: 'パスワード',
-                  ),
-                  obscureText: true,
-                ),
-                const Gap(16),
-                Center(
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      final navigator = Navigator.of(context);
-                      await ref
-                          .read(authServiceProvider)
-                          .signInWithEmailAndPassword(
-                            email: _emailTextEditingController.text,
-                            password: _passwordTextEditingController.text,
-                          );
-                      navigator.pop();
-                    },
-                    child: const Text('サインイン'),
-                  ),
-                ),
-                const Divider(),
-                Center(
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      final token = await ref.read(getFcmTokenProvider).call();
-                      if (token == null) {
-                        return;
-                      }
-                      debugPrint(token);
-                      await ref
-                          .read(appScaffoldMessengerControllerProvider)
-                          .showDialogByBuilder<void>(
-                            builder: (context) => AlertDialog(
-                              title: const SelectableText('FCM トークン'),
-                              content: Text(token),
-                            ),
-                          );
-                    },
-                    child: const Text('FCM トークン表示'),
-                  ),
-                ),
-              ],
-            ],
-          ),
-        ),
-      ],
     );
   }
 }

@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutterfire_gen_annotation/flutterfire_gen_annotation.dart';
-import 'package:flutterfire_json_converters/flutterfire_json_converters.dart';
 
 part 'read_status.flutterfire_gen.dart';
 
@@ -11,11 +10,10 @@ part 'read_status.flutterfire_gen.dart';
 )
 class ReadStatus {
   const ReadStatus({
-    this.lastReadAt = const ServerTimestamp(),
+    this.lastReadAt,
   });
 
-  @sealedTimestampConverter
-  @CreateDefault(ServerTimestamp())
-  @UpdateDefault(ServerTimestamp())
-  final SealedTimestamp lastReadAt;
+  @AlwaysUseFieldValueServerTimestampWhenCreating()
+  @AlwaysUseFieldValueServerTimestampWhenUpdating()
+  final DateTime? lastReadAt;
 }

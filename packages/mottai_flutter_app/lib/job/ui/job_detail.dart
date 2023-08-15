@@ -2,10 +2,17 @@ import 'package:auto_route/auto_route.dart';
 import 'package:dart_flutter_common/dart_flutter_common.dart';
 import 'package:firebase_common/firebase_common.dart';
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../../auth/ui/auth_dependent_builder.dart';
+import '../../chat/chat_rooms.dart';
+import '../../chat/ui/chat_room.dart';
+import '../../scaffold_messenger_controller.dart';
 import '../../user/host.dart';
+import '../../user/user_mode.dart';
 import '../job.dart';
+import 'start_chat_with_host_controller.dart';
 
 /// 仕事詳細ページ。
 @RoutePage()
@@ -27,11 +34,12 @@ class JobDetailPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(title: const Text('お手伝い募集')),
-      // Jobの読み込み状態によって表示を変更
       body: ref.watch(jobFutureProvider(jobId)).when(
             data: (job) {
               if (job == null) {
-                return const Center(child: Text('お手伝いが存在していません。'));
+                return const Center(
+                  child: Text('お手伝いの情報が見つかりませんでした。'),
+                );
               }
               return ref.watch(hostFutureProvider(job.hostId)).when(
                     data: (readHost) {
@@ -51,7 +59,7 @@ class JobDetailPage extends ConsumerWidget {
             },
             loading: () => const Center(child: CircularProgressIndicator()),
             error: (error, stackTrace) => const Center(
-              child: Text('通信に失敗しました。'),
+              child: Text('お手伝いの情報の取得に失敗しました。'),
             ),
           ),
     );
@@ -74,11 +82,10 @@ class _JobDetail extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (readHost.imageUrl.isNotEmpty)
-            Center(
-              child: LimitedBox(
-                maxHeight: 300,
-                child: Image.network(readHost.imageUrl, fit: BoxFit.cover),
-              ),
+            GenericImage.rectangle(
+              imageUrl: readHost.imageUrl,
+              height: 300,
+              width: MediaQuery.of(context).size.width,
             ),
           Padding(
             padding: const EdgeInsets.symmetric(
@@ -218,17 +225,168 @@ class _JobDetail extends ConsumerWidget {
               ],
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.only(top: 16, bottom: 32),
-            child: Center(
-              child: ElevatedButton(
-                onPressed: () {}, // TODO: 未実装
-                child: const Text('このホストに連絡する'),
-              ),
+          const Gap(16),
+          _StartChatWithHostButton(readHost: readHost),
+          const Gap(96),
+        ],
+      ),
+    );
+  }
+}
+
+class _StartChatWithHostButton extends ConsumerWidget {
+  const _StartChatWithHostButton({required this.readHost});
+
+  final ReadHost readHost;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isHostMode = ref.watch(userModeStateProvider) == UserMode.host;
+    final chatRoomExists = ref.watch(chatRoomExistsProvider(readHost.hostId));
+    return Column(
+      children: [
+        Center(
+          child: AuthDependentBuilder(
+            onAuthenticated: (userId) => Column(
+              children: [
+                ElevatedButton(
+                  onPressed: isHostMode || chatRoomExists
+                      ? null
+                      : () async {
+                          if (isHostMode) {
+                            return;
+                          }
+                          final stackRouter = context.router;
+                          final chatRoomId = await ref
+                              .read(appScaffoldMessengerControllerProvider)
+                              .showDialogByBuilder<String>(
+                                builder: (context) => _StartChatWithHostDialog(
+                                  hostId: readHost.hostId,
+                                  workerId: userId,
+                                ),
+                                barrierDismissible: false,
+                              );
+                          if (chatRoomId == null) {
+                            return;
+                          }
+                          stackRouter.popUntilRoot();
+                          await stackRouter.pushNamed(
+                            ChatRoomPage.location(chatRoomId: chatRoomId),
+                          );
+                        },
+                  child: const Text('このホストに連絡する'),
+                ),
+                if (isHostMode) ...[
+                  const Gap(8),
+                  Text(
+                    'ホストモードでは、他のホストに連絡することはできません。',
+                    style: Theme.of(context).textTheme.labelSmall,
+                  ),
+                ] else if (chatRoomExists) ...[
+                  const Gap(8),
+                  Text(
+                    'このホストととのチャットルームは既に存在しています。',
+                    style: Theme.of(context).textTheme.labelSmall,
+                  ),
+                ],
+              ],
+            ),
+            onUnAuthenticated: () => Column(
+              children: [
+                const ElevatedButton(
+                  onPressed: null,
+                  child: Text('このホストに連絡する'),
+                ),
+                const Gap(8),
+                Text(
+                  'ホストに連絡するには、ログインが必要です。',
+                  style: Theme.of(context).textTheme.labelSmall,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// 「このホストに連絡する」を押して、最初のメッセージを送信するダイアログ。
+class _StartChatWithHostDialog extends ConsumerStatefulWidget {
+  const _StartChatWithHostDialog({
+    required this.workerId,
+    required this.hostId,
+  });
+
+  final String workerId;
+
+  final String hostId;
+
+  @override
+  ConsumerState<_StartChatWithHostDialog> createState() =>
+      _StartChatWithHostDialogState();
+}
+
+class _StartChatWithHostDialogState
+    extends ConsumerState<_StartChatWithHostDialog> {
+  late final TextEditingController _textEditingController;
+
+  @override
+  void initState() {
+    super.initState();
+    _textEditingController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _textEditingController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('ホストへ最初のメッセージ'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Text(
+            'ホストに最初のメッセージを送りましょう！'
+            'メッセージを送ると、チャットルームが作成されます。',
+          ),
+          const Gap(16),
+          TextField(
+            controller: _textEditingController,
+            decoration: const InputDecoration(
+              border: OutlineInputBorder(),
+              labelText: 'メッセージ',
             ),
           ),
         ],
       ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('キャンセル'),
+        ),
+        TextButton(
+          onPressed: () async {
+            final chatRoomId =
+                await ref.read(startChatControllerProvider).startChatWithHost(
+                      workerId: widget.workerId,
+                      hostId: widget.hostId,
+                      content: _textEditingController.text,
+                    );
+            if (chatRoomId == null) {
+              return;
+            }
+            if (mounted) {
+              Navigator.pop(context, chatRoomId);
+            }
+          },
+          child: const Text('送信'),
+        ),
+      ],
     );
   }
 }

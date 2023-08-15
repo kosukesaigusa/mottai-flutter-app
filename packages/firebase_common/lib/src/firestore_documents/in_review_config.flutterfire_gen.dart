@@ -52,9 +52,9 @@ class ReadInReviewConfig {
 class CreateInReviewConfig {
   const CreateInReviewConfig({
     required this.iOSInReviewVersion,
-    this.enableIOSInReviewMode = false,
+    required this.enableIOSInReviewMode,
     required this.androidInReviewVersion,
-    this.enableAndroidInReviewMode = false,
+    required this.enableAndroidInReviewMode,
   });
 
   final String iOSInReviewVersion;
@@ -98,59 +98,65 @@ class UpdateInReviewConfig {
   }
 }
 
-/// A [CollectionReference] to configurations collection to read.
+class DeleteInReviewConfig {}
+
+/// Provides a reference to the configurations collection for reading.
 final readInReviewConfigCollectionReference = FirebaseFirestore.instance
     .collection('configurations')
     .withConverter<ReadInReviewConfig>(
       fromFirestore: (ds, _) => ReadInReviewConfig.fromDocumentSnapshot(ds),
-      toFirestore: (obj, _) => throw UnimplementedError(),
+      toFirestore: (_, __) => throw UnimplementedError(),
     );
 
-/// A [DocumentReference] to inReviewConfig document to read.
+/// Provides a reference to a inReviewConfig document for reading.
 DocumentReference<ReadInReviewConfig> readInReviewConfigDocumentReference({
   required String inReviewConfigId,
 }) =>
     readInReviewConfigCollectionReference.doc(inReviewConfigId);
 
-/// A [CollectionReference] to configurations collection to create.
+/// Provides a reference to the configurations collection for creating.
 final createInReviewConfigCollectionReference = FirebaseFirestore.instance
     .collection('configurations')
     .withConverter<CreateInReviewConfig>(
-      fromFirestore: (ds, _) => throw UnimplementedError(),
+      fromFirestore: (_, __) => throw UnimplementedError(),
       toFirestore: (obj, _) => obj.toJson(),
     );
 
-/// A [DocumentReference] to inReviewConfig document to create.
+/// Provides a reference to a inReviewConfig document for creating.
 DocumentReference<CreateInReviewConfig> createInReviewConfigDocumentReference({
   required String inReviewConfigId,
 }) =>
     createInReviewConfigCollectionReference.doc(inReviewConfigId);
 
-/// A [CollectionReference] to configurations collection to update.
+/// Provides a reference to the configurations collection for updating.
 final updateInReviewConfigCollectionReference = FirebaseFirestore.instance
     .collection('configurations')
     .withConverter<UpdateInReviewConfig>(
-      fromFirestore: (ds, _) => throw UnimplementedError(),
+      fromFirestore: (_, __) => throw UnimplementedError(),
       toFirestore: (obj, _) => obj.toJson(),
     );
 
-/// A [DocumentReference] to inReviewConfig document to update.
+/// Provides a reference to a inReviewConfig document for updating.
 DocumentReference<UpdateInReviewConfig> updateInReviewConfigDocumentReference({
   required String inReviewConfigId,
 }) =>
     updateInReviewConfigCollectionReference.doc(inReviewConfigId);
 
-/// A [CollectionReference] to configurations collection to delete.
-final deleteInReviewConfigCollectionReference =
-    FirebaseFirestore.instance.collection('configurations');
+/// Provides a reference to the configurations collection for deleting.
+final deleteInReviewConfigCollectionReference = FirebaseFirestore.instance
+    .collection('configurations')
+    .withConverter<DeleteInReviewConfig>(
+      fromFirestore: (_, __) => throw UnimplementedError(),
+      toFirestore: (_, __) => throw UnimplementedError(),
+    );
 
-/// A [DocumentReference] to inReviewConfig document to delete.
-DocumentReference<Object?> deleteInReviewConfigDocumentReference({
+/// Provides a reference to a inReviewConfig document for deleting.
+DocumentReference<DeleteInReviewConfig> deleteInReviewConfigDocumentReference({
   required String inReviewConfigId,
 }) =>
     deleteInReviewConfigCollectionReference.doc(inReviewConfigId);
 
-/// A query manager to execute query against [InReviewConfig].
+/// Manages queries against the configurations collection.
 class InReviewConfigQuery {
   /// Fetches [ReadInReviewConfig] documents.
   Future<List<ReadInReviewConfig>> fetchDocuments({
@@ -197,7 +203,7 @@ class InReviewConfigQuery {
     });
   }
 
-  /// Fetches a specified [ReadInReviewConfig] document.
+  /// Fetches a specific [ReadInReviewConfig] document.
   Future<ReadInReviewConfig?> fetchDocument({
     required String inReviewConfigId,
     GetOptions? options,
@@ -208,7 +214,7 @@ class InReviewConfigQuery {
     return ds.data();
   }
 
-  /// Subscribes a specified [InReviewConfig] document.
+  /// Subscribes a specific [InReviewConfig] document.
   Stream<ReadInReviewConfig?> subscribeDocument({
     required String inReviewConfigId,
     bool includeMetadataChanges = false,
@@ -239,7 +245,7 @@ class InReviewConfigQuery {
         inReviewConfigId: inReviewConfigId,
       ).set(createInReviewConfig, options);
 
-  /// Updates a specified [InReviewConfig] document.
+  /// Updates a specific [InReviewConfig] document.
   Future<void> update({
     required String inReviewConfigId,
     required UpdateInReviewConfig updateInReviewConfig,
@@ -248,7 +254,7 @@ class InReviewConfigQuery {
         inReviewConfigId: inReviewConfigId,
       ).update(updateInReviewConfig.toJson());
 
-  /// Deletes a specified [InReviewConfig] document.
+  /// Deletes a specific [InReviewConfig] document.
   Future<void> delete({
     required String inReviewConfigId,
   }) =>

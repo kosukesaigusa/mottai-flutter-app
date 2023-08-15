@@ -147,7 +147,7 @@ class _ImagePickerSamplePageState extends ConsumerState<ImagePickerSamplePage> {
       await ref
           .read(appScaffoldMessengerControllerProvider)
           .showDialogByBuilder<bool>(
-            builder: (context) => const AccessNotDeniedDialog.gallery(),
+            builder: (context) => const AccessDeniedDialog.gallery(),
           );
     }
   }
@@ -168,7 +168,7 @@ class _ImagePickerSamplePageState extends ConsumerState<ImagePickerSamplePage> {
       await ref
           .read(appScaffoldMessengerControllerProvider)
           .showDialogByBuilder<bool>(
-            builder: (context) => const AccessNotDeniedDialog.camera(),
+            builder: (context) => const AccessDeniedDialog.camera(),
           );
     }
   }
@@ -191,7 +191,7 @@ class _ImagePickerSamplePageState extends ConsumerState<ImagePickerSamplePage> {
       await ref
           .read(appScaffoldMessengerControllerProvider)
           .showDialogByBuilder<bool>(
-            builder: (context) => const AccessNotDeniedDialog.camera(),
+            builder: (context) => const AccessDeniedDialog.camera(),
           );
     }
   }

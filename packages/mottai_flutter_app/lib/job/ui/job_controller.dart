@@ -3,15 +3,15 @@ import 'dart:io';
 import 'package:firebase_common/firebase_common.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../auth/auth.dart';
 import '../../image/firebase_storage.dart';
 import '../job.dart';
 
-final jobControllerProvider = Provider.autoDispose<JobController>(
-  (ref) => JobController(
+final jobControllerProvider =
+    Provider.family.autoDispose<JobController, String>(
+  (ref, userId) => JobController(
     jobService: ref.watch(jobServiceProvider),
     firebaseStorageService: ref.watch(firebaseStorageServiceProvider),
-    userId: ref.watch(userIdProvider),
+    userId: userId,
   ),
 );
 
@@ -19,7 +19,7 @@ class JobController {
   const JobController({
     required JobService jobService,
     required FirebaseStorageService firebaseStorageService,
-    String? userId,
+    required String userId,
   })  : _jobService = jobService,
         _firebaseStorageService = firebaseStorageService,
         _userId = userId;
@@ -29,10 +29,11 @@ class JobController {
 
   final JobService _jobService;
   final FirebaseStorageService _firebaseStorageService;
-  final String? _userId;
+  final String _userId;
 
   /// [Job] の情報を作成する。
   Future<void> create({
+    required String hostId,
     required String title,
     required String content,
     required String place,
@@ -43,17 +44,12 @@ class JobController {
     required String comment,
     File? imageFile,
   }) async {
-    final userId = _userId;
-    if (userId == null) {
-      return;
-    }
-
     var imageUrl = '';
     if (imageFile != null) {
       imageUrl = await _uploadImage(imageFile);
     }
     await _jobService.create(
-      hostId: userId,
+      hostId: hostId,
       title: title,
       content: content,
       place: place,
@@ -79,11 +75,6 @@ class JobController {
     String? comment,
     File? imageFile,
   }) async {
-    final userId = _userId;
-    if (userId == null) {
-      return;
-    }
-
     String? imageUrl;
     if (imageFile != null) {
       imageUrl = await _uploadImage(imageFile);

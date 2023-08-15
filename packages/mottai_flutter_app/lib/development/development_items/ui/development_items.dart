@@ -64,9 +64,7 @@ class DevelopmentItemsPage extends ConsumerWidget {
           ),
           ListTile(
             title: const Text('仕事情報作成ページ'),
-            onTap: () => context.router.pushNamed(
-              JobCreatePage.location(),
-            ),
+            onTap: () => context.router.pushNamed(JobCreatePage.location),
           ),
           ListTile(
             title: const Text('仕事情報編集ページ'),

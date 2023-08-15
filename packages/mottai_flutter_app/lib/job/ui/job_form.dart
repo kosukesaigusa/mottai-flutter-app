@@ -1,19 +1,34 @@
 import 'package:dart_flutter_common/dart_flutter_common.dart';
 import 'package:firebase_common/firebase_common.dart';
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../development/firebase_storage/firebase_storage.dart';
 import '../../development/firebase_storage/ui/firebase_storage_controller.dart';
 import 'job_controller.dart';
 
+/// - `create` の場合、ログイン済みの `hostId`（ユーザー ID）
+/// - `update` の場合、更新対象の [Job] とその本人であることが確認された `hostId`（ユーザー ID）
+///
+/// を受け取り、それに応じた [Job] の作成または更新を行うフォーム。
 class JobForm extends ConsumerStatefulWidget {
-  const JobForm({
-    this.job,
+  const JobForm.create({
+    required String hostId,
     super.key,
-  });
+  })  : _hostId = hostId,
+        _job = null;
 
-  final ReadJob? job;
+  const JobForm.update({
+    required String hostId,
+    required ReadJob job,
+    super.key,
+  })  : _hostId = hostId,
+        _job = job;
+
+  final ReadJob? _job;
+
+  final String _hostId;
 
   @override
   JobFormState createState() => JobFormState();
@@ -42,24 +57,28 @@ class JobFormState extends ConsumerState<JobForm> {
   late final TextEditingController _rewardController;
 
   /// [Job.accessDescription] のテキストフィールド用コントローラー
-  late final TextEditingController _accessDiscriptionController;
+  late final TextEditingController _accessDescriptionController;
 
   /// [Job.comment] のテキストフィールド用コントローラー
   late final TextEditingController _commentController;
 
+  /// 画像の高さ。
+  static const double _imageHeight = 300;
+
   @override
   void initState() {
     super.initState();
-    _titleController = TextEditingController(text: widget.job?.title);
-    _locationController = TextEditingController(text: widget.job?.place);
-    _contentController = TextEditingController(text: widget.job?.content);
-    _belongingsController = TextEditingController(text: widget.job?.belongings);
-    _rewardController = TextEditingController(text: widget.job?.reward);
-    _accessDiscriptionController =
-        TextEditingController(text: widget.job?.accessDescription);
-    _commentController = TextEditingController(text: widget.job?.comment);
-    if (widget.job != null) {
-      _selectedAccessTypes.addAll(widget.job!.accessTypes.toList());
+    _titleController = TextEditingController(text: widget._job?.title);
+    _locationController = TextEditingController(text: widget._job?.place);
+    _contentController = TextEditingController(text: widget._job?.content);
+    _belongingsController =
+        TextEditingController(text: widget._job?.belongings);
+    _rewardController = TextEditingController(text: widget._job?.reward);
+    _accessDescriptionController =
+        TextEditingController(text: widget._job?.accessDescription);
+    _commentController = TextEditingController(text: widget._job?.comment);
+    if (widget._job != null) {
+      _selectedAccessTypes.addAll(widget._job!.accessTypes.toList());
     }
   }
 
@@ -68,54 +87,44 @@ class JobFormState extends ConsumerState<JobForm> {
     final firebaseStorageController =
         ref.watch(firebaseStorageControllerProvider);
     final pickedImageFile = ref.watch(pickedImageFileStateProvider);
-    final controller = ref.watch(jobControllerProvider);
-    final jobId = widget.job?.jobId;
-    late final Widget imageWidget;
-
-    if (pickedImageFile != null) {
-      imageWidget = GestureDetector(
-        onTap: firebaseStorageController.pickImageFromGallery,
-        child: SizedBox(
-          height: 300,
-          child: Center(
-            child: Image.file(pickedImageFile),
-          ),
-        ),
-      );
-    }
-    // 画像が選択されている場合は画像を表示
-    // 選択されていない場合は画像アイコンを表示
-    else if (widget.job != null && widget.job?.imageUrl != '') {
-      imageWidget = GenericImage.rectangle(
-        onTap: firebaseStorageController.pickImageFromGallery,
-        showDetailOnTap: false,
-        imageUrl: pickedImageFile?.path ?? widget.job!.imageUrl,
-        height: 300,
-        width: null,
-      );
-    } else {
-      imageWidget = GestureDetector(
-        onTap: firebaseStorageController.pickImageFromGallery,
-        child: Container(
-          height: 300,
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.black38),
-          ),
-          child: const Center(child: Icon(Icons.image)),
-        ),
-      );
-    }
-
+    final controller = ref.watch(jobControllerProvider(widget._hostId));
+    final jobId = widget._job?.jobId;
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          imageWidget,
-          Padding(
-            padding: const EdgeInsets.symmetric(
-              vertical: 8,
-              horizontal: 24,
+          if (pickedImageFile != null)
+            GestureDetector(
+              onTap: firebaseStorageController.pickImageFromGallery,
+              child: SizedBox(
+                height: _imageHeight,
+                child: Center(
+                  child: Image.file(pickedImageFile),
+                ),
+              ),
+            )
+          else if ((widget._job?.imageUrl ?? '').isNotEmpty)
+            GenericImage.rectangle(
+              onTap: firebaseStorageController.pickImageFromGallery,
+              showDetailOnTap: false,
+              imageUrl: pickedImageFile?.path ?? widget._job!.imageUrl,
+              height: _imageHeight,
+              width: null,
+            )
+          else
+            GestureDetector(
+              onTap: firebaseStorageController.pickImageFromGallery,
+              child: Container(
+                height: _imageHeight,
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.black38),
+                ),
+                child: const Center(child: Icon(Icons.image)),
+              ),
             ),
+          const Gap(32),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
             child: Form(
               key: formKey,
               child: Column(
@@ -158,20 +167,20 @@ class JobFormState extends ConsumerState<JobForm> {
                     controller: _rewardController,
                     isRequired: true,
                   ),
-                  _TextInputSection(
+                  _TextInputSection<AccessType>.withChoice(
                     title: 'アクセス',
                     description: 'お手伝いの場所までのアクセス方法について補足説明をしてください。'
                         '最寄りの駅やバス停まで送迎ができる場合などは、その内容も入力してください。',
-                    controller: _accessDiscriptionController,
+                    controller: _accessDescriptionController,
                     choices: {
                       for (final v in AccessType.values) v: v.label,
                     },
-                    enableChoices: _selectedAccessTypes,
+                    enabledChoices: _selectedAccessTypes,
                     onChoiceSelected: (item) {
                       if (_selectedAccessTypes.contains(item)) {
                         _selectedAccessTypes.remove(item);
                       } else {
-                        _selectedAccessTypes.add(item as AccessType);
+                        _selectedAccessTypes.add(item);
                       }
                       setState(() {});
                     },
@@ -202,20 +211,21 @@ class JobFormState extends ConsumerState<JobForm> {
                               belongings: _belongingsController.text,
                               reward: _rewardController.text,
                               accessDescription:
-                                  _accessDiscriptionController.text,
+                                  _accessDescriptionController.text,
                               comment: _commentController.text,
                               imageFile: pickedImageFile,
                               accessTypes: _selectedAccessTypes.toSet(),
                             );
                           } else {
                             controller.create(
+                              hostId: widget._hostId,
                               title: _titleController.text,
                               place: _locationController.text,
                               content: _contentController.text,
                               belongings: _belongingsController.text,
                               reward: _rewardController.text,
                               accessDescription:
-                                  _accessDiscriptionController.text,
+                                  _accessDescriptionController.text,
                               comment: _commentController.text,
                               imageFile: pickedImageFile,
                               accessTypes: _selectedAccessTypes.toSet(),
@@ -236,23 +246,33 @@ class JobFormState extends ConsumerState<JobForm> {
   }
 }
 
-/// タイトルと説明、テキストフィールドからなるセクション
-/// [Section]を使用し、contentにフィールドを与えている
-class _TextInputSection extends StatelessWidget {
+/// タイトルと説明、テキストフィールドからなるセクション。
+/// [Section] を使用し、`Section.content` にフィールドを与えている。
+class _TextInputSection<T extends dynamic> extends StatelessWidget {
+  /// テキスト入力のみをさせる通常の [_TextInputSection] を作成する。
   const _TextInputSection({
     required this.title,
     this.description,
     this.maxLines,
     this.defaultDisplayLines = 1,
-    this.choices,
-    this.enableChoices,
-    this.onChoiceSelected,
     this.controller,
     this.isRequired = false,
-  }) : assert(
-          (choices != null) == (enableChoices != null),
-          'choicesとenableChoicesのどちらかのみをnullにすることはできません。',
-        );
+  })  : choices = const {},
+        enabledChoices = const [],
+        onChoiceSelected = null;
+
+  /// テキスト入力と選択肢を併せて入力させる [_TextInputSection] を作成する。
+  const _TextInputSection.withChoice({
+    required this.title,
+    this.description,
+    this.maxLines,
+    this.defaultDisplayLines = 1,
+    required this.choices,
+    required this.enabledChoices,
+    required this.onChoiceSelected,
+    this.controller,
+    this.isRequired = false,
+  });
 
   /// セクションのタイトル。
   final String title;
@@ -268,13 +288,13 @@ class _TextInputSection extends StatelessWidget {
 
   /// テキストフィールドの下に表示する選択肢
   /// 選択された際の値がkeyで、表示する値がvalueの[Map]で受け取る。
-  final Map<dynamic, String>? choices;
+  final Map<T, String> choices;
 
   /// [choices] の有効な値のリスト
-  final List<dynamic>? enableChoices;
+  final List<T> enabledChoices;
 
   /// [choices] が選択された際のコールバック
-  final void Function(dynamic item)? onChoiceSelected;
+  final void Function(T item)? onChoiceSelected;
 
   /// テキストフィールドのコントローラー
   final TextEditingController? controller;
@@ -295,12 +315,13 @@ class _TextInputSection extends StatelessWidget {
       descriptionStyle: Theme.of(context).textTheme.bodyMedium,
       sectionPadding: const EdgeInsets.only(bottom: 32),
       content: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           TextFormField(
             controller: controller,
             maxLines: maxLines,
             validator: (value) {
-              if (isRequired && value == '') {
+              if (isRequired && (value ?? '').isEmpty) {
                 return '入力してください。';
               }
               return null;
@@ -310,13 +331,16 @@ class _TextInputSection extends StatelessWidget {
               border: const OutlineInputBorder(),
             ),
           ),
-          if (choices != null)
-            SelectableChips(
-              allItems: choices!.keys,
-              labels: choices!,
-              enabledItems: enableChoices!,
+          if (choices.isNotEmpty) ...[
+            const Gap(16),
+            SelectableChips<T>(
+              allItems: choices.keys,
+              labels: choices,
+              runSpacing: 8,
+              enabledItems: enabledChoices,
               onTap: onChoiceSelected,
-            )
+            ),
+          ],
         ],
       ),
     );

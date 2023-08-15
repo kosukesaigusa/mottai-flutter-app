@@ -20,6 +20,7 @@ import '../../image_picker/ui/image_picker_sample.dart';
 import '../../in_review/ui/in_review.dart';
 import '../../sample_todo/ui/sample_todos.dart';
 import '../../sign_in/ui/sign_in.dart';
+import '../../user_social_login/user_social_login.dart';
 import '../../web_link/ui/web_link_stub.dart';
 
 /// 開発中の各ページへの導線を表示するページ。
@@ -146,6 +147,11 @@ class DevelopmentItemsPage extends ConsumerWidget {
           ListTile(
             title: const Text('サインイン (Google, Apple, LINE)'),
             onTap: () => context.router.pushNamed(SignInSamplePage.location),
+          ),
+          ListTile(
+            title: const Text('ソーシャル認証連携 (Google, Apple, LINE)'),
+            onTap: () =>
+                context.router.pushNamed(UserSocialLoginSamplePage.location),
           ),
           const ListTile(
             title: Text('FCM トークン（トークン追加, device_info_plus）'),

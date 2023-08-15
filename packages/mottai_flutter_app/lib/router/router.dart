@@ -13,6 +13,7 @@ import '../development/image_picker/ui/image_picker_sample.dart';
 import '../development/in_review/ui/in_review.dart';
 import '../development/sample_todo/ui/sample_todos.dart';
 import '../development/sign_in/ui/sign_in.dart';
+import '../development/user_social_login/user_social_login.dart';
 import '../development/web_link/ui/web_link_stub.dart';
 import '../host/ui/create_or_update_host.dart';
 import '../host/ui/host.dart';
@@ -133,6 +134,10 @@ class AppRouter extends $AppRouter {
     AutoRoute(
       path: WebLinkStubPage.path,
       page: WebLinkStubRoute.page,
+    ),
+    AutoRoute(
+      path: UserSocialLoginSamplePage.path,
+      page: UserSocialLoginSampleRoute.page,
     ),
   ];
 }

@@ -37,5 +37,10 @@ final readStatusRepositoryProvider =
 final sampleTodoRepositoryProvider =
     Provider.autoDispose<SampleTodoRepository>((_) => SampleTodoRepository());
 
+final userSocialLoginRepositoryProvider =
+    Provider.autoDispose<UserSocialLoginRepository>(
+  (_) => UserSocialLoginRepository(),
+);
+
 final workerRepositoryProvider =
     Provider.autoDispose<WorkerRepository>((_) => WorkerRepository());

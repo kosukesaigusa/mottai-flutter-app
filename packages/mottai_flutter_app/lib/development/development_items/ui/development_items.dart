@@ -17,6 +17,7 @@ import '../../color/ui/color.dart';
 import '../../firebase_storage/ui/firebase_storage.dart';
 import '../../force_update/ui/force_update.dart';
 import '../../generic_image/ui/generic_images.dart';
+import '../../geoflutterfire_plus/geoflutterfire_plus.dart';
 import '../../image_detail_view/ui/image_detail_view_stub.dart';
 import '../../image_picker/ui/image_picker_sample.dart';
 import '../../in_review/ui/in_review.dart';
@@ -223,6 +224,17 @@ class DevelopmentItemsPage extends ConsumerWidget {
               '色の確認',
             ),
             onTap: () => context.router.pushNamed(ColorPage.location),
+          ),
+          ListTile(
+            title: const Text(
+              'geoflutterfire_plus の機能確認',
+            ),
+            onTap: () => Navigator.push<void>(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const GeoflutterfirePlusSample(),
+              ),
+            ),
           ),
         ],
       ),

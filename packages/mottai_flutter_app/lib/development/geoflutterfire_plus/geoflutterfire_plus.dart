@@ -6,6 +6,13 @@ import 'package:geoflutterfire_plus/geoflutterfire_plus.dart';
 class GeoflutterfirePlusSample extends StatelessWidget {
   const GeoflutterfirePlusSample({super.key});
 
+  static const _latitude = 35.681236;
+
+  static const _longitude = 139.767125;
+
+  static final _locationsCollectionReference =
+      FirebaseFirestore.instance.collection('sampleLocations');
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -16,11 +23,10 @@ class GeoflutterfirePlusSample extends StatelessWidget {
             leading: const Icon(Icons.map),
             title: const Text('Call fetchWithin method'),
             onTap: () async {
-              final locationCollectionRef =
-                  FirebaseFirestore.instance.collection('locations');
-              const center = GeoFirePoint(GeoPoint(35.681236, 139.767125));
-              final result = await GeoCollectionReference(locationCollectionRef)
-                  .fetchWithin(
+              const center = GeoFirePoint(GeoPoint(_latitude, _longitude));
+              final result =
+                  await GeoCollectionReference(_locationsCollectionReference)
+                      .fetchWithin(
                 center: center,
                 radiusInKm: 6,
                 field: 'geo',
@@ -28,10 +34,28 @@ class GeoflutterfirePlusSample extends StatelessWidget {
                 geopointFrom: (data) => (data['geo']
                     as Map<String, dynamic>)['geopoint'] as GeoPoint,
               );
-              debugPrint(result.toString());
+              // output: 50
+              debugPrint(result.length.toString());
             },
           ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          for (var i = 0; i < 50; i++) {
+            final newLatitude = _latitude + i * 0.0001;
+            final newLongitude = _longitude + i * 0.0001;
+            final newGeoFirePoint =
+                GeoFirePoint(GeoPoint(newLatitude, newLongitude));
+            _locationsCollectionReference.add(<String, dynamic>{
+              'geo': <String, dynamic>{
+                'geopoint': newGeoFirePoint.geopoint,
+                'geohash': newGeoFirePoint.geohash,
+              },
+            });
+          }
+        },
+        child: const Icon(Icons.add),
       ),
     );
   }

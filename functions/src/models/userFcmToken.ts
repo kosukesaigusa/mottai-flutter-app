@@ -1,7 +1,7 @@
 export class UserFcmToken {
-    userId = ''
-    token = ''
-    deviceInfo = ''
+    userId = ``;
+    token = ``;
+    deviceInfo = ``;
     createdAt?: FirebaseFirestore.Timestamp
     updatedAt?: FirebaseFirestore.Timestamp
 

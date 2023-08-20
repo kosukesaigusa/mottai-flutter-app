@@ -9,5 +9,5 @@ db.settings({ ignoreUndefinedProperties: true })
 
 /// fcmTokens コレクションの参照 */
 export const userFcmTokensRef: CollectionReference<UserFcmToken> = db
-    .collection(`fcmTokens`)
+    .collection(`userFcmTokens`)
     .withConverter<UserFcmToken>(userFcmTokenConverter)

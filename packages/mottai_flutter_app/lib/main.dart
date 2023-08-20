@@ -9,6 +9,7 @@ import 'package_info.dart';
 import 'push_notification/firebase_messaging.dart';
 import 'router/router.dart';
 import 'scaffold_messenger_controller.dart';
+import 'setup_local_emulator.dart';
 import 'user/user.dart';
 import 'user/user_mode.dart';
 
@@ -17,6 +18,10 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  if (const String.fromEnvironment('FLAVOR') == 'local') {
+    await setUpLocalEmulator();
+  }
   await LineSDK.instance
       .setup(const String.fromEnvironment('LINE_CHANNEL_ID'))
       .then((_) {

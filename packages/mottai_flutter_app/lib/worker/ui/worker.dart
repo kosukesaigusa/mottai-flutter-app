@@ -5,8 +5,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../auth/auth.dart';
 import '../../host/ui/create_or_update_host.dart';
+import '../../user/ui/identity_dependent_builder.dart';
 import '../../user/ui/user_mode.dart';
 import '../../user/user.dart';
 import '../../user/worker.dart';
@@ -49,8 +49,6 @@ class WorkerPageBody extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final workerImageUrl = ref.watch(workerImageUrlProvider(userId));
     final workerDisplayName = ref.watch(workerDisplayNameProvider(userId));
-    final loggedInUserId = ref.watch(userIdProvider);
-    final isMatchingUserId = loggedInUserId == userId;
     final isHost = ref.watch(isHostProvider);
     return SingleChildScrollView(
       // TODO: Divider は横いっぱいに表示したいので Padding の水平方向の全体適用はやめたい。
@@ -73,23 +71,34 @@ class WorkerPageBody extends ConsumerWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                if (isMatchingUserId)
-                  CircleAvatar(
-                    backgroundColor: Theme.of(context).focusColor,
-                    child: IconButton(
-                      color: Theme.of(context).shadowColor,
-                      onPressed: () => context.router.pushNamed(
-                        CreateOrUpdateWorkerPage.location(userId: userId),
+                IdentityDependentBuilder(
+                  buildForIdentity: () {
+                    return CircleAvatar(
+                      backgroundColor: Theme.of(context).focusColor,
+                      child: IconButton(
+                        color: Theme.of(context).shadowColor,
+                        onPressed: () => context.router.pushNamed(
+                          CreateOrUpdateWorkerPage.location(userId: userId),
+                        ),
+                        icon: const Icon(Icons.edit),
                       ),
-                      icon: const Icon(Icons.edit),
-                    ),
-                  ),
+                    );
+                  },
+                  targetUserId: userId,
+                ),
               ],
             ),
-            if (isMatchingUserId) ...[
-              const Gap(16),
-              const UserModeSection(),
-            ],
+            IdentityDependentBuilder(
+              buildForIdentity: () {
+                return const Column(
+                  children: [
+                    Gap(16),
+                    UserModeSection(),
+                  ],
+                );
+              },
+              targetUserId: userId,
+            ),
             const Gap(16),
             // TODO 自己紹介をDBに追加する
             Section(
@@ -116,96 +125,103 @@ class WorkerPageBody extends ConsumerWidget {
                     'https://www.kaku-ichi.co.jp/media/wp-content/uploads/2020/02/20200226001.jpg',
               ),
             ),
-            if (isMatchingUserId) ...[
-              const Divider(
-                height: 36,
-              ),
-              Section(
-                title: 'ソーシャル連携',
-                titleStyle: Theme.of(context).textTheme.titleLarge,
-                content: const Column(
+            IdentityDependentBuilder(
+              buildForIdentity: () {
+                return Column(
                   children: [
-                    Row(
-                      children: [
-                        FaIcon(
-                          FontAwesomeIcons.google,
-                          size: 30,
-                        ),
-                        SizedBox(width: 10),
-                        Text('Google'),
-                        // TODO google連携済みかどうかで出し分けられるようにする
-                        Expanded(
-                          child: Align(
-                            alignment: Alignment.centerRight,
-                            child: Text('連携済み'),
-                          ),
-                        ),
-                      ],
+                    const Divider(
+                      height: 36,
                     ),
-                    SizedBox(height: 12),
-                    Row(
-                      children: [
-                        FaIcon(
-                          FontAwesomeIcons.apple,
-                          size: 40,
-                        ),
-                        SizedBox(width: 10),
-                        Text('Apple'),
-                        // TODO apple連携済みかどうかで出し分けられるようにする
-                        Expanded(
-                          child: Align(
-                            alignment: Alignment.centerRight,
-                            child: Text('連携済み'),
+                    Section(
+                      title: 'ソーシャル連携',
+                      titleStyle: Theme.of(context).textTheme.titleLarge,
+                      content: const Column(
+                        children: [
+                          Row(
+                            children: [
+                              FaIcon(
+                                FontAwesomeIcons.google,
+                                size: 30,
+                              ),
+                              SizedBox(width: 10),
+                              Text('Google'),
+                              // TODO google連携済みかどうかで出し分けられるようにする
+                              Expanded(
+                                child: Align(
+                                  alignment: Alignment.centerRight,
+                                  child: Text('連携済み'),
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 12),
-                    Row(
-                      children: [
-                        FaIcon(
-                          FontAwesomeIcons.line,
-                          color: Color(0xff06c755),
-                          size: 30,
-                        ),
-                        SizedBox(width: 10),
-                        Text('LINE'),
-                        // TODO line連携済みかどうかで出し分けられるようにする
-                        Expanded(
-                          child: Align(
-                            alignment: Alignment.centerRight,
-                            child: Text('連携済み'),
+                          SizedBox(height: 12),
+                          Row(
+                            children: [
+                              FaIcon(
+                                FontAwesomeIcons.apple,
+                                size: 40,
+                              ),
+                              SizedBox(width: 10),
+                              Text('Apple'),
+                              // TODO apple連携済みかどうかで出し分けられるようにする
+                              Expanded(
+                                child: Align(
+                                  alignment: Alignment.centerRight,
+                                  child: Text('連携済み'),
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
-                      ],
-                    )
-                  ],
-                ),
-              ),
-              if (!isHost) ...[
-                const Divider(height: 36),
-                Section(
-                  title: 'ホストとして登録',
-                  titleStyle: Theme.of(context).textTheme.titleLarge,
-                  titleBottomMargin: 8,
-                  content: const Text(
-                    '''
-ホスト（農家、猟師、猟師など）として登録・利用しますか？ホストとして利用すると、自分の農園や仕事の情報を掲載して、お手伝いをしてくれるワーカーとマッチングしますか？''',
-                  ),
-                ),
-                Align(
-                  child: ElevatedButton(
-                    onPressed: () => context.router.pushNamed(
-                      CreateOrUpdateHostPage.location(
-                        userId: userId,
-                        actionType: ActionType.create.name,
+                          SizedBox(height: 12),
+                          Row(
+                            children: [
+                              FaIcon(
+                                FontAwesomeIcons.line,
+                                color: Color(0xff06c755),
+                                size: 30,
+                              ),
+                              SizedBox(width: 10),
+                              Text('LINE'),
+                              // TODO line連携済みかどうかで出し分けられるようにする
+                              Expanded(
+                                child: Align(
+                                  alignment: Alignment.centerRight,
+                                  child: Text('連携済み'),
+                                ),
+                              ),
+                            ],
+                          )
+                        ],
                       ),
                     ),
-                    child: const Text('ホストとして登録'),
-                  ),
-                ),
-              ],
-            ],
+                    if (!isHost) ...[
+                      const Divider(height: 36),
+                      Section(
+                        title: 'ホストとして登録',
+                        titleStyle: Theme.of(context).textTheme.titleLarge,
+                        titleBottomMargin: 8,
+                        content: const Text(
+                          '''
+ホスト（農家、猟師、猟師など）として登録・利用しますか？ホストとして利用すると、自分の農園や仕事の情報を掲載して、お手伝いをしてくれるワーカーとマッチングしますか？''',
+                        ),
+                      ),
+                      Align(
+                        child: ElevatedButton(
+                          onPressed: () => context.router.pushNamed(
+                            CreateOrUpdateHostPage.location(
+                              userId: userId,
+                              actionType: ActionType.create.name,
+                            ),
+                          ),
+                          child: const Text('ホストとして登録'),
+                        ),
+                      ),
+                    ],
+                  ],
+                );
+              },
+              targetUserId: userId,
+            ),
             const Gap(32),
           ],
         ),

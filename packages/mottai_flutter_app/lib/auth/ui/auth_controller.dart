@@ -132,7 +132,7 @@ class AuthController {
   /// 複数の認証方法が有効化されている場合、指定された [SignInMethod] に基づいて、
   /// [AuthService] に定義されたソーシャルログインのリンク解除処理を実行する。
   /// そうではない場合(単一の認証方法のみが有効化されている場合)は、解除不可であることをユーザーに通知する。
-  /// 
+  ///
   /// - [signInMethod] : リンクまたはリンク解除を行うソーシャルログインの方法。
   /// - [userId] : 操作対象のユーザーID。
   /// - [userSocialLogin] : ユーザーの [UserSocialLogin] ドキュメント
@@ -142,7 +142,6 @@ class AuthController {
     //TODO controller が firebase_common に依存することは問題か？
     required ReadUserSocialLogin userSocialLogin,
   }) async {
-    
     if (!_hasMultipleAuthMethodsEnabled(userSocialLogin)) {
       // 単一の認証方法のみが有効化されている場合、
       // 本メソッドを呼び出す際に指定している SignInMethod がその単一の認証方法となるため、
@@ -161,19 +160,26 @@ class AuthController {
   }
 
   /// 引数で受ける [userSocialLogin] を元に、複数の認証方法が有効化されているかを判定し、真偽値を返す
-  //TODO もし SignInMethod の種類が増えた場合、以下コードも修正が必要になってしまうため、改善が必要か？
   bool _hasMultipleAuthMethodsEnabled(
     ReadUserSocialLogin userSocialLogin,
   ) {
-
-    final enabledList = [
-      userSocialLogin.isGoogleEnabled,
-      userSocialLogin.isAppleEnabled,
-      userSocialLogin.isLINEEnabled,
-    ];
+    //TODO 以下の記述箇所はService層である auth.dart に変更すべきか？
+    //TODO ただし、そうした場合、 auth.dart が firebase_common に依存するが問題ないか？
+    final enabledList = <bool>[];
+    for (final signInMethod in SignInMethod.values) {
+      switch (signInMethod) {
+        case SignInMethod.google:
+          enabledList.add(userSocialLogin.isGoogleEnabled);
+        case SignInMethod.apple:
+          enabledList.add(userSocialLogin.isGoogleEnabled);
+        case SignInMethod.line:
+          enabledList.add(userSocialLogin.isLINEEnabled);
+        case SignInMethod.email:
+          throw UnimplementedError();
+      }
+    }
 
     return enabledList.where((isEnabled) => isEnabled).length > 1;
-
   }
 
   /// [FirebaseAuth] からサインアウトする。

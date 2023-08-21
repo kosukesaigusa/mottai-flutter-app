@@ -1,9 +1,14 @@
 import * as admin from 'firebase-admin'
 import {
+    DocumentData,
     DocumentReference,
+    DocumentSnapshot,
     FieldValue,
+    Query,
     QueryDocumentSnapshot,
     QuerySnapshot,
+    SetOptions,
+    Timestamp,
     WriteResult
 } from 'firebase-admin/firestore'
 
@@ -55,18 +60,12 @@ export class ReadWorker {
             displayName: (json[`displayName`] as string | undefined) ?? ``,
             imageUrl: (json[`imageUrl`] as string | undefined) ?? ``,
             isHost: (json[`isHost`] as boolean | undefined) ?? false,
-            createdAt: (
-                json[`createdAt`] as FirebaseFirestore.Timestamp | undefined
-            )?.toDate(),
-            updatedAt: (
-                json[`updatedAt`] as FirebaseFirestore.Timestamp | undefined
-            )?.toDate()
+            createdAt: (json[`createdAt`] as Timestamp | undefined)?.toDate(),
+            updatedAt: (json[`updatedAt`] as Timestamp | undefined)?.toDate()
         })
     }
 
-    static fromDocumentSnapshot(
-        ds: FirebaseFirestore.DocumentSnapshot
-    ): ReadWorker {
+    static fromDocumentSnapshot(ds: DocumentSnapshot): ReadWorker {
         const data = ds.data()!
         const cleanedData: Record<string, unknown> = {}
         for (const [key, value] of Object.entries(data)) {
@@ -100,8 +99,6 @@ export class CreateWorker {
     readonly imageUrl: string
 
     readonly isHost: boolean
-
-    readonly createdAt?: Date
 
     toJson(): Record<string, unknown> {
         return {
@@ -140,8 +137,10 @@ export class UpdateWorker {
 
     readonly createdAt?: Date
 
-    toJson(): Record<string, unknown> {
-        const json: Record<string, unknown> = {}
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    toJson(): Record<string, any> {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const json: Record<string, any> = {}
         if (this.displayName != undefined) {
             json[`displayName`] = this.displayName
         }
@@ -152,14 +151,14 @@ export class UpdateWorker {
             json[`isHost`] = this.isHost
         }
         if (this.createdAt != undefined) {
-            json[`createdAt`] = FirebaseFirestore.Timestamp.fromDate(
-                this.createdAt
-            )
+            json[`createdAt`] = this.createdAt
         }
         json[`updatedAt`] = FieldValue.serverTimestamp()
         return json
     }
 }
+
+export class DeleteWorker {}
 
 /**
  * A Cloud Firestore object which ignores `undefined` properties.
@@ -168,126 +167,121 @@ const db = admin.firestore()
 db.settings({ ignoreUndefinedProperties: true })
 
 /**
- * A CollectionReference to the workers collection for reading.
- * @type {FirebaseFirestore.CollectionReference<ReadWorker>}
+ * Provides a reference to the workers collection for reading.
  */
 export const readWorkerCollectionReference = db
     .collection(`workers`)
     .withConverter<ReadWorker>({
-        fromFirestore: (ds: FirebaseFirestore.DocumentSnapshot): ReadWorker => {
+        fromFirestore: (ds: DocumentSnapshot): ReadWorker => {
             return ReadWorker.fromDocumentSnapshot(ds)
         },
-        toFirestore: (): FirebaseFirestore.DocumentData => {
-            throw Error(`toFirestore is not implemented for ReadWorker`)
+        toFirestore: () => {
+            throw new Error(`toFirestore is not implemented for ReadWorker`)
         }
     })
 
 /**
- * A DocumentReference to a worker document for reading.
- * @param {string} workerId - The ID of the worker document to read.
- * @returns {FirebaseFirestore.DocumentReference<ReadWorker>}
+ * Provides a reference to a worker document for reading.
+ * @param workerId - The ID of the worker document to read.
  */
 export const readWorkerDocumentReference = ({
     workerId
 }: {
     workerId: string
-}): FirebaseFirestore.DocumentReference<ReadWorker> =>
-    readWorkerCollectionReference.doc(workerId)
+}): DocumentReference<ReadWorker> => readWorkerCollectionReference.doc(workerId)
 
 /**
- * A CollectionReference to the workers collection for creating.
- * @type {FirebaseFirestore.CollectionReference<CreateWorker>}
+ * Provides a reference to the workers collection for creating.
  */
 export const createWorkerCollectionReference = db
     .collection(`workers`)
     .withConverter<CreateWorker>({
-        fromFirestore: (): CreateWorker => {
+        fromFirestore: () => {
             throw new Error(`fromFirestore is not implemented for CreateWorker`)
         },
-        toFirestore: (obj: CreateWorker): FirebaseFirestore.DocumentData => {
+        toFirestore: (obj: CreateWorker): DocumentData => {
             return obj.toJson()
         }
     })
 
 /**
- * A DocumentReference to a worker document for creating.
- * @param {string} workerId - The ID of the worker document to create.
- * @returns {FirebaseFirestore.DocumentReference<CreateWorker>}
+ * Provides a reference to a worker document for creating.
+ * @param workerId - The ID of the worker document to read.
  */
 export const createWorkerDocumentReference = ({
     workerId
 }: {
     workerId: string
-}): FirebaseFirestore.DocumentReference<CreateWorker> =>
+}): DocumentReference<CreateWorker> =>
     createWorkerCollectionReference.doc(workerId)
 
 /**
- * A CollectionReference to the workers collection for updating.
- * @type {FirebaseFirestore.CollectionReference<UpdateWorker>}
+ * Provides a reference to the workers collection for updating.
  */
 export const updateWorkerCollectionReference = db
     .collection(`workers`)
     .withConverter<UpdateWorker>({
-        fromFirestore: (): CreateWorker => {
-            throw new Error(`fromFirestore is not implemented for CreateWorker`)
+        fromFirestore: () => {
+            throw new Error(`fromFirestore is not implemented for UpdateWorker`)
         },
-        toFirestore: (obj: UpdateWorker): FirebaseFirestore.DocumentData => {
+        toFirestore: (obj: UpdateWorker): DocumentData => {
             return obj.toJson()
         }
     })
 
 /**
- * A DocumentReference to a worker document for updating.
- * @param {string} workerId - The ID of the worker document to update.
- * @returns {FirebaseFirestore.DocumentReference<UpdateWorker>}
+ * Provides a reference to a worker document for updating.
+ * @param workerId - The ID of the worker document to read.
  */
 export const updateWorkerDocumentReference = ({
     workerId
 }: {
     workerId: string
-}): FirebaseFirestore.DocumentReference<UpdateWorker> =>
+}): DocumentReference<UpdateWorker> =>
     updateWorkerCollectionReference.doc(workerId)
 
 /**
- * A CollectionReference to the workers collection for deleting.
- * @type {FirebaseFirestore.CollectionReference}
+ * Provides a reference to the workers collection for deleting.
  */
-export const deleteWorkerCollectionReference = db.collection(`workers`)
+export const deleteWorkerCollectionReference = db
+    .collection(`workers`)
+    .withConverter<DeleteWorker>({
+        fromFirestore: () => {
+            throw new Error(`fromFirestore is not implemented for DeleteWorker`)
+        },
+        toFirestore: (): DocumentData => {
+            throw new Error(`toFirestore is not implemented for DeleteWorker`)
+        }
+    })
 
 /**
- * A DocumentReference to a worker document for deleting.
- * @param {string} workerId - The ID of the worker document to delete.
- * @returns {FirebaseFirestore.DocumentReference}
+ * Provides a reference to a worker document for deleting.
+ * @param workerId - The ID of the worker document to read.
  */
 export const deleteWorkerDocumentReference = ({
     workerId
 }: {
     workerId: string
-}): FirebaseFirestore.DocumentReference =>
+}): DocumentReference<DeleteWorker> =>
     deleteWorkerCollectionReference.doc(workerId)
 
 /**
- * A query manager to execute queries against the Worker collection.
+ * Manages queries against the workers collection.
  */
 export class WorkerQuery {
     /**
-     * Fetches ReadWorker documents.
-     * @param {Object} options - Options for the query.
-     * @param {Function} options.queryBuilder - A function to build the query.
-     * @param {Function} options.compare - A function to compare the results.
-     * @returns {Promise<ReadWorker[]>}
+     * Fetches worker documents.
+     * @param queryBuilder - Function to modify the query.
+     * @param compare - Function to sort the results.
      */
     async fetchDocuments({
         queryBuilder,
         compare
     }: {
-        queryBuilder?: (
-            query: FirebaseFirestore.Query<ReadWorker>
-        ) => FirebaseFirestore.Query<ReadWorker>
+        queryBuilder?: (query: Query<ReadWorker>) => Query<ReadWorker>
         compare?: (lhs: ReadWorker, rhs: ReadWorker) => number
-    } = {}): Promise<ReadWorker[]> {
-        let query: FirebaseFirestore.Query<ReadWorker> =
-            readWorkerCollectionReference
+    }): Promise<ReadWorker[]> {
+        let query: Query<ReadWorker> = readWorkerCollectionReference
         if (queryBuilder != undefined) {
             query = queryBuilder(query)
         }
@@ -302,25 +296,23 @@ export class WorkerQuery {
     }
 
     /**
-     * Fetches a specified ReadWorker document.
-     * @param {Object} options - Options for the query.
-     * @param {string} options.workerId - The ID of the worker document to fetch.
-     * @returns {Promise<ReadWorker | undefined>}
+     * Fetches a specific worker document.
+     * @param workerId - The ID of the worker document to fetch.
      */
     async fetchDocument({
         workerId
     }: {
         workerId: string
     }): Promise<ReadWorker | undefined> {
-        const ds = await readWorkerDocumentReference({ workerId }).get()
+        const ds = await readWorkerDocumentReference({
+            workerId
+        }).get()
         return ds.data()
     }
 
     /**
-     * Adds a Worker document.
-     * @param {Object} options - Options for the query.
-     * @param {CreateWorker} options.createWorker - The worker document to add.
-     * @returns {Promise<DocumentReference<CreateWorker>>}
+     * Adds a worker document.
+     * @param createWorker - The worker details to add.
      */
     async add({
         createWorker
@@ -331,12 +323,10 @@ export class WorkerQuery {
     }
 
     /**
-     * Sets a Worker document.
-     * @param {Object} options - Options for the query.
-     * @param {string} options.workerId - The ID of the worker document to set.
-     * @param {CreateWorker} options.createWorker - The worker document to set.
-     * @param {FirebaseFirestore.SetOptions} options.options - Options for the set operation.
-     * @returns {Promise<WriteResult>}
+     * Sets a worker document.
+     * @param workerId - The ID of the worker document to set.
+     * @param createWorker - The worker details to set.
+     * @param options - Options for the set operation.
      */
     async set({
         workerId,
@@ -345,24 +335,23 @@ export class WorkerQuery {
     }: {
         workerId: string
         createWorker: CreateWorker
-        options?: FirebaseFirestore.SetOptions
+        options?: SetOptions
     }): Promise<WriteResult> {
         if (options == undefined) {
-            return createWorkerDocumentReference({ workerId }).set(createWorker)
+            return createWorkerDocumentReference({
+                workerId
+            }).set(createWorker)
         } else {
-            return createWorkerDocumentReference({ workerId }).set(
-                createWorker,
-                options
-            )
+            return createWorkerDocumentReference({
+                workerId
+            }).set(createWorker, options)
         }
     }
 
     /**
-     * Updates a specified Worker document.
-     * @param {Object} options - Options for the query.
-     * @param {string} options.workerId - The ID of the worker document to update.
-     * @param {UpdateWorker} options.updateWorker - The worker document to update.
-     * @returns {Promise<WriteResult>}
+     * Updates a specific worker document.
+     * @param workerId - The ID of the worker document to update.
+     * @param updateWorker - The details for updating the worker.
      */
     async update({
         workerId,
@@ -371,18 +360,18 @@ export class WorkerQuery {
         workerId: string
         updateWorker: UpdateWorker
     }): Promise<WriteResult> {
-        return updateWorkerDocumentReference({ workerId }).update(
-            updateWorker.toJson()
-        )
+        return updateWorkerDocumentReference({
+            workerId
+        }).update(updateWorker.toJson())
     }
 
     /**
-     * Deletes a specified Worker document.
-     * @param {Object} options - Options for the query.
-     * @param {string} options.workerId - The ID of the worker document to delete.
-     * @returns {Promise<WriteResult>}
+     * Deletes a specific worker document.
+     * @param workerId - The ID of the worker document to delete.
      */
     async delete({ workerId }: { workerId: string }): Promise<WriteResult> {
-        return deleteWorkerDocumentReference({ workerId }).delete()
+        return deleteWorkerDocumentReference({
+            workerId
+        }).delete()
     }
 }

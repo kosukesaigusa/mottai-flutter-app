@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_common/firebase_common.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -128,14 +129,27 @@ class AuthController {
     //TODO リンク処理の過程でログインをキャンセルした際のエラーハンドリングが適切にできていない。
   }
 
-  /// [SignInMethod] に基づいて、[AuthService] に定義されたソーシャルログインのリンク解除処理を実行する。
-  ///
-  /// - `signInMethod` : リンクまたはリンク解除を行うソーシャルログインの方法。
-  /// - `userId` : 操作対象のユーザーID。
+  /// 複数の認証方法が有効化されている場合、指定された [SignInMethod] に基づいて、
+  /// [AuthService] に定義されたソーシャルログインのリンク解除処理を実行する。
+  /// そうではない場合(単一の認証方法のみが有効化されている場合)は、解除不可であることをユーザーに通知する。
+  /// 
+  /// - [signInMethod] : リンクまたはリンク解除を行うソーシャルログインの方法。
+  /// - [userId] : 操作対象のユーザーID。
+  /// - [userSocialLogin] : ユーザーの [UserSocialLogin] ドキュメント
   Future<void> unLinkUserSocialLogin({
     required SignInMethod signInMethod,
     required String userId,
+    //TODO controller が firebase_common に依存することは問題か？
+    required ReadUserSocialLogin userSocialLogin,
   }) async {
+    
+    if (!_hasMultipleAuthMethodsEnabled(userSocialLogin)) {
+      // 単一の認証方法のみが有効化されている場合、
+      // 本メソッドを呼び出す際に指定している SignInMethod がその単一の認証方法となるため、
+      // 解除不可であることをダイアログ表示する。
+      //TODO 解除できないことをダイアログ表示する
+      throw UnimplementedError();
+    }
     try {
       await _authService.unLinkUserSocialLogin(
         signInMethod: signInMethod,
@@ -144,6 +158,22 @@ class AuthController {
     } on FirebaseException catch (e) {
       _appScaffoldMessengerController.showSnackBarByFirebaseException(e);
     }
+  }
+
+  /// 引数で受ける [userSocialLogin] を元に、複数の認証方法が有効化されているかを判定し、真偽値を返す
+  //TODO もし SignInMethod の種類が増えた場合、以下コードも修正が必要になってしまうため、改善が必要か？
+  bool _hasMultipleAuthMethodsEnabled(
+    ReadUserSocialLogin userSocialLogin,
+  ) {
+
+    final enabledList = [
+      userSocialLogin.isGoogleEnabled,
+      userSocialLogin.isAppleEnabled,
+      userSocialLogin.isLINEEnabled,
+    ];
+
+    return enabledList.where((isEnabled) => isEnabled).length > 1;
+
   }
 
   /// [FirebaseAuth] からサインアウトする。

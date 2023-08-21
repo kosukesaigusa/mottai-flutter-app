@@ -49,6 +49,7 @@ class UserSocialLoginSamplePage extends ConsumerWidget {
                             .unLinkUserSocialLogin(
                               signInMethod: SignInMethod.google,
                               userId: userId,
+                              userSocialLogin: data,
                             );
                       }
                       await ref
@@ -69,6 +70,7 @@ class UserSocialLoginSamplePage extends ConsumerWidget {
                             .unLinkUserSocialLogin(
                               signInMethod: SignInMethod.apple,
                               userId: userId,
+                              userSocialLogin: data,
                             );
                       }
                       await ref
@@ -88,6 +90,7 @@ class UserSocialLoginSamplePage extends ConsumerWidget {
                             .unLinkUserSocialLogin(
                               signInMethod: SignInMethod.line,
                               userId: userId,
+                              userSocialLogin: data,
                             );
                       }
                       await ref

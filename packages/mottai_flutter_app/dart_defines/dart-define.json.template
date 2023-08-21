@@ -1,0 +1,6 @@
+{
+	"flavor": "dev or prod",
+	"appName": "mottai_dev or mottai_prod",
+	"appIdSuffix": ".dev or .prod",
+	"LINE_CHANNEL_ID": "YOUR_CHANNEL_ID_HERE"
+}

@@ -282,9 +282,12 @@ class AuthService {
   /// 成功した場合はその認証情報からFirebase用の [AuthCredential] オブジェクトを生成して返す
   Future<AuthCredential> _getGoogleAuthCredential() async {
     final googleUser = await GoogleSignIn().signIn(); // サインインダイアログの表示
+
+    // サインインダイアログでキャンセルが選択された場合には、AppException をスローし、キャンセルされたことを通知する
     if (googleUser == null) {
       throw const AppException(message: 'キャンセルされました');
     }
+
     final googleAuth = await googleUser.authentication; // アカウントからトークン生成
 
     return GoogleAuthProvider.credential(
@@ -315,9 +318,11 @@ class AuthService {
         rawNonce: rawNonce,
       );
     } on SignInWithAppleAuthorizationException catch (e) {
+      // サインインダイアログでキャンセルが選択された場合には、AppException をスローし、キャンセルされたことを通知する
       if (e.code == AuthorizationErrorCode.canceled) {
         throw const AppException(message: 'キャンセルされました');
       }
+      //TODO
       throw UnimplementedError();
     }
   }
@@ -352,6 +357,7 @@ class AuthService {
 
       return lineCredential;
     } on PlatformException catch (e) {
+      // サインインダイアログでキャンセルが選択された場合には、AppException をスローし、キャンセルされたことを通知する
       if (e.message == 'User cancelled or interrupted the login process.') {
         throw const AppException(message: 'キャンセルされました');
       }

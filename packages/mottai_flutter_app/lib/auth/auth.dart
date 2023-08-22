@@ -9,6 +9,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
+import '../exception.dart';
 import '../firestore_repository.dart';
 import '../user/user_mode.dart';
 import '../user/worker.dart';
@@ -280,11 +281,14 @@ class AuthService {
   /// 成功した場合はその認証情報からFirebase用の [AuthCredential] オブジェクトを生成して返す
   Future<AuthCredential> _getGoogleAuthCredential() async {
     final googleUser = await GoogleSignIn().signIn(); // サインインダイアログの表示
-    final googleAuth = await googleUser?.authentication; // アカウントからトークン生成
+    if (googleUser == null) {
+      throw const AppException(message: 'キャンセルされました');
+    }
+    final googleAuth = await googleUser.authentication; // アカウントからトークン生成
 
     return GoogleAuthProvider.credential(
-      accessToken: googleAuth?.accessToken,
-      idToken: googleAuth?.idToken,
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
     );
   }
 
@@ -293,21 +297,28 @@ class AuthService {
   /// Appleでのログインを求め、
   /// 成功した場合はその認証情報からFirebase用の [AuthCredential] オブジェクトを生成して返す。
   Future<AuthCredential> _getAppleAuthCredential() async {
-    final rawNonce = generateNonce();
-    final nonce = _sha256ofString(rawNonce);
+    try {
+      final rawNonce = generateNonce();
+      final nonce = _sha256ofString(rawNonce);
 
-    final appleCredential = await SignInWithApple.getAppleIDCredential(
-      scopes: [
-        AppleIDAuthorizationScopes.email,
-        AppleIDAuthorizationScopes.fullName,
-      ],
-      nonce: nonce,
-    );
+      final appleCredential = await SignInWithApple.getAppleIDCredential(
+        scopes: [
+          AppleIDAuthorizationScopes.email,
+          AppleIDAuthorizationScopes.fullName,
+        ],
+        nonce: nonce,
+      );
 
-    return OAuthProvider('apple.com').credential(
-      idToken: appleCredential.identityToken,
-      rawNonce: rawNonce,
-    );
+      return OAuthProvider('apple.com').credential(
+        idToken: appleCredential.identityToken,
+        rawNonce: rawNonce,
+      );
+    } on SignInWithAppleAuthorizationException catch (e) {
+      if (e.code == AuthorizationErrorCode.canceled) {
+        throw const AppException(message: 'キャンセルされました');
+      }
+      throw UnimplementedError();
+    }
   }
 
   Future<UserCredential> _getLINEUserCredentialWithSignIn() async {

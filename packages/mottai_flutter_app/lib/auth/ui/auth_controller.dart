@@ -91,7 +91,7 @@ class AuthController {
         // NOTE: Apple はキャンセルやネットワークエラーの判定ができないので、try-catchしない。
         return _authService.signInWithApple();
       case SignInMethod.line:
-        return _authService.signInWithLINE();
+          return _authService.signInWithLINE();
       case SignInMethod.email:
         throw UnimplementedError();
     }
@@ -125,7 +125,7 @@ class AuthController {
       );
     } on FirebaseException catch (e) {
       _appScaffoldMessengerController.showSnackBarByFirebaseException(e);
-    }
+    } 
     //TODO リンク処理の過程でログインをキャンセルした際のエラーハンドリングが適切にできていない。
   }
 
@@ -171,11 +171,12 @@ class AuthController {
         case SignInMethod.google:
           enabledList.add(userSocialLogin.isGoogleEnabled);
         case SignInMethod.apple:
-          enabledList.add(userSocialLogin.isGoogleEnabled);
+          enabledList.add(userSocialLogin.isAppleEnabled);
         case SignInMethod.line:
           enabledList.add(userSocialLogin.isLINEEnabled);
+        //TODO email認証は追って削除される想定
         case SignInMethod.email:
-          throw UnimplementedError();
+          enabledList.add(false);
       }
     }
 

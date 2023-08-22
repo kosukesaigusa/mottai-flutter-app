@@ -94,7 +94,7 @@ class AuthService {
   /// [AuthCredential] を取得するまでの処理は、
   /// [_linkWithCredential] でも使用するため、別メソッドして定義している
   Future<UserCredential> signInWithGoogle() async {
-    final credential = await _getGoogleCredential();
+    final credential = await _getGoogleAuthCredential();
 
     final userCredential = await _auth.signInWithCredential(credential);
     await _createWorkerAndUserSocialLoginWhenFirstSignIn(
@@ -110,7 +110,7 @@ class AuthService {
   /// [AuthCredential] を取得するまでの処理は、
   /// [_linkWithCredential] でも使用するため、別メソッドして定義している
   Future<UserCredential> signInWithApple() async {
-    final oauthCredential = await _getAppleCredential();
+    final oauthCredential = await _getAppleAuthCredential();
 
     final userCredential =
         await FirebaseAuth.instance.signInWithCredential(oauthCredential);
@@ -124,16 +124,7 @@ class AuthService {
   /// [FirebaseAuth] に LINE でサインインする。
   /// https://firebase.flutter.dev/docs/auth/custom-auth に従っている。
   Future<UserCredential> signInWithLINE() async {
-    final loginResult = await LineSDK.instance.login();
-    final accessToken = loginResult.accessToken.data['access_token'] as String;
-    final callable = FirebaseFunctions.instanceFor(region: 'asia-northeast1')
-        .httpsCallable('createfirebaseauthcustomtoken');
-    final response = await callable.call<Map<String, dynamic>>(
-      <String, dynamic>{'accessToken': accessToken},
-    );
-    final customToken = response.data['customToken'] as String;
-    final userCredential =
-        await FirebaseAuth.instance.signInWithCustomToken(customToken);
+    final userCredential = await _getLINEUserCredentialWithSignIn();
     await _createWorkerAndUserSocialLoginWhenFirstSignIn(
       userCredential: userCredential,
       signInMethod: SignInMethod.line,
@@ -246,10 +237,9 @@ class AuthService {
   /// ログイン時に取得される [AuthCredential] を元に、ユーザーアカウントにソーシャル認証情報をリンクする
   Future<void> _linkWithCredential({required SignInMethod signInMethod}) async {
     final credential = switch (signInMethod) {
-      SignInMethod.google => await _getGoogleCredential(),
-      SignInMethod.apple => await _getAppleCredential(),
-      //TODO LINEの AuthCredential を取得する処理がまだわかっていないため未実装
-      SignInMethod.line => throw UnimplementedError(),
+      SignInMethod.google => await _getGoogleAuthCredential(),
+      SignInMethod.apple => await _getAppleAuthCredential(),
+      SignInMethod.line => await _getLINEAuthCredential(),
       //TODO emailは追って削除される想定
       SignInMethod.email => throw UnimplementedError(),
     };
@@ -288,7 +278,7 @@ class AuthService {
   ///
   /// [GoogleSignIn] ライブラリを使用してユーザーにGoogleでのログインを求め、
   /// 成功した場合はその認証情報からFirebase用の [AuthCredential] オブジェクトを生成して返す
-  Future<AuthCredential> _getGoogleCredential() async {
+  Future<AuthCredential> _getGoogleAuthCredential() async {
     final googleUser = await GoogleSignIn().signIn(); // サインインダイアログの表示
     final googleAuth = await googleUser?.authentication; // アカウントからトークン生成
 
@@ -302,7 +292,7 @@ class AuthService {
   ///
   /// Appleでのログインを求め、
   /// 成功した場合はその認証情報からFirebase用の [AuthCredential] オブジェクトを生成して返す。
-  Future<AuthCredential> _getAppleCredential() async {
+  Future<AuthCredential> _getAppleAuthCredential() async {
     final rawNonce = generateNonce();
     final nonce = _sha256ofString(rawNonce);
 
@@ -320,12 +310,43 @@ class AuthService {
     );
   }
 
+  Future<UserCredential> _getLINEUserCredentialWithSignIn() async {
+    final loginResult = await LineSDK.instance.login();
+    final accessToken = loginResult.accessToken.data['access_token'] as String;
+    final callable = FirebaseFunctions.instanceFor(region: 'asia-northeast1')
+        .httpsCallable('createfirebaseauthcustomtoken');
+    final response = await callable.call<Map<String, dynamic>>(
+      <String, dynamic>{'accessToken': accessToken},
+    );
+    final customToken = response.data['customToken'] as String;
+    return FirebaseAuth.instance.signInWithCustomToken(customToken);
+  }
+
+  Future<AuthCredential> _getLINEAuthCredential() async {
+    final tempUserCredential = await _getLINEUserCredentialWithSignIn();
+
+    final lineCredential = tempUserCredential.credential;
+    if (lineCredential == null) {
+      //TODO LINEサインインの結果がnullだった場合の処理
+      throw UnimplementedError();
+    }
+
+    if (tempUserCredential.user == null) {
+      //TODO tempUserCredential.user がnullだった場合の処理
+    }
+
+    await tempUserCredential.user!.delete();
+
+    return lineCredential;
+  }
+
   /// ログインユーザーが持つ `providerId` を元に、指定された [SignInMethod] のリンクを解除する
   Future<void> _unlinkWithProviderId({
     required SignInMethod signInMethod,
   }) async {
     const googleProviderId = 'google.com';
     const appleProviderId = 'apple.com';
+    const customProviderId = 'custom';
 
     final user = _auth.currentUser;
 
@@ -336,8 +357,7 @@ class AuthService {
     final providerIdToUnlink = switch (signInMethod) {
       SignInMethod.google => googleProviderId,
       SignInMethod.apple => appleProviderId,
-      //TODO LINE用の実装
-      SignInMethod.line => throw UnimplementedError(),
+      SignInMethod.line => customProviderId,
       //TODO emailは削除される想定
       SignInMethod.email => throw UnimplementedError(),
     };

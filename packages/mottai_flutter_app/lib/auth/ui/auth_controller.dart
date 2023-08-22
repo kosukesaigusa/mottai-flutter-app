@@ -91,7 +91,7 @@ class AuthController {
         // NOTE: Apple はキャンセルやネットワークエラーの判定ができないので、try-catchしない。
         return _authService.signInWithApple();
       case SignInMethod.line:
-          return _authService.signInWithLINE();
+        return _authService.signInWithLINE();
       case SignInMethod.email:
         throw UnimplementedError();
     }
@@ -125,7 +125,7 @@ class AuthController {
       );
     } on FirebaseException catch (e) {
       _appScaffoldMessengerController.showSnackBarByFirebaseException(e);
-    } 
+    }
     //TODO リンク処理の過程でログインをキャンセルした際のエラーハンドリングが適切にできていない。
   }
 
@@ -145,9 +145,9 @@ class AuthController {
     if (!_hasMultipleAuthMethodsEnabled(userSocialLogin)) {
       // 単一の認証方法のみが有効化されている場合、
       // 本メソッドを呼び出す際に指定している SignInMethod がその単一の認証方法となるため、
-      // 解除不可であることをダイアログ表示する。
-      //TODO 解除できないことをダイアログ表示する
-      throw UnimplementedError();
+      // 解除不可であることを SnackBar で表示する。
+      _appScaffoldMessengerController.showSnackBar('唯一の認証のため解除できません。');
+      return;
     }
     try {
       await _authService.unLinkUserSocialLogin(

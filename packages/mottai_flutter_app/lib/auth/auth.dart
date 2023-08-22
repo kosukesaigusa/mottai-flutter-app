@@ -281,19 +281,26 @@ class AuthService {
   /// [GoogleSignIn] ライブラリを使用してユーザーにGoogleでのログインを求め、
   /// 成功した場合はその認証情報からFirebase用の [AuthCredential] オブジェクトを生成して返す
   Future<AuthCredential> _getGoogleAuthCredential() async {
-    final googleUser = await GoogleSignIn().signIn(); // サインインダイアログの表示
+    try {
+      final googleUser = await GoogleSignIn().signIn(); // サインインダイアログの表示
 
-    // サインインダイアログでキャンセルが選択された場合には、AppException をスローし、キャンセルされたことを通知する
-    if (googleUser == null) {
-      throw const AppException(message: 'キャンセルされました');
+      // サインインダイアログでキャンセルが選択された場合には、AppException をスローし、キャンセルされたことを通知する
+      if (googleUser == null) {
+        throw const AppException(message: 'キャンセルされました');
+      }
+
+      final googleAuth = await googleUser.authentication; // アカウントからトークン生成
+
+      return GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+    } on PlatformException catch (e) {
+      if (e.code == 'network_error') {
+        throw const AppException(message: '接続できませんでした。\nネットワーク状況を確認してください。');
+      }
+      throw const AppException(message: 'Google認証に失敗しました');
     }
-
-    final googleAuth = await googleUser.authentication; // アカウントからトークン生成
-
-    return GoogleAuthProvider.credential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
   }
 
   /// Apple認証から [AuthCredential] を取得する
@@ -322,8 +329,7 @@ class AuthService {
       if (e.code == AuthorizationErrorCode.canceled) {
         throw const AppException(message: 'キャンセルされました');
       }
-      //TODO
-      throw UnimplementedError();
+      throw const AppException(message: 'Apple認証に失敗しました');
     }
   }
 

@@ -128,7 +128,6 @@ class AuthController {
     } on AppException catch (e) {
       _appScaffoldMessengerController.showSnackBarByException(e);
     }
-    //TODO リンク処理の過程でログインをキャンセルした際のエラーハンドリングが適切にできていない。
   }
 
   /// 複数の認証方法が有効化されている場合、指定された [SignInMethod] に基づいて、

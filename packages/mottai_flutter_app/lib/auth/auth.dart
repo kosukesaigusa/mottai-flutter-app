@@ -334,34 +334,17 @@ class AuthService {
   }
 
   Future<UserCredential> _getLINEUserCredentialWithSignIn() async {
-    final loginResult = await LineSDK.instance.login();
-    final accessToken = loginResult.accessToken.data['access_token'] as String;
-    final callable = FirebaseFunctions.instanceFor(region: 'asia-northeast1')
-        .httpsCallable('createfirebaseauthcustomtoken');
-    final response = await callable.call<Map<String, dynamic>>(
-      <String, dynamic>{'accessToken': accessToken},
-    );
-    final customToken = response.data['customToken'] as String;
-    return FirebaseAuth.instance.signInWithCustomToken(customToken);
-  }
-
-  Future<AuthCredential> _getLINEAuthCredential() async {
     try {
-      final tempUserCredential = await _getLINEUserCredentialWithSignIn();
-
-      final lineCredential = tempUserCredential.credential;
-      if (lineCredential == null) {
-        //TODO LINEサインインの結果がnullだった場合の処理
-        throw UnimplementedError();
-      }
-
-      if (tempUserCredential.user == null) {
-        //TODO tempUserCredential.user がnullだった場合の処理
-      }
-
-      await tempUserCredential.user!.delete();
-
-      return lineCredential;
+      final loginResult = await LineSDK.instance.login();
+      final accessToken =
+          loginResult.accessToken.data['access_token'] as String;
+      final callable = FirebaseFunctions.instanceFor(region: 'asia-northeast1')
+          .httpsCallable('createfirebaseauthcustomtoken');
+      final response = await callable.call<Map<String, dynamic>>(
+        <String, dynamic>{'accessToken': accessToken},
+      );
+      final customToken = response.data['customToken'] as String;
+      return FirebaseAuth.instance.signInWithCustomToken(customToken);
     } on PlatformException catch (e) {
       // サインインダイアログでキャンセルが選択された場合には、AppException をスローし、キャンセルされたことを通知する
       if (e.message == 'User cancelled or interrupted the login process.') {
@@ -369,6 +352,24 @@ class AuthService {
       }
       rethrow;
     }
+  }
+
+  Future<AuthCredential> _getLINEAuthCredential() async {
+    final tempUserCredential = await _getLINEUserCredentialWithSignIn();
+
+    final lineCredential = tempUserCredential.credential;
+    if (lineCredential == null) {
+      //TODO LINEサインインの結果がnullだった場合の処理
+      throw UnimplementedError();
+    }
+
+    if (tempUserCredential.user == null) {
+      //TODO tempUserCredential.user がnullだった場合の処理
+    }
+
+    await tempUserCredential.user!.delete();
+
+    return lineCredential;
   }
 
   /// ログインユーザーが持つ `providerId` を元に、指定された [SignInMethod] のリンクを解除する

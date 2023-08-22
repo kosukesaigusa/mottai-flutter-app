@@ -4,6 +4,7 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_common/firebase_common.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_line_sdk/flutter_line_sdk.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -334,21 +335,28 @@ class AuthService {
   }
 
   Future<AuthCredential> _getLINEAuthCredential() async {
-    final tempUserCredential = await _getLINEUserCredentialWithSignIn();
+    try {
+      final tempUserCredential = await _getLINEUserCredentialWithSignIn();
 
-    final lineCredential = tempUserCredential.credential;
-    if (lineCredential == null) {
-      //TODO LINEサインインの結果がnullだった場合の処理
-      throw UnimplementedError();
+      final lineCredential = tempUserCredential.credential;
+      if (lineCredential == null) {
+        //TODO LINEサインインの結果がnullだった場合の処理
+        throw UnimplementedError();
+      }
+
+      if (tempUserCredential.user == null) {
+        //TODO tempUserCredential.user がnullだった場合の処理
+      }
+
+      await tempUserCredential.user!.delete();
+
+      return lineCredential;
+    } on PlatformException catch (e) {
+      if (e.message == 'User cancelled or interrupted the login process.') {
+        throw const AppException(message: 'キャンセルされました');
+      }
+      rethrow;
     }
-
-    if (tempUserCredential.user == null) {
-      //TODO tempUserCredential.user がnullだった場合の処理
-    }
-
-    await tempUserCredential.user!.delete();
-
-    return lineCredential;
   }
 
   /// ログインユーザーが持つ `providerId` を元に、指定された [SignInMethod] のリンクを解除する

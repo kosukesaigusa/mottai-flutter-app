@@ -21,6 +21,7 @@ dependencies:
   firebase_core: ^2.15.0
   firebase_dynamic_links: ^5.3.4
   firebase_messaging: ^14.6.5
+  firebase_storage: ^11.2.5
   flutter:
     sdk: flutter
   flutter_image_compress: ^2.0.4

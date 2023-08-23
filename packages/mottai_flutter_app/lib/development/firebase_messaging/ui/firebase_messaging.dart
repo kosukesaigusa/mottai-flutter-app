@@ -19,6 +19,7 @@ class FirebaseMessagingPage extends ConsumerStatefulWidget {
 }
 
 class _FirebaseStorageSampleState extends ConsumerState<FirebaseMessagingPage> {
+  String userId = '';
   @override
   void initState() {
     super.initState();
@@ -35,7 +36,21 @@ class _FirebaseStorageSampleState extends ConsumerState<FirebaseMessagingPage> {
           const Padding(
             padding: EdgeInsets.all(16),
             child: Text(
-              'testNotificationsコレクションに適当なドキュメントを追加しそれをトリガーとしてプッシュ通知を送る',
+              'userIdを入力してtestNotificationsコレクションに'
+              '適当なドキュメントを追加しそれをトリガーとしてプッシュ通知を送る。'
+              'userFcmTokensコレクションから入力したuserIdを持つドキュメントを'
+              '取得してプッシュ通知を送っています。プッシュ通知タップ後サンプルサインイン画面に遷移する。',
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: TextField(
+              decoration: const InputDecoration(hintText: 'userIdを入力してください'),
+              onChanged: (input) {
+                setState(() {
+                  userId = input;
+                });
+              },
             ),
           ),
           Padding(
@@ -43,10 +58,10 @@ class _FirebaseStorageSampleState extends ConsumerState<FirebaseMessagingPage> {
             child: ElevatedButton(
               onPressed: () {
                 FirebaseFirestore.instance
-                    .collection('testNotificatons')
-                    .add({'createdAt': Timestamp.now()});
+                    .collection('testNotifications')
+                    .add({'createdAt': Timestamp.now(), 'userId': userId});
               },
-              child: const Text('Add testNotification collection'),
+              child: const Text('Add testNotification document'),
             ),
           ),
         ],

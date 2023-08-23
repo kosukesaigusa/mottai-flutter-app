@@ -1,6 +1,6 @@
 import { messaging } from 'firebase-admin'
 import * as functions from 'firebase-functions'
-import { UserFcmTokenRepository } from '../repositories/userFcmToken'
+import { UserFcmTokenRepository } from './repositories/userFcmToken'
 
 /**
  * 1次元配列を 500 要素ずつの 2 次元配列に分割する

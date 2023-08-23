@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../../auth/auth.dart';
 import '../../auth/ui/auth_dependent_builder.dart';
 import '../../chat/chat_rooms.dart';
 import '../../chat/ui/chat_room.dart';
@@ -12,6 +13,7 @@ import '../../scaffold_messenger_controller.dart';
 import '../../user/host.dart';
 import '../../user/user_mode.dart';
 import '../job.dart';
+import 'job_update.dart';
 import 'start_chat_with_host_controller.dart';
 
 /// 仕事詳細ページ。
@@ -32,16 +34,28 @@ class JobDetailPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final userId = ref.watch(userIdProvider);
+    final jobAsyncValue = ref.watch(jobFutureProvider(jobId));
+    final isLoading = jobAsyncValue.isLoading;
+    final job = ref.watch(jobFutureProvider(jobId)).valueOrNull;
     return Scaffold(
-      appBar: AppBar(title: const Text('お手伝い募集')),
-      body: ref.watch(jobFutureProvider(jobId)).when(
-            data: (job) {
-              if (job == null) {
-                return const Center(
-                  child: Text('お手伝いの情報が見つかりませんでした。'),
-                );
-              }
-              return ref.watch(hostFutureProvider(job.hostId)).when(
+      appBar: AppBar(
+        title: const Text('お手伝い募集'),
+        // TODO:なるんさんが実装中の「本人かどうかビルダー」に後で書き換える。
+        actions: [
+          if (!isLoading && userId != null && job != null)
+            IconButton(
+              onPressed: () => context.router
+                  .pushNamed(JobUpdatePage.location(jobId: jobId)),
+              icon: const Icon(Icons.edit),
+            ),
+        ],
+      ),
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : job == null
+              ? const Text('お手伝い募集の情報が見つかりませんでした。')
+              : ref.watch(hostFutureProvider(job.hostId)).when(
                     data: (readHost) {
                       if (readHost == null) {
                         return const Center(
@@ -52,16 +66,10 @@ class JobDetailPage extends ConsumerWidget {
                     },
                     loading: () =>
                         const Center(child: CircularProgressIndicator()),
-                    error: (error, stackTrace) => const Center(
-                      child: Text('通信に失敗しました。'),
+                    error: (_, __) => const Center(
+                      child: Text('ホスト情報の取得に失敗しました。'),
                     ),
-                  );
-            },
-            loading: () => const Center(child: CircularProgressIndicator()),
-            error: (error, stackTrace) => const Center(
-              child: Text('お手伝いの情報の取得に失敗しました。'),
-            ),
-          ),
+                  ),
     );
   }
 }

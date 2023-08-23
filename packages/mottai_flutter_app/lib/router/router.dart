@@ -5,6 +5,7 @@ import '../chat/ui/chat_rooms.dart';
 import '../development/color/ui/color.dart';
 import '../development/development_items/ui/development_items.dart';
 import '../development/email_and_password_sign_in/ui/email_and_password_sign_in.dart';
+import '../development/environment/ui/environment.dart';
 import '../development/firebase_messaging/ui/firebase_messaging.dart';
 import '../development/firebase_storage/ui/firebase_storage.dart';
 import '../development/force_update/ui/force_update.dart';
@@ -18,7 +19,9 @@ import '../development/user_social_login/user_social_login.dart';
 import '../development/web_link/ui/web_link_stub.dart';
 import '../host/ui/create_or_update_host.dart';
 import '../host/ui/host.dart';
+import '../job/ui/job_create.dart';
 import '../job/ui/job_detail.dart';
+import '../job/ui/job_update.dart';
 import '../map/ui/map.dart';
 import '../my_account/ui/my_account.dart';
 import '../review/ui/reviews.dart';
@@ -58,8 +61,16 @@ class AppRouter extends $AppRouter {
       page: ChatRoomRoute.page,
     ),
     AutoRoute(
+      path: JobCreatePage.path,
+      page: JobCreateRoute.page,
+    ),
+    AutoRoute(
       path: JobDetailPage.path,
       page: JobDetailRoute.page,
+    ),
+    AutoRoute(
+      path: JobUpdatePage.path,
+      page: JobUpdateRoute.page,
     ),
     AutoRoute(
       path: WorkerPage.path,
@@ -69,10 +80,6 @@ class AppRouter extends $AppRouter {
       path: HostPage.path,
       page: HostRoute.page,
     ),
-    // AutoRoute(
-    //   path: CreateOrUpdateJobPage.path,
-    //   page: CreateOrUpdateJobRoute.page,
-    // ),
     // AutoRoute(
     //   path: UserPage.path,
     //   page: UserRoute.page,
@@ -139,6 +146,10 @@ class AppRouter extends $AppRouter {
     AutoRoute(
       path: UserSocialLoginSamplePage.path,
       page: UserSocialLoginSampleRoute.page,
+    ),
+    AutoRoute(
+      path: EnvironmentPage.path,
+      page: EnvironmentRoute.page,
     ),
     AutoRoute(
       path: FirebaseMessagingPage.path,

@@ -8,14 +8,18 @@ import '../../../chat/ui/chat_room.dart';
 import '../../../chat/ui/chat_rooms.dart';
 import '../../../host/ui/create_or_update_host.dart';
 import '../../../host/ui/host.dart';
+import '../../../job/ui/job_create.dart';
 import '../../../job/ui/job_detail.dart';
+import '../../../job/ui/job_update.dart';
 import '../../../map/ui/map.dart';
 import '../../../worker/ui/worker.dart';
 import '../../color/ui/color.dart';
+import '../../environment/ui/environment.dart';
 import '../../firebase_messaging/ui/firebase_messaging.dart';
 import '../../firebase_storage/ui/firebase_storage.dart';
 import '../../force_update/ui/force_update.dart';
 import '../../generic_image/ui/generic_images.dart';
+import '../../geoflutterfire_plus/geoflutterfire_plus.dart';
 import '../../image_detail_view/ui/image_detail_view_stub.dart';
 import '../../image_picker/ui/image_picker_sample.dart';
 import '../../in_review/ui/in_review.dart';
@@ -59,6 +63,16 @@ class DevelopmentItemsPage extends ConsumerWidget {
             title: const Text('仕事詳細ページ (FutureProvider)'),
             onTap: () => context.router.pushNamed(
               JobDetailPage.location(jobId: 'PYRsrMSOApEgZ6lzMuUK'),
+            ),
+          ),
+          ListTile(
+            title: const Text('仕事情報作成ページ'),
+            onTap: () => context.router.pushNamed(JobCreatePage.location),
+          ),
+          ListTile(
+            title: const Text('仕事情報編集ページ'),
+            onTap: () => context.router.pushNamed(
+              JobUpdatePage.location(jobId: 'PYRsrMSOApEgZ6lzMuUK'),
             ),
           ),
           ListTile(
@@ -182,6 +196,12 @@ class DevelopmentItemsPage extends ConsumerWidget {
             ),
             onTap: () => context.router.pushNamed(WebLinkStubPage.location),
           ),
+          ListTile(
+            title: const Text(
+              'flavor環境情報',
+            ),
+            onTap: () => context.router.pushNamed(EnvironmentPage.location),
+          ),
           const Divider(),
           Padding(
             padding: const EdgeInsets.all(16),
@@ -212,6 +232,17 @@ class DevelopmentItemsPage extends ConsumerWidget {
               '色の確認',
             ),
             onTap: () => context.router.pushNamed(ColorPage.location),
+          ),
+          ListTile(
+            title: const Text(
+              'geoflutterfire_plus の機能確認',
+            ),
+            onTap: () => Navigator.push<void>(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const GeoflutterfirePlusSample(),
+              ),
+            ),
           ),
         ],
       ),

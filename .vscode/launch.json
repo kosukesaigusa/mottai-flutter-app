@@ -6,14 +6,40 @@
       "program": "packages/mottai_flutter_app/lib/main.dart",
       "request": "launch",
       "type": "dart",
-      "args": ["--debug", "--dart-define-from-file=dev-dart-define.json"]
+      "args": [
+        "--debug",
+        "--dart-define-from-file=dart_defines/dev-dart-define.json"
+      ]
     },
     {
       "name": "Release (dev)",
       "program": "packages/mottai_flutter_app/lib/main.dart",
       "request": "launch",
       "type": "dart",
-      "args": ["--release", "--dart-define-from-file=dev-dart-define.json"]
+      "args": [
+        "--release",
+        "--dart-define-from-file=dart_defines/dev-dart-define.json"
+      ]
+    },
+    {
+      "name": "Debug (prod)",
+      "program": "packages/mottai_flutter_app/lib/main.dart",
+      "request": "launch",
+      "type": "dart",
+      "args": [
+        "--debug",
+        "--dart-define-from-file=dart_defines/prod-dart-define.json"
+      ]
+    },
+    {
+      "name": "Release (prod)",
+      "program": "packages/mottai_flutter_app/lib/main.dart",
+      "request": "launch",
+      "type": "dart",
+      "args": [
+        "--release",
+        "--dart-define-from-file=dart_defines/prod-dart-define.json"
+      ]
     },
     {
       "name": "Debug (local)",

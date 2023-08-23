@@ -1,5 +1,5 @@
 import * as functions from 'firebase-functions'
-import { sendFCMByUserIds } from '../../callable-functions/sendFCMNotification'
+import { sendFCMByUserIds } from '../sendFCMNotification'
 
 /**
  * 新しい testNotification ドキュメントが作成されたときに発火する。

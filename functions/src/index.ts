@@ -28,7 +28,7 @@ admin.initializeApp({
 functions.setGlobalOptions({ region: `asia-northeast1` })
 
 // /** ここでデプロイする関数をまとめる。 */
-import { onCreateTestNotification } from './firebase-functions/testNotification/onCreateTestNotification'
+import { onCreateTestNotification } from './development/testNotification/onCreateTestNotification'
 
 // /** index.ts で import してデプロイする関数一覧。 */
 export { onCreateTestNotification }

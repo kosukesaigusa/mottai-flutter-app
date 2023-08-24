@@ -78,7 +78,8 @@ class AuthController {
         try {
           return _authService.signInWithGoogle();
         }
-        //TODO エラーハンドリングをauth.dartに記述したため、また、以下だとユーザーキャンセルを処理できないと思われるため、削除で問題ないか？
+        //TODO エラーハンドリングをauth.dartに記述したため、
+        //また、以下だとユーザーキャンセルを処理できないと思われるため、削除で問題ないか？
         // NOTE: この例外は、ユーザーがログインをキャンセルした場合に発生する。
         on PlatformException catch (e) {
           if (e.code == 'network_error') {

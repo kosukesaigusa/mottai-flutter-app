@@ -333,6 +333,7 @@ class AuthService {
     }
   }
 
+  /// LINEでのログインを求め、 [UserCredential] を取得する
   Future<UserCredential> _getLINEUserCredentialWithSignIn() async {
     try {
       final loginResult = await LineSDK.instance.login();
@@ -346,7 +347,7 @@ class AuthService {
       final customToken = response.data['customToken'] as String;
       return FirebaseAuth.instance.signInWithCustomToken(customToken);
     } on PlatformException catch (e) {
-      // サインインダイアログでキャンセルが選択された場合には、AppException をスローし、キャンセルされたことを通知する
+      // サインインダイアログでユーザーによりキャンセルが選択された場合には、AppException をスローし、キャンセルされたことを通知する
       if (e.message == 'User cancelled or interrupted the login process.') {
         throw const AppException(message: 'キャンセルされました');
       }
@@ -354,16 +355,28 @@ class AuthService {
     }
   }
 
+  /// LINE認証から [AuthCredential] を取得する
+  ///
+  /// LINEでのログインを求め、
+  /// 成功した場合はその認証情報からFirebase用の [AuthCredential] オブジェクトを生成して返す。
+  /// カスタム認証の場合、[AuthCredential] は、一度ユーザーアカウントを作成してからではないと取得できないようなので、
+  /// 一時的なユーザーアカウントを作成し、[AuthCredential] 取得後に、その一時的なアカウントを削除するという手順を踏んでいる
   Future<AuthCredential> _getLINEAuthCredential() async {
+
+    // AuthCredential を取得するために、LINEログインにより一時的なユーザーアカウントを作成する
     final tempUserCredential = await _getLINEUserCredentialWithSignIn();
 
+    // 何かしらの理由により、一時的に作成したアカウントの credential or user が null だった場合は、
+    // AppException をスローし、認証連携が失敗したことを通知する
     if (tempUserCredential.credential == null ||
         tempUserCredential.user == null) {
-      throw const AppException(message: 'ログインできませんでした。');
+      throw const AppException(message: 'LINEによる認証連携ができませんでした。');
     }
 
+    // 一時的に作成したユーザーアカウントを削除
     await tempUserCredential.user!.delete();
 
+    // 一時的に作成したユーザーアカウントが持つ AuthCredential を返す
     return tempUserCredential.credential!;
   }
 

@@ -6,10 +6,11 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../auth/auth.dart';
 import '../../job/job.dart';
 import '../../user/host.dart';
+import '../../user/ui/identity_dependent_builder.dart';
 import '../../user/ui/user_mode.dart';
+import '../../user/user_mode.dart';
 import 'create_or_update_host.dart';
 
 /// ホストページ。
@@ -50,9 +51,8 @@ class HostPageBody extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final hostImageUrl = ref.watch(hostImageUrlProvider(userId));
     final hostDisplayName = ref.watch(hostDisplayNameProvider(userId));
-    final loggedInUserId = ref.watch(userIdProvider);
-    final isMatchingUserId = loggedInUserId == userId;
     final readHost = ref.watch(hostFutureProvider(userId));
+    final currentUserMode = ref.watch(userModeStateProvider);
     return SingleChildScrollView(
       // TODO: Divider は横いっぱいに表示したいので Padding の水平方向の全体適用はやめたい。
       child: Padding(
@@ -74,26 +74,37 @@ class HostPageBody extends ConsumerWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                if (isMatchingUserId)
-                  CircleAvatar(
-                    backgroundColor: Theme.of(context).focusColor,
-                    child: IconButton(
-                      color: Theme.of(context).shadowColor,
-                      onPressed: () => context.router.pushNamed(
-                        CreateOrUpdateHostPage.location(
-                          userId: userId,
-                          actionType: ActionType.update.name,
+                IdentityDependentBuilder(
+                  buildForIdentity: () {
+                    return CircleAvatar(
+                      backgroundColor: Theme.of(context).focusColor,
+                      child: IconButton(
+                        color: Theme.of(context).shadowColor,
+                        onPressed: () => context.router.pushNamed(
+                          CreateOrUpdateHostPage.location(
+                            userId: userId,
+                            actionType: ActionType.update.name,
+                          ),
                         ),
+                        icon: const Icon(Icons.edit),
                       ),
-                      icon: const Icon(Icons.edit),
-                    ),
-                  ),
+                    );
+                  },
+                  targetUserId: userId,
+                ),
               ],
             ),
-            if (isMatchingUserId) ...[
-              const Gap(16),
-              const UserModeSection(),
-            ],
+            IdentityDependentBuilder(
+              buildForIdentity: () {
+                return const Column(
+                  children: [
+                    Gap(16),
+                    UserModeSection(),
+                  ],
+                );
+              },
+              targetUserId: userId,
+            ),
             const SizedBox(height: 24),
             // TODO 自己紹介をDBに追加する
             Section(
@@ -150,13 +161,114 @@ class HostPageBody extends ConsumerWidget {
                 ],
               ),
             ),
+            IdentityDependentBuilder(
+              buildForIdentity: () {
+                return Column(
+                  children: [
+                    const SizedBox(
+                      height: 12,
+                    ),
+                    Section(
+                      titleBottomMargin: 4,
+                      title: 'ユーザーモード',
+                      content: Text(
+                        currentUserMode == UserMode.host
+                            ? '''
+ホストとしてアプリを使用します。あなたが募集するお手伝いに興味があるワーカーとやりとりをして、お手伝いを受け入れるモードです。'''
+                            : '''ワーカーとしてアプリを使用します。興味のあるホストやお手伝いを探して、お手伝いに応募するモードです。''',
+                      ),
+                    ),
+                    SegmentedButton<UserMode>(
+                      style: ButtonStyle(
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                      ),
+                      segments: const <ButtonSegment<UserMode>>[
+                        ButtonSegment<UserMode>(
+                          value: UserMode.host,
+                          label: Text('ホスト'),
+                        ),
+                        ButtonSegment<UserMode>(
+                          value: UserMode.worker,
+                          label: Text('ワーカー'),
+                        ),
+                      ],
+                      selected: <UserMode>{currentUserMode},
+                      onSelectionChanged: (newSelection) {
+                        ref
+                            .read(userModeStateProvider.notifier)
+                            .update((_) => newSelection.first);
+                      },
+                    ),
+                  ],
+                );
+              },
+              targetUserId: userId,
+            ),
+
+            const SizedBox(height: 24),
+            // TODO 自己紹介をDBに追加する
+            const Section(
+              titleBottomMargin: 4,
+              title: '自己紹介',
+              content: Text(
+                '''
+神奈川県小田原市で農家や漁師をしています。夏の時期にレモンの収穫のお手伝いをしてくれる方を募集しています。こんな感じでここには自己紹介文を表示する。表示するのは最大 8 行表くらいでいいだろうか。あいうえお、かきくけこ、さしすせそ、たちつてと、なにぬねの、はひふへほ、まみむめも、やゆよ、わをん、あいうえお、かきくけこ、さしすせそ、たちつてと、なにぬねの、はひふへほ、まみむめも、やゆよ...''',
+              ),
+            ),
+            const SizedBox(height: 24),
+            const Section(
+              titleBottomMargin: 4,
+              title: 'ホストタイプ',
+              content: Text('ワーカーはホストタイプ（複数選択可）を参考にして、興味のあるお手伝いを探します。'),
+            ),
+            readHost.when(
+              data: (readHost) {
+                if (readHost == null) {
+                  return const Center(
+                    child: Text('ホストタイプがありません。'),
+                  );
+                }
+                return SelectableChips<HostType>(
+                  allItems: HostType.values,
+                  labels: Map.fromEntries(
+                    HostType.values.map(
+                      (type) => MapEntry(type, type.label),
+                    ),
+                  ),
+                  enabledItems: readHost.hostTypes,
+                );
+              },
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (error, stackTrace) => const Center(
+                child: Text('通信に失敗しました。'),
+              ),
+            ),
+            const SizedBox(height: 24),
+            const Section(
+              titleBottomMargin: 4,
+              title: '公開する場所・住所',
+              content: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('''
+農場や主な作業場所などの、公開される場所・住所です。ワーカーは地図上から近所や興味がある地域のホストを探します。必ずしも正確で細かい住所である必要はありません。'''),
+                  SizedBox(height: 12),
+                  // TODO ここは後でデータを取得する
+                  Text('神奈川県小田原市石322 (hostLocation.address)'),
+                ],
+              ),
+            ),
             const Divider(
               height: 36,
             ),
             Section(
+              titleBottomMargin: 4,
               title: '掲載中のお手伝い募集',
-              titleStyle: Theme.of(context).textTheme.titleLarge,
-              titleBottomMargin: 8,
               content: ref.watch(userJobsFutureProvider(userId)).when(
                     data: (jobs) {
                       if (jobs.isEmpty) {
@@ -186,71 +298,78 @@ class HostPageBody extends ConsumerWidget {
                     ),
                   ),
             ),
-            if (isMatchingUserId) ...[
-              const Divider(height: 36),
-              Section(
-                title: 'ソーシャル連携',
-                titleStyle: Theme.of(context).textTheme.titleLarge,
-                content: const Column(
+            IdentityDependentBuilder(
+              buildForIdentity: () {
+                return Column(
                   children: [
-                    Row(
-                      children: [
-                        FaIcon(
-                          FontAwesomeIcons.google,
-                          size: 30,
-                        ),
-                        SizedBox(width: 10),
-                        Text('Google'),
-                        // TODO google連携済みかどうかで出し分けられるようにする
-                        Expanded(
-                          child: Align(
-                            alignment: Alignment.centerRight,
-                            child: Text('連携済み'),
+                    const Divider(height: 36),
+                    Section(
+                      title: 'ソーシャル連携',
+                      titleStyle: Theme.of(context).textTheme.titleLarge,
+                      content: const Column(
+                        children: [
+                          Row(
+                            children: [
+                              FaIcon(
+                                FontAwesomeIcons.google,
+                                size: 30,
+                              ),
+                              SizedBox(width: 10),
+                              Text('Google'),
+                              // TODO google連携済みかどうかで出し分けられるようにする
+                              Expanded(
+                                child: Align(
+                                  alignment: Alignment.centerRight,
+                                  child: Text('連携済み'),
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
-                      ],
+                          SizedBox(height: 12),
+                          Row(
+                            children: [
+                              FaIcon(
+                                FontAwesomeIcons.apple,
+                                size: 40,
+                              ),
+                              SizedBox(width: 10),
+                              Text('Apple'),
+                              // TODO apple連携済みかどうかで出し分けられるようにする
+                              Expanded(
+                                child: Align(
+                                  alignment: Alignment.centerRight,
+                                  child: Text('連携済み'),
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 12),
+                          Row(
+                            children: [
+                              FaIcon(
+                                FontAwesomeIcons.line,
+                                color: Color(0xff06c755),
+                                size: 30,
+                              ),
+                              SizedBox(width: 10),
+                              Text('LINE'),
+                              // TODO line連携済みかどうかで出し分けられるようにする
+                              Expanded(
+                                child: Align(
+                                  alignment: Alignment.centerRight,
+                                  child: Text('連携済み'),
+                                ),
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
                     ),
-                    SizedBox(height: 12),
-                    Row(
-                      children: [
-                        FaIcon(
-                          FontAwesomeIcons.apple,
-                          size: 40,
-                        ),
-                        SizedBox(width: 10),
-                        Text('Apple'),
-                        // TODO apple連携済みかどうかで出し分けられるようにする
-                        Expanded(
-                          child: Align(
-                            alignment: Alignment.centerRight,
-                            child: Text('連携済み'),
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 12),
-                    Row(
-                      children: [
-                        FaIcon(
-                          FontAwesomeIcons.line,
-                          color: Color(0xff06c755),
-                          size: 30,
-                        ),
-                        SizedBox(width: 10),
-                        Text('LINE'),
-                        // TODO line連携済みかどうかで出し分けられるようにする
-                        Expanded(
-                          child: Align(
-                            alignment: Alignment.centerRight,
-                            child: Text('連携済み'),
-                          ),
-                        ),
-                      ],
-                    )
                   ],
-                ),
-              ),
-            ],
+                );
+              },
+              targetUserId: userId,
+            ),
             const Gap(32),
           ],
         ),

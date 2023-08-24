@@ -1,26 +1,12 @@
 import axios from 'axios';
-import { https } from 'firebase-functions/v2';
 
-export const notificationSlack = https.onRequest(async (request, response) => {
-  if (request.method === `OPTIONS`) {
-    response.set(`Access-Control-Allow-Methods`, `POST`);
-    response.set(`Access-Control-Allow-Headers`, `Content-Type`);
-    response.status(204).send(``);
-  }
-  else if (request.method === `POST`) {
-    if (request.body[`text`]) {
-      const endpoint = process.env.SLACK_ENDPOINT
-      if (!endpoint) {
-        response.status(400).send(`could not find SLACK_ENDPOINT`);
-        return;
-      }
-      axios.post(endpoint, { text: request.body[`text`] });
-      response.status(200).send(`OK`);
-    }
-    else {
-      response.status(400).send(`invalid parameter. You must include 'text' param in the body`);
-    }
-  } else {
-    response.status(405).send(`invalid method`);
-  }
-});
+/**
+ * Slackへメッセージを通知する。
+ * @param {message} message - 通知するテキスト
+ * @throws {Error} 通知に失敗した場合、エラーを発報
+ */
+export const notificationSlack = async (message: string) => {
+  const url = process.env.SLACK_URL;  // 環境変数からURLの取得
+  if (!url) return;
+  await axios.post(url, { text: message });
+}

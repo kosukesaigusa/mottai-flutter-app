@@ -357,19 +357,14 @@ class AuthService {
   Future<AuthCredential> _getLINEAuthCredential() async {
     final tempUserCredential = await _getLINEUserCredentialWithSignIn();
 
-    final lineCredential = tempUserCredential.credential;
-    if (lineCredential == null) {
-      //TODO LINEサインインの結果がnullだった場合の処理
-      throw UnimplementedError();
-    }
-
-    if (tempUserCredential.user == null) {
-      //TODO tempUserCredential.user がnullだった場合の処理
+    if (tempUserCredential.credential == null ||
+        tempUserCredential.user == null) {
+      throw const AppException(message: 'ログインできませんでした。');
     }
 
     await tempUserCredential.user!.delete();
 
-    return lineCredential;
+    return tempUserCredential.credential!;
   }
 
   /// ログインユーザーが持つ `providerId` を元に、指定された [SignInMethod] のリンクを解除する

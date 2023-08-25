@@ -27,9 +27,8 @@ admin.initializeApp({
 /** Firebase Functions のグローバル設定。 */
 functions.setGlobalOptions({ region: `asia-northeast1` })
 
-/** ここでデプロイする関数をまとめる。 */
-import { createfirebaseauthcustomtoken } from './callable-functions/createFirebaseAuthCustomToken'
-import { notificationSlack } from './callable-functions/notificationSlack'
+// /** ここでデプロイする関数をまとめる。 */
+// import { createfirebaseauthcustomtoken } from './callable-functions/createFirebaseAuthCustomToken'
 
-/** index.ts で import してデプロイする関数一覧。 */
-export { createfirebaseauthcustomtoken, notificationSlack }
+// /** index.ts で import してデプロイする関数一覧。 */
+// export { createfirebaseauthcustomtoken }

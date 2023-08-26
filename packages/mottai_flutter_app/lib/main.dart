@@ -20,11 +20,11 @@ void main() async {
   final flavor = Flavor.values.byName(flavorName);
 
   WidgetsFlutterBinding.ensureInitialized();
+  // 環境ごとに読み込むfirebase情報を分ける
+  await Firebase.initializeApp(options: firebaseOptionsWithFlavor(flavor));
   if (const String.fromEnvironment('FLAVOR') == 'local') {
     await setUpLocalEmulator();
   }
-  // 環境ごとに読み込むfirebase情報を分ける
-  await Firebase.initializeApp(options: firebaseOptionsWithFlavor(flavor));
   await LineSDK.instance
       .setup(const String.fromEnvironment('LINE_CHANNEL_ID'))
       .then((_) {

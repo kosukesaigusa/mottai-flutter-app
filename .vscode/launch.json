@@ -49,7 +49,7 @@
       "args": [
         "--debug",
         "--dart-define=FLAVOR=local",
-        "--dart-define-from-file=dev-dart-define.json"
+        "--dart-define-from-file=dart_defines/dev-dart-define.json"
       ]
     },
     {

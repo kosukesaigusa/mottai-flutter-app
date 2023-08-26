@@ -6,11 +6,10 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../../auth/ui/auth_dependent_builder.dart';
 import '../../job/job.dart';
 import '../../user/host.dart';
-import '../../user/ui/identity_dependent_builder.dart';
 import '../../user/ui/user_mode.dart';
-import '../../user/user_mode.dart';
 import 'create_or_update_host.dart';
 
 /// ホストページ。
@@ -52,7 +51,6 @@ class HostPageBody extends ConsumerWidget {
     final hostImageUrl = ref.watch(hostImageUrlProvider(userId));
     final hostDisplayName = ref.watch(hostDisplayNameProvider(userId));
     final readHost = ref.watch(hostFutureProvider(userId));
-    final currentUserMode = ref.watch(userModeStateProvider);
     return SingleChildScrollView(
       // TODO: Divider は横いっぱいに表示したいので Padding の水平方向の全体適用はやめたい。
       child: Padding(
@@ -74,8 +72,8 @@ class HostPageBody extends ConsumerWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                IdentityDependentBuilder(
-                  buildForIdentity: () {
+                UserAuthDependentBuilder(
+                  onUserAuthenticated: (userId) {
                     return CircleAvatar(
                       backgroundColor: Theme.of(context).focusColor,
                       child: IconButton(
@@ -90,22 +88,22 @@ class HostPageBody extends ConsumerWidget {
                       ),
                     );
                   },
-                  targetUserId: userId,
+                  userId: userId,
                 ),
               ],
             ),
-            IdentityDependentBuilder(
-              buildForIdentity: () {
-                return const Column(
+            UserAuthDependentBuilder(
+              userId: userId,
+              onUserAuthenticated: (_) {
+                return Column(
                   children: [
-                    Gap(16),
-                    UserModeSection(),
+                    const Gap(16),
+                    UserModeSection(userId: userId),
                   ],
                 );
               },
-              targetUserId: userId,
             ),
-            const SizedBox(height: 24),
+            const Gap(24),
             // TODO 自己紹介をDBに追加する
             Section(
               title: '自己紹介',
@@ -116,7 +114,7 @@ class HostPageBody extends ConsumerWidget {
 神奈川県小田原市で農家や漁師をしています。夏の時期にレモンの収穫のお手伝いをしてくれる方を募集しています。こんな感じでここには自己紹介文を表示する。表示するのは最大 8 行表くらいでいいだろうか。あいうえお、かきくけこ、さしすせそ、たちつてと、なにぬねの、はひふへほ、まみむめも、やゆよ、わをん、あいうえお、かきくけこ、さしすせそ、たちつてと、なにぬねの、はひふへほ、まみむめも、やゆよ...''',
               ),
             ),
-            const SizedBox(height: 24),
+            const Gap(24),
             Section(
               title: 'ホストタイプ',
               titleStyle: Theme.of(context).textTheme.titleLarge,
@@ -145,7 +143,7 @@ class HostPageBody extends ConsumerWidget {
                 child: Text('通信に失敗しました。'),
               ),
             ),
-            const SizedBox(height: 24),
+            const Gap(24),
             Section(
               title: '公開する場所・住所',
               titleStyle: Theme.of(context).textTheme.titleLarge,
@@ -155,62 +153,14 @@ class HostPageBody extends ConsumerWidget {
                 children: [
                   Text('''
 農場や主な作業場所などの、公開される場所・住所です。ワーカーは地図上から近所や興味がある地域のホストを探します。必ずしも正確で細かい住所である必要はありません。'''),
-                  SizedBox(height: 12),
+                  Gap(12),
                   // TODO ここは後でデータを取得する
                   Text('神奈川県小田原市石322 (hostLocation.address)'),
                 ],
               ),
             ),
-            IdentityDependentBuilder(
-              buildForIdentity: () {
-                return Column(
-                  children: [
-                    const SizedBox(
-                      height: 12,
-                    ),
-                    Section(
-                      titleBottomMargin: 4,
-                      title: 'ユーザーモード',
-                      content: Text(
-                        currentUserMode == UserMode.host
-                            ? '''
-ホストとしてアプリを使用します。あなたが募集するお手伝いに興味があるワーカーとやりとりをして、お手伝いを受け入れるモードです。'''
-                            : '''ワーカーとしてアプリを使用します。興味のあるホストやお手伝いを探して、お手伝いに応募するモードです。''',
-                      ),
-                    ),
-                    SegmentedButton<UserMode>(
-                      style: ButtonStyle(
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                      ),
-                      segments: const <ButtonSegment<UserMode>>[
-                        ButtonSegment<UserMode>(
-                          value: UserMode.host,
-                          label: Text('ホスト'),
-                        ),
-                        ButtonSegment<UserMode>(
-                          value: UserMode.worker,
-                          label: Text('ワーカー'),
-                        ),
-                      ],
-                      selected: <UserMode>{currentUserMode},
-                      onSelectionChanged: (newSelection) {
-                        ref
-                            .read(userModeStateProvider.notifier)
-                            .update((_) => newSelection.first);
-                      },
-                    ),
-                  ],
-                );
-              },
-              targetUserId: userId,
-            ),
-
-            const SizedBox(height: 24),
+            UserModeSection(userId: userId),
+            const Gap(24),
             // TODO 自己紹介をDBに追加する
             const Section(
               titleBottomMargin: 4,
@@ -220,7 +170,7 @@ class HostPageBody extends ConsumerWidget {
 神奈川県小田原市で農家や漁師をしています。夏の時期にレモンの収穫のお手伝いをしてくれる方を募集しています。こんな感じでここには自己紹介文を表示する。表示するのは最大 8 行表くらいでいいだろうか。あいうえお、かきくけこ、さしすせそ、たちつてと、なにぬねの、はひふへほ、まみむめも、やゆよ、わをん、あいうえお、かきくけこ、さしすせそ、たちつてと、なにぬねの、はひふへほ、まみむめも、やゆよ...''',
               ),
             ),
-            const SizedBox(height: 24),
+            const Gap(24),
             const Section(
               titleBottomMargin: 4,
               title: 'ホストタイプ',
@@ -248,7 +198,7 @@ class HostPageBody extends ConsumerWidget {
                 child: Text('通信に失敗しました。'),
               ),
             ),
-            const SizedBox(height: 24),
+            const Gap(24),
             const Section(
               titleBottomMargin: 4,
               title: '公開する場所・住所',
@@ -257,7 +207,7 @@ class HostPageBody extends ConsumerWidget {
                 children: [
                   Text('''
 農場や主な作業場所などの、公開される場所・住所です。ワーカーは地図上から近所や興味がある地域のホストを探します。必ずしも正確で細かい住所である必要はありません。'''),
-                  SizedBox(height: 12),
+                  Gap(12),
                   // TODO ここは後でデータを取得する
                   Text('神奈川県小田原市石322 (hostLocation.address)'),
                 ],
@@ -298,8 +248,9 @@ class HostPageBody extends ConsumerWidget {
                     ),
                   ),
             ),
-            IdentityDependentBuilder(
-              buildForIdentity: () {
+            UserAuthDependentBuilder(
+              userId: userId,
+              onUserAuthenticated: (_) {
                 return Column(
                   children: [
                     const Divider(height: 36),
@@ -314,7 +265,7 @@ class HostPageBody extends ConsumerWidget {
                                 FontAwesomeIcons.google,
                                 size: 30,
                               ),
-                              SizedBox(width: 10),
+                              Gap(10),
                               Text('Google'),
                               // TODO google連携済みかどうかで出し分けられるようにする
                               Expanded(
@@ -325,14 +276,14 @@ class HostPageBody extends ConsumerWidget {
                               ),
                             ],
                           ),
-                          SizedBox(height: 12),
+                          Gap(12),
                           Row(
                             children: [
                               FaIcon(
                                 FontAwesomeIcons.apple,
                                 size: 40,
                               ),
-                              SizedBox(width: 10),
+                              Gap(10),
                               Text('Apple'),
                               // TODO apple連携済みかどうかで出し分けられるようにする
                               Expanded(
@@ -343,7 +294,7 @@ class HostPageBody extends ConsumerWidget {
                               ),
                             ],
                           ),
-                          SizedBox(height: 12),
+                          Gap(12),
                           Row(
                             children: [
                               FaIcon(
@@ -351,7 +302,7 @@ class HostPageBody extends ConsumerWidget {
                                 color: Color(0xff06c755),
                                 size: 30,
                               ),
-                              SizedBox(width: 10),
+                              Gap(10),
                               Text('LINE'),
                               // TODO line連携済みかどうかで出し分けられるようにする
                               Expanded(
@@ -368,7 +319,6 @@ class HostPageBody extends ConsumerWidget {
                   ],
                 );
               },
-              targetUserId: userId,
             ),
             const Gap(32),
           ],

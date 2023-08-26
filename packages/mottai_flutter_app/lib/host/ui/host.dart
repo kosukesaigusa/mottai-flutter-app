@@ -10,7 +10,6 @@ import '../../auth/ui/auth_dependent_builder.dart';
 import '../../job/job.dart';
 import '../../user/host.dart';
 import '../../user/ui/user_mode.dart';
-import '../../user/user_mode.dart';
 import 'create_or_update_host.dart';
 
 /// ホストページ。
@@ -52,7 +51,6 @@ class HostPageBody extends ConsumerWidget {
     final hostImageUrl = ref.watch(hostImageUrlProvider(userId));
     final hostDisplayName = ref.watch(hostDisplayNameProvider(userId));
     final readHost = ref.watch(hostFutureProvider(userId));
-    final currentUserMode = ref.watch(userModeStateProvider);
     return SingleChildScrollView(
       // TODO: Divider は横いっぱいに表示したいので Padding の水平方向の全体適用はやめたい。
       child: Padding(

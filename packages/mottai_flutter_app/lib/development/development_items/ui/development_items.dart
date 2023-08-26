@@ -14,7 +14,6 @@ import '../../../job/ui/job_update.dart';
 import '../../../map/ui/map.dart';
 import '../../../worker/ui/worker.dart';
 import '../../color/ui/color.dart';
-import '../../environment/ui/environment.dart';
 import '../../firebase_storage/ui/firebase_storage.dart';
 import '../../force_update/ui/force_update.dart';
 import '../../generic_image/ui/generic_images.dart';
@@ -194,12 +193,6 @@ class DevelopmentItemsPage extends ConsumerWidget {
               'WebLinkサンプル',
             ),
             onTap: () => context.router.pushNamed(WebLinkStubPage.location),
-          ),
-          ListTile(
-            title: const Text(
-              'flavor環境情報',
-            ),
-            onTap: () => context.router.pushNamed(EnvironmentPage.location),
           ),
           const Divider(),
           Padding(

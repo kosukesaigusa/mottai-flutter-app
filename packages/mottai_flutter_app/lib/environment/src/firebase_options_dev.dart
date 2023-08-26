@@ -51,7 +51,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyAR_-jpRLOtS59zlNI1KCufmI4OOwBERkM',
-    appId: '1:709197089170:android:eb3a88088fa0cbcc7ed94b',
+    appId: '1:709197089170:android:ea115cc56387c6c37ed94b',
     messagingSenderId: '709197089170',
     projectId: 'mottai-app-dev-2',
     storageBucket: 'mottai-app-dev-2.appspot.com',
@@ -59,12 +59,14 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyAkaXi3WuwG4YgsTwDsHvqXKa6hfpmx77c',
-    appId: '1:709197089170:ios:0b63605a631ffad27ed94b',
+    appId: '1:709197089170:ios:7617a4349b5968e77ed94b',
     messagingSenderId: '709197089170',
     projectId: 'mottai-app-dev-2',
     storageBucket: 'mottai-app-dev-2.appspot.com',
+    androidClientId:
+        '709197089170-eoscur7kmv2s45ikpgkvdjtim6b6sbgb.apps.googleusercontent.com',
     iosClientId:
-        '709197089170-9hsmfhj3ovc79m8f982j7lot5n7iq3rh.apps.googleusercontent.com',
-    iosBundleId: 'com.kosukesaigusa.mottaiFlutterApp',
+        '709197089170-1lr8vaboc73s41u7l2vijfqs2c7udu0n.apps.googleusercontent.com',
+    iosBundleId: 'com.kosukesaigusa.mottaiFlutterApp.dev',
   );
 }

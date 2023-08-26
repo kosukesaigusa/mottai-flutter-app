@@ -5,7 +5,7 @@ import '../auth.dart';
 
 /// Firebase に Auth にサインイン済みの場合にのみ [onAuthenticated] で渡した
 /// ウィジェットを表示する。
-/// その最、サインイン済みのユーザーの `userId` が使用できる。
+/// その際、サインイン済みのユーザーの `userId` が使用できる。
 class AuthDependentBuilder extends ConsumerWidget {
   const AuthDependentBuilder({
     super.key,
@@ -13,11 +13,11 @@ class AuthDependentBuilder extends ConsumerWidget {
     this.onUnAuthenticated,
   });
 
-  /// サインイン済みの場合に表示されるウィジェットを `userId` とともに返す
-  /// ビルダー関数。
+  /// Firebase に Auth にサインイン済みの場合に表示されるウィジェットを `userId` とともに
+  /// 返すビルダー関数。
   final Widget Function(String userId) onAuthenticated;
 
-  /// サインインアウトの場合に表示されるウィジェットを返すビルダー関数（任意）。
+  ///  Firebase Auth にサインインしていない場合に表示されるウィジェットを返すビルダー関数（任意）。
   /// 渡さなければ共通の [_SignedOut] ウィジェットが表示される。
   final Widget Function()? onUnAuthenticated;
 
@@ -41,5 +41,41 @@ class _SignedOut extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Center(child: Text('ログインしてください。'));
+  }
+}
+
+/// Firebase Auth にサインイン済みであり、そのユーザーが指定した [userId] に一致する場合
+/// にのみ [onUserAuthenticated] で渡したウィジェットを表示する。
+/// その際、サインイン済みのユーザーの [userId] が使用できる。
+class UserAuthDependentBuilder extends ConsumerWidget {
+  const UserAuthDependentBuilder({
+    super.key,
+    required this.userId,
+    required this.onUserAuthenticated,
+    this.onUserUnAuthenticated,
+  });
+
+  /// Firebase Auth にサインイン済みであり、そのユーザーが指定した [userId] に一致する場合
+  /// に表示されるウィジェットを [userId] とともに返すビルダー関数。
+  final Widget Function(String userId) onUserAuthenticated;
+
+  /// Firebase Auth にサインインしていない、またはサインイン済みでもそのユーザーが指定した
+  /// [userId] に一致しない場合表示されるウィジェットを返すビルダー関数（任意）。
+  final Widget Function()? onUserUnAuthenticated;
+
+  /// 表示するユーザーの uid.
+  final String userId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final userId = ref.watch(userIdProvider);
+    if (userId == null || userId != this.userId) {
+      if (onUserUnAuthenticated != null) {
+        return onUserUnAuthenticated!();
+      } else {
+        return const SizedBox();
+      }
+    }
+    return onUserAuthenticated(userId);
   }
 }

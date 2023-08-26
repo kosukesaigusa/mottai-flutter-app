@@ -5,8 +5,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../../auth/ui/auth_dependent_builder.dart';
 import '../../host/ui/create_or_update_host.dart';
-import '../../user/ui/identity_dependent_builder.dart';
 import '../../user/ui/user_mode.dart';
 import '../../user/user.dart';
 import '../../user/worker.dart';
@@ -71,8 +71,9 @@ class WorkerPageBody extends ConsumerWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                IdentityDependentBuilder(
-                  buildForIdentity: () {
+                UserAuthDependentBuilder(
+                  userId: userId,
+                  onUserAuthenticated: (_) {
                     return CircleAvatar(
                       backgroundColor: Theme.of(context).focusColor,
                       child: IconButton(
@@ -84,20 +85,19 @@ class WorkerPageBody extends ConsumerWidget {
                       ),
                     );
                   },
-                  targetUserId: userId,
                 ),
               ],
             ),
-            IdentityDependentBuilder(
-              buildForIdentity: () {
-                return const Column(
+            UserAuthDependentBuilder(
+              userId: userId,
+              onUserAuthenticated: (_) {
+                return Column(
                   children: [
-                    Gap(16),
-                    UserModeSection(),
+                    const Gap(16),
+                    UserModeSection(userId: userId),
                   ],
                 );
               },
-              targetUserId: userId,
             ),
             const Gap(16),
             // TODO 自己紹介をDBに追加する
@@ -125,8 +125,9 @@ class WorkerPageBody extends ConsumerWidget {
                     'https://www.kaku-ichi.co.jp/media/wp-content/uploads/2020/02/20200226001.jpg',
               ),
             ),
-            IdentityDependentBuilder(
-              buildForIdentity: () {
+            UserAuthDependentBuilder(
+              userId: userId,
+              onUserAuthenticated: (userId) {
                 return Column(
                   children: [
                     const Divider(
@@ -143,7 +144,7 @@ class WorkerPageBody extends ConsumerWidget {
                                 FontAwesomeIcons.google,
                                 size: 30,
                               ),
-                              SizedBox(width: 10),
+                              Gap(10),
                               Text('Google'),
                               // TODO google連携済みかどうかで出し分けられるようにする
                               Expanded(
@@ -154,14 +155,14 @@ class WorkerPageBody extends ConsumerWidget {
                               ),
                             ],
                           ),
-                          SizedBox(height: 12),
+                          Gap(12),
                           Row(
                             children: [
                               FaIcon(
                                 FontAwesomeIcons.apple,
                                 size: 40,
                               ),
-                              SizedBox(width: 10),
+                              Gap(10),
                               Text('Apple'),
                               // TODO apple連携済みかどうかで出し分けられるようにする
                               Expanded(
@@ -172,7 +173,7 @@ class WorkerPageBody extends ConsumerWidget {
                               ),
                             ],
                           ),
-                          SizedBox(height: 12),
+                          Gap(12),
                           Row(
                             children: [
                               FaIcon(
@@ -180,7 +181,7 @@ class WorkerPageBody extends ConsumerWidget {
                                 color: Color(0xff06c755),
                                 size: 30,
                               ),
-                              SizedBox(width: 10),
+                              Gap(10),
                               Text('LINE'),
                               // TODO line連携済みかどうかで出し分けられるようにする
                               Expanded(
@@ -220,7 +221,6 @@ class WorkerPageBody extends ConsumerWidget {
                   ],
                 );
               },
-              targetUserId: userId,
             ),
             const Gap(32),
           ],

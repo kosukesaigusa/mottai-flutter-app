@@ -98,7 +98,10 @@ class _DrawerChild extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(packageInfo.packageName),
+              Text(
+                '${packageInfo.packageName} '
+                '(${packageInfo.version}+${packageInfo.buildNumber})',
+              ),
               if (ref.watch(isHostProvider)) ...[
                 const Gap(8),
                 Text(

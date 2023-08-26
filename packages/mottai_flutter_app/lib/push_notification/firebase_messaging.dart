@@ -1,11 +1,14 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:auto_route/auto_route.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+
+import '../root/ui/root.dart';
 
 /// FCM の Payload に含まれる、通知タップ時に画面遷移を期待している時のキー名。
 const _fcmPayloadLocationKey = 'location';
@@ -232,15 +235,7 @@ final _handleNotificationDataProvider =
     final location = data[_fcmPayloadLocationKey] as String;
     debugPrint(location);
     if (data.containsKey(_fcmPayloadLocationKey)) {
-      // TODO: 適切な画面遷移の Callback を外から指定できるようにする。
-      // // location: `/` の場合は、すべての画面を取り除く
-      // if (location == ref.read(appRouterProvider).initialRoute) {
-      //   ref.read(navigationServiceProvider).popUntilFirstRoute();
-      // } else {
-      //   await ref
-      //       .read(navigationServiceProvider)
-      //       .pushOnCurrentTab(location: location, arguments: data);
-      // }
+      await ref.read(rootPageKey).currentContext?.router.pushNamed(location);
     }
   },
 );

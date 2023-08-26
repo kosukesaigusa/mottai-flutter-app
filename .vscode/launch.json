@@ -42,6 +42,17 @@
       ]
     },
     {
+      "name": "Debug (local)",
+      "program": "packages/mottai_flutter_app/lib/main.dart",
+      "request": "launch",
+      "type": "dart",
+      "args": [
+        "--debug",
+        "--dart-define=FLAVOR=local",
+        "--dart-define-from-file=dart_defines/dev-dart-define.json"
+      ]
+    },
+    {
       "name": "Debug Functions (local)",
       "type": "node",
       "request": "attach",

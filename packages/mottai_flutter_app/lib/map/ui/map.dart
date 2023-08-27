@@ -279,6 +279,7 @@ class _HostLocationPageView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // TODO: 表示する [HostLocation] がない場合の UI を考える。
     return PageView.builder(
       controller: PageController(viewportFraction: _viewportFraction),
       itemCount: readHostLocations.length,

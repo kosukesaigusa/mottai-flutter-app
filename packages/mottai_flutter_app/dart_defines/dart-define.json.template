@@ -1,0 +1,6 @@
+{
+  "LINE_CHANNEL_ID": "YOUR_CHANNEL_ID_HERE", // See 1Password.
+  "flavor": "dev", // (or "prod")
+  "appName": "DEV MOTTAI", // (or "MOTTAI"),
+  "appIdSuffix": ".dev" // (or "")
+}

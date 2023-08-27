@@ -14,7 +14,7 @@ import '../../../job/ui/job_update.dart';
 import '../../../map/ui/map.dart';
 import '../../../worker/ui/worker.dart';
 import '../../color/ui/color.dart';
-import '../../environment/ui/environment.dart';
+import '../../firebase_messaging/ui/firebase_messaging.dart';
 import '../../firebase_storage/ui/firebase_storage.dart';
 import '../../force_update/ui/force_update.dart';
 import '../../generic_image/ui/generic_images.dart';
@@ -171,12 +171,12 @@ class DevelopmentItemsPage extends ConsumerWidget {
             title: Text('FCM トークン（トークン追加, device_info_plus）'),
             // onTap: () => context.router.pushNamed(FcmTokenPage.location),
           ),
-          const ListTile(
-            title: Text(
+          ListTile(
+            title: const Text(
               '通知 (firebase_messaging, local_notification, dynamic_links)',
             ),
-            // onTap: () =>
-            //     context.router.pushNamed(FirebaseMessagingPage.location),
+            onTap: () =>
+                context.router.pushNamed(FirebaseMessagingPage.location),
           ),
           ListTile(
             title: const Text('汎用画像ウィジェット'),
@@ -194,12 +194,6 @@ class DevelopmentItemsPage extends ConsumerWidget {
               'WebLinkサンプル',
             ),
             onTap: () => context.router.pushNamed(WebLinkStubPage.location),
-          ),
-          ListTile(
-            title: const Text(
-              'flavor環境情報',
-            ),
-            onTap: () => context.router.pushNamed(EnvironmentPage.location),
           ),
           const Divider(),
           Padding(

@@ -11,10 +11,18 @@
         "target": "es2020",
         "baseUrl": "./",
         "paths": {
-            "~/*": ["./*"]
+            "~/*": [
+                "./*"
+            ]
         },
-        "types": ["@types/node", "jest"]
+        "types": [
+            "@types/node",
+            "jest"
+        ]
     },
     "compileOnSave": true,
-    "exclude": ["node_modules", "lib"]
+    "exclude": [
+        "node_modules",
+        "lib"
+    ]
 }

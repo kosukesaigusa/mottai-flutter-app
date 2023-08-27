@@ -16,6 +16,8 @@ import '../../scaffold_messenger_controller.dart';
 import '../../user/user.dart';
 import '../../user/user_mode.dart';
 
+final rootPageKey = Provider((ref) => GlobalKey<NavigatorState>());
+
 /// メインの [BottomNavigationBar] を含む画面。
 @RoutePage()
 class RootPage extends ConsumerStatefulWidget {
@@ -44,6 +46,7 @@ class _RootPageState extends ConsumerState<RootPage> {
   @override
   Widget build(BuildContext context) {
     return AutoTabsScaffold(
+      key: ref.watch(rootPageKey),
       appBarBuilder: (_, __) => AppBar(
         title: Image.asset(MottaiAssets.appBarLogo, height: 40),
       ),
@@ -95,7 +98,10 @@ class _DrawerChild extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(packageInfo.packageName),
+              Text(
+                '${packageInfo.packageName} '
+                '(${packageInfo.version}+${packageInfo.buildNumber})',
+              ),
               if (ref.watch(isHostProvider)) ...[
                 const Gap(8),
                 Text(

@@ -4,6 +4,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:dart_flutter_common/dart_flutter_common.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../scaffold_messenger_controller.dart';
@@ -42,7 +43,7 @@ class _ImagePickerSamplePageState extends ConsumerState<ImagePickerSamplePage> {
       ),
       body: ListView(
         children: [
-          const SizedBox(height: 60),
+          const Gap(60),
           const Center(child: Text('1 枚の画像を選択')),
           if (_pickedImageFromGallery == null)
             GestureDetector(
@@ -67,7 +68,7 @@ class _ImagePickerSamplePageState extends ConsumerState<ImagePickerSamplePage> {
                 child: Image.file(_pickedImageFromGallery!),
               ),
             ),
-          const SizedBox(height: 60),
+          const Gap(60),
           const Center(child: Text('1 枚の画像を撮影して選択')),
           if (_pickedImageFromCamera == null)
             GestureDetector(
@@ -92,7 +93,7 @@ class _ImagePickerSamplePageState extends ConsumerState<ImagePickerSamplePage> {
                 child: Image.file(_pickedImageFromCamera!),
               ),
             ),
-          const SizedBox(height: 60),
+          const Gap(60),
           const Center(child: Text('複数の画像を選択')),
           if (_pickedImagesFromGallery.isEmpty)
             GestureDetector(

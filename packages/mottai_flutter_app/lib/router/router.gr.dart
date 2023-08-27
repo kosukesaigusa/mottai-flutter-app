@@ -17,7 +17,7 @@ import 'package:mottai_flutter_app/development/development_items/ui/development_
     as _i6;
 import 'package:mottai_flutter_app/development/email_and_password_sign_in/ui/email_and_password_sign_in.dart'
     as _i7;
-import 'package:mottai_flutter_app/development/environment/ui/environment.dart'
+import 'package:mottai_flutter_app/development/firebase_messaging/ui/firebase_messaging.dart'
     as _i8;
 import 'package:mottai_flutter_app/development/firebase_storage/ui/firebase_storage.dart'
     as _i9;
@@ -122,10 +122,10 @@ abstract class $AppRouter extends _i28.RootStackRouter {
         child: const _i7.EmailAndPasswordSignInPage(),
       );
     },
-    EnvironmentRoute.name: (routeData) {
+    FirebaseMessagingRoute.name: (routeData) {
       return _i28.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const _i8.EnvironmentPage(),
+        child: const _i8.FirebaseMessagingPage(),
       );
     },
     FirebaseStorageSampleRoute.name: (routeData) {
@@ -456,15 +456,15 @@ class EmailAndPasswordSignInRoute extends _i28.PageRouteInfo<void> {
 }
 
 /// generated route for
-/// [_i8.EnvironmentPage]
-class EnvironmentRoute extends _i28.PageRouteInfo<void> {
-  const EnvironmentRoute({List<_i28.PageRouteInfo>? children})
+/// [_i8.FirebaseMessagingPage]
+class FirebaseMessagingRoute extends _i28.PageRouteInfo<void> {
+  const FirebaseMessagingRoute({List<_i28.PageRouteInfo>? children})
       : super(
-          EnvironmentRoute.name,
+          FirebaseMessagingRoute.name,
           initialChildren: children,
         );
 
-  static const String name = 'EnvironmentRoute';
+  static const String name = 'FirebaseMessagingRoute';
 
   static const _i28.PageInfo<void> page = _i28.PageInfo<void>(name);
 }

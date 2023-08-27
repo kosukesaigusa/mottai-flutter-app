@@ -142,10 +142,9 @@ class AuthController {
   Future<void> unLinkUserSocialLogin({
     required SignInMethod signInMethod,
     required String userId,
-    //TODO controller が firebase_common に依存することは問題か？
     required ReadUserSocialLogin userSocialLogin,
   }) async {
-    if (!_hasMultipleAuthMethodsEnabled(userSocialLogin)) {
+    if (!_authService.hasMultipleAuthMethodsEnabled(userSocialLogin)) {
       // 単一の認証方法のみが有効化されている場合、
       // 本メソッドを呼び出す際に指定している SignInMethod がその単一の認証方法となるため、
       // 解除不可であることを SnackBar で表示する。
@@ -160,30 +159,6 @@ class AuthController {
     } on FirebaseException catch (e) {
       _appScaffoldMessengerController.showSnackBarByFirebaseException(e);
     }
-  }
-
-  /// 引数で受ける [userSocialLogin] を元に、複数の認証方法が有効化されているかを判定し、真偽値を返す
-  bool _hasMultipleAuthMethodsEnabled(
-    ReadUserSocialLogin userSocialLogin,
-  ) {
-    //TODO 以下の記述箇所はService層である auth.dart に変更すべきか？
-    //TODO ただし、そうした場合、 auth.dart が firebase_common に依存するが問題ないか？
-    final enabledList = <bool>[];
-    for (final signInMethod in SignInMethod.values) {
-      switch (signInMethod) {
-        case SignInMethod.google:
-          enabledList.add(userSocialLogin.isGoogleEnabled);
-        case SignInMethod.apple:
-          enabledList.add(userSocialLogin.isAppleEnabled);
-        case SignInMethod.line:
-          enabledList.add(userSocialLogin.isLINEEnabled);
-        //TODO email認証は追って削除される想定
-        case SignInMethod.email:
-          enabledList.add(false);
-      }
-    }
-
-    return enabledList.where((isEnabled) => isEnabled).length > 1;
   }
 
   /// [FirebaseAuth] からサインアウトする。

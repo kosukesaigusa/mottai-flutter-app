@@ -410,4 +410,27 @@ class AuthService {
       }
     }
   }
+
+  /// 引数で受ける [userSocialLogin] を元に、複数の認証方法が有効化されているかを判定し、真偽値を返す
+  bool hasMultipleAuthMethodsEnabled(
+    ReadUserSocialLogin userSocialLogin,
+  ) {
+    final enabledList = <bool>[];
+    for (final signInMethod in SignInMethod.values) {
+      switch (signInMethod) {
+        case SignInMethod.google:
+          enabledList.add(userSocialLogin.isGoogleEnabled);
+        case SignInMethod.apple:
+          enabledList.add(userSocialLogin.isAppleEnabled);
+        case SignInMethod.line:
+          enabledList.add(userSocialLogin.isLINEEnabled);
+        //TODO email認証は追って削除される想定
+        case SignInMethod.email:
+          enabledList.add(false);
+      }
+    }
+
+    return enabledList.where((isEnabled) => isEnabled).length > 1;
+  }
+
 }

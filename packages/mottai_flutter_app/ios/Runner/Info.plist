@@ -30,6 +30,7 @@
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>com.googleusercontent.apps.709197089170-1lr8vaboc73s41u7l2vijfqs2c7udu0n</string>
+				<string>line3rdp.$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 			</array>
 		</dict>
 	</array>
@@ -39,6 +40,7 @@
 	<array>
 		<string>https</string>
 		<string>http</string>
+		<string>lineauth2</string>
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>

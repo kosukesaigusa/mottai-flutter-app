@@ -28,6 +28,18 @@ class Host {
 
   @ReadDefault(<HostType>{})
   @_hostTypesConverter
+//   @TranslateJsonConverterToTypeScript(
+//     fromJson: '''
+// (hostTypes: unknown[] | undefined): Set<HostType> {
+//   return new Set((hostTypes ?? []).map((e) => e as HostType))
+// }
+// ''',
+//     toJson: '''
+// (hostTypes: Set<HostType>): string[] {
+//   return [...hostTypes]
+// }
+// ''',
+//   )
   final Set<HostType> hostTypes;
 
   @ReadDefault(<String>[])
@@ -42,6 +54,7 @@ class Host {
   final DateTime? updatedAt;
 }
 
+// @TranslateToTypeScript(isEnum: true)
 enum HostType {
   farmer('農家'),
   fisherman('漁師'),

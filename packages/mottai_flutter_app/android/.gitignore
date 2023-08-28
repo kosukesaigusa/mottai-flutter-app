@@ -12,3 +12,4 @@ key.properties
 **/*.keystore
 **/*.jks
 secret.properties
+keystore.properties

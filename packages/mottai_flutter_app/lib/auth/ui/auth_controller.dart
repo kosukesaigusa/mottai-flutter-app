@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_common/firebase_common.dart';
-import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../scaffold_messenger_controller.dart';
@@ -75,22 +74,8 @@ class AuthController {
   Future<UserCredential> _signIn(SignInMethod signInMethod) async {
     switch (signInMethod) {
       case SignInMethod.google:
-        try {
           return _authService.signInWithGoogle();
-        }
-        //TODO エラーハンドリングをauth.dartに記述したため、
-        //また、以下だとユーザーキャンセルを処理できないと思われるため、削除で問題ないか？
-        // NOTE: この例外は、ユーザーがログインをキャンセルした場合に発生する。
-        on PlatformException catch (e) {
-          if (e.code == 'network_error') {
-            throw const AppException(
-              message: '接続できませんでした。\nネットワーク状況を確認してください。',
-            );
-          }
-          throw const AppException(message: 'キャンセルしました。');
-        }
       case SignInMethod.apple:
-        // NOTE: Apple はキャンセルやネットワークエラーの判定ができないので、try-catchしない。
         return _authService.signInWithApple();
       case SignInMethod.line:
         return _authService.signInWithLINE();

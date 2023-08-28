@@ -74,7 +74,7 @@ class AuthController {
   Future<UserCredential> _signIn(SignInMethod signInMethod) async {
     switch (signInMethod) {
       case SignInMethod.google:
-          return _authService.signInWithGoogle();
+        return _authService.signInWithGoogle();
       case SignInMethod.apple:
         return _authService.signInWithApple();
       case SignInMethod.line:

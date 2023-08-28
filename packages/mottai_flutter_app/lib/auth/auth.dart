@@ -372,8 +372,7 @@ class AuthService {
 
     // 何かしらの理由により、一時的に作成したアカウントの credential or user が null だった場合は、
     // AppException をスローし、認証連携が失敗したことを通知する
-    if (authCredential == null ||
-        tempUser == null) {
+    if (authCredential == null || tempUser == null) {
       throw const AppException(message: 'LINEによる認証連携ができませんでした。');
     }
 

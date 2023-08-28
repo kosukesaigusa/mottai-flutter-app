@@ -365,18 +365,20 @@ class AuthService {
     // AuthCredential を取得するために、LINEログインにより一時的なユーザーアカウントを作成する
     final tempUserCredential = await _getLINEUserCredentialWithSignIn();
 
+    final tempUser = tempUserCredential.user;
+
+    // 一時的に作成したユーザーアカウントから AuthCredential を取得
+    final authCredential = tempUserCredential.credential;
+
     // 何かしらの理由により、一時的に作成したアカウントの credential or user が null だった場合は、
     // AppException をスローし、認証連携が失敗したことを通知する
-    if (tempUserCredential.credential == null ||
-        tempUserCredential.user == null) {
+    if (authCredential == null ||
+        tempUser == null) {
       throw const AppException(message: 'LINEによる認証連携ができませんでした。');
     }
 
-    // 一時的に作成したユーザーアカウントから AuthCredential を取得
-    final authCredential = tempUserCredential.credential!;
-
     // 一時的に作成したユーザーアカウントを削除
-    await tempUserCredential.user!.delete();
+    await tempUser.delete();
 
     return authCredential;
   }
@@ -432,5 +434,4 @@ class AuthService {
 
     return enabledList.where((isEnabled) => isEnabled).length > 1;
   }
-
 }

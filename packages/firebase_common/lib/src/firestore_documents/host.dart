@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutterfire_gen_annotation/flutterfire_gen_annotation.dart';
+import 'package:flutterfire_gen_ts_annotation/flutterfire_gen_ts_annotation.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'host.flutterfire_gen.dart';
@@ -28,6 +29,18 @@ class Host {
 
   @ReadDefault(<HostType>{})
   @_hostTypesConverter
+  @TranslateJsonConverterToTypeScript(
+    fromJson: '''
+(hostTypes: unknown[] | undefined): Set<HostType> {
+  return new Set((hostTypes ?? []).map((e) => e as HostType))
+}
+''',
+    toJson: '''
+(hostTypes: Set<HostType>): string[] {
+  return [...hostTypes]
+}
+''',
+  )
   final Set<HostType> hostTypes;
 
   @ReadDefault(<String>[])
@@ -42,6 +55,7 @@ class Host {
   final DateTime? updatedAt;
 }
 
+@TranslateToTypeScript(isEnum: true)
 enum HostType {
   farmer('農家'),
   fisherman('漁師'),

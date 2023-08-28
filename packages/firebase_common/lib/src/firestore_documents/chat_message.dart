@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutterfire_gen_annotation/flutterfire_gen_annotation.dart';
-import 'package:flutterfire_gen_ts_annotation/flutterfire_gen_ts_annotation.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'chat_message.flutterfire_gen.dart';
@@ -23,18 +22,18 @@ class ChatMessage {
   final String senderId;
 
   @_chatMessageTypeConverter
-  @TranslateJsonConverterToTypeScript(
-    fromJson: '''
-(chatMessageType: string): ChatMessageType {
-  return chatMessageType as ChatMessageType
-}
-''',
-    toJson: '''
-(chatMessageType: ChatMessageType): string {
-  return chatMessageType as string;
-}
-''',
-  )
+//   @TranslateJsonConverterToTypeScript(
+//     fromJson: '''
+// (chatMessageType: string): ChatMessageType {
+//   return chatMessageType as ChatMessageType
+// }
+// ''',
+//     toJson: '''
+// (chatMessageType: ChatMessageType): string {
+//   return chatMessageType as string;
+// }
+// ''',
+//   )
   final ChatMessageType chatMessageType;
 
   @ReadDefault('')
@@ -56,7 +55,7 @@ class ChatMessage {
   final DateTime? updatedAt;
 }
 
-@TranslateToTypeScript(isEnum: true)
+// @TranslateToTypeScript(isEnum: true)
 enum ChatMessageType {
   worker,
   host,

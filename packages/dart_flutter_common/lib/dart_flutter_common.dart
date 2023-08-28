@@ -4,5 +4,6 @@ export 'src/int.dart';
 export 'src/scaffold_messenger_controller.dart';
 export 'src/string.dart';
 export 'src/widgets/_export.dart';
+export 'src/widgets/chat_room_list_tile.dart';
 export 'src/widgets/generic_image.dart';
 export 'src/widgets/web_link.dart';

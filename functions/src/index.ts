@@ -28,7 +28,8 @@ admin.initializeApp({
 functions.setGlobalOptions({ region: `asia-northeast1` })
 
 // /** ここでデプロイする関数をまとめる。 */
+import { createfirebaseauthcustomtoken } from './callable-functions/createFirebaseAuthCustomToken'
 import { onCreateTestNotification } from './development/testNotification/onCreateTestNotification'
 
 // /** index.ts で import してデプロイする関数一覧。 */
-export { onCreateTestNotification }
+export { createfirebaseauthcustomtoken, onCreateTestNotification }

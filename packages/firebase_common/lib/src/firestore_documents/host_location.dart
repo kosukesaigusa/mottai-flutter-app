@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutterfire_gen_annotation/flutterfire_gen_annotation.dart';
+import 'package:flutterfire_gen_ts_annotation/flutterfire_gen_ts_annotation.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'host_location.flutterfire_gen.dart';
@@ -20,6 +21,23 @@ class HostLocation {
   final String address;
 
   @_geoConverter
+  @TranslateJsonConverterToTypeScript(
+    fromJson: '''
+(json: Record<string, unknown>): Geo {
+  const geohash = json['geohash'] as string
+  const geopoint = json['geopoint'] as GeoPoint
+  return new Geo({ geohash, geopoint })
+}
+''',
+    toJson: '''
+(geo: Geo): Record<string, unknown> {
+  return {
+    geohash: geo.geohash,
+    geopoint: geo.geopoint
+  }
+}
+''',
+  )
   final Geo geo;
 
   @AlwaysUseFieldValueServerTimestampWhenCreating()
@@ -30,6 +48,7 @@ class HostLocation {
   final DateTime? updatedAt;
 }
 
+@TranslateToTypeScript()
 class Geo {
   const Geo({
     required this.geohash,

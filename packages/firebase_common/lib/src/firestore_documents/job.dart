@@ -1,6 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutterfire_gen_annotation/flutterfire_gen_annotation.dart';
-import 'package:flutterfire_gen_ts_annotation/flutterfire_gen_ts_annotation.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'job.flutterfire_gen.dart';
@@ -50,18 +48,18 @@ class Job {
   @ReadDefault(<AccessType>{})
   @CreateDefault(<AccessType>{})
   @_accessTypesConverter
-  @TranslateJsonConverterToTypeScript(
-    fromJson: '''
-(accessTypes: unknown[] | undefined): Set<AccessType> {
-  return new Set((accessTypes ?? []).map((e) => e as AccessType))
-}
-''',
-    toJson: '''
-(accessTypes: Set<AccessType>): string[] {
-  return [...accessTypes]
-}
-''',
-  )
+//   @TranslateJsonConverterToTypeScript(
+//     fromJson: '''
+// (accessTypes: unknown[] | undefined): Set<AccessType> {
+//   return new Set((accessTypes ?? []).map((e) => e as AccessType))
+// }
+// ''',
+//     toJson: '''
+// (accessTypes: Set<AccessType>): string[] {
+//   return [...accessTypes]
+// }
+// ''',
+//   )
   final Set<AccessType> accessTypes;
 
   @ReadDefault('')
@@ -77,7 +75,7 @@ class Job {
 }
 
 /// 仕事の場所へのアクセスの種類。
-@TranslateToTypeScript(isEnum: true)
+// @TranslateToTypeScript(isEnum: true)
 enum AccessType {
   trainAvailable('電車あり'),
   busAvailable('バスあり'),

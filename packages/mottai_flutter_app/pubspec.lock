@@ -678,14 +678,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.1.0-dev.3"
-  flutterfire_gen_ts_annotation:
-    dependency: transitive
-    description:
-      name: flutterfire_gen_ts_annotation
-      sha256: "298fda3026dcd0ff48dbff76cbfcc48657c2a870eae82ed4803006a6acef5330"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.0.1-dev.1"
   flutterfire_gen_utils:
     dependency: transitive
     description:

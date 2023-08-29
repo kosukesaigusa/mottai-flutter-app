@@ -6,8 +6,9 @@ import '../../../auth/ui/auth_dependent_builder.dart';
 import '../../../chat/read_status.dart';
 import '../../../chat/ui/chat_room.dart';
 import '../../../chat/ui/chat_rooms.dart';
-import '../../../host/ui/create_or_update_host.dart';
 import '../../../host/ui/host.dart';
+import '../../../host/ui/host_create.dart';
+import '../../../host/ui/host_update.dart';
 import '../../../job/ui/job_create.dart';
 import '../../../job/ui/job_detail.dart';
 import '../../../job/ui/job_update.dart';
@@ -125,10 +126,15 @@ class DevelopmentItemsPage extends ConsumerWidget {
               'flutter_google_maps, geolocator)',
             ),
             onTap: () => context.router.pushNamed(
-              CreateOrUpdateHostPage.location(
-                userId: 'b1M4bcp7zEVpgHXYhOVWt8BMkq23',
-                actionType: ActionType.create.name,
-              ),
+              HostCreatePage.location,
+            ),
+          ),
+          ListTile(
+            title: const Text(
+              'ホスト情報更新ページ',
+            ),
+            onTap: () => context.router.pushNamed(
+              HostUpdatePage.location(hostId: 'b1M4bcp7zEVpgHXYhOVWt8BMkq23'),
             ),
           ),
           const Divider(),

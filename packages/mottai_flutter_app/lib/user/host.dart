@@ -51,4 +51,38 @@ class HostService {
   /// 指定した [Host] を取得する。
   Future<ReadHost?> fetchHost({required String hostId}) =>
       _hostRepository.fetchHost(hostId: hostId);
+
+  /// [Host] の情報を作成する。
+  Future<void> create({
+    required String displayName,
+    required String introduction,
+    required Set<HostType> hostTypes,
+    required List<String> urls,
+    required String imageUrl,
+  }) =>
+      _hostRepository.create(
+        displayName: displayName,
+        introduction: introduction,
+        hostTypes: hostTypes,
+        urls: urls,
+        imageUrl: imageUrl,
+      );
+
+  /// [Host] の情報を更新する。
+  Future<void> update({
+    required String hostId,
+    String? displayName,
+    String? introduction,
+    Set<HostType>? hostTypes,
+    List<String>? urls,
+    String? imageUrl,
+  }) =>
+      _hostRepository.update(
+        hostId: hostId,
+        displayName: displayName,
+        introduction: introduction,
+        hostTypes: hostTypes,
+        urls: urls,
+        imageUrl: imageUrl,
+      );
 }

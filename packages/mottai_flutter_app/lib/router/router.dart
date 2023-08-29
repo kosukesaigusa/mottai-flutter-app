@@ -16,8 +16,9 @@ import '../development/sample_todo/ui/sample_todos.dart';
 import '../development/sign_in/ui/sign_in.dart';
 import '../development/user_social_login/user_social_login.dart';
 import '../development/web_link/ui/web_link_stub.dart';
-import '../host/ui/create_or_update_host.dart';
+import '../host/ui/host_create.dart';
 import '../host/ui/host.dart';
+import '../host/ui/host_update.dart';
 import '../job/ui/job_create.dart';
 import '../job/ui/job_detail.dart';
 import '../job/ui/job_update.dart';
@@ -76,8 +77,16 @@ class AppRouter extends $AppRouter {
       page: WorkerRoute.page,
     ),
     AutoRoute(
+      path: HostCreatePage.path,
+      page: HostCreateRoute.page,
+    ),
+    AutoRoute(
       path: HostPage.path,
       page: HostRoute.page,
+    ),
+    AutoRoute(
+      path: HostUpdatePage.path,
+      page: HostUpdateRoute.page,
     ),
     // AutoRoute(
     //   path: UserPage.path,
@@ -86,11 +95,6 @@ class AppRouter extends $AppRouter {
     AutoRoute(
       path: CreateOrUpdateWorkerPage.path,
       page: CreateOrUpdateWorkerRoute.page,
-      fullscreenDialog: true,
-    ),
-    AutoRoute(
-      path: CreateOrUpdateHostPage.path,
-      page: CreateOrUpdateHostRoute.page,
       fullscreenDialog: true,
     ),
     // NOTE: 以下、開発用のページ。

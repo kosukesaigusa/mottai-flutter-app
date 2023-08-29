@@ -34,6 +34,9 @@ class Host {
   @CreateDefault(<String>[])
   final List<String> urls;
 
+  /// urlの最大数
+  static const urlMaxCount = 5;
+
   @AlwaysUseFieldValueServerTimestampWhenCreating()
   final DateTime? createdAt;
 

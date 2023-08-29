@@ -6,7 +6,7 @@ import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../auth/ui/auth_dependent_builder.dart';
-import '../../host/ui/create_or_update_host.dart';
+import '../../host/ui/host_create.dart';
 import '../../user/ui/user_mode.dart';
 import '../../user/user.dart';
 import '../../user/worker.dart';
@@ -209,10 +209,7 @@ class WorkerPageBody extends ConsumerWidget {
                       Align(
                         child: ElevatedButton(
                           onPressed: () => context.router.pushNamed(
-                            CreateOrUpdateHostPage.location(
-                              userId: userId,
-                              actionType: ActionType.create.name,
-                            ),
+                            HostCreatePage.location,
                           ),
                           child: const Text('ホストとして登録'),
                         ),

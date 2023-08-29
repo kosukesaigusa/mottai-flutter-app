@@ -304,22 +304,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.1.0-dev.3"
-  flutterfire_gen_ts:
-    dependency: "direct dev"
-    description:
-      name: flutterfire_gen_ts
-      sha256: fff1cb018e73746156b200e0209b686a523a1af68e307c88b32aac3610f3c5f3
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.0.1-dev.1"
-  flutterfire_gen_ts_annotation:
-    dependency: "direct main"
-    description:
-      name: flutterfire_gen_ts_annotation
-      sha256: "298fda3026dcd0ff48dbff76cbfcc48657c2a870eae82ed4803006a6acef5330"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.0.1-dev.1"
   flutterfire_gen_utils:
     dependency: "direct main"
     description:

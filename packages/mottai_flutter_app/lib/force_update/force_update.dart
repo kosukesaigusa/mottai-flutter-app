@@ -26,7 +26,7 @@ final isForceUpdateRequiredProvider = StateProvider.autoDispose<bool>(
           if (!forceUpdateInfo.iOSForceUpdate) {
             return false;
           }
-          return isCurrentVersionLessThanMinimum(
+          return isCurrentVersionLessThanMinRequiredVersion(
             currentVersion,
             forceUpdateInfo.iOSMinRequiredVersion,
           );
@@ -34,7 +34,7 @@ final isForceUpdateRequiredProvider = StateProvider.autoDispose<bool>(
           if (!forceUpdateInfo.androidForceUpdate) {
             return false;
           }
-          return isCurrentVersionLessThanMinimum(
+          return isCurrentVersionLessThanMinRequiredVersion(
             currentVersion,
             forceUpdateInfo.androidMinRequiredVersion,
           );

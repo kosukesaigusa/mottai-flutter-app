@@ -20,6 +20,23 @@ class HostLocation {
   final String address;
 
   @_geoConverter
+//   @TranslateJsonConverterToTypeScript(
+//     fromJson: '''
+// (json: Record<string, unknown>): Geo {
+//   const geohash = json['geohash'] as string
+//   const geopoint = json['geopoint'] as GeoPoint
+//   return new Geo({ geohash, geopoint })
+// }
+// ''',
+//     toJson: '''
+// (geo: Geo): Record<string, unknown> {
+//   return {
+//     geohash: geo.geohash,
+//     geopoint: geo.geopoint
+//   }
+// }
+// ''',
+//   )
   final Geo geo;
 
   @AlwaysUseFieldValueServerTimestampWhenCreating()
@@ -30,6 +47,7 @@ class HostLocation {
   final DateTime? updatedAt;
 }
 
+// @TranslateToTypeScript()
 class Geo {
   const Geo({
     required this.geohash,

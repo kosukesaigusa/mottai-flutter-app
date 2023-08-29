@@ -58,87 +58,22 @@ class ChatRoomsPage extends ConsumerWidget {
                   ),
                 );
               }
-              return ListView.separated(
-                separatorBuilder: (context, index) => const Divider(height: 1),
+              return ListView.builder(
                 itemCount: chatRooms.length,
                 itemBuilder: (context, index) {
-                  final readChatRoom = chatRooms[index];
-                  // TODO: ListTileにし、デザイン調整する。
-                  final chatPartnerImageUrl =
-                      ref.watch(chatPartnerImageUrlProvider(readChatRoom));
-                  final chatPartnerDisplayName = ref.watch(
-                    chatPartnerDisplayNameProvider(
-                      readChatRoom,
-                    ),
-                  );
-                  final latestChatMessage = ref.watch(
-                    latestMessageProvider(readChatRoom.chatRoomId),
-                  );
-                  final unReadCountString =
-                      ref.watch(unReadCountStringProvider(readChatRoom));
-                  return InkWell(
+                  final chatRoom = chatRooms[index];
+                  final latestChatMessage =
+                      ref.watch(latestMessageProvider(chatRoom.chatRoomId));
+                  return GenericChatRoom(
+                    imageUrl: ref.watch(chatPartnerImageUrlProvider(chatRoom)),
+                    title: ref.watch(chatPartnerDisplayNameProvider(chatRoom)),
+                    latestMessage: latestChatMessage?.content,
                     onTap: () => context.router.pushNamed(
-                      ChatRoomPage.location(
-                        chatRoomId: readChatRoom.chatRoomId,
-                      ),
+                      ChatRoomPage.location(chatRoomId: chatRoom.chatRoomId),
                     ),
-                    child: SizedBox(
-                      child: Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            if (chatPartnerImageUrl.isNotEmpty)
-                              GenericImage.circle(
-                                imageUrl: chatPartnerImageUrl,
-                                size: 64,
-                              )
-                            else
-                              const CircleAvatar(
-                                radius: 32,
-                                child: Icon(Icons.person),
-                              ),
-                            Expanded(
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 16),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    if (latestChatMessage?.createdAt != null)
-                                      Text(
-                                        latestChatMessage!.createdAt!
-                                            .formatRelativeDate(),
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .labelSmall,
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    Text(
-                                      chatPartnerDisplayName,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .titleMedium,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                    if (latestChatMessage != null)
-                                      Text(
-                                        latestChatMessage.content,
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            if (unReadCountString.isNotEmpty)
-                              Badge(label: Text(unReadCountString)),
-                          ],
-                        ),
-                      ),
-                    ),
+                    updatedAt: latestChatMessage?.createdAt,
+                    unReadCountString:
+                        ref.watch(unReadCountStringProvider(chatRoom)),
                   );
                 },
               );

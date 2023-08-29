@@ -88,11 +88,37 @@ android {
         ]
     }
 
-    buildTypes {
+    // android/keystore.properties を読み込む。下記のような内容を期待している。
+    // 
+    // storePassword=foo
+    // keyPassword=foo
+    // keyAlias=bar
+    // storeFile=bar.jks
+    def keystoreProperties = new Properties()
+    def keystorePropertiesFile = rootProject.file('keystore.properties')
+    if (keystorePropertiesFile.exists()) {
+        keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+    }
+
+    signingConfigs {
+        debug {
+            storeFile file('debug.keystore')
+        }
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
+            storePassword keystoreProperties['storePassword']
+        }
+    }
+
+    buildTypes {
+        debug {
             signingConfig signingConfigs.debug
+        }
+        
+        release {
+            signingConfig signingConfigs.release
         }
     }
 }

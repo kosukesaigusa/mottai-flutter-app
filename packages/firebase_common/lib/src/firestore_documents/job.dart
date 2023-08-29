@@ -49,6 +49,18 @@ class Job {
   @ReadDefault(<AccessType>{})
   @CreateDefault(<AccessType>{})
   @_accessTypesConverter
+//   @TranslateJsonConverterToTypeScript(
+//     fromJson: '''
+// (accessTypes: unknown[] | undefined): Set<AccessType> {
+//   return new Set((accessTypes ?? []).map((e) => e as AccessType))
+// }
+// ''',
+//     toJson: '''
+// (accessTypes: Set<AccessType>): string[] {
+//   return [...accessTypes]
+// }
+// ''',
+//   )
   final Set<AccessType> accessTypes;
 
   @ReadDefault('')
@@ -64,6 +76,7 @@ class Job {
 }
 
 /// 仕事の場所へのアクセスの種類。
+// @TranslateToTypeScript(isEnum: true)
 enum AccessType {
   trainAvailable('電車あり'),
   busAvailable('バスあり'),

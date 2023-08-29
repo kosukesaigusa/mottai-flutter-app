@@ -6,18 +6,12 @@ import 'firebase_storage_resource.dart';
 
 /// Firebase Storageとのインタラクションを提供するサービスクラス。
 class FirebaseStorageService {
-  /// カスタムの [bucket] を使用して、新しい [FirebaseStorageService] のインスタンスを作成する。
-  ///
-  /// [bucket] が指定された場合、そのバケットが使用される。
-  /// そうでない場合、デフォルトのバケットが使用される。
-  FirebaseStorageService({String? bucket}) {
-    if (bucket != null) {
-      _firebaseStorage = FirebaseStorage.instanceFor(bucket: bucket);
-    } else {
-      _firebaseStorage = FirebaseStorage.instance;
-    }
-  }
-  late FirebaseStorage _firebaseStorage;
+  FirebaseStorageService() : _firebaseStorage = FirebaseStorage.instance;
+
+  FirebaseStorageService.bucket(String bucket)
+      : _firebaseStorage = FirebaseStorage.instanceFor(bucket: bucket);
+
+  late final FirebaseStorage _firebaseStorage;
 
   /// リソースをFirebase Storageに指定された [path] にアップロードする。
   ///

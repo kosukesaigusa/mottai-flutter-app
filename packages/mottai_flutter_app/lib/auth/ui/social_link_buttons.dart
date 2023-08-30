@@ -14,7 +14,7 @@ class SocialLinkButtons extends ConsumerWidget {
           children: [
             SizedBox(
               width: 40,
-              child: Image.asset('assets/login_icon/google_icon.png'),
+              child: Image.asset('assets/login_icon/Google.png'),
             ),
             const SizedBox(width: 10),
             const Text('Google'),

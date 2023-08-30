@@ -52,15 +52,4 @@ class UserSocialLoginRepository {
         ),
       );
 
-  /// [UserSocialLogin]の `isLINEEnabled` を引数で受けた値に更新する。
-  Future<void> updateIsLINEEnabled({
-    required String userId,
-    required bool value,
-  }) =>
-      _query.update(
-        userSocialLoginId: userId,
-        updateUserSocialLogin: UpdateUserSocialLogin(
-          isLINEEnabled: value,
-        ),
-      );
 }

@@ -241,7 +241,8 @@ class AuthService {
     final credential = switch (signInMethod) {
       SignInMethod.google => await _getGoogleAuthCredential(),
       SignInMethod.apple => await _getAppleAuthCredential(),
-      SignInMethod.line => await _getLINEAuthCredential(),
+      // LINEは認証連携の対象外
+      SignInMethod.line => throw UnimplementedError(),
       //TODO emailは追って削除される想定
       SignInMethod.email => throw UnimplementedError(),
     };
@@ -265,11 +266,9 @@ class AuthService {
           userId: userId,
           value: value,
         );
+      // LINEは認証連携の対象外
       case SignInMethod.line:
-        await _userSocialLoginRepository.updateIsLINEEnabled(
-          userId: userId,
-          value: value,
-        );
+        throw UnimplementedError();
       //TODO emailはなくなる想定
       case SignInMethod.email:
         throw UnimplementedError();
@@ -353,33 +352,6 @@ class AuthService {
       }
       rethrow;
     }
-  }
-
-  /// LINE認証から [AuthCredential] を取得する
-  ///
-  /// LINEでのログインを求め、
-  /// 成功した場合はその認証情報からFirebase用の [AuthCredential] オブジェクトを生成して返す。
-  /// カスタム認証の場合、[AuthCredential] は、一度ユーザーアカウントを作成してからではないと取得できないようなので、
-  /// 一時的なユーザーアカウントを作成し、[AuthCredential] 取得後に、その一時的なアカウントを削除するという手順を踏んでいる
-  Future<AuthCredential> _getLINEAuthCredential() async {
-    // AuthCredential を取得するために、LINEログインにより一時的なユーザーアカウントを作成する
-    final tempUserCredential = await _getLINEUserCredentialWithSignIn();
-
-    final tempUser = tempUserCredential.user;
-
-    // 一時的に作成したユーザーアカウントから AuthCredential を取得
-    final authCredential = tempUserCredential.credential;
-
-    // 何かしらの理由により、一時的に作成したアカウントの credential or user が null だった場合は、
-    // AppException をスローし、認証連携が失敗したことを通知する
-    if (authCredential == null || tempUser == null) {
-      throw const AppException(message: 'LINEによる認証連携ができませんでした。');
-    }
-
-    // 一時的に作成したユーザーアカウントを削除
-    await tempUser.delete();
-
-    return authCredential;
   }
 
   /// ログインユーザーが持つ `providerId` を元に、指定された [SignInMethod] のリンクを解除する

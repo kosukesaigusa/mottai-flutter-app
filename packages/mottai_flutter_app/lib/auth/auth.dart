@@ -360,7 +360,6 @@ class AuthService {
   }) async {
     const googleProviderId = 'google.com';
     const appleProviderId = 'apple.com';
-    const customProviderId = 'custom';
 
     final user = _auth.currentUser;
 
@@ -371,7 +370,8 @@ class AuthService {
     final providerIdToUnlink = switch (signInMethod) {
       SignInMethod.google => googleProviderId,
       SignInMethod.apple => appleProviderId,
-      SignInMethod.line => customProviderId,
+      // LINEは認証連携の対象外
+      SignInMethod.line => throw UnimplementedError(),
       //TODO emailは削除される想定
       SignInMethod.email => throw UnimplementedError(),
     };

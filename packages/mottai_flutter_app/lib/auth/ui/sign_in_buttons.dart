@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -24,21 +25,23 @@ class SignInButtons extends ConsumerWidget {
                 ref.read(authControllerProvider).signIn(SignInMethod.google),
           ),
         ),
-        const Gap(32),
-        SizedBox(
-          height: 48,
-          child: SignInButton(
-            Buttons.appleDark,
-            text: 'Apple でサインイン',
-            onPressed: () async =>
-                ref.read(authControllerProvider).signIn(SignInMethod.apple),
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(
-                Radius.circular(8),
+        if (defaultTargetPlatform == TargetPlatform.iOS) ...[
+          const Gap(32),
+          SizedBox(
+            height: 48,
+            child: SignInButton(
+              Buttons.appleDark,
+              text: 'Apple でサインイン',
+              onPressed: () async =>
+                  ref.read(authControllerProvider).signIn(SignInMethod.apple),
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(8),
+                ),
               ),
             ),
           ),
-        ),
+        ],
         const Gap(32),
         SizedBox(
           height: 48,

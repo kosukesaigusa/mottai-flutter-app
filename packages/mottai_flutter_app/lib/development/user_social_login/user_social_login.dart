@@ -82,26 +82,6 @@ class UserSocialLoginSamplePage extends ConsumerWidget {
                     },
                     child: Text(data.isAppleEnabled ? 'Apple解除' : 'Apple連携する'),
                   ),
-                  ElevatedButton(
-                    onPressed: () async {
-                      if (data.isLINEEnabled) {
-                        return ref
-                            .read(authControllerProvider)
-                            .unLinkUserSocialLogin(
-                              signInMethod: SignInMethod.line,
-                              userId: userId,
-                              userSocialLogin: data,
-                            );
-                      }
-                      await ref
-                          .read(authControllerProvider)
-                          .linkUserSocialLogin(
-                            signInMethod: SignInMethod.line,
-                            userId: userId,
-                          );
-                    },
-                    child: Text(data.isLINEEnabled ? 'LINE解除' : 'LINE連携する'),
-                  ),
                 ],
               );
             },

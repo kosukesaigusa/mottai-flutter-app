@@ -51,5 +51,4 @@ class UserSocialLoginRepository {
           isGoogleEnabled: value,
         ),
       );
-
 }

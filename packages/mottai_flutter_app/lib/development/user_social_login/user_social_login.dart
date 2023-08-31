@@ -84,7 +84,8 @@ class UserSocialLoginSamplePage extends ConsumerWidget {
                               userId: userId,
                             );
                       },
-                      child: Text(data.isAppleEnabled ? 'Apple解除' : 'Apple連携する'),
+                      child:
+                          Text(data.isAppleEnabled ? 'Apple解除' : 'Apple連携する'),
                     ),
                   ),
                 ],

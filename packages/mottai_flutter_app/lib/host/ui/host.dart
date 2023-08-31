@@ -2,11 +2,11 @@ import 'package:auto_route/auto_route.dart';
 import 'package:dart_flutter_common/dart_flutter_common.dart';
 import 'package:firebase_common/firebase_common.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../auth/ui/auth_dependent_builder.dart';
+import '../../auth/ui/social_link_buttons.dart';
 import '../../job/job.dart';
 import '../../user/host.dart';
 import '../../user/ui/user_mode.dart';
@@ -249,78 +249,18 @@ class HostPageBody extends ConsumerWidget {
                   ),
             ),
             UserAuthDependentBuilder(
+              onUserAuthenticated: (userId) => Column(
+                children: [
+                  const Divider(height: 36),
+                  Section(
+                    title: 'ソーシャル連携',
+                    titleStyle: Theme.of(context).textTheme.titleLarge,
+                    content: const SocialLinkButtons(),
+                  ),
+                ],
+              ),
               userId: userId,
-              onUserAuthenticated: (_) {
-                return Column(
-                  children: [
-                    const Divider(height: 36),
-                    Section(
-                      title: 'ソーシャル連携',
-                      titleStyle: Theme.of(context).textTheme.titleLarge,
-                      content: const Column(
-                        children: [
-                          Row(
-                            children: [
-                              FaIcon(
-                                FontAwesomeIcons.google,
-                                size: 30,
-                              ),
-                              Gap(10),
-                              Text('Google'),
-                              // TODO google連携済みかどうかで出し分けられるようにする
-                              Expanded(
-                                child: Align(
-                                  alignment: Alignment.centerRight,
-                                  child: Text('連携済み'),
-                                ),
-                              ),
-                            ],
-                          ),
-                          Gap(12),
-                          Row(
-                            children: [
-                              FaIcon(
-                                FontAwesomeIcons.apple,
-                                size: 40,
-                              ),
-                              Gap(10),
-                              Text('Apple'),
-                              // TODO apple連携済みかどうかで出し分けられるようにする
-                              Expanded(
-                                child: Align(
-                                  alignment: Alignment.centerRight,
-                                  child: Text('連携済み'),
-                                ),
-                              ),
-                            ],
-                          ),
-                          Gap(12),
-                          Row(
-                            children: [
-                              FaIcon(
-                                FontAwesomeIcons.line,
-                                color: Color(0xff06c755),
-                                size: 30,
-                              ),
-                              Gap(10),
-                              Text('LINE'),
-                              // TODO line連携済みかどうかで出し分けられるようにする
-                              Expanded(
-                                child: Align(
-                                  alignment: Alignment.centerRight,
-                                  child: Text('連携済み'),
-                                ),
-                              ),
-                            ],
-                          )
-                        ],
-                      ),
-                    ),
-                  ],
-                );
-              },
             ),
-            const Gap(32),
           ],
         ),
       ),

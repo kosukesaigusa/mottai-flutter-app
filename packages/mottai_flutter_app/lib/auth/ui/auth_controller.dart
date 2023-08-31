@@ -1,5 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/services.dart';
+import 'package:firebase_common/firebase_common.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../scaffold_messenger_controller.dart';
@@ -74,20 +74,8 @@ class AuthController {
   Future<UserCredential> _signIn(SignInMethod signInMethod) async {
     switch (signInMethod) {
       case SignInMethod.google:
-        try {
-          return _authService.signInWithGoogle();
-        }
-        // NOTE: この例外は、ユーザーがログインをキャンセルした場合に発生する。
-        on PlatformException catch (e) {
-          if (e.code == 'network_error') {
-            throw const AppException(
-              message: '接続できませんでした。\nネットワーク状況を確認してください。',
-            );
-          }
-          throw const AppException(message: 'キャンセルしました。');
-        }
+        return _authService.signInWithGoogle();
       case SignInMethod.apple:
-        // NOTE: Apple はキャンセルやネットワークエラーの判定ができないので、try-catchしない。
         return _authService.signInWithApple();
       case SignInMethod.line:
         return _authService.signInWithLINE();
@@ -124,18 +112,30 @@ class AuthController {
       );
     } on FirebaseException catch (e) {
       _appScaffoldMessengerController.showSnackBarByFirebaseException(e);
+    } on AppException catch (e) {
+      _appScaffoldMessengerController.showSnackBarByException(e);
     }
-    //TODO リンク処理の過程でログインをキャンセルした際のエラーハンドリングが適切にできていない。
   }
 
-  /// [SignInMethod] に基づいて、[AuthService] に定義されたソーシャルログインのリンク解除処理を実行する。
+  /// 複数の認証方法が有効化されている場合、指定された [SignInMethod] に基づいて、
+  /// [AuthService] に定義されたソーシャルログインのリンク解除処理を実行する。
+  /// そうではない場合(単一の認証方法のみが有効化されている場合)は、解除不可であることをユーザーに通知する。
   ///
-  /// - `signInMethod` : リンクまたはリンク解除を行うソーシャルログインの方法。
-  /// - `userId` : 操作対象のユーザーID。
+  /// - [signInMethod] : リンクまたはリンク解除を行うソーシャルログインの方法。
+  /// - [userId] : 操作対象のユーザーID。
+  /// - [userSocialLogin] : ユーザーの [UserSocialLogin] ドキュメント
   Future<void> unLinkUserSocialLogin({
     required SignInMethod signInMethod,
     required String userId,
+    required ReadUserSocialLogin userSocialLogin,
   }) async {
+    if (!_authService.hasMultipleAuthMethodsEnabled(userSocialLogin)) {
+      // 単一の認証方法のみが有効化されている場合、
+      // 本メソッドを呼び出す際に指定している SignInMethod がその単一の認証方法となるため、
+      // 解除不可であることを SnackBar で表示する。
+      _appScaffoldMessengerController.showSnackBar('唯一の認証のため解除できません。');
+      return;
+    }
     try {
       await _authService.unLinkUserSocialLogin(
         signInMethod: signInMethod,

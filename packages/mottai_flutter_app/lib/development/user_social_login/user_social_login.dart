@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -49,6 +51,7 @@ class UserSocialLoginSamplePage extends ConsumerWidget {
                             .unLinkUserSocialLogin(
                               signInMethod: SignInMethod.google,
                               userId: userId,
+                              userSocialLogin: data,
                             );
                       }
                       await ref
@@ -61,43 +64,29 @@ class UserSocialLoginSamplePage extends ConsumerWidget {
                     child:
                         Text(data.isGoogleEnabled ? 'Google解除' : 'Google連携する'),
                   ),
-                  ElevatedButton(
-                    onPressed: () async {
-                      if (data.isAppleEnabled) {
-                        return ref
+                  Visibility(
+                    visible: Platform.isIOS,
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        if (data.isAppleEnabled) {
+                          return ref
+                              .read(authControllerProvider)
+                              .unLinkUserSocialLogin(
+                                signInMethod: SignInMethod.apple,
+                                userId: userId,
+                                userSocialLogin: data,
+                              );
+                        }
+                        await ref
                             .read(authControllerProvider)
-                            .unLinkUserSocialLogin(
+                            .linkUserSocialLogin(
                               signInMethod: SignInMethod.apple,
                               userId: userId,
                             );
-                      }
-                      await ref
-                          .read(authControllerProvider)
-                          .linkUserSocialLogin(
-                            signInMethod: SignInMethod.apple,
-                            userId: userId,
-                          );
-                    },
-                    child: Text(data.isAppleEnabled ? 'Apple解除' : 'Apple連携する'),
-                  ),
-                  ElevatedButton(
-                    onPressed: () async {
-                      if (data.isLINEEnabled) {
-                        return ref
-                            .read(authControllerProvider)
-                            .unLinkUserSocialLogin(
-                              signInMethod: SignInMethod.line,
-                              userId: userId,
-                            );
-                      }
-                      await ref
-                          .read(authControllerProvider)
-                          .linkUserSocialLogin(
-                            signInMethod: SignInMethod.line,
-                            userId: userId,
-                          );
-                    },
-                    child: Text(data.isLINEEnabled ? 'LINE解除' : 'LINE連携する'),
+                      },
+                      child:
+                          Text(data.isAppleEnabled ? 'Apple解除' : 'Apple連携する'),
+                    ),
                   ),
                 ],
               );

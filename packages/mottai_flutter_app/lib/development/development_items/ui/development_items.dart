@@ -163,7 +163,7 @@ class DevelopmentItemsPage extends ConsumerWidget {
             onTap: () => context.router.pushNamed(SignInSamplePage.location),
           ),
           ListTile(
-            title: const Text('ソーシャル認証連携 (Google, Apple, LINE)'),
+            title: const Text('ソーシャル認証連携 (Google, Apple)'),
             onTap: () =>
                 context.router.pushNamed(UserSocialLoginSamplePage.location),
           ),

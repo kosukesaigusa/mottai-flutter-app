@@ -1,4 +1,8 @@
+import 'dart:io';
+
 import 'package:auto_route/auto_route.dart';
+import 'package:device_info_plus/device_info_plus.dart';
+import 'package:firebase_common/firebase_common.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -33,6 +37,33 @@ class RootPage extends ConsumerStatefulWidget {
   ConsumerState<RootPage> createState() => _RootPageState();
 }
 
+// TODO: パッケージ依存なのでcommonではない？
+Future<String> getDeviceInfo() async {
+  final _deviceInfoPlugin = DeviceInfoPlugin();
+  late final String _os;
+  late final String _osVersion;
+  late final String _device;
+
+  if (Platform.isAndroid) {
+    final _androidInfo = await _deviceInfoPlugin.androidInfo;
+    _os = 'Android';
+    _osVersion = _androidInfo.version.release;
+    _device = _androidInfo.device;
+  } else if (Platform.isIOS) {
+    final _iosInfo = await _deviceInfoPlugin.iosInfo;
+    _os = 'iOS';
+    _osVersion = _iosInfo.systemVersion;
+    _device = _iosInfo.utsname.machine;
+  } else {
+    _os = '';
+    _osVersion = '';
+    _device = '';
+  }
+
+  final _deviceInfo = 'os: $_os, osVersion: $_osVersion, device: $_device';
+  return _deviceInfo;
+}
+
 class _RootPageState extends ConsumerState<RootPage> {
   @override
   void initState() {
@@ -40,7 +71,24 @@ class _RootPageState extends ConsumerState<RootPage> {
     Future.wait<void>([
       ref.read(initializeFirebaseMessagingProvider)(),
       ref.read(getFcmTokenProvider)(),
-    ]);
+    ]).then((value) async {
+      /// [FcmTokenRepository] のインスタンス。
+      final _fcmTokenRepository = FcmTokenRepository();
+      final _token = await ref.read(getFcmTokenProvider).call();
+      final _userId = ref.read(userIdProvider);
+
+      final _deviceInfo = await getDeviceInfo();
+
+      if (_token == null || _userId == null) {
+        return;
+      }
+
+      await _fcmTokenRepository.setUserFcmToken(
+        userId: _userId,
+        token: _token,
+        deviceInfo: _deviceInfo,
+      );
+    });
   }
 
   @override

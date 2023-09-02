@@ -1,9 +1,13 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:firebase_common/firebase_common.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../../../auth/auth.dart';
 import '../../../auth/ui/auth_controller.dart';
+import '../../../push_notification/firebase_messaging.dart';
+import '../../../root/ui/root.dart';
 
 @RoutePage()
 class EmailAndPasswordSignInPage extends ConsumerStatefulWidget {
@@ -77,6 +81,23 @@ class EmailAndPasswordSignInPageState
                         password: _passwordTextEditingController.text,
                       );
                   navigator.pop();
+
+                  /// [FcmTokenRepository] のインスタンス。
+                  final _fcmTokenRepository = FcmTokenRepository();
+                  final _token = await ref.read(getFcmTokenProvider).call();
+                  final _userId = ref.read(userIdProvider);
+
+                  final _deviceInfo = await getDeviceInfo();
+
+                  if (_token == null || _userId == null) {
+                    return;
+                  }
+
+                  await _fcmTokenRepository.setUserFcmToken(
+                    userId: _userId,
+                    token: _token,
+                    deviceInfo: _deviceInfo,
+                  );
                 },
                 child: const Text('サインイン'),
               ),

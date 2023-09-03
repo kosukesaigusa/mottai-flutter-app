@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../auth/ui/auth_dependent_builder.dart';
+import '../../host_location/host_location.dart';
 import '../../user/host.dart';
 import 'host_form.dart';
 
@@ -24,25 +25,39 @@ class HostUpdatePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      appBar: AppBar(title: const Text('お手伝い募集内容を入力')),
+      appBar: AppBar(title: const Text('ホスト情報編集')),
       body: AuthDependentBuilder(
         onAuthenticated: (hostId) {
           return ref.watch(hostFutureProvider(hostId)).when(
                 data: (host) {
                   if (host == null) {
-                    return const Center(child: Text('お手伝いが存在していません。'));
+                    return const Center(child: Text('ホストが存在していません。'));
                   }
-                  // UrlのhostIdとログイン中のユーザーのhostIdが違う場合
-                  if (host.hostId != hostId) {
-                    return const Center(
-                      child: Text('編集の権限がありません。'),
-                    );
-                  }
-                  return HostForm.update(workerId: hostId, host: host);
+                  return ref
+                      .watch(hostLocationsFromHostFutureProvider(hostId))
+                      .when(
+                        data: (hostLocations) {
+                          if (hostLocations == null || hostLocations.isEmpty) {
+                            return const Center(
+                              child: Text('ホスト所在地が存在していません。'),
+                            );
+                          }
+                          return HostForm.update(
+                            workerId: hostId,
+                            host: host,
+                            location: hostLocations.first,
+                          );
+                        },
+                        error: (_, __) => const Center(
+                          child: Text('ホスト所在地が取得できませんでした。'),
+                        ),
+                        loading: () =>
+                            const Center(child: CircularProgressIndicator()),
+                      );
                 },
                 loading: () => const Center(child: CircularProgressIndicator()),
                 error: (_, __) => const Center(
-                  child: Text('仕事情報が取得できませんでした。'),
+                  child: Text('ホスト情報が取得できませんでした。'),
                 ),
               );
         },

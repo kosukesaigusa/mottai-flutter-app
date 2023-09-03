@@ -33,6 +33,7 @@ class HostController {
 
   /// [Host] の情報を作成する。
   Future<void> create({
+    required String workerId,
     required String displayName,
     required String introduction,
     required Set<HostType> hostTypes,
@@ -41,6 +42,7 @@ class HostController {
   }) async {
     final imageUrl = await _uploadImage(imageFile);
     await _hostService.create(
+      workerId: workerId,
       displayName: displayName,
       introduction: introduction,
       hostTypes: hostTypes,

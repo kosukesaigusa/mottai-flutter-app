@@ -54,6 +54,7 @@ class HostService {
 
   /// [Host] の情報を作成する。
   Future<void> create({
+    required String workerId,
     required String displayName,
     required String introduction,
     required Set<HostType> hostTypes,
@@ -61,6 +62,7 @@ class HostService {
     required String imageUrl,
   }) =>
       _hostRepository.create(
+        workerId: workerId,
         displayName: displayName,
         introduction: introduction,
         hostTypes: hostTypes,

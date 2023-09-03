@@ -8,6 +8,10 @@ import '../../development/firebase_storage/firebase_storage.dart';
 import '../../development/firebase_storage/ui/firebase_storage_controller.dart';
 import 'host_controller.dart';
 
+/// 画像選択フィールドのエラーメッセージ
+final imageFieldErrorStateProvider =
+    StateProvider.autoDispose<String?>((_) => null);
+
 /// - `create` の場合、ログイン済みの `workerId`（ユーザー ID）
 /// - `update` の場合、更新対象の [Host] とその本人であることが確認された `hostId`（ユーザー ID）
 ///
@@ -16,19 +20,24 @@ class HostForm extends ConsumerStatefulWidget {
   const HostForm.create({
     required String workerId,
     super.key,
-  })  : _workerId = workerId,
-        _host = null;
+  })  : _hostId = workerId,
+        _host = null,
+        _hostLocation = null;
 
   const HostForm.update({
     required String workerId,
     required ReadHost host,
+    required ReadHostLocation location,
     super.key,
-  })  : _workerId = workerId,
-        _host = host;
+  })  : _hostId = workerId,
+        _host = host,
+        _hostLocation = location;
 
   final ReadHost? _host;
 
-  final String _workerId;
+  final ReadHostLocation? _hostLocation;
+
+  final String _hostId;
 
   @override
   HostFormState createState() => HostFormState();
@@ -53,9 +62,6 @@ class HostFormState extends ConsumerState<HostForm> {
   /// [Host.urls]のテキストフィールド用コントローラー
   final List<TextEditingController> _urlControllers = [];
 
-  /// 画像の高さ。
-  static const double _imageHeight = 300;
-
   @override
   void initState() {
     super.initState();
@@ -74,58 +80,11 @@ class HostFormState extends ConsumerState<HostForm> {
     final firebaseStorageController =
         ref.watch(firebaseStorageControllerProvider);
     final pickedImageFile = ref.watch(pickedImageFileStateProvider);
-    final controller = ref.watch(hostControllerProvider(widget._workerId));
-    final hostId = widget._host?.hostId;
+    final controller = ref.watch(hostControllerProvider(widget._hostId));
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.all(8),
-            child: Row(
-              children: [
-                if (pickedImageFile != null)
-                  GestureDetector(
-                    onTap: firebaseStorageController.pickImageFromGallery,
-                    child: Container(
-                      height: 128,
-                      width: 128,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        image: DecorationImage(
-                          fit: BoxFit.cover,
-                          image: FileImage(pickedImageFile),
-                        ),
-                      ),
-                    ),
-                  )
-                else if ((widget._host?.imageUrl ?? '').isNotEmpty)
-                  GenericImage.circle(
-                    onTap: firebaseStorageController.pickImageFromGallery,
-                    showDetailOnTap: false,
-                    imageUrl: pickedImageFile?.path ?? widget._host!.imageUrl,
-                    size: 64,
-                  )
-                else
-                  GestureDetector(
-                    onTap: firebaseStorageController.pickImageFromGallery,
-                    child: const Icon(
-                      Icons.account_circle_sharp,
-                      color: Color(0xFF323232),
-                      size: 128,
-                    ),
-                  ),
-                Flexible(
-                  child: _InputTextField(
-                    labelText: 'ホスト名',
-                    maxLines: 1,
-                    controller: _nameController,
-                    isRequired: true,
-                  ),
-                ),
-              ],
-            ),
-          ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24),
             child: Form(
@@ -133,6 +92,76 @@ class HostFormState extends ConsumerState<HostForm> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            if (pickedImageFile != null)
+                              GestureDetector(
+                                onTap: firebaseStorageController
+                                    .pickImageFromGallery,
+                                child: Container(
+                                  height: 128,
+                                  width: 128,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    image: DecorationImage(
+                                      fit: BoxFit.cover,
+                                      image: FileImage(pickedImageFile),
+                                    ),
+                                  ),
+                                ),
+                              )
+                            else if ((widget._host?.imageUrl ?? '').isNotEmpty)
+                              GenericImage.circle(
+                                onTap: firebaseStorageController
+                                    .pickImageFromGallery,
+                                showDetailOnTap: false,
+                                imageUrl: pickedImageFile?.path ??
+                                    widget._host!.imageUrl,
+                                size: 64,
+                              )
+                            else
+                              GestureDetector(
+                                onTap: firebaseStorageController
+                                    .pickImageFromGallery,
+                                child: const Icon(
+                                  Icons.account_circle_sharp,
+                                  color: Color(0xFF323232),
+                                  size: 128,
+                                ),
+                              ),
+                            Flexible(
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 8),
+                                child: _InputTextField(
+                                  labelText: 'ホスト名',
+                                  maxLines: 1,
+                                  controller: _nameController,
+                                  isRequired: true,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        if (ref.watch(imageFieldErrorStateProvider) != null)
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              ref.watch(imageFieldErrorStateProvider)!,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium!
+                                  .copyWith(
+                                    color: Theme.of(context).colorScheme.error,
+                                  ),
+                            ),
+                          )
+                      ],
+                    ),
+                  ),
                   _TextInputSection(
                     title: '自己紹介',
                     defaultDisplayLines: 5,
@@ -206,13 +235,23 @@ class HostFormState extends ConsumerState<HostForm> {
                       child: ElevatedButton(
                         onPressed: () {
                           final isValidate = formKey.currentState?.validate();
-                          if (!(isValidate ?? true)) {
+                          if (!(isValidate ?? true) ||
+                              pickedImageFile == null) {
+                            if (pickedImageFile == null) {
+                              ref
+                                  .watch(imageFieldErrorStateProvider.notifier)
+                                  .state = '画像を選択してください';
+                            } else {
+                              ref
+                                  .watch(imageFieldErrorStateProvider.notifier)
+                                  .state = null;
+                            }
                             return;
                           }
 
-                          if (hostId != null) {
+                          if (widget._host != null) {
                             controller.updateHost(
-                              hostId: hostId,
+                              hostId: widget._hostId,
                               displayName: _nameController.text,
                               introduction: _introductionController.text,
                               imageFile: pickedImageFile,
@@ -223,9 +262,10 @@ class HostFormState extends ConsumerState<HostForm> {
                             );
                           } else {
                             controller.create(
+                              workerId: widget._hostId,
                               displayName: _nameController.text,
                               introduction: _introductionController.text,
-                              imageFile: pickedImageFile!,
+                              imageFile: pickedImageFile,
                               hostTypes: _selectedHosyTypes.toSet(),
                               urls: _urlControllers
                                   .map((controller) => controller.text)
@@ -237,7 +277,6 @@ class HostFormState extends ConsumerState<HostForm> {
                       ),
                     ),
                   ),
-                  const LineCountTextField(),
                 ],
               ),
             ),
@@ -419,70 +458,6 @@ class _OptionalBadge extends StatelessWidget {
         backgroundColor: Colors.grey,
       );
     }
-  }
-}
-
-class LineCountTextField extends StatefulWidget {
-  const LineCountTextField({super.key});
-
-  @override
-  _LineCountTextFieldState createState() => _LineCountTextFieldState();
-}
-
-class _LineCountTextFieldState extends State<LineCountTextField> {
-  final TextEditingController _controller = TextEditingController();
-  int displayedLineCount = 1; // 初期値は1行
-
-  @override
-  void initState() {
-    super.initState();
-    _controller.addListener(updateDisplayedLineCount);
-  }
-
-  void updateDisplayedLineCount() {
-    final text = _controller.text;
-    final textPainter = TextPainter(
-      text: TextSpan(
-        text: text,
-        // style: const TextStyle(
-        //   fontSize: 16,
-        // ),
-      ), // 適切なスタイルを設定
-      textDirection: TextDirection.ltr,
-    )..layout(maxWidth: 336);
-
-    // textPainter.layout(maxWidth: MediaQuery.of(context).size.width - 48);
-
-    setState(() {
-      // displayedLineCount = textPainter.computeLineMetrics().length;
-      displayedLineCount = _calculateLines(textPainter, text.length);
-    });
-  }
-
-  int _calculateLines(TextPainter textPainter, int textLength) {
-    final boundary =
-        textPainter.getLineBoundary(TextPosition(offset: textLength));
-    if (boundary.start > 0) {
-      return _calculateLines(textPainter, boundary.start - 1) + 1;
-    }
-    return 1;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        TextField(
-          // style: const TextStyle(
-          //   fontSize: 16,
-          //   letterSpacing: 0.67,
-          // ),
-          controller: _controller,
-          maxLines: null,
-        ),
-        Text('Displayed Line Count: $displayedLineCount'),
-      ],
-    );
   }
 }
 

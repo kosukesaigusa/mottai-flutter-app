@@ -13,13 +13,15 @@ class HostRepository {
 
   /// [Host] の情報を作成する。
   Future<void> create({
+    required String workerId,
     required String displayName,
     required String introduction,
     required Set<HostType> hostTypes,
     required List<String> urls,
     required String imageUrl,
   }) =>
-      _query.add(
+      _query.set(
+        hostId: workerId,
         createHost: CreateHost(
           displayName: displayName,
           introduction: introduction,

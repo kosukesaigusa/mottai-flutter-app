@@ -62,6 +62,7 @@ class HostFormState extends ConsumerState<HostForm> {
     _nameController = TextEditingController(text: widget._host?.displayName);
     _introductionController =
         TextEditingController(text: widget._host?.introduction);
+    _locationController = TextEditingController(); //TODO: location追加
     for (var i = 0; i < Host.urlMaxCount; i++) {
       _urlControllers
           .add(TextEditingController(text: widget._host?.urls.elementAt(i)));
@@ -79,36 +80,52 @@ class HostFormState extends ConsumerState<HostForm> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (pickedImageFile != null)
-            GestureDetector(
-              onTap: firebaseStorageController.pickImageFromGallery,
-              child: SizedBox(
-                height: _imageHeight,
-                child: Center(
-                  child: Image.file(pickedImageFile),
+          Padding(
+            padding: const EdgeInsets.all(8),
+            child: Row(
+              children: [
+                if (pickedImageFile != null)
+                  GestureDetector(
+                    onTap: firebaseStorageController.pickImageFromGallery,
+                    child: Container(
+                      height: 128,
+                      width: 128,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
+                          fit: BoxFit.cover,
+                          image: FileImage(pickedImageFile),
+                        ),
+                      ),
+                    ),
+                  )
+                else if ((widget._host?.imageUrl ?? '').isNotEmpty)
+                  GenericImage.circle(
+                    onTap: firebaseStorageController.pickImageFromGallery,
+                    showDetailOnTap: false,
+                    imageUrl: pickedImageFile?.path ?? widget._host!.imageUrl,
+                    size: 64,
+                  )
+                else
+                  GestureDetector(
+                    onTap: firebaseStorageController.pickImageFromGallery,
+                    child: const Icon(
+                      Icons.account_circle_sharp,
+                      color: Color(0xFF323232),
+                      size: 128,
+                    ),
+                  ),
+                Flexible(
+                  child: _InputTextField(
+                    labelText: 'ホスト名',
+                    maxLines: 1,
+                    controller: _nameController,
+                    isRequired: true,
+                  ),
                 ),
-              ),
-            )
-          else if ((widget._host?.imageUrl ?? '').isNotEmpty)
-            GenericImage.rectangle(
-              onTap: firebaseStorageController.pickImageFromGallery,
-              showDetailOnTap: false,
-              imageUrl: pickedImageFile?.path ?? widget._host!.imageUrl,
-              height: _imageHeight,
-              width: null,
-            )
-          else
-            GestureDetector(
-              onTap: firebaseStorageController.pickImageFromGallery,
-              child: Container(
-                height: _imageHeight,
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.black38),
-                ),
-                child: const Center(child: Icon(Icons.image)),
-              ),
+              ],
             ),
-          const Gap(32),
+          ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24),
             child: Form(
@@ -117,28 +134,19 @@ class HostFormState extends ConsumerState<HostForm> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _TextInputSection(
-                    title: 'ホスト名',
-                    maxLines: 1,
-                    controller: _nameController,
-                    isRequired: true,
-                  ),
-                  _TextInputSection(
                     title: '自己紹介',
-                    maxLines: 12,
                     defaultDisplayLines: 5,
                     controller: _introductionController,
                     isRequired: true,
                   ),
-                  _TextInputSection.withChoice(
+                  _TextInputSection.onlyChoice(
                     title: 'ホストタイプ',
                     description: 'ワーカーはホストタイプ（複数選択可）を参考にして、'
                         '興味のあるお手伝いを探します。',
-                    // defaultDisplayLines: 10,
-                    // controller: _contentController,
-                    isRequired: true,
                     choices: {
                       for (final v in HostType.values) v: v.label,
                     },
+                    isRequired: true,
                     enabledChoices: _selectedHosyTypes,
                     onChoiceSelected: (item) {
                       if (_selectedHosyTypes.contains(item)) {
@@ -175,12 +183,18 @@ class HostFormState extends ConsumerState<HostForm> {
                     description: '農園や各種 SNS の URL があれば入力してください（最大 5 件）。',
                     descriptionStyle: Theme.of(context).textTheme.bodyMedium,
                     sectionPadding: const EdgeInsets.only(bottom: 32),
-                    content: Wrap(
-                      children: _urlControllers.map<Widget>((controller) {
-                        return TextFormField(
-                          controller: controller,
-                          decoration: const InputDecoration(
-                            border: OutlineInputBorder(),
+                    content: _VariableHeightGrid(
+                      rowCount: 2,
+                      children:
+                          _urlControllers.asMap().entries.map<Widget>((entry) {
+                        return Padding(
+                          padding: const EdgeInsets.all(8),
+                          child: TextFormField(
+                            controller: entry.value,
+                            decoration: InputDecoration(
+                              label: Text('URL(${entry.key + 1})'),
+                              border: const OutlineInputBorder(),
+                            ),
                           ),
                         );
                       }).toList(),
@@ -223,6 +237,7 @@ class HostFormState extends ConsumerState<HostForm> {
                       ),
                     ),
                   ),
+                  const LineCountTextField(),
                 ],
               ),
             ),
@@ -261,6 +276,18 @@ class _TextInputSection<T extends dynamic> extends StatelessWidget {
     this.isRequired = false,
   });
 
+  /// 選択肢をのみの [_TextInputSection] を作成する。
+  const _TextInputSection.onlyChoice({
+    required this.title,
+    this.description,
+    required this.choices,
+    required this.enabledChoices,
+    required this.onChoiceSelected,
+    this.isRequired = false,
+  })  : defaultDisplayLines = 0,
+        controller = null,
+        maxLines = null;
+
   /// セクションのタイトル。
   final String title;
 
@@ -297,27 +324,21 @@ class _TextInputSection<T extends dynamic> extends StatelessWidget {
         padding: const EdgeInsets.only(left: 8),
         child: _OptionalBadge(isRequired: isRequired),
       ),
-      titleStyle: Theme.of(context).textTheme.titleLarge,
+      titleStyle: Theme.of(context).textTheme.bodyLarge,
       description: description,
       descriptionStyle: Theme.of(context).textTheme.bodyMedium,
       sectionPadding: const EdgeInsets.only(bottom: 32),
       content: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          TextFormField(
-            controller: controller,
-            maxLines: maxLines,
-            validator: (value) {
-              if (isRequired && (value ?? '').isEmpty) {
-                return '入力してください。';
-              }
-              return null;
-            },
-            decoration: InputDecoration(
-              hintText: List.filled(defaultDisplayLines - 1, '\n').join(),
-              border: const OutlineInputBorder(),
+          if (defaultDisplayLines > 0) ...[
+            _InputTextField(
+              controller: controller,
+              maxLines: maxLines,
+              isRequired: isRequired,
+              defaultDisplayLines: defaultDisplayLines,
             ),
-          ),
+          ],
           if (choices.isNotEmpty) ...[
             const Gap(16),
             SelectableChips<T>(
@@ -329,6 +350,50 @@ class _TextInputSection<T extends dynamic> extends StatelessWidget {
             ),
           ],
         ],
+      ),
+    );
+  }
+}
+
+class _InputTextField extends StatelessWidget {
+  const _InputTextField({
+    this.maxLines,
+    this.defaultDisplayLines = 1,
+    this.controller,
+    this.isRequired = false,
+    this.labelText,
+  });
+
+  /// テキストフィールドの最大行数
+  final int? maxLines;
+
+  /// 初期表示時のテキストフィールドの行数
+  final int defaultDisplayLines;
+
+  /// テキストフィールドのコントローラー
+  final TextEditingController? controller;
+
+  /// 必須入力か否か
+  final bool isRequired;
+
+  /// テキストフィールドのラベルテキスト
+  final String? labelText;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      controller: controller,
+      maxLines: maxLines,
+      validator: (value) {
+        if (isRequired && (value ?? '').isEmpty) {
+          return '入力してください。';
+        }
+        return null;
+      },
+      decoration: InputDecoration(
+        hintText: List.filled(defaultDisplayLines - 1, '\n').join(),
+        border: const OutlineInputBorder(),
+        labelText: labelText,
       ),
     );
   }
@@ -354,5 +419,116 @@ class _OptionalBadge extends StatelessWidget {
         backgroundColor: Colors.grey,
       );
     }
+  }
+}
+
+class LineCountTextField extends StatefulWidget {
+  const LineCountTextField({super.key});
+
+  @override
+  _LineCountTextFieldState createState() => _LineCountTextFieldState();
+}
+
+class _LineCountTextFieldState extends State<LineCountTextField> {
+  final TextEditingController _controller = TextEditingController();
+  int displayedLineCount = 1; // 初期値は1行
+
+  @override
+  void initState() {
+    super.initState();
+    _controller.addListener(updateDisplayedLineCount);
+  }
+
+  void updateDisplayedLineCount() {
+    final text = _controller.text;
+    final textPainter = TextPainter(
+      text: TextSpan(
+        text: text,
+        // style: const TextStyle(
+        //   fontSize: 16,
+        // ),
+      ), // 適切なスタイルを設定
+      textDirection: TextDirection.ltr,
+    )..layout(maxWidth: 336);
+
+    // textPainter.layout(maxWidth: MediaQuery.of(context).size.width - 48);
+
+    setState(() {
+      // displayedLineCount = textPainter.computeLineMetrics().length;
+      displayedLineCount = _calculateLines(textPainter, text.length);
+    });
+  }
+
+  int _calculateLines(TextPainter textPainter, int textLength) {
+    final boundary =
+        textPainter.getLineBoundary(TextPosition(offset: textLength));
+    if (boundary.start > 0) {
+      return _calculateLines(textPainter, boundary.start - 1) + 1;
+    }
+    return 1;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        TextField(
+          // style: const TextStyle(
+          //   fontSize: 16,
+          //   letterSpacing: 0.67,
+          // ),
+          controller: _controller,
+          maxLines: null,
+        ),
+        Text('Displayed Line Count: $displayedLineCount'),
+      ],
+    );
+  }
+}
+
+/// [TextField]をGridで表示するウィジェット
+/// GridViewの場合は、aspect比を指定する必要があり、
+/// [TextField]のような可変長aspect比が必要なウィジェットでは使用できないため作成
+class _VariableHeightGrid extends StatelessWidget {
+  const _VariableHeightGrid({
+    required this.rowCount,
+    required this.children,
+  });
+
+  final int rowCount;
+  final List<Widget> children;
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final columnCount = (children.length / rowCount).ceil();
+        final columnWigets = <Widget>[];
+        for (var i = 0; i < columnCount; i++) {
+          final rowWigets = <Widget>[];
+          for (var j = 0; j < rowCount; j++) {
+            final targetIndex = j + i * rowCount;
+            if (targetIndex < children.length) {
+              rowWigets.add(
+                LimitedBox(
+                  maxWidth: constraints.maxWidth / rowCount,
+                  maxHeight: constraints.maxHeight,
+                  child: children[targetIndex],
+                ),
+              );
+            }
+          }
+
+          columnWigets.add(
+            Row(
+              children: rowWigets,
+            ),
+          );
+        }
+        return Column(
+          children: columnWigets,
+        );
+      },
+    );
   }
 }

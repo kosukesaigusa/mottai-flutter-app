@@ -29,39 +29,30 @@ class HostLocationService {
           {required String hostId}) =>
       _hostLocationRepository.fetchHostLocationsFromHost(hostId: hostId);
 
-  /// [Host] の情報を作成する。
+  /// [HostLocation] の情報を作成する。
   Future<void> create({
-    required String workerId,
-    required String displayName,
-    required String introduction,
-    required Set<HostType> hostTypes,
-    required List<String> urls,
-    required String imageUrl,
+    required String hostLocationId,
+    required String hostId,
+    required String address,
+    required Geo geo,
   }) =>
       _hostLocationRepository.create(
-        workerId: workerId,
-        displayName: displayName,
-        introduction: introduction,
-        hostTypes: hostTypes,
-        urls: urls,
-        imageUrl: imageUrl,
+        hostLocationId: hostLocationId,
+        hostId: hostId,
+        address: address,
+        geo: geo,
       );
 
   /// [Host] の情報を更新する。
   Future<void> update({
+    required String hostLocationId,
     required String hostId,
-    String? displayName,
-    String? introduction,
-    Set<HostType>? hostTypes,
-    List<String>? urls,
-    String? imageUrl,
+    required String address,
+    required Geo geo,
   }) =>
       _hostLocationRepository.update(
-        hostId: hostId,
-        displayName: displayName,
-        introduction: introduction,
-        hostTypes: hostTypes,
-        urls: urls,
-        imageUrl: imageUrl,
+        hostLocationId: hostLocationId,
+        address: address,
+        geo: geo,
       );
 }

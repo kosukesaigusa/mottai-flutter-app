@@ -2,6 +2,7 @@ import 'package:dart_flutter_common/dart_flutter_common.dart';
 import 'package:firebase_common/firebase_common.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../development/firebase_storage/firebase_storage.dart';
@@ -194,13 +195,34 @@ class HostFormState extends ConsumerState<HostForm> {
                     controller: _locationController,
                     isRequired: true,
                   ),
-                  const _TextInputSection(
+                  _TextInputSection.onlyChild(
                     title: '地図上に表示する位置情報',
                     description: 'ワーカーはマップ上からお手伝いしたいホストを探します。'
                         '「地図を開く」から地図を開いて、あなたの農園や主な作業場所を長押ししてピンを立ててください。'
                         '必ずしも正確な位置を指定する必要はありません。',
                     // controller: _rewardController,
                     isRequired: true,
+                    child: Column(
+                      children: [
+                        SizedBox(
+                          height: 160,
+                          child: GoogleMap(
+                            initialCameraPosition: const CameraPosition(
+                              target: LatLng(0, 0),
+                            ),
+                            markers: {
+                              const Marker(
+                                markerId: MarkerId('(0, 0)'),
+                              ),
+                            },
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () => {},
+                          child: const Text('地図を開く'),
+                        ),
+                      ],
+                    ),
                   ),
                   Section(
                     title: 'URL',
@@ -298,24 +320,12 @@ class _TextInputSection<T extends dynamic> extends StatelessWidget {
     this.defaultDisplayLines = 1,
     this.controller,
     this.isRequired = false,
+    this.child,
   })  : choices = const {},
         enabledChoices = const [],
         onChoiceSelected = null;
 
-  /// テキスト入力と選択肢を併せて入力させる [_TextInputSection] を作成する。
-  const _TextInputSection.withChoice({
-    required this.title,
-    this.description,
-    this.maxLines,
-    this.defaultDisplayLines = 1,
-    required this.choices,
-    required this.enabledChoices,
-    required this.onChoiceSelected,
-    this.controller,
-    this.isRequired = false,
-  });
-
-  /// 選択肢をのみの [_TextInputSection] を作成する。
+  /// 選択肢のみの [_TextInputSection] を作成する。
   const _TextInputSection.onlyChoice({
     required this.title,
     this.description,
@@ -323,9 +333,23 @@ class _TextInputSection<T extends dynamic> extends StatelessWidget {
     required this.enabledChoices,
     required this.onChoiceSelected,
     this.isRequired = false,
+    this.child,
   })  : defaultDisplayLines = 0,
         controller = null,
         maxLines = null;
+
+  /// 選択肢のみの [_TextInputSection] を作成する。
+  const _TextInputSection.onlyChild({
+    required this.title,
+    this.description,
+    this.isRequired = false,
+    required this.child,
+  })  : defaultDisplayLines = 0,
+        controller = null,
+        maxLines = null,
+        choices = const {},
+        enabledChoices = const [],
+        onChoiceSelected = null;
 
   /// セクションのタイトル。
   final String title;
@@ -354,6 +378,9 @@ class _TextInputSection<T extends dynamic> extends StatelessWidget {
 
   /// 必須入力か否か
   final bool isRequired;
+
+  /// カスタム可能な子ウィジェット
+  final Widget? child;
 
   @override
   Widget build(BuildContext context) {
@@ -388,6 +415,9 @@ class _TextInputSection<T extends dynamic> extends StatelessWidget {
               onTap: onChoiceSelected,
             ),
           ],
+          if (child != null) ...[
+            child!,
+          ]
         ],
       ),
     );

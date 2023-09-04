@@ -17,4 +17,10 @@ class FcmTokenRepository {
           deviceInfo: deviceInfo,
         ),
       );
+
+  /// 指定した [userFcmTokenId]をもとに ユーザーのFCMトークン情報を取得する。
+  Future<ReadUserFcmToken?> fetchUserFcmToken({
+    required String userFcmTokenId,
+  }) =>
+      _query.fetchDocument(userFcmTokenId: userFcmTokenId);
 }

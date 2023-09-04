@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:firebase_common/firebase_common.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -37,15 +38,16 @@ class HostUpdatePage extends ConsumerWidget {
                       .watch(hostLocationsFromHostFutureProvider(hostId))
                       .when(
                         data: (hostLocations) {
-                          if (hostLocations == null || hostLocations.isEmpty) {
-                            return const Center(
-                              child: Text('ホスト所在地が存在していません。'),
-                            );
+                          ReadHostLocation? location;
+                          if (hostLocations != null &&
+                              hostLocations.isNotEmpty) {
+                            location = hostLocations.first;
                           }
+
                           return HostForm.update(
                             workerId: hostId,
                             host: host,
-                            location: hostLocations.first,
+                            location: location,
                           );
                         },
                         error: (_, __) => const Center(

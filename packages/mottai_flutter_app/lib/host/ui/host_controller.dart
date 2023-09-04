@@ -1,6 +1,9 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_common/firebase_common.dart';
+import 'package:geoflutterfire_plus/geoflutterfire_plus.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../image/firebase_storage.dart';
@@ -16,7 +19,7 @@ final hostControllerProvider =
 );
 
 class HostController {
-  const HostController({
+  HostController({
     required HostService hostService,
     required FirebaseStorageService firebaseStorageService,
     required String userId,
@@ -30,6 +33,29 @@ class HostController {
   final HostService _hostService;
   final FirebaseStorageService _firebaseStorageService;
   final String _userId;
+  LatLng _latLng = const LatLng(0, 0);
+  Geo? _geo;
+
+  LatLng get latLng => _latLng;
+
+  void updateGeo(Geo geo) {
+    _geo = geo;
+    _latLng = LatLng(geo.geopoint.latitude, geo.geopoint.longitude);
+  }
+
+  void updateGeoFromLatLng(LatLng latLng) {
+    final geoPoint = GeoPoint(
+      latLng.latitude,
+      latLng.longitude,
+    );
+    final geoFirePoint = GeoFirePoint(geoPoint);
+    updateGeo(
+      Geo(
+        geohash: geoFirePoint.geohash,
+        geopoint: geoPoint,
+      ),
+    );
+  }
 
   /// [Host] の情報を作成する。
   Future<void> create({

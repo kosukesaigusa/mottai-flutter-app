@@ -7,6 +7,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../development/firebase_storage/firebase_storage.dart';
 import '../../development/firebase_storage/ui/firebase_storage_controller.dart';
+import '../../host_location/ui/host_location_select_dialog.dart';
 import 'host_controller.dart';
 
 /// 画像選択フィールドのエラーメッセージ
@@ -28,7 +29,7 @@ class HostForm extends ConsumerStatefulWidget {
   const HostForm.update({
     required String workerId,
     required ReadHost host,
-    required ReadHostLocation location,
+    ReadHostLocation? location,
     super.key,
   })  : _hostId = workerId,
         _host = host,
@@ -63,16 +64,45 @@ class HostFormState extends ConsumerState<HostForm> {
   /// [Host.urls]のテキストフィールド用コントローラー
   final List<TextEditingController> _urlControllers = [];
 
+  /// [HostController] インスタンス
+  late final HostController _controller;
+
   @override
   void initState() {
     super.initState();
     _nameController = TextEditingController(text: widget._host?.displayName);
     _introductionController =
         TextEditingController(text: widget._host?.introduction);
-    _locationController = TextEditingController(); //TODO: location追加
+    _locationController = TextEditingController();
     for (var i = 0; i < Host.urlMaxCount; i++) {
       _urlControllers
           .add(TextEditingController(text: widget._host?.urls.elementAt(i)));
+    }
+
+    _controller = ref.read(hostControllerProvider(widget._hostId));
+
+    final hostLocation = widget._hostLocation;
+    if (hostLocation != null) {
+      _controller.updateGeoFromLatLng(
+        LatLng(
+          hostLocation.geo.geopoint.latitude,
+          hostLocation.geo.geopoint.longitude,
+        ),
+      );
+    } else {
+      // final geoController = ref.watch(currentLocationControllerProvider);
+      // Future(() async {
+      //   final position = await geoController.getCurrentPosition();
+
+      //   if (position != null) {
+      //     _controller.updateGeoFromLatLng(
+      //       LatLng(
+      //         position.latitude,
+      //         position.longitude,
+      //       ),
+      //     );
+      //   }
+      // });
     }
   }
 
@@ -81,7 +111,6 @@ class HostFormState extends ConsumerState<HostForm> {
     final firebaseStorageController =
         ref.watch(firebaseStorageControllerProvider);
     final pickedImageFile = ref.watch(pickedImageFileStateProvider);
-    final controller = ref.watch(hostControllerProvider(widget._hostId));
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -207,18 +236,32 @@ class HostFormState extends ConsumerState<HostForm> {
                         SizedBox(
                           height: 160,
                           child: GoogleMap(
-                            initialCameraPosition: const CameraPosition(
-                              target: LatLng(0, 0),
+                            initialCameraPosition: CameraPosition(
+                              target: _controller.latLng,
                             ),
                             markers: {
-                              const Marker(
-                                markerId: MarkerId('(0, 0)'),
+                              Marker(
+                                markerId: MarkerId(
+                                  '(${_controller.latLng.latitude}, ${_controller.latLng.longitude})',
+                                ),
                               ),
                             },
                           ),
                         ),
                         TextButton(
-                          onPressed: () => {},
+                          onPressed: () async {
+                            final geo = await showDialog<Geo>(
+                              context: context,
+                              builder: (context) => HostLocationSelectDialog(
+                                initialCameraPosition: CameraPosition(
+                                  target: _controller.latLng,
+                                ),
+                              ),
+                            );
+                            if (geo != null) {
+                              _controller.updateGeo(geo);
+                            }
+                          },
                           child: const Text('地図を開く'),
                         ),
                       ],
@@ -272,7 +315,7 @@ class HostFormState extends ConsumerState<HostForm> {
                           }
 
                           if (widget._host != null) {
-                            controller.updateHost(
+                            _controller.updateHost(
                               hostId: widget._hostId,
                               displayName: _nameController.text,
                               introduction: _introductionController.text,
@@ -283,7 +326,7 @@ class HostFormState extends ConsumerState<HostForm> {
                                   .toList(),
                             );
                           } else {
-                            controller.create(
+                            _controller.create(
                               workerId: widget._hostId,
                               displayName: _nameController.text,
                               introduction: _introductionController.text,

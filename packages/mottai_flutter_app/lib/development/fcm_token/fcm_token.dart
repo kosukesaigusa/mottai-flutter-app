@@ -42,14 +42,13 @@ class FcmTokenPage extends ConsumerWidget {
                       future: ref.read(
                         fcmTokenFutureProvider(token.data!).future,
                       ),
-                      builder: (context, useFcmToken) {
-                        if (useFcmToken.connectionState ==
-                            ConnectionState.waiting) {
+                      builder: (context, user) {
+                        if (user.connectionState == ConnectionState.waiting) {
                           return const Center(
                             child: CircularProgressIndicator(),
                           );
                         }
-                        return useFcmToken.data == null
+                        return user.data == null
                             ? const Center(
                                 child: Text('データの取得に失敗しました。'),
                               )
@@ -60,14 +59,14 @@ class FcmTokenPage extends ConsumerWidget {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Text('token: ${useFcmToken.data!.token}'),
+                                    Text('token: ${user.data!.token}'),
                                     const Gap(24),
                                     Text(
-                                      'deviceInfo: ${useFcmToken.data!.deviceInfo}',
+                                      'deviceInfo: ${user.data!.deviceInfo}',
                                     ),
                                     const Gap(24),
                                     Text(
-                                      'createAt: ${useFcmToken.data!.createdAt}',
+                                      'createAt: ${user.data!.createdAt}',
                                     ),
                                   ],
                                 ),

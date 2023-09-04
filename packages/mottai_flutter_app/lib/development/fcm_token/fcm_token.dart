@@ -63,11 +63,11 @@ class FcmTokenPage extends ConsumerWidget {
                                     Text('token: ${useFcmToken.data!.token}'),
                                     const Gap(24),
                                     Text(
-                                      'token: ${useFcmToken.data!.deviceInfo}',
+                                      'deviceInfo: ${useFcmToken.data!.deviceInfo}',
                                     ),
                                     const Gap(24),
                                     Text(
-                                      'token: ${useFcmToken.data!.createdAt}',
+                                      'createAt: ${useFcmToken.data!.createdAt}',
                                     ),
                                   ],
                                 ),

@@ -59,6 +59,7 @@ flutter:
 
   assets:
     - assets/images/
+    - assets/login_icon/
 
 flutter_icons:
   android: true

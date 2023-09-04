@@ -85,7 +85,7 @@ class FcmTokenPage extends ConsumerWidget {
 /// 指定した [UserFcmToken] を取得する [FutureProvider].
 final fcmTokenFutureProvider = FutureProvider.family
     .autoDispose<ReadUserFcmToken?, String>((ref, userFcmTokenId) async {
-  return await ref
+  return ref
       .watch(fcmTokenRepositoryProvider)
       .fetchUserFcmToken(userFcmTokenId: userFcmTokenId);
 });

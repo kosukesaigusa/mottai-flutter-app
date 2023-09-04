@@ -4,11 +4,13 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_common/firebase_common.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_line_sdk/flutter_line_sdk.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
+import '../exception.dart';
 import '../firestore_repository.dart';
 import '../user/user_mode.dart';
 import '../user/worker.dart';
@@ -94,7 +96,7 @@ class AuthService {
   /// [AuthCredential] を取得するまでの処理は、
   /// [_linkWithCredential] でも使用するため、別メソッドして定義している
   Future<UserCredential> signInWithGoogle() async {
-    final credential = await _getGoogleCredential();
+    final credential = await _getGoogleAuthCredential();
 
     final userCredential = await _auth.signInWithCredential(credential);
     await _createWorkerAndUserSocialLoginWhenFirstSignIn(
@@ -110,7 +112,7 @@ class AuthService {
   /// [AuthCredential] を取得するまでの処理は、
   /// [_linkWithCredential] でも使用するため、別メソッドして定義している
   Future<UserCredential> signInWithApple() async {
-    final oauthCredential = await _getAppleCredential();
+    final oauthCredential = await _getAppleAuthCredential();
 
     final userCredential =
         await FirebaseAuth.instance.signInWithCredential(oauthCredential);
@@ -124,16 +126,7 @@ class AuthService {
   /// [FirebaseAuth] に LINE でサインインする。
   /// https://firebase.flutter.dev/docs/auth/custom-auth に従っている。
   Future<UserCredential> signInWithLINE() async {
-    final loginResult = await LineSDK.instance.login();
-    final accessToken = loginResult.accessToken.data['access_token'] as String;
-    final callable = FirebaseFunctions.instanceFor(region: 'asia-northeast1')
-        .httpsCallable('createfirebaseauthcustomtoken');
-    final response = await callable.call<Map<String, dynamic>>(
-      <String, dynamic>{'accessToken': accessToken},
-    );
-    final customToken = response.data['customToken'] as String;
-    final userCredential =
-        await FirebaseAuth.instance.signInWithCustomToken(customToken);
+    final userCredential = await _getLINEUserCredentialWithSignIn();
     await _createWorkerAndUserSocialLoginWhenFirstSignIn(
       userCredential: userCredential,
       signInMethod: SignInMethod.line,
@@ -246,9 +239,9 @@ class AuthService {
   /// ログイン時に取得される [AuthCredential] を元に、ユーザーアカウントにソーシャル認証情報をリンクする
   Future<void> _linkWithCredential({required SignInMethod signInMethod}) async {
     final credential = switch (signInMethod) {
-      SignInMethod.google => await _getGoogleCredential(),
-      SignInMethod.apple => await _getAppleCredential(),
-      //TODO LINEの AuthCredential を取得する処理がまだわかっていないため未実装
+      SignInMethod.google => await _getGoogleAuthCredential(),
+      SignInMethod.apple => await _getAppleAuthCredential(),
+      // LINEは認証連携の対象外
       SignInMethod.line => throw UnimplementedError(),
       //TODO emailは追って削除される想定
       SignInMethod.email => throw UnimplementedError(),
@@ -273,11 +266,9 @@ class AuthService {
           userId: userId,
           value: value,
         );
+      // LINEは認証連携の対象外
       case SignInMethod.line:
-        await _userSocialLoginRepository.updateIsLINEEnabled(
-          userId: userId,
-          value: value,
-        );
+        throw UnimplementedError();
       //TODO emailはなくなる想定
       case SignInMethod.email:
         throw UnimplementedError();
@@ -288,36 +279,79 @@ class AuthService {
   ///
   /// [GoogleSignIn] ライブラリを使用してユーザーにGoogleでのログインを求め、
   /// 成功した場合はその認証情報からFirebase用の [AuthCredential] オブジェクトを生成して返す
-  Future<AuthCredential> _getGoogleCredential() async {
-    final googleUser = await GoogleSignIn().signIn(); // サインインダイアログの表示
-    final googleAuth = await googleUser?.authentication; // アカウントからトークン生成
+  Future<AuthCredential> _getGoogleAuthCredential() async {
+    try {
+      final googleUser = await GoogleSignIn().signIn(); // サインインダイアログの表示
 
-    return GoogleAuthProvider.credential(
-      accessToken: googleAuth?.accessToken,
-      idToken: googleAuth?.idToken,
-    );
+      // サインインダイアログでキャンセルが選択された場合には、AppException をスローし、キャンセルされたことを通知する
+      if (googleUser == null) {
+        throw const AppException(message: 'キャンセルされました');
+      }
+
+      final googleAuth = await googleUser.authentication; // アカウントからトークン生成
+
+      return GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+    } on PlatformException catch (e) {
+      if (e.code == 'network_error') {
+        throw const AppException(message: '接続できませんでした。\nネットワーク状況を確認してください。');
+      }
+      throw const AppException(message: 'Google認証に失敗しました');
+    }
   }
 
   /// Apple認証から [AuthCredential] を取得する
   ///
   /// Appleでのログインを求め、
   /// 成功した場合はその認証情報からFirebase用の [AuthCredential] オブジェクトを生成して返す。
-  Future<AuthCredential> _getAppleCredential() async {
-    final rawNonce = generateNonce();
-    final nonce = _sha256ofString(rawNonce);
+  Future<AuthCredential> _getAppleAuthCredential() async {
+    try {
+      final rawNonce = generateNonce();
+      final nonce = _sha256ofString(rawNonce);
 
-    final appleCredential = await SignInWithApple.getAppleIDCredential(
-      scopes: [
-        AppleIDAuthorizationScopes.email,
-        AppleIDAuthorizationScopes.fullName,
-      ],
-      nonce: nonce,
-    );
+      final appleCredential = await SignInWithApple.getAppleIDCredential(
+        scopes: [
+          AppleIDAuthorizationScopes.email,
+          AppleIDAuthorizationScopes.fullName,
+        ],
+        nonce: nonce,
+      );
 
-    return OAuthProvider('apple.com').credential(
-      idToken: appleCredential.identityToken,
-      rawNonce: rawNonce,
-    );
+      return OAuthProvider('apple.com').credential(
+        idToken: appleCredential.identityToken,
+        rawNonce: rawNonce,
+      );
+    } on SignInWithAppleAuthorizationException catch (e) {
+      // サインインダイアログでキャンセルが選択された場合には、AppException をスローし、キャンセルされたことを通知する
+      if (e.code == AuthorizationErrorCode.canceled) {
+        throw const AppException(message: 'キャンセルされました');
+      }
+      throw const AppException(message: 'Apple認証に失敗しました');
+    }
+  }
+
+  /// LINEでのログインを求め、 [UserCredential] を取得する
+  Future<UserCredential> _getLINEUserCredentialWithSignIn() async {
+    try {
+      final loginResult = await LineSDK.instance.login();
+      final accessToken =
+          loginResult.accessToken.data['access_token'] as String;
+      final callable = FirebaseFunctions.instanceFor(region: 'asia-northeast1')
+          .httpsCallable('createfirebaseauthcustomtoken');
+      final response = await callable.call<Map<String, dynamic>>(
+        <String, dynamic>{'accessToken': accessToken},
+      );
+      final customToken = response.data['customToken'] as String;
+      return FirebaseAuth.instance.signInWithCustomToken(customToken);
+    } on PlatformException catch (e) {
+      // サインインダイアログでユーザーによりキャンセルが選択された場合には、AppException をスローし、キャンセルされたことを通知する
+      if (e.message == 'User cancelled or interrupted the login process.') {
+        throw const AppException(message: 'キャンセルされました');
+      }
+      rethrow;
+    }
   }
 
   /// ログインユーザーが持つ `providerId` を元に、指定された [SignInMethod] のリンクを解除する
@@ -336,7 +370,7 @@ class AuthService {
     final providerIdToUnlink = switch (signInMethod) {
       SignInMethod.google => googleProviderId,
       SignInMethod.apple => appleProviderId,
-      //TODO LINE用の実装
+      // LINEは認証連携の対象外
       SignInMethod.line => throw UnimplementedError(),
       //TODO emailは削除される想定
       SignInMethod.email => throw UnimplementedError(),
@@ -348,5 +382,27 @@ class AuthService {
         return;
       }
     }
+  }
+
+  /// 引数で受ける [userSocialLogin] を元に、複数の認証方法が有効化されているかを判定し、真偽値を返す
+  bool hasMultipleAuthMethodsEnabled(
+    ReadUserSocialLogin userSocialLogin,
+  ) {
+    final enabledList = <bool>[];
+    for (final signInMethod in SignInMethod.values) {
+      switch (signInMethod) {
+        case SignInMethod.google:
+          enabledList.add(userSocialLogin.isGoogleEnabled);
+        case SignInMethod.apple:
+          enabledList.add(userSocialLogin.isAppleEnabled);
+        case SignInMethod.line:
+          enabledList.add(userSocialLogin.isLINEEnabled);
+        //TODO email認証は追って削除される想定
+        case SignInMethod.email:
+          enabledList.add(false);
+      }
+    }
+
+    return enabledList.where((isEnabled) => isEnabled).length > 1;
   }
 }

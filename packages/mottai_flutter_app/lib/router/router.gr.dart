@@ -246,13 +246,9 @@ abstract class $AppRouter extends _i29.RootStackRouter {
       );
     },
     SignInSampleRoute.name: (routeData) {
-      final args = routeData.argsAs<SignInSampleRouteArgs>();
       return _i29.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: _i25.SignInSamplePage(
-          key: args.key,
-          token: args.token,
-        ),
+        child: const _i25.SignInSamplePage(),
       );
     },
     UserSocialLoginSampleRoute.name: (routeData) {
@@ -781,40 +777,16 @@ class SampleTodosRoute extends _i29.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i25.SignInSamplePage]
-class SignInSampleRoute extends _i29.PageRouteInfo<SignInSampleRouteArgs> {
-  SignInSampleRoute({
-    _i30.Key? key,
-    required String token,
-    List<_i29.PageRouteInfo>? children,
-  }) : super(
+class SignInSampleRoute extends _i29.PageRouteInfo<void> {
+  const SignInSampleRoute({List<_i29.PageRouteInfo>? children})
+      : super(
           SignInSampleRoute.name,
-          args: SignInSampleRouteArgs(
-            key: key,
-            token: token,
-          ),
           initialChildren: children,
         );
 
   static const String name = 'SignInSampleRoute';
 
-  static const _i29.PageInfo<SignInSampleRouteArgs> page =
-      _i29.PageInfo<SignInSampleRouteArgs>(name);
-}
-
-class SignInSampleRouteArgs {
-  const SignInSampleRouteArgs({
-    this.key,
-    required this.token,
-  });
-
-  final _i30.Key? key;
-
-  final String token;
-
-  @override
-  String toString() {
-    return 'SignInSampleRouteArgs{key: $key, token: $token}';
-  }
+  static const _i29.PageInfo<void> page = _i29.PageInfo<void>(name);
 }
 
 /// generated route for

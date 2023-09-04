@@ -22,6 +22,18 @@ class ChatMessage {
   final String senderId;
 
   @_chatMessageTypeConverter
+//   @TranslateJsonConverterToTypeScript(
+//     fromJson: '''
+// (chatMessageType: string): ChatMessageType {
+//   return chatMessageType as ChatMessageType
+// }
+// ''',
+//     toJson: '''
+// (chatMessageType: ChatMessageType): string {
+//   return chatMessageType as string;
+// }
+// ''',
+//   )
   final ChatMessageType chatMessageType;
 
   @ReadDefault('')
@@ -43,6 +55,7 @@ class ChatMessage {
   final DateTime? updatedAt;
 }
 
+// @TranslateToTypeScript(isEnum: true)
 enum ChatMessageType {
   worker,
   host,

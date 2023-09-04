@@ -1,11 +1,8 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:sign_in_button/sign_in_button.dart';
 
-import '../../../auth/auth.dart';
-import '../../../auth/ui/auth_controller.dart';
+import '../../../auth/ui/sign_in_buttons.dart';
 
 @RoutePage()
 class SignInSamplePage extends ConsumerWidget {
@@ -23,38 +20,8 @@ class SignInSamplePage extends ConsumerWidget {
       appBar: AppBar(
         title: const Text('サインインページ'),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-              height: 48,
-              child: SignInButton(
-                Buttons.google,
-                text: 'Google でサインイン',
-                onPressed: () async => ref
-                    .read(authControllerProvider)
-                    .signIn(SignInMethod.google),
-              ),
-            ),
-            const Gap(32),
-            SizedBox(
-              height: 48,
-              child: SignInButton(
-                Buttons.apple,
-                text: 'Apple でサインイン',
-                onPressed: () async =>
-                    ref.read(authControllerProvider).signIn(SignInMethod.apple),
-              ),
-            ),
-            const Gap(32),
-            ElevatedButton(
-              child: const Text('LINE でサインイン'),
-              onPressed: () async =>
-                  ref.read(authControllerProvider).signIn(SignInMethod.line),
-            ),
-          ],
-        ),
+      body: const Center(
+        child: SignInButtons(),
       ),
     );
   }

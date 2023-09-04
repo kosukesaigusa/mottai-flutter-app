@@ -4,29 +4,30 @@ import 'package:package_info_plus/package_info_plus.dart';
 final packageInfoProvider =
     Provider<PackageInfo>((_) => throw UnimplementedError());
 
-/// 文字列のアプリバージョンを受け取り、数値を返す
+/// アプリバージョンを文字列を受け取り、対応する数値を返す。
 ///
-/// '0.0.1'→1
+/// 例
 ///
-/// '0.1.0'→10
+/// ```dart
+/// print(formatVersionNumber('0.0.1')); // 1
 ///
-/// '1.0.0'→100
-int formatVersionNumber(String version) {
-  final sb = StringBuffer();
-
-  final versionNumbers = version.split('.');
-
-  sb.writeAll(versionNumbers);
-
-  return int.parse(sb.toString());
+/// print(formatVersionNumber('0.1.0')); // 10
+///
+/// print(formatVersionNumber('1.0.0')); // 100
+/// ```
+int formatVersionNumber(String versionString) {
+  final stringBuffer = StringBuffer();
+  final versionNumbers = versionString.split('.');
+  stringBuffer.writeAll(versionNumbers);
+  return int.parse(stringBuffer.toString());
 }
 
-bool isCurrentVersionLessThanMinimum(
-  String currentVersion,
-  String minRequiredVersion,
+/// 現在のアプリバージョンが、最小必要バージョンよりも小さいかどうかを返す。
+bool isCurrentVersionLessThanMinRequiredVersion(
+  String currentVersionString,
+  String minRequiredVersionString,
 ) {
-  final currentVersionValue = formatVersionNumber(currentVersion);
-  final minRequiredVersionValue = formatVersionNumber(minRequiredVersion);
-
-  return currentVersionValue < minRequiredVersionValue;
+  final currentVersion = formatVersionNumber(currentVersionString);
+  final minRequiredVersion = formatVersionNumber(minRequiredVersionString);
+  return currentVersion < minRequiredVersion;
 }

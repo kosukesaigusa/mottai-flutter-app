@@ -1,6 +1,6 @@
 import 'package:dart_flutter_common/dart_flutter_common.dart';
 
-/// アプリ内で使用する [Exception] 型。
+/// アプリ内で汎用的に使用する [Exception] 型。
 class AppException implements Exception {
   const AppException({
     this.code,
@@ -8,13 +8,13 @@ class AppException implements Exception {
     this.defaultMessage = 'エラーが発生しました。',
   });
 
-  /// ステータスコードや独自のエラーコードなどのエラー種別を識別するための文字列
+  /// ステータスコードや独自のエラーコードなどのエラー種別を識別するための文字列。
   final String? code;
 
-  /// 例外の内容を説明するメッセージ
+  /// 例外の内容を説明するメッセージ。
   final String? message;
 
-  /// message が空の場合に使用されるメッセージ
+  /// [message] が空の場合に使用されるメッセージ。
   final String defaultMessage;
 
   @override

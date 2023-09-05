@@ -182,6 +182,7 @@ class _DrawerChild extends ConsumerWidget {
           onTap: () => context.router.pushNamed(DevelopmentItemsPage.location),
         ),
         Visibility(
+          //TODO ref.watch(userIdProvider)が複数呼ばれているため共通化すべき
           visible: ref.watch(userIdProvider) != null,
           child: ListTile(
             leading: const Icon(Icons.person_off),
@@ -189,7 +190,9 @@ class _DrawerChild extends ConsumerWidget {
             onTap: () async {
               await ref
                   .read(disableUserAccountRequestControllerProvider)
-                  .disableUserAccountRequest();
+                  .disableUserAccountRequest(
+                    userId: ref.watch(userIdProvider)!,
+                  );
             },
           ),
         ),

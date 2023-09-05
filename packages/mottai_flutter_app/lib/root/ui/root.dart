@@ -185,7 +185,38 @@ class _DrawerChild extends ConsumerWidget {
           child: ListTile(
             leading: const Icon(Icons.person_off),
             title: const Text('退会する'),
-            onTap: () {},
+            onTap: () async {
+              await ref
+                  .read(appScaffoldMessengerControllerProvider)
+                  .showDialogByBuilder<void>(
+                    builder: (context) => AlertDialog(
+                      title: const SelectableText('本当に退会しますか？'),
+                      actions: [
+                        ElevatedButton(
+                          onPressed: () {
+                            //TODO 退会処理
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.red,
+                          ),
+                          child: const Text(
+                            '退会する',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: const Text('戻る'),
+                        )
+                      ],
+                    ),
+                  );
+            },
           ),
         ),
       ],

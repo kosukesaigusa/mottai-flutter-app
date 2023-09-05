@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 
 import '../../dart_flutter_common.dart';
 
-/// タイトル、詳細、画像の3つを表示するカードウィジェット
+/// Material 3 のデザインに従って、タイトル、詳細、画像の 3 つを水平方向に表示するカード
+/// ウィジェット。
 class MaterialHorizontalCard extends StatelessWidget {
-  /// タイトル、詳細、画像の3つを表示するカードウィジェット
+  /// Material 3 のデザインに従って、タイトル、詳細、画像の 3 つを水平方向に表示するカード
+  /// ウィジェット。
   const MaterialHorizontalCard({
     required this.title,
     required this.description,
@@ -18,7 +20,7 @@ class MaterialHorizontalCard extends StatelessWidget {
   /// カードに表示するタイトル。
   final String title;
 
-  /// カードに表示する詳細
+  /// カードに表示する詳細。
   final String description;
 
   @override

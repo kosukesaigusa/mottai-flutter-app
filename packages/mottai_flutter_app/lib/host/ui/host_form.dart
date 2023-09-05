@@ -1,7 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dart_flutter_common/dart_flutter_common.dart';
 import 'package:firebase_common/firebase_common.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:geoflutterfire_plus/geoflutterfire_plus.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -67,13 +69,50 @@ class HostFormState extends ConsumerState<HostForm> {
   /// [HostController] インスタンス
   late final HostController _controller;
 
+  /// 選択中の [Geo]
+  late Geo _geo;
+
+  /// [GoogleMap] ウィジェットの `onMapCreated` で得られるコントローラインスタンス。
+  late final GoogleMapController _googleMapController;
+
+  /// Google Mapに記される [Marker].
+  Set<Marker> _markers = {};
+
+  /// [Geo] から [LatLng] に変換する関数
+  static LatLng convertGeoToLatLng(Geo? geo) {
+    var latitude = 0.0;
+
+    var longitude = 0.0;
+
+    if (geo != null) {
+      latitude = geo.geopoint.latitude;
+      longitude = geo.geopoint.longitude;
+    }
+
+    return LatLng(latitude, longitude);
+  }
+
+  /// [LatLng] から [Geo] に変換する関数
+  static Geo convertLatLngToGeo(LatLng? latLng) {
+    final geoPoint = GeoPoint(
+      latLng?.latitude ?? 0,
+      latLng?.longitude ?? 0,
+    );
+    final geoFirePoint = GeoFirePoint(geoPoint);
+    return Geo(
+      geohash: geoFirePoint.geohash,
+      geopoint: geoPoint,
+    );
+  }
+
   @override
   void initState() {
     super.initState();
     _nameController = TextEditingController(text: widget._host?.displayName);
     _introductionController =
         TextEditingController(text: widget._host?.introduction);
-    _locationController = TextEditingController();
+    _locationController =
+        TextEditingController(text: widget._hostLocation?.address);
     for (var i = 0; i < Host.urlMaxCount; i++) {
       _urlControllers
           .add(TextEditingController(text: widget._host?.urls.elementAt(i)));
@@ -83,26 +122,33 @@ class HostFormState extends ConsumerState<HostForm> {
 
     final hostLocation = widget._hostLocation;
     if (hostLocation != null) {
-      _controller.updateGeoFromLatLng(
+      _geo = convertLatLngToGeo(
         LatLng(
           hostLocation.geo.geopoint.latitude,
           hostLocation.geo.geopoint.longitude,
         ),
       );
+      _markers.add(
+        Marker(
+          markerId: MarkerId(
+            '(${_geo.geopoint.latitude}, ${_geo.geopoint.longitude})',
+          ),
+        ),
+      );
     } else {
-      // final geoController = ref.watch(currentLocationControllerProvider);
-      // Future(() async {
-      //   final position = await geoController.getCurrentPosition();
-
-      //   if (position != null) {
-      //     _controller.updateGeoFromLatLng(
-      //       LatLng(
-      //         position.latitude,
-      //         position.longitude,
-      //       ),
-      //     );
-      //   }
-      // });
+      _geo = convertLatLngToGeo(
+        const LatLng(
+          0,
+          0,
+        ),
+      );
+      _markers.add(
+        Marker(
+          markerId: MarkerId(
+            '(${_geo.geopoint.latitude}, ${_geo.geopoint.longitude})',
+          ),
+        ),
+      );
     }
   }
 
@@ -229,7 +275,6 @@ class HostFormState extends ConsumerState<HostForm> {
                     description: 'ワーカーはマップ上からお手伝いしたいホストを探します。'
                         '「地図を開く」から地図を開いて、あなたの農園や主な作業場所を長押ししてピンを立ててください。'
                         '必ずしも正確な位置を指定する必要はありません。',
-                    // controller: _rewardController,
                     isRequired: true,
                     child: Column(
                       children: [
@@ -237,29 +282,56 @@ class HostFormState extends ConsumerState<HostForm> {
                           height: 160,
                           child: GoogleMap(
                             initialCameraPosition: CameraPosition(
-                              target: _controller.latLng,
-                            ),
-                            markers: {
-                              Marker(
-                                markerId: MarkerId(
-                                  '(${_controller.latLng.latitude}, ${_controller.latLng.longitude})',
-                                ),
+                              target: convertGeoToLatLng(
+                                _geo,
                               ),
+                              zoom: 20,
+                            ),
+                            markers: _markers,
+                            onMapCreated: (controller) {
+                              _googleMapController = controller;
                             },
                           ),
                         ),
                         TextButton(
                           onPressed: () async {
+                            Marker? marker;
+                            if (_markers.isNotEmpty) {
+                              marker = _markers.first;
+                            }
                             final geo = await showDialog<Geo>(
                               context: context,
                               builder: (context) => HostLocationSelectDialog(
                                 initialCameraPosition: CameraPosition(
-                                  target: _controller.latLng,
+                                  target: convertGeoToLatLng(
+                                    _geo,
+                                  ),
+                                  zoom: 20,
                                 ),
+                                initialMarker: marker,
                               ),
                             );
                             if (geo != null) {
-                              _controller.updateGeo(geo);
+                              _geo = geo;
+
+                              await _googleMapController.moveCamera(
+                                CameraUpdate.newLatLng(
+                                  convertGeoToLatLng(
+                                    _geo,
+                                  ),
+                                ),
+                              );
+
+                              final markers = <Marker>{}..add(
+                                  Marker(
+                                    markerId: MarkerId(
+                                      '${_geo.geopoint.latitude},${_geo.geopoint.longitude}',
+                                    ),
+                                    position: convertGeoToLatLng(_geo),
+                                  ),
+                                );
+                              _markers = markers;
+                              setState(() {});
                             }
                           },
                           child: const Text('地図を開く'),
@@ -300,9 +372,11 @@ class HostFormState extends ConsumerState<HostForm> {
                       child: ElevatedButton(
                         onPressed: () {
                           final isValidate = formKey.currentState?.validate();
-                          if (!(isValidate ?? true) ||
-                              pickedImageFile == null) {
-                            if (pickedImageFile == null) {
+                          final isExistImage = (pickedImageFile != null) ||
+                              (widget._host?.imageUrl != null);
+
+                          if (!(isValidate ?? true) || !isExistImage) {
+                            if (!isExistImage) {
                               ref
                                   .watch(imageFieldErrorStateProvider.notifier)
                                   .state = '画像を選択してください';
@@ -315,7 +389,7 @@ class HostFormState extends ConsumerState<HostForm> {
                           }
 
                           if (widget._host != null) {
-                            _controller.updateHost(
+                            _controller.update(
                               hostId: widget._hostId,
                               displayName: _nameController.text,
                               introduction: _introductionController.text,
@@ -324,17 +398,21 @@ class HostFormState extends ConsumerState<HostForm> {
                               urls: _urlControllers
                                   .map((controller) => controller.text)
                                   .toList(),
+                              address: _locationController.text,
+                              geo: _geo,
                             );
                           } else {
                             _controller.create(
                               workerId: widget._hostId,
                               displayName: _nameController.text,
                               introduction: _introductionController.text,
-                              imageFile: pickedImageFile,
+                              imageFile: pickedImageFile!,
                               hostTypes: _selectedHosyTypes.toSet(),
                               urls: _urlControllers
                                   .map((controller) => controller.text)
                                   .toList(),
+                              address: _locationController.text,
+                              geo: _geo,
                             );
                           }
                         },

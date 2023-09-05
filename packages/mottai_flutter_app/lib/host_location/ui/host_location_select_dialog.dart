@@ -9,9 +9,11 @@ class HostLocationSelectDialog extends ConsumerStatefulWidget {
   HostLocationSelectDialog({
     super.key,
     CameraPosition? initialCameraPosition,
+    this.initialMarker,
   }) : _initialCameraPosition = initialCameraPosition!;
 
   final CameraPosition _initialCameraPosition;
+  final Marker? initialMarker;
 
   @override
   HostLocationSelectDialogState createState() =>
@@ -21,9 +23,17 @@ class HostLocationSelectDialog extends ConsumerStatefulWidget {
 /// 位置情報選択ダイアログ
 class HostLocationSelectDialogState
     extends ConsumerState<HostLocationSelectDialog> {
-  Marker _selectedMarker = const Marker(
-    markerId: MarkerId('(0, 0)'),
-  );
+  late Marker _selectedMarker;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.initialMarker != null) {
+      _selectedMarker = widget.initialMarker!;
+    } else {
+      _selectedMarker = const Marker(markerId: MarkerId('0,0'));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,14 +55,13 @@ class HostLocationSelectDialogState
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   child: GoogleMap(
                     initialCameraPosition: widget._initialCameraPosition,
-                    markers: {
-                      _selectedMarker,
-                    },
+                    markers: {_selectedMarker},
                     onTap: (position) {
                       setState(() {
                         _selectedMarker = Marker(
                           markerId: MarkerId(
-                              '(${position.latitude}, ${position.longitude})'),
+                            '(${position.latitude}, ${position.longitude})',
+                          ),
                           position:
                               LatLng(position.latitude, position.longitude),
                         );
@@ -63,8 +72,10 @@ class HostLocationSelectDialogState
               ),
               ElevatedButton(
                 onPressed: () {
-                  final geoPoint = GeoPoint(_selectedMarker.position.latitude,
-                      _selectedMarker.position.longitude);
+                  final geoPoint = GeoPoint(
+                    _selectedMarker.position.latitude,
+                    _selectedMarker.position.longitude,
+                  );
                   final geoFirePoint = GeoFirePoint(geoPoint);
                   final geo = Geo(
                     geohash: geoFirePoint.geohash,

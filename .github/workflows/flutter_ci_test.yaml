@@ -20,6 +20,8 @@ jobs:
       # ソースコードをチェックアウトする。
       - name: Checkout
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
       # Dart ファイルが変更されたかチェックする。
       - name: Check for Dart file changes

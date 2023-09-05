@@ -11,6 +11,7 @@ class ReadWorker {
     required this.displayName,
     required this.imageUrl,
     required this.isHost,
+    required this.introduction,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -25,6 +26,8 @@ class ReadWorker {
 
   final bool isHost;
 
+  final String introduction;
+
   final DateTime? createdAt;
 
   final DateTime? updatedAt;
@@ -36,6 +39,7 @@ class ReadWorker {
       displayName: json['displayName'] as String? ?? '',
       imageUrl: json['imageUrl'] as String? ?? '',
       isHost: json['isHost'] as bool? ?? false,
+      introduction: json['introduction'] as String? ?? '',
       createdAt: (json['createdAt'] as Timestamp?)?.toDate(),
       updatedAt: (json['updatedAt'] as Timestamp?)?.toDate(),
     );
@@ -56,17 +60,20 @@ class CreateWorker {
     required this.displayName,
     this.imageUrl = '',
     required this.isHost,
+    required this.introduction,
   });
 
   final String displayName;
   final String imageUrl;
   final bool isHost;
+  final String introduction;
 
   Map<String, dynamic> toJson() {
     return {
       'displayName': displayName,
       'imageUrl': imageUrl,
       'isHost': isHost,
+      'introduction': introduction,
       'createdAt': FieldValue.serverTimestamp(),
       'updatedAt': FieldValue.serverTimestamp(),
     };
@@ -78,12 +85,14 @@ class UpdateWorker {
     this.displayName,
     this.imageUrl,
     this.isHost,
+    this.introduction,
     this.createdAt,
   });
 
   final String? displayName;
   final String? imageUrl;
   final bool? isHost;
+  final String? introduction;
   final DateTime? createdAt;
 
   Map<String, dynamic> toJson() {
@@ -91,6 +100,7 @@ class UpdateWorker {
       if (displayName != null) 'displayName': displayName,
       if (imageUrl != null) 'imageUrl': imageUrl,
       if (isHost != null) 'isHost': isHost,
+      if (introduction != null) 'introduction': introduction,
       if (createdAt != null) 'createdAt': createdAt,
       'updatedAt': FieldValue.serverTimestamp(),
     };

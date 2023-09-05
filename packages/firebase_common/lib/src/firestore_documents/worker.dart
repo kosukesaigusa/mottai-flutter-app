@@ -9,6 +9,7 @@ class Worker {
     required this.displayName,
     required this.imageUrl,
     required this.isHost,
+    required this.introduction,
     this.createdAt,
     this.updatedAt,
   });
@@ -22,6 +23,9 @@ class Worker {
 
   @ReadDefault(false)
   final bool isHost;
+
+  @ReadDefault('')
+  final String introduction;
 
   @AlwaysUseFieldValueServerTimestampWhenCreating()
   final DateTime? createdAt;

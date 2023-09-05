@@ -1,13 +1,16 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:dart_flutter_common/dart_flutter_common.dart';
 import 'package:firebase_common/firebase_common.dart';
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../pagination/ui/pagination_list_view.dart';
+import '../../user/worker.dart';
 import '../review.dart';
 
 /// レビュー一覧画面。
 @RoutePage()
-class ReviewsPage extends StatelessWidget {
+class ReviewsPage extends ConsumerWidget {
   const ReviewsPage({super.key});
 
   /// [AutoRoute] で指定するパス文字列。
@@ -17,14 +20,25 @@ class ReviewsPage extends StatelessWidget {
   static const location = path;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return FirestorePaginationListView<ReadReview>(
       stateNotifierProvider: reviewsStateNotifierProvider,
-      itemBuilder: (context, review) =>
-          // TODO: 後で MaterialVerticalCard に書き換える。
-          ListTile(
-        title: Text(review.title),
-        subtitle: Text(review.content),
+      itemBuilder: (context, review) => MaterialVerticalCard(
+        headerImageUrl: ref.watch(workerImageUrlProvider(review.workerId)),
+        header: ref.watch(workerDisplayNameProvider(review.workerId)),
+        subhead: review.createdAt?.formatRelativeDate(),
+        imageUrl: review.imageUrl,
+        title: review.title,
+        content: review.content,
+        menuButtonOnPressed: () {},
+        actions: [
+          ElevatedButton(
+            onPressed: () {
+              // TODO: 感想詳細ページへ遷移する
+            },
+            child: const Text('もっと見る'),
+          ),
+        ],
       ),
     );
   }

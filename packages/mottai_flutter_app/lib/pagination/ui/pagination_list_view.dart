@@ -11,6 +11,7 @@ class FirestorePaginationListView<T> extends ConsumerWidget {
   const FirestorePaginationListView({
     required this.stateNotifierProvider,
     required this.itemBuilder,
+    this.showDebugIndicator = false,
     super.key,
   });
 
@@ -20,6 +21,9 @@ class FirestorePaginationListView<T> extends ConsumerWidget {
 
   /// [ListView.builder] で表示する各要素のビルダー関数。
   final Widget Function(BuildContext, T) itemBuilder;
+
+  /// 開発時のみ表示する、無限スクロールのデバッグ用ウィジェットを表示するか。
+  final bool showDebugIndicator;
 
   /// 画面の何割をスクロールした時点で次の _limit 件のメッセージを取得するか。
   static const _scrollValueThreshold = 0.8;
@@ -49,7 +53,7 @@ class FirestorePaginationListView<T> extends ConsumerWidget {
                 },
               ),
             ),
-            if (kDebugMode)
+            if (kDebugMode && showDebugIndicator)
               Positioned(
                 child: Align(
                   alignment: Alignment.topCenter,

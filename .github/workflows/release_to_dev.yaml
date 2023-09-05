@@ -65,8 +65,8 @@ jobs:
 
       - name: Save AuthKey.p8 file
         run: |
-          cd packages/mottai_flutter_app
-          echo "${{ secrets.DEV_IOS_AUTH_KEY }}" > ./private_keys/AuthKey.p8
+          mkdir -p packages/mottai_flutter_app/private_keys
+          echo "${{ secrets.DEV_IOS_AUTH_KEY }}" > packages/mottai_flutter_app/private_keys/AuthKey.p8
 
       - name: Validate ipa
         run: |

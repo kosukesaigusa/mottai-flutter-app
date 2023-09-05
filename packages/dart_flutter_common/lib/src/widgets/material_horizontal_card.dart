@@ -2,23 +2,16 @@ import 'package:flutter/material.dart';
 
 import '../../dart_flutter_common.dart';
 
-/// Material 3 のデザインに従って、タイトル、詳細、画像の 3 つを水平方向に表示するカード
-/// ウィジェット。
+/// Material 3 の Figma のデザインに従って、タイトル、詳細、画像の 3 つを水平方向に表示する
+/// カードウィジェット。
 class MaterialHorizontalCard extends StatelessWidget {
-  /// Material 3 のデザインに従って、タイトル、詳細、画像の 3 つを水平方向に表示するカード
-  /// ウィジェット。
+  /// Material 3 の Figma のデザインに従って、タイトル、詳細、画像の 3 つを水平方向に表示する
+  /// カードウィジェット。
   const MaterialHorizontalCard({
     this.headerImageUrl,
     required this.header,
     required this.subhead,
-    this.subheadMaxLines = 1,
     this.mediaImageUrl,
-    this.borderRadius = 8,
-    this.contentVerticalPadding = 16,
-    this.contentHorizontalPadding = 16,
-    this.headerImageRightPadding = 16,
-    this.headerImageSize = 40,
-    this.mediaImageSize = 80,
     super.key,
   });
 
@@ -31,53 +24,32 @@ class MaterialHorizontalCard extends StatelessWidget {
   /// ヘッダー下に表示する文字列。
   final String subhead;
 
-  /// ヘッダー下に表示する文字列の最大行数。
-  final int subheadMaxLines;
-
   /// メディア画像の URL 文字列。
   final String? mediaImageUrl;
 
   /// カードの角丸の半径。
-  final double borderRadius;
-
-  /// ヘッダー画像の右側の余白。
-  final double headerImageRightPadding;
-
-  /// コンテンツ部分（左側）の垂直方向の余白。
-  final double contentVerticalPadding;
-
-  /// コンテンツ部分（左側）の水平方向の余白。
-  final double contentHorizontalPadding;
-
-  /// ヘッダー画像のサイズ。
-  final double headerImageSize;
-
-  /// メディア画像のサイズ。
-  final double mediaImageSize;
+  static const double _borderRadius = 8;
 
   @override
   Widget build(BuildContext context) {
     return Card(
       margin: EdgeInsets.zero,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(borderRadius),
+        borderRadius: BorderRadius.circular(_borderRadius),
       ),
       child: Row(
         children: [
           Expanded(
             child: Padding(
-              padding: EdgeInsets.symmetric(
-                vertical: contentVerticalPadding,
-                horizontal: contentHorizontalPadding,
-              ),
+              padding: const EdgeInsets.all(16),
               child: Row(
                 children: [
                   if (headerImageUrl != null)
                     Padding(
-                      padding: EdgeInsets.only(right: headerImageRightPadding),
+                      padding: const EdgeInsets.only(right: 16),
                       child: GenericImage.circle(
                         imageUrl: headerImageUrl!,
-                        size: headerImageSize,
+                        size: 40,
                       ),
                     ),
                   Flexible(
@@ -91,8 +63,8 @@ class MaterialHorizontalCard extends StatelessWidget {
                         ),
                         Text(
                           subhead,
-                          style: Theme.of(context).textTheme.labelSmall,
-                          maxLines: subheadMaxLines,
+                          style: Theme.of(context).textTheme.bodyMedium,
+                          maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
                       ],
@@ -104,13 +76,13 @@ class MaterialHorizontalCard extends StatelessWidget {
           ),
           if (mediaImageUrl != null)
             ClipRRect(
-              borderRadius: BorderRadius.only(
-                topRight: Radius.circular(borderRadius),
-                bottomRight: Radius.circular(borderRadius),
+              borderRadius: const BorderRadius.only(
+                topRight: Radius.circular(_borderRadius),
+                bottomRight: Radius.circular(_borderRadius),
               ),
               child: GenericImage.square(
                 imageUrl: mediaImageUrl!,
-                size: mediaImageSize,
+                size: 80,
               ),
             ),
         ],

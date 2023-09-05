@@ -180,6 +180,14 @@ class _DrawerChild extends ConsumerWidget {
           title: const Text('開発ページへ'),
           onTap: () => context.router.pushNamed(DevelopmentItemsPage.location),
         ),
+        Visibility(
+          visible: ref.watch(userIdProvider) != null,
+          child: ListTile(
+            leading: const Icon(Icons.person_off),
+            title: const Text('退会する'),
+            onTap: () {},
+          ),
+        ),
       ],
     );
   }

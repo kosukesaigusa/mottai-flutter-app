@@ -34,24 +34,11 @@ jobs:
       - name: Create dev-dart-define.json from GitHub secret
         run: cd packages/mottai_flutter_app && echo '${{ secrets.DEV_DART_DEFINE_JSON_STRING }}' > dev-dart-define.json
 
-      - name: Decode and install certificate
-        run: |
-          echo ${{ secrets.APPLE_DEVELOPMENT_CERTIFICATE_P12_BASE64_STRING }} | base64 --decode > certificate.p12
-          security create-keychain -p "" build.keychain
-          security import certificate.p12 -k build.keychain -P ${{ secrets.APPLE_DEVELOPMENT_CERTIFICATE_P12_PASSWORD }} -A
-
-      - name: Decode and install provisioning profile
-        run: |
-          echo ${{ secrets.PROVISIONING_PROFILE_BASE64_STRING }} | base64 --decode > profile.mobileprovision
-          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
-          cp profile.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles/
-
-      - name: Set keychain settings
-        run: |
-          security list-keychains -s build.keychain
-          security default-keychain -s build.keychain
-          security unlock-keychain -p "" build.keychain
-          security set-keychain-settings -lut 3600 build.keychain
+      # - name: Decode and install certificate
+      #   run: |
+      #     echo ${{ secrets.APPLE_DEVELOPMENT_CERTIFICATE_P12_BASE64_STRING }} | base64 --decode > certificate.p12
+      #     security create-keychain -p "" build.keychain
+      #     security import certificate.p12 -k build.keychain -P ${{ secrets.APPLE_DEVELOPMENT_CERTIFICATE_P12_PASSWORD }} -A
 
       # - name: Decode and install provisioning profile
       #   run: |
@@ -59,11 +46,24 @@ jobs:
       #     mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
       #     cp profile.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles/
 
-      # - name: Set Code-Signing Certificates
-      #   uses: Apple-Actions/import-codesign-certs@v1
-      #   with:
-      #     p12-file-base64: ${{ secrets.APPLE_DEVELOPMENT_CERTIFICATE_P12_BASE64_STRING }}
-      #     p12-password: ${{ secrets.APPLE_DEVELOPMENT_CERTIFICATE_P12_PASSWORD }}
+      # - name: Set keychain settings
+      #   run: |
+      #     security list-keychains -s build.keychain
+      #     security default-keychain -s build.keychain
+      #     security unlock-keychain -p "" build.keychain
+      #     security set-keychain-settings -lut 3600 build.keychain
+
+      - name: Decode and install provisioning profile
+        run: |
+          echo ${{ secrets.PROVISIONING_PROFILE_BASE64_STRING }} | base64 --decode > profile.mobileprovision
+          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+          cp profile.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles/
+
+      - name: Run import-codesign-certs
+        uses: Apple-Actions/import-codesign-certs@v1
+        with:
+          p12-file-base64: ${{ secrets.APPLE_DEVELOPMENT_CERTIFICATE_P12_BASE64_STRING }}
+          p12-password: ${{ secrets.APPLE_DEVELOPMENT_CERTIFICATE_P12_PASSWORD }}
 
       - name: Create Environment.swift
         run: |

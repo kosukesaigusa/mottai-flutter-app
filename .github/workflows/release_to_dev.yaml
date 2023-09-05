@@ -31,11 +31,14 @@ jobs:
       - name: flutter pub get (mottai_flutter_app)
         run: cd packages/mottai_flutter_app && flutter pub get
 
+      - name: Create dev-dart-define.json from GitHub secret
+        run: echo '${{ secrets.DEV_DART_DEFINE_JSON_STRING }}' > dev-dart-define.json
+
       - name: Flutter Build IPA
         run: |
           cd packages/mottai_flutter_app
           flutter build ipa --release \
-            --dart-define-from-file="dart_defines/dev-dart-define.json" \
+            --dart-define-from-file="dev-dart-define.json" \
             -t "lib/main.dart" \
             --build-name=$(grep 'version:' pubspec.yaml | cut -d ' ' -f 2 | cut -d '+' -f 1) \
             --build-number=$GITHUB_RUN_NUMBER \

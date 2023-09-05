@@ -34,25 +34,6 @@ jobs:
       - name: Create dev-dart-define.json from GitHub secret
         run: cd packages/mottai_flutter_app && echo '${{ secrets.DEV_DART_DEFINE_JSON_STRING }}' > dev-dart-define.json
 
-      # - name: Decode and install certificate
-      #   run: |
-      #     echo ${{ secrets.APPLE_DEVELOPMENT_CERTIFICATE_P12_BASE64_STRING }} | base64 --decode > certificate.p12
-      #     security create-keychain -p "" build.keychain
-      #     security import certificate.p12 -k build.keychain -P ${{ secrets.APPLE_DEVELOPMENT_CERTIFICATE_P12_PASSWORD }} -A
-
-      # - name: Decode and install provisioning profile
-      #   run: |
-      #     echo ${{ secrets.PROVISIONING_PROFILE_BASE64_STRING }} | base64 --decode > profile.mobileprovision
-      #     mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
-      #     cp profile.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles/
-
-      # - name: Set keychain settings
-      #   run: |
-      #     security list-keychains -s build.keychain
-      #     security default-keychain -s build.keychain
-      #     security unlock-keychain -p "" build.keychain
-      #     security set-keychain-settings -lut 3600 build.keychain
-
       - name: Decode and install provisioning profile
         run: |
           echo ${{ secrets.PROVISIONING_PROFILE_BASE64_STRING }} | base64 --decode > profile.mobileprovision
@@ -82,6 +63,11 @@ jobs:
             --build-number=$GITHUB_RUN_NUMBER \
             --export-options-plist="ios/ExportOptions.plist"
 
+      - name: Save AuthKey.p8 file
+        run: |
+          cd packages/mottai_flutter_app
+          echo "${{ secrets.DEV_IOS_AUTH_KEY }}" > ./private_keys/AuthKey.p8
+
       - name: Validate ipa
         run: |
           xcrun altool --validate-app \
@@ -89,7 +75,7 @@ jobs:
             -t ios \
             --apiKey ${{ secrets.DEV_IOS_API_KEY }} \
             --apiIssuer ${{ secrets.DEV_IOS_API_ISSUER }} \
-            --private-key ${{ secrets.DEV_IOS_AUTH_KEY }}
+            --private-key "./private_keys/AuthKey.p8"
 
       - name: Upload ipa to TestFlight
         run: |
@@ -98,4 +84,4 @@ jobs:
             -t ios \
             --apiKey ${{ secrets.DEV_IOS_API_KEY }} \
             --apiIssuer ${{ secrets.DEV_IOS_API_ISSUER }} \
-            --private-key ${{ secrets.DEV_IOS_AUTH_KEY }}
+            --private-key "./private_keys/AuthKey.p8"

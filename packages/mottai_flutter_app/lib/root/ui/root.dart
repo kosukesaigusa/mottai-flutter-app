@@ -7,6 +7,7 @@ import '../../assets.dart';
 import '../../auth/auth.dart';
 import '../../auth/ui/auth_controller.dart';
 import '../../development/development_items/ui/development_items.dart';
+import '../../development/disable_user_account_request/ui/disable_user_account_request_controller.dart';
 import '../../development/email_and_password_sign_in/ui/email_and_password_sign_in.dart';
 import '../../development/sign_in/ui/sign_in.dart';
 import '../../package_info.dart';
@@ -187,35 +188,8 @@ class _DrawerChild extends ConsumerWidget {
             title: const Text('退会する'),
             onTap: () async {
               await ref
-                  .read(appScaffoldMessengerControllerProvider)
-                  .showDialogByBuilder<void>(
-                    builder: (context) => AlertDialog(
-                      title: const SelectableText('本当に退会しますか？'),
-                      actions: [
-                        ElevatedButton(
-                          onPressed: () {
-                            //TODO 退会処理
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.red,
-                          ),
-                          child: const Text(
-                            '退会する',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        ElevatedButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          child: const Text('戻る'),
-                        )
-                      ],
-                    ),
-                  );
+                  .read(disableUserAccountRequestControllerProvider)
+                  .disableUserAccountRequest();
             },
           ),
         ),

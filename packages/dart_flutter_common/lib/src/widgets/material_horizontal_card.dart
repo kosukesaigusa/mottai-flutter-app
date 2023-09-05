@@ -10,12 +10,9 @@ class MaterialHorizontalCard extends StatelessWidget {
   const MaterialHorizontalCard({
     required this.title,
     required this.description,
-    required this.imageUrl,
+    this.imageUrl,
     super.key,
   });
-
-  /// 表示する画像の URL 文字列。
-  final String imageUrl;
 
   /// カードに表示するタイトル。
   final String title;
@@ -23,18 +20,25 @@ class MaterialHorizontalCard extends StatelessWidget {
   /// カードに表示する詳細。
   final String description;
 
+  /// 表示する画像の URL 文字列。
+  final String? imageUrl;
+
+  /// カードの角丸の半径。
+  static const double _borderRadius = 8;
+
   @override
   Widget build(BuildContext context) {
     return Card(
+      margin: EdgeInsets.zero,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(_borderRadius),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Flexible(
             child: Padding(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -46,21 +50,21 @@ class MaterialHorizontalCard extends StatelessWidget {
                   Text(
                     description,
                     style: Theme.of(context).textTheme.labelSmall,
+                    maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),
             ),
           ),
-          ClipRRect(
-            borderRadius: const BorderRadius.only(
-              topRight: Radius.circular(12),
-              bottomRight: Radius.circular(12),
+          if (imageUrl != null)
+            ClipRRect(
+              borderRadius: const BorderRadius.only(
+                topRight: Radius.circular(_borderRadius),
+                bottomRight: Radius.circular(_borderRadius),
+              ),
+              child: GenericImage.square(imageUrl: imageUrl!, size: 96),
             ),
-            child: GenericImage.square(
-              imageUrl: imageUrl,
-            ),
-          ),
         ],
       ),
     );

@@ -10,7 +10,7 @@ jobs:
     runs-on: macOS-latest
 
     steps:
-      - name: Checkout Repository
+      - name: Checkout repository
         uses: actions/checkout@v2
 
       - name: Read Flutter SDK version
@@ -59,14 +59,20 @@ jobs:
           mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
           cp profile.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles/
 
-      # 署名をする
-      - name: Import Code-Signing Certificates
+      - name: Set Code-Signing Certificates
         uses: Apple-Actions/import-codesign-certs@v1
         with:
           p12-file-base64: ${{ secrets.APPLE_DEVELOPMENT_CERTIFICATE_P12_BASE64_STRING }}
           p12-password: ${{ secrets.APPLE_DEVELOPMENT_CERTIFICATE_P12_PASSWORD }}
 
-      - name: Flutter Build IPA
+      - name: Create Environment.swift
+        run: |
+          echo "import Foundation" > packages/mottai_flutter_app/ios/Runner/Environment.swift
+          echo "struct Env {" >> packages/mottai_flutter_app/ios/Runner/Environment.swift
+          echo "  static let googleMapApiKey = \"${{ secrets.DEV_GOOGLE_MAP_API_KEY }}\"" >> packages/mottai_flutter_app/ios/Runner/Environment.swift
+          echo "}" >> packages/mottai_flutter_app/ios/Runner/Environment.swift
+
+      - name: flutter build ipa
         run: |
           cd packages/mottai_flutter_app
           flutter build ipa --release \
@@ -76,7 +82,7 @@ jobs:
             --build-number=$GITHUB_RUN_NUMBER \
             --export-options-plist="ios/ExportOptions.plist"
 
-      - name: Validate IPA
+      - name: Validate ipa
         run: |
           xcrun altool --validate-app \
             -f "./packages/mottai_flutter_app/build/ios/ipa/mottai_dev.ipa" \
@@ -85,7 +91,7 @@ jobs:
             --apiIssuer ${{ secrets.DEV_IOS_API_ISSUER }} \
             --private-key ${{ secrets.DEV_IOS_AUTH_KEY }}
 
-      - name: Upload IPA to TestFlight
+      - name: Upload ipa to TestFlight
         run: |
           xcrun altool --upload-app \
             -f "./packages/mottai_flutter_app/build/ios/ipa/mottai_dev.ipa" \

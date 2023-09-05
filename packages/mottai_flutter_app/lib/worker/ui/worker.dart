@@ -119,9 +119,9 @@ class WorkerPageBody extends ConsumerWidget {
               title: '投稿した感想',
               titleStyle: Theme.of(context).textTheme.titleLarge,
               content: const MaterialHorizontalCard(
-                title: '矢郷農園でレモンの収穫をお手...あああああああああああああああ',
-                description: '先週末、矢郷農園でレモンの収穫を...あああああああああああ',
-                imageUrl:
+                header: '矢郷農園でレモンの収穫をお手...あああああああああああああああ',
+                subhead: '先週末、矢郷農園でレモンの収穫を...あああああああああああ',
+                mediaImageUrl:
                     'https://www.kaku-ichi.co.jp/media/wp-content/uploads/2020/02/20200226001.jpg',
               ),
             ),

@@ -229,10 +229,10 @@ class HostPageBody extends ConsumerWidget {
                       final list_ = jobs.map(
                         (job) {
                           return MaterialHorizontalCard(
-                            title: job.title,
-                            description: job.content,
+                            header: job.title,
+                            subhead: job.content,
                             // TODO 掲載中のお仕事ごとに画像があってもいいかも
-                            imageUrl:
+                            mediaImageUrl:
                                 'https://image.space.rakuten.co.jp/d/strg/ctrl/9/640594311698c5a7d384759ef33cd4c313b50f29.96.9.9.3.jpeg',
                           );
                         },

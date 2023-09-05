@@ -108,8 +108,7 @@ class JobFormState extends ConsumerState<JobForm> {
               onTap: firebaseStorageController.pickImageFromGallery,
               showDetailOnTap: false,
               imageUrl: pickedImageFile?.path ?? widget._job!.imageUrl,
-              height: _imageHeight,
-              width: null,
+              maxHeight: _imageHeight,
             )
           else
             GestureDetector(

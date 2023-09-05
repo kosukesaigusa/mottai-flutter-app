@@ -42,8 +42,7 @@ class GenericImagesPage extends StatelessWidget {
               const Text('長方形'),
               GenericImage.rectangle(
                 imageUrl: 'https://picsum.photos/100',
-                height: 100,
-                width: 240,
+                maxHeight: 100,
                 borderRadius: 12,
                 onTap: () => debugPrint('onTap'),
               ),
@@ -51,8 +50,7 @@ class GenericImagesPage extends StatelessWidget {
               // errorWidgetのサンプル
               GenericImage.rectangle(
                 imageUrl: 'https://testinvalidurl.com',
-                height: 100,
-                width: 240,
+                maxWidth: 240,
                 borderRadius: 12,
                 onTap: () => debugPrint('onTap'),
               ),

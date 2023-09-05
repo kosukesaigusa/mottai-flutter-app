@@ -1,5 +1,9 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:firebase_common/firebase_common.dart';
 import 'package:flutter/material.dart';
+
+import '../../pagination/ui/pagination_list_view.dart';
+import '../review.dart';
 
 /// レビュー一覧画面。
 @RoutePage()
@@ -14,6 +18,14 @@ class ReviewsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const SizedBox();
+    return FirestorePaginationListView<ReadReview>(
+      stateNotifierProvider: reviewsStateNotifierProvider,
+      itemBuilder: (context, review) =>
+          // TODO: 後で MaterialVerticalCard に書き換える。
+          ListTile(
+        title: Text(review.title),
+        subtitle: Text(review.content),
+      ),
+    );
   }
 }

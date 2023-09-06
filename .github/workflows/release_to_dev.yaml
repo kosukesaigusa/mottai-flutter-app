@@ -64,6 +64,13 @@ jobs:
           p12-file-base64: ${{ secrets.DEV_APPLE_DISTRIBUTION_CERTIFICATE_P12_BASE64_STRING }}
           p12-password: ${{ secrets.DEV_APPLE_DISTRIBUTION_CERTIFICATE_P12_PASSWORD }}
 
+      - name: Prepare Xcode build settings for Distribution
+        run: |
+          # 適切なプロビジョニングプロファイルの名前を指定する
+          echo "PROVISIONING_PROFILE_SPECIFIER = Mottai Flutter App Dev" >> DartDefines.xcconfig
+          # 手動署名を選択する
+          echo "CODE_SIGN_STYLE = Manual" >> DartDefines.xcconfig
+
       - name: Create Environment.swift
         run: |
           echo "import Foundation" > packages/mottai_flutter_app/ios/Runner/Environment.swift

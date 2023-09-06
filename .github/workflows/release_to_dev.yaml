@@ -37,6 +37,23 @@ jobs:
       #     echo '${{ secrets.DEV_DART_DEFINE_JSON_STRING }}' > dev-dart-define.json
       #     cat dev-dart-define.json
 
+      # ... 既存のタスク
+
+      - name: Prepare Xcode build settings
+        run: |
+          # dart_define.json から各値を読み込む
+          # FLAVOR=$(jq -r '.flavor' dart_define.json)
+          # APP_NAME=$(jq -r '.appName' dart_define.json)
+          # APP_ID_SUFFIX=$(jq -r '.appIdSuffix' dart_define.json)
+
+          # DartDefines.xcconfig ファイルに書き込む
+          echo "flavor = dev" > DartDefines.xcconfig
+          echo "appName = mottai_dev" >> DartDefines.xcconfig
+          echo "appIdSuffix = .dev" >> DartDefines.xcconfig
+
+          # このファイルを Xcode が参照できるように移動する（オプション）
+          mv DartDefines.xcconfig packages/mottai_flutter_app/ios/
+
       - name: Decode and install provisioning profile
         run: |
           echo ${{ secrets.DEV_APPLE_DISTRIBUTION_PROVISIONING_PROFILE_BASE64_STRING }} | base64 --decode > profile.mobileprovision

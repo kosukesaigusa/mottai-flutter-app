@@ -41,7 +41,7 @@ jobs:
           cp profile.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles/
 
       - name: Run import-codesign-certs
-        uses: Apple-Actions/import-codesign-certs@v1
+        uses: Apple-Actions/import-codesign-certs@v2
         with:
           p12-file-base64: ${{ secrets.APPLE_DEVELOPMENT_CERTIFICATE_P12_BASE64_STRING }}
           p12-password: ${{ secrets.APPLE_DEVELOPMENT_CERTIFICATE_P12_PASSWORD }}
@@ -70,8 +70,9 @@ jobs:
 
       - name: Validate ipa
         run: |
+          cd packages/mottai_flutter_app
           xcrun altool --validate-app \
-            -f "./packages/mottai_flutter_app/build/ios/ipa/mottai_dev.ipa" \
+            -f "./build/ios/ipa/mottai_dev.ipa" \
             -t ios \
             --apiKey ${{ secrets.DEV_IOS_API_KEY }} \
             --apiIssuer ${{ secrets.DEV_IOS_API_ISSUER }} \
@@ -79,8 +80,9 @@ jobs:
 
       - name: Upload ipa to TestFlight
         run: |
+          cd packages/mottai_flutter_app
           xcrun altool --upload-app \
-            -f "./packages/mottai_flutter_app/build/ios/ipa/mottai_dev.ipa" \
+            -f "./build/ios/ipa/mottai_dev.ipa" \
             -t ios \
             --apiKey ${{ secrets.DEV_IOS_API_KEY }} \
             --apiIssuer ${{ secrets.DEV_IOS_API_ISSUER }} \

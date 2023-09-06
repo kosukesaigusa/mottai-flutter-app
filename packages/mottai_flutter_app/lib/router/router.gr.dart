@@ -17,7 +17,8 @@ import 'package:mottai_flutter_app/development/development_items/ui/development_
     as _i6;
 import 'package:mottai_flutter_app/development/email_and_password_sign_in/ui/email_and_password_sign_in.dart'
     as _i7;
-import 'package:mottai_flutter_app/development/fcm_token/fcm_token.dart' as _i8;
+import 'package:mottai_flutter_app/development/fcm_token/ui/fcm_token.dart'
+    as _i8;
 import 'package:mottai_flutter_app/development/firebase_messaging/ui/firebase_messaging.dart'
     as _i9;
 import 'package:mottai_flutter_app/development/firebase_storage/ui/firebase_storage.dart'

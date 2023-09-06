@@ -5,7 +5,7 @@ import '../chat/ui/chat_rooms.dart';
 import '../development/color/ui/color.dart';
 import '../development/development_items/ui/development_items.dart';
 import '../development/email_and_password_sign_in/ui/email_and_password_sign_in.dart';
-import '../development/fcm_token/fcm_token.dart';
+import '../development/fcm_token/ui/fcm_token.dart';
 import '../development/firebase_messaging/ui/firebase_messaging.dart';
 import '../development/firebase_storage/ui/firebase_storage.dart';
 import '../development/force_update/ui/force_update.dart';

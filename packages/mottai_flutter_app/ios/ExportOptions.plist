@@ -8,8 +8,9 @@
 	<string>app-store</string>
 	<key>provisioningProfiles</key>
 	<dict>
-		<key>com.kosukesaigusa.mottaiFlutterApp.dev</key>
-		<string>profile</string>
+		<!-- Provisioning Profile の中身を確認して App ID と名前を指定する必要がある -->
+		<key>M92JZ2K56V.com.kosukesaigusa.mottaiFlutterApp.dev</key>
+		<string>Distribution Mottai Flutter App Dev</string>
 	</dict>
 	<key>signingCertificate</key>
 	<string>Apple Distribution</string>

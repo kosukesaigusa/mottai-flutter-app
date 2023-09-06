@@ -36,7 +36,7 @@ jobs:
 
       - name: Decode and install provisioning profile
         run: |
-          echo ${{ secrets.PROVISIONING_PROFILE_BASE64_STRING }} | base64 --decode > profile.mobileprovision
+          echo ${{ secrets.DEV_APPLE_DISTRIBUTION_PROVISIONING_PROFILE_BASE64_STRING }} | base64 --decode > profile.mobileprovision
           mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
           cp profile.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles/
 

@@ -9,7 +9,7 @@
 	<key>provisioningProfiles</key>
 	<dict>
 		<!-- Provisioning Profile の中身を確認して App ID と名前を指定する必要がある -->
-		<key>M92JZ2K56V.com.kosukesaigusa.mottaiFlutterApp.dev</key>
+		<key>com.kosukesaigusa.mottaiFlutterApp.dev</key>
 		<string>Mottai Flutter App Dev</string>
 	</dict>
 	<key>signingCertificate</key>

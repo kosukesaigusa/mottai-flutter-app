@@ -32,7 +32,10 @@ jobs:
         run: cd packages/mottai_flutter_app && flutter pub get
 
       - name: Create dev-dart-define.json from GitHub secret
-        run: cd packages/mottai_flutter_app && echo '${{ secrets.DEV_DART_DEFINE_JSON_STRING }}' > dev-dart-define.json
+        run: |
+          cd packages/mottai_flutter_app
+          echo '${{ secrets.DEV_DART_DEFINE_JSON_STRING }}' > dev-dart-define.json
+          cat dev-dart-define.json
 
       - name: Decode and install provisioning profile
         run: |

@@ -43,8 +43,8 @@ jobs:
       - name: Run import-codesign-certs
         uses: Apple-Actions/import-codesign-certs@v2
         with:
-          p12-file-base64: ${{ secrets.APPLE_DEVELOPMENT_CERTIFICATE_P12_BASE64_STRING }}
-          p12-password: ${{ secrets.APPLE_DEVELOPMENT_CERTIFICATE_P12_PASSWORD }}
+          p12-file-base64: ${{ secrets.APPLE_DISTRIBUTION_CERTIFICATE_P12_BASE64_STRING }}
+          p12-password: ${{ secrets.APPLE_DISTRIBUTION_CERTIFICATE_P12_PASSWORD }}
 
       - name: Create Environment.swift
         run: |

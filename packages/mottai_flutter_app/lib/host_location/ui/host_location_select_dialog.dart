@@ -71,7 +71,7 @@ class HostLocationSelectDialogState
                 ),
               ),
               ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
                   final geoPoint = GeoPoint(
                     _selectedMarker.position.latitude,
                     _selectedMarker.position.longitude,
@@ -81,7 +81,17 @@ class HostLocationSelectDialogState
                     geohash: geoFirePoint.geohash,
                     geopoint: geoPoint,
                   );
-                  Navigator.pop(context, geo);
+
+                  final confirm = await showDialog<bool>(
+                    context: context,
+                    builder: (context) => _ConfirmDialog(geo: geo),
+                  );
+
+                  if (confirm != null && confirm) {
+                    if (context.mounted) {
+                      Navigator.pop(context, geo);
+                    }
+                  }
                 },
                 child: const Text('位置情報を決定する'),
               ),
@@ -89,6 +99,38 @@ class HostLocationSelectDialogState
           ),
         ),
       ),
+    );
+  }
+}
+
+class _ConfirmDialog extends StatelessWidget {
+  const _ConfirmDialog({
+    required this.geo,
+  });
+
+  final Geo geo;
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('位置を選択しました'),
+      content: Text(
+        '・緯度： ${geo.geopoint.latitude}\n'
+        '・緯度： ${geo.geopoint.longitude}\n'
+        'の地点を選択しました。\n'
+        '\n'
+        'マップ上のピンの位置が正しいことを確認してください。\n',
+      ),
+      actions: <Widget>[
+        TextButton(
+          child: const Text('キャンセル'),
+          onPressed: () => Navigator.pop(context, false),
+        ),
+        TextButton(
+          child: const Text('OK'),
+          onPressed: () => Navigator.pop(context, true),
+        ),
+      ],
     );
   }
 }

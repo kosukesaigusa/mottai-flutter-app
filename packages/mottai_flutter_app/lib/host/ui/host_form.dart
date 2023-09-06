@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dart_flutter_common/dart_flutter_common.dart';
 import 'package:firebase_common/firebase_common.dart';
@@ -12,8 +14,15 @@ import '../../development/firebase_storage/ui/firebase_storage_controller.dart';
 import '../../host_location/ui/host_location_select_dialog.dart';
 import 'host_controller.dart';
 
+/// 東京駅の緯度経度（テスト用）初期位置は現在地？
+const _tokyoStation = LatLng(35.681236, 139.767125);
+
 /// 画像選択フィールドのエラーメッセージ
 final imageFieldErrorStateProvider =
+    StateProvider.autoDispose<String?>((_) => null);
+
+/// ホストタイプフィールドのエラーメッセージ
+final hostTypeErrorStateProvider =
     StateProvider.autoDispose<String?>((_) => null);
 
 /// - `create` の場合、ログイン済みの `workerId`（ユーザー ID）
@@ -137,10 +146,7 @@ class HostFormState extends ConsumerState<HostForm> {
       );
     } else {
       _geo = convertLatLngToGeo(
-        const LatLng(
-          0,
-          0,
-        ),
+        _tokyoStation,
       );
       _markers.add(
         Marker(
@@ -150,6 +156,33 @@ class HostFormState extends ConsumerState<HostForm> {
         ),
       );
     }
+  }
+
+  bool _validate(File? pickedImageFile) {
+    final textValidate = formKey.currentState?.validate();
+    final isExistImage =
+        (pickedImageFile != null) || (widget._host?.imageUrl != null);
+    final isSelectedHostType = _selectedHosyTypes.isNotEmpty;
+
+    var result = textValidate ?? true; // テキストの検証結果を代入(すべてのアンドをとるため)
+
+    // エラーメッセージの初期化
+    ref.watch(hostTypeErrorStateProvider.notifier).state = null;
+    ref.watch(imageFieldErrorStateProvider.notifier).state = null;
+
+    // 画像のチェック
+    if (!isExistImage) {
+      ref.watch(imageFieldErrorStateProvider.notifier).state = '画像を選択してください';
+      result = false;
+    }
+
+    // ホストタイプのチェック
+    if (!isSelectedHostType) {
+      ref.watch(hostTypeErrorStateProvider.notifier).state =
+          'ホストタイプを1つ以上選択してください';
+      result = false;
+    }
+    return result;
   }
 
   @override
@@ -252,6 +285,7 @@ class HostFormState extends ConsumerState<HostForm> {
                       for (final v in HostType.values) v: v.label,
                     },
                     isRequired: true,
+                    errorMessage: ref.watch(hostTypeErrorStateProvider),
                     enabledChoices: _selectedHosyTypes,
                     onChoiceSelected: (item) {
                       if (_selectedHosyTypes.contains(item)) {
@@ -371,20 +405,7 @@ class HostFormState extends ConsumerState<HostForm> {
                     child: Center(
                       child: ElevatedButton(
                         onPressed: () {
-                          final isValidate = formKey.currentState?.validate();
-                          final isExistImage = (pickedImageFile != null) ||
-                              (widget._host?.imageUrl != null);
-
-                          if (!(isValidate ?? true) || !isExistImage) {
-                            if (!isExistImage) {
-                              ref
-                                  .watch(imageFieldErrorStateProvider.notifier)
-                                  .state = '画像を選択してください';
-                            } else {
-                              ref
-                                  .watch(imageFieldErrorStateProvider.notifier)
-                                  .state = null;
-                            }
+                          if (!_validate(pickedImageFile)) {
                             return;
                           }
 
@@ -441,6 +462,7 @@ class _TextInputSection<T extends dynamic> extends StatelessWidget {
     this.defaultDisplayLines = 1,
     this.controller,
     this.isRequired = false,
+    this.errorMessage,
     this.child,
   })  : choices = const {},
         enabledChoices = const [],
@@ -454,6 +476,7 @@ class _TextInputSection<T extends dynamic> extends StatelessWidget {
     required this.enabledChoices,
     required this.onChoiceSelected,
     this.isRequired = false,
+    this.errorMessage,
     this.child,
   })  : defaultDisplayLines = 0,
         controller = null,
@@ -464,6 +487,7 @@ class _TextInputSection<T extends dynamic> extends StatelessWidget {
     required this.title,
     this.description,
     this.isRequired = false,
+    this.errorMessage,
     required this.child,
   })  : defaultDisplayLines = 0,
         controller = null,
@@ -503,6 +527,9 @@ class _TextInputSection<T extends dynamic> extends StatelessWidget {
   /// カスタム可能な子ウィジェット
   final Widget? child;
 
+  /// エラーメッセージ
+  final String? errorMessage;
+
   @override
   Widget build(BuildContext context) {
     return Section(
@@ -518,6 +545,17 @@ class _TextInputSection<T extends dynamic> extends StatelessWidget {
       content: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          if (errorMessage != null) ...[
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                errorMessage!,
+                style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                      color: Theme.of(context).colorScheme.error,
+                    ),
+              ),
+            ),
+          ],
           if (defaultDisplayLines > 0) ...[
             _InputTextField(
               controller: controller,

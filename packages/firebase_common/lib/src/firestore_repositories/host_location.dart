@@ -6,8 +6,9 @@ class HostLocationRepository {
   final _query = HostLocationQuery();
 
   /// 指定した [HostLocation] を取得する。
-  Future<ReadHostLocation?> fetchHostLocation(
-          {required String hostLocationId}) =>
+  Future<ReadHostLocation?> fetchHostLocation({
+    required String hostLocationId,
+  }) =>
       _query.fetchDocument(hostLocationId: hostLocationId);
 
   /// [Host]から関連する[HostLocation]をすべて取得する。

@@ -365,7 +365,8 @@ class HostFormState extends ConsumerState<HostForm> {
                               final markers = <Marker>{}..add(
                                   Marker(
                                     markerId: MarkerId(
-                                      '${_geo.geopoint.latitude},${_geo.geopoint.longitude}',
+                                      '${_geo.geopoint.latitude},'
+                                      '${_geo.geopoint.longitude}',
                                     ),
                                     position: convertGeoToLatLng(_geo),
                                   ),

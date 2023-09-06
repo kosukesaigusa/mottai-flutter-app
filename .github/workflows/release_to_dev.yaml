@@ -56,6 +56,15 @@ jobs:
           echo "  static let googleMapApiKey = \"${{ secrets.DEV_GOOGLE_MAP_API_KEY }}\"" >> packages/mottai_flutter_app/ios/Runner/Environment.swift
           echo "}" >> packages/mottai_flutter_app/ios/Runner/Environment.swift
 
+      - name: Show Xcode build settings
+        run: |
+          cd packages/mottai_flutter_app/ios
+          xcodebuild -showBuildSettings
+
+      - name: Output environment variables
+        run: |
+          echo "App Id Suffix: $appIdSuffix"
+
       - name: flutter build ipa
         run: |
           cd packages/mottai_flutter_app
@@ -68,6 +77,11 @@ jobs:
             --build-name=$(grep 'version:' pubspec.yaml | cut -d ' ' -f 2 | cut -d '+' -f 1) \
             --build-number=$GITHUB_RUN_NUMBER \
             --export-options-plist="ios/ExportOptions.plist"
+
+      - name: Show Xcode build settings
+        run: |
+          cd packages/mottai_flutter_app/ios
+          xcodebuild -showBuildSettings
 
       - name: Save AuthKey.p8 file
         run: |

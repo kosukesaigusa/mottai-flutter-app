@@ -129,6 +129,12 @@ class HostFormState extends ConsumerState<HostForm> {
 
     _controller = ref.read(hostControllerProvider(widget._hostId));
 
+    // ホストタイプ設定
+    if (widget._host != null) {
+      _selectedHosyTypes.addAll(widget._host!.hostTypes.toList());
+    }
+
+    // ホスト所在設定
     final hostLocation = widget._hostLocation;
     if (hostLocation != null) {
       _geo = convertLatLngToGeo(

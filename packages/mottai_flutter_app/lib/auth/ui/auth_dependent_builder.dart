@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../auth.dart';
+import 'sign_in_buttons.dart';
 
 /// Firebase に Auth にサインイン済みの場合にのみ [onAuthenticated] で渡した
 /// ウィジェットを表示する。
@@ -40,7 +42,17 @@ class _SignedOut extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(child: Text('ログインしてください。'));
+    return const Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text('機能を使用するには、サインインが必要です。'),
+          Text('下記のいずれかの方法でサインインしてください。'),
+          Gap(24),
+          SignInButtons(),
+        ],
+      ),
+    );
   }
 }
 

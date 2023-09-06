@@ -1,11 +1,11 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:dart_flutter_common/dart_flutter_common.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../auth/ui/auth_dependent_builder.dart';
+import '../../auth/ui/social_link_buttons.dart';
 import '../../host/ui/host_create.dart';
 import '../../user/ui/user_mode.dart';
 import '../../user/user.dart';
@@ -119,9 +119,9 @@ class WorkerPageBody extends ConsumerWidget {
               title: '投稿した感想',
               titleStyle: Theme.of(context).textTheme.titleLarge,
               content: const MaterialHorizontalCard(
-                title: '矢郷農園でレモンの収穫をお手...あああああああああああああああ',
-                description: '先週末、矢郷農園でレモンの収穫を...あああああああああああ',
-                imageUrl:
+                header: '矢郷農園でレモンの収穫をお手...あああああああああああああああ',
+                subhead: '先週末、矢郷農園でレモンの収穫を...あああああああああああ',
+                mediaImageUrl:
                     'https://www.kaku-ichi.co.jp/media/wp-content/uploads/2020/02/20200226001.jpg',
               ),
             ),
@@ -130,70 +130,11 @@ class WorkerPageBody extends ConsumerWidget {
               onUserAuthenticated: (userId) {
                 return Column(
                   children: [
-                    const Divider(
-                      height: 36,
-                    ),
+                    const Divider(height: 36),
                     Section(
                       title: 'ソーシャル連携',
                       titleStyle: Theme.of(context).textTheme.titleLarge,
-                      content: const Column(
-                        children: [
-                          Row(
-                            children: [
-                              FaIcon(
-                                FontAwesomeIcons.google,
-                                size: 30,
-                              ),
-                              Gap(10),
-                              Text('Google'),
-                              // TODO google連携済みかどうかで出し分けられるようにする
-                              Expanded(
-                                child: Align(
-                                  alignment: Alignment.centerRight,
-                                  child: Text('連携済み'),
-                                ),
-                              ),
-                            ],
-                          ),
-                          Gap(12),
-                          Row(
-                            children: [
-                              FaIcon(
-                                FontAwesomeIcons.apple,
-                                size: 40,
-                              ),
-                              Gap(10),
-                              Text('Apple'),
-                              // TODO apple連携済みかどうかで出し分けられるようにする
-                              Expanded(
-                                child: Align(
-                                  alignment: Alignment.centerRight,
-                                  child: Text('連携済み'),
-                                ),
-                              ),
-                            ],
-                          ),
-                          Gap(12),
-                          Row(
-                            children: [
-                              FaIcon(
-                                FontAwesomeIcons.line,
-                                color: Color(0xff06c755),
-                                size: 30,
-                              ),
-                              Gap(10),
-                              Text('LINE'),
-                              // TODO line連携済みかどうかで出し分けられるようにする
-                              Expanded(
-                                child: Align(
-                                  alignment: Alignment.centerRight,
-                                  child: Text('連携済み'),
-                                ),
-                              ),
-                            ],
-                          )
-                        ],
-                      ),
+                      content: const SocialLinkButtons(),
                     ),
                     if (!isHost) ...[
                       const Divider(height: 36),

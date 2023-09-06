@@ -34,6 +34,9 @@ final jobRepositoryProvider =
 final readStatusRepositoryProvider =
     Provider.autoDispose<ReadStatusRepository>((_) => ReadStatusRepository());
 
+final reviewRepositoryProvider =
+    Provider.autoDispose<ReviewRepository>((_) => ReviewRepository());
+
 final sampleTodoRepositoryProvider =
     Provider.autoDispose<SampleTodoRepository>((_) => SampleTodoRepository());
 

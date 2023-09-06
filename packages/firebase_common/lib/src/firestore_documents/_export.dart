@@ -6,6 +6,7 @@ export 'host_location.dart';
 export 'in_review_config.dart';
 export 'job.dart';
 export 'read_status.dart';
+export 'review.dart';
 export 'sample_todo.dart';
 export 'user_fcm_token.dart';
 export 'user_social_login.dart';

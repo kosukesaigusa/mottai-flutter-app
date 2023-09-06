@@ -1,7 +1,7 @@
 name: mottai_flutter_app
 description: MOTTAI mobile app.
 publish_to: "none"
-version: 0.0.1
+version: 1.0.1
 
 environment:
   sdk: ">=3.0.0 <4.0.0"
@@ -58,6 +58,7 @@ flutter:
 
   assets:
     - assets/images/
+    - assets/login_icon/
 
 flutter_icons:
   android: true

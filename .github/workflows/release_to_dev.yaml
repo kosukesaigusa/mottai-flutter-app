@@ -1,0 +1,60 @@
+name: Flutter CI/CD
+
+on:
+  push:
+    branches:
+      - release_to_dev
+
+jobs:
+  build:
+    runs-on: macOS-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Read Flutter SDK version
+        run: echo "FLUTTER_VERSION=$(jq -r '.flutterSdkVersion' .fvm/fvm_config.json)" >> $GITHUB_ENV
+        shell: bash
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+
+      - name: flutter pub get (dart_flutter_common)
+        run: cd packages/dart_flutter_common && flutter pub get
+
+      - name: flutter pub get (firebase_common)
+        run: cd packages/firebase_common && flutter pub get
+
+      - name: flutter pub get (mottai_flutter_app)
+        run: cd packages/mottai_flutter_app && flutter pub get
+
+      - name: Flutter Build IPA
+        run: |
+          cd packages/mottai_flutter_app
+          flutter build ipa --release \
+            --dart-define-from-file="dart_defines/dev-dart-define.json" \
+            -t "lib/main.dart" \
+            --build-name=$(grep 'version:' pubspec.yaml | cut -d ' ' -f 2 | cut -d '+' -f 1) \
+            --build-number=$GITHUB_RUN_NUMBER \
+            --export-options-plist="ios/ExportOptions.plist"
+
+      - name: Validate IPA
+        run: |
+          xcrun altool --validate-app \
+            -f "./packages/mottai_flutter_app/build/ios/ipa/mottai_dev.ipa" \
+            -t ios \
+            --apiKey ${{ secrets.DEV_IOS_API_KEY }} \
+            --apiIssuer ${{ secrets.DEV_IOS_API_ISSUER }} \
+            --private-key ${{ secrets.DEV_IOS_AUTH_KEY }}
+
+      - name: Upload IPA to TestFlight
+        run: |
+          xcrun altool --upload-app \
+            -f "./packages/mottai_flutter_app/build/ios/ipa/mottai_dev.ipa" \
+            -t ios \
+            --apiKey ${{ secrets.DEV_IOS_API_KEY }} \
+            --apiIssuer ${{ secrets.DEV_IOS_API_ISSUER }} \
+            --private-key ${{ secrets.DEV_IOS_AUTH_KEY }}

@@ -61,6 +61,10 @@ jobs:
           cd packages/mottai_flutter_app
           flutter build ipa --release \
             --dart-define-from-file="dev-dart-define.json" \
+            --dart-define=FLAVOR=dev \
+            --dart-define=LINE_CHANNEL_ID=${{ secrets.DEV_LINE_CHANNEL_ID }} \
+            --dart-define=appIdSuffix=.dev \
+            --dart-define=appName=mottai_dev \
             -t "lib/main.dart" \
             --build-name=$(grep 'version:' pubspec.yaml | cut -d ' ' -f 2 | cut -d '+' -f 1) \
             --build-number=$GITHUB_RUN_NUMBER \

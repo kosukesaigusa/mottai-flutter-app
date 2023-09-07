@@ -21,8 +21,9 @@ class SignInButtons extends ConsumerWidget {
           child: SignInButton(
             Buttons.google,
             text: 'Google でサインイン',
-            onPressed: () async =>
-                ref.read(authControllerProvider).signIn(SignInMethod.google),
+            onPressed: () async => ref
+                .read(authControllerProvider)
+                .signIn(SignInMethod.google, ref),
           ),
         ),
         if (defaultTargetPlatform == TargetPlatform.iOS) ...[
@@ -32,8 +33,9 @@ class SignInButtons extends ConsumerWidget {
             child: SignInButton(
               Buttons.appleDark,
               text: 'Apple でサインイン',
-              onPressed: () async =>
-                  ref.read(authControllerProvider).signIn(SignInMethod.apple),
+              onPressed: () async => ref
+                  .read(authControllerProvider)
+                  .signIn(SignInMethod.apple, ref),
               shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(
                   Radius.circular(8),
@@ -48,7 +50,7 @@ class SignInButtons extends ConsumerWidget {
           child: login_button.SignInButtonBuilder(
             text: 'LINE でサインイン',
             onPressed: () async =>
-                ref.read(authControllerProvider).signIn(SignInMethod.line),
+                ref.read(authControllerProvider).signIn(SignInMethod.line, ref),
             backgroundColor: const Color(0xff06C755),
             shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.all(

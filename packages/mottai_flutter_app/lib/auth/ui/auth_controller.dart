@@ -3,6 +3,7 @@ import 'package:firebase_common/firebase_common.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../scaffold_messenger_controller.dart';
+import '../../development/fcm_token/fcm_token.dart';
 import '../../exception.dart';
 import '../../user/host.dart';
 import '../../user/user_mode.dart';
@@ -39,10 +40,12 @@ class AuthController {
 
   /// 選択した [SignInMethod] でサインインする。
   /// サインイン後、必要性を確認して [UserMode] を `UserMode.Host` にする。
-  Future<void> signIn(SignInMethod signInMethod) async {
+  /// サインインに成功した際は、[UserFcmToken] を登録する。
+  Future<void> signIn(SignInMethod signInMethod, WidgetRef ref) async {
     try {
       final userCredential = await _signIn(signInMethod);
       await _maybeSetUserModeToHost(userCredential);
+      await setFcmTokenWithDeviceInfo(ref);
     } on AppException catch (e) {
       _appScaffoldMessengerController.showSnackBarByException(e);
     }

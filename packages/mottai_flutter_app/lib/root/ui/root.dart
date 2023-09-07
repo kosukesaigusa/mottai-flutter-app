@@ -1,7 +1,4 @@
-import 'dart:io';
-
 import 'package:auto_route/auto_route.dart';
-import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -11,7 +8,6 @@ import '../../auth/auth.dart';
 import '../../auth/ui/auth_controller.dart';
 import '../../development/development_items/ui/development_items.dart';
 import '../../development/email_and_password_sign_in/ui/email_and_password_sign_in.dart';
-import '../../development/fcm_token/fcm_token.dart';
 import '../../development/sign_in/ui/sign_in.dart';
 import '../../package_info.dart';
 import '../../push_notification/firebase_messaging.dart';
@@ -19,6 +15,7 @@ import '../../router/router.gr.dart';
 import '../../scaffold_messenger_controller.dart';
 import '../../user/user.dart';
 import '../../user/user_mode.dart';
+import '../../user_fcm_token/user_fcm_token.dart';
 
 final rootPageKey = Provider((ref) => GlobalKey<NavigatorState>());
 
@@ -43,10 +40,21 @@ class _RootPageState extends ConsumerState<RootPage> {
     super.initState();
     Future.wait<void>([
       ref.read(initializeFirebaseMessagingProvider)(),
-      ref.read(getFcmTokenProvider)(),
-    ]).then((value) async {
-      await setFcmTokenWithDeviceInfo(ref);
-    });
+      _setFcmTokenIfSignedIn(),
+    ]);
+  }
+
+  /// FCM トークンを取得し、サインイン済みなら FCM トークンを保存する。
+  Future<void> _setFcmTokenIfSignedIn() async {
+    final fcmToken = await ref.read(getFcmTokenProvider)();
+    if (fcmToken == null) {
+      return;
+    }
+    final userId = ref.read(userIdProvider);
+    if (userId == null) {
+      return;
+    }
+    await ref.read(fcmTokenServiceProvider).setUserFcmToken(userId: userId);
   }
 
   @override
@@ -188,28 +196,5 @@ class _DrawerChild extends ConsumerWidget {
         ),
       ],
     );
-  }
-}
-
-// NOTE: パッケージ依存なのでcommonではない。
-Future<String> getDeviceInfo() async {
-  final _deviceInfoPlugin = DeviceInfoPlugin();
-
-  if (Platform.isAndroid) {
-    const os = 'Android';
-    final androidInfo = await _deviceInfoPlugin.androidInfo;
-    final osVersion = androidInfo.version.release;
-    final device = androidInfo.device;
-
-    return 'os: $os, osVersion: $osVersion, device: $device';
-  } else if (Platform.isIOS) {
-    const os = 'iOS';
-    final iosInfo = await _deviceInfoPlugin.iosInfo;
-    final osVersion = iosInfo.systemVersion;
-    final device = iosInfo.model;
-
-    return 'os: $os, osVersion: $osVersion, device: $device';
-  } else {
-    throw UnimplementedError();
   }
 }

@@ -5,7 +5,6 @@ import '../chat/ui/chat_rooms.dart';
 import '../development/color/ui/color.dart';
 import '../development/development_items/ui/development_items.dart';
 import '../development/email_and_password_sign_in/ui/email_and_password_sign_in.dart';
-import '../development/fcm_token/ui/fcm_token.dart';
 import '../development/firebase_messaging/ui/firebase_messaging.dart';
 import '../development/firebase_storage/ui/firebase_storage.dart';
 import '../development/force_update/ui/force_update.dart';
@@ -15,6 +14,7 @@ import '../development/image_picker/ui/image_picker_sample.dart';
 import '../development/in_review/ui/in_review.dart';
 import '../development/sample_todo/ui/sample_todos.dart';
 import '../development/sign_in/ui/sign_in.dart';
+import '../development/user_fcm_token/ui/user_fcm_token.dart';
 import '../development/user_social_login/user_social_login.dart';
 import '../development/web_link/ui/web_link_stub.dart';
 import '../host/ui/create_or_update_host.dart';
@@ -148,8 +148,8 @@ class AppRouter extends $AppRouter {
       page: UserSocialLoginSampleRoute.page,
     ),
     AutoRoute(
-      path: FcmTokenPage.path,
-      page: FcmTokenRoute.page,
+      path: UserFcmTokenPage.path,
+      page: UserFcmTokenRoute.page,
     ),
     AutoRoute(
       path: FirebaseMessagingPage.path,

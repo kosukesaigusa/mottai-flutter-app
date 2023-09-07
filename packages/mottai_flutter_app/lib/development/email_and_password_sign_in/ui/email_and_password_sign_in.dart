@@ -4,7 +4,6 @@ import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../auth/ui/auth_controller.dart';
-import '../../fcm_token/fcm_token.dart';
 
 @RoutePage()
 class EmailAndPasswordSignInPage extends ConsumerStatefulWidget {
@@ -77,7 +76,6 @@ class EmailAndPasswordSignInPageState
                         email: _emailTextEditingController.text,
                         password: _passwordTextEditingController.text,
                       );
-                  await setFcmTokenWithDeviceInfo(ref);
                   navigator.pop();
                 },
                 child: const Text('サインイン'),

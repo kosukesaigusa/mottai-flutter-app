@@ -3,16 +3,17 @@ import 'package:firebase_common/firebase_common.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../scaffold_messenger_controller.dart';
-import '../../development/fcm_token/fcm_token.dart';
 import '../../exception.dart';
 import '../../user/host.dart';
 import '../../user/user_mode.dart';
+import '../../user_fcm_token/user_fcm_token.dart';
 import '../auth.dart';
 
 final authControllerProvider = Provider.autoDispose<AuthController>(
   (ref) => AuthController(
     authService: ref.watch(authServiceProvider),
     hostService: ref.watch(hostServiceProvider),
+    fcmTokenService: ref.watch(fcmTokenServiceProvider),
     userModeStateController: ref.watch(userModeStateProvider.notifier),
     appScaffoldMessengerController:
         ref.watch(appScaffoldMessengerControllerProvider),
@@ -23,16 +24,20 @@ class AuthController {
   const AuthController({
     required AuthService authService,
     required HostService hostService,
+    required FcmTokenService fcmTokenService,
     required StateController<UserMode> userModeStateController,
     required AppScaffoldMessengerController appScaffoldMessengerController,
   })  : _authService = authService,
         _hostService = hostService,
+        _fcmTokenService = fcmTokenService,
         _userModeStateController = userModeStateController,
         _appScaffoldMessengerController = appScaffoldMessengerController;
 
   final AuthService _authService;
 
   final HostService _hostService;
+
+  final FcmTokenService _fcmTokenService;
 
   final StateController<UserMode> _userModeStateController;
 
@@ -41,11 +46,11 @@ class AuthController {
   /// 選択した [SignInMethod] でサインインする。
   /// サインイン後、必要性を確認して [UserMode] を `UserMode.Host` にする。
   /// サインインに成功した際は、[UserFcmToken] を登録する。
-  Future<void> signIn(SignInMethod signInMethod, WidgetRef ref) async {
+  Future<void> signIn(SignInMethod signInMethod) async {
     try {
       final userCredential = await _signIn(signInMethod);
       await _maybeSetUserModeToHost(userCredential);
-      await setFcmTokenWithDeviceInfo(ref);
+      await _setFcmToken(userCredential);
     } on AppException catch (e) {
       _appScaffoldMessengerController.showSnackBarByException(e);
     }
@@ -98,6 +103,16 @@ class AuthController {
     if (await _hostService.hostExists(hostId: uid)) {
       _userModeStateController.update((state) => UserMode.host);
     }
+  }
+
+  /// サインインで得られた [UserCredential] を与え、それに対応するユーザーの FCM トークンを
+  /// 保存する。
+  Future<void> _setFcmToken(UserCredential userCredential) async {
+    final uid = userCredential.user?.uid;
+    if (uid == null) {
+      return;
+    }
+    await _fcmTokenService.setUserFcmToken(userId: uid);
   }
 
   /// [SignInMethod] に基づいて、[AuthService] に定義されたソーシャルログインのリンク処理を実行する。

@@ -17,38 +17,38 @@ import 'package:mottai_flutter_app/development/development_items/ui/development_
     as _i6;
 import 'package:mottai_flutter_app/development/email_and_password_sign_in/ui/email_and_password_sign_in.dart'
     as _i7;
-import 'package:mottai_flutter_app/development/fcm_token/ui/fcm_token.dart'
-    as _i8;
 import 'package:mottai_flutter_app/development/firebase_messaging/ui/firebase_messaging.dart'
-    as _i9;
+    as _i8;
 import 'package:mottai_flutter_app/development/firebase_storage/ui/firebase_storage.dart'
-    as _i10;
+    as _i9;
 import 'package:mottai_flutter_app/development/force_update/ui/force_update.dart'
-    as _i11;
+    as _i10;
 import 'package:mottai_flutter_app/development/generic_image/ui/generic_images.dart'
-    as _i12;
+    as _i11;
 import 'package:mottai_flutter_app/development/image_detail_view/ui/image_detail_view_stub.dart'
-    as _i14;
+    as _i13;
 import 'package:mottai_flutter_app/development/image_picker/ui/image_picker_sample.dart'
-    as _i15;
+    as _i14;
 import 'package:mottai_flutter_app/development/in_review/ui/in_review.dart'
-    as _i16;
+    as _i15;
 import 'package:mottai_flutter_app/development/sample_todo/ui/sample_todos.dart'
-    as _i24;
-import 'package:mottai_flutter_app/development/sign_in/ui/sign_in.dart' as _i25;
+    as _i23;
+import 'package:mottai_flutter_app/development/sign_in/ui/sign_in.dart' as _i24;
+import 'package:mottai_flutter_app/development/user_fcm_token/ui/user_fcm_token.dart'
+    as _i25;
 import 'package:mottai_flutter_app/development/user_social_login/user_social_login.dart'
     as _i26;
 import 'package:mottai_flutter_app/development/web_link/ui/web_link_stub.dart'
     as _i27;
 import 'package:mottai_flutter_app/host/ui/create_or_update_host.dart' as _i4;
-import 'package:mottai_flutter_app/host/ui/host.dart' as _i13;
-import 'package:mottai_flutter_app/job/ui/job_create.dart' as _i17;
-import 'package:mottai_flutter_app/job/ui/job_detail.dart' as _i18;
-import 'package:mottai_flutter_app/job/ui/job_update.dart' as _i19;
-import 'package:mottai_flutter_app/map/ui/map.dart' as _i20;
-import 'package:mottai_flutter_app/my_account/ui/my_account.dart' as _i21;
-import 'package:mottai_flutter_app/review/ui/reviews.dart' as _i22;
-import 'package:mottai_flutter_app/root/ui/root.dart' as _i23;
+import 'package:mottai_flutter_app/host/ui/host.dart' as _i12;
+import 'package:mottai_flutter_app/job/ui/job_create.dart' as _i16;
+import 'package:mottai_flutter_app/job/ui/job_detail.dart' as _i17;
+import 'package:mottai_flutter_app/job/ui/job_update.dart' as _i18;
+import 'package:mottai_flutter_app/map/ui/map.dart' as _i19;
+import 'package:mottai_flutter_app/my_account/ui/my_account.dart' as _i20;
+import 'package:mottai_flutter_app/review/ui/reviews.dart' as _i21;
+import 'package:mottai_flutter_app/root/ui/root.dart' as _i22;
 import 'package:mottai_flutter_app/worker/ui/create_or_update_worker.dart'
     as _i5;
 import 'package:mottai_flutter_app/worker/ui/worker.dart' as _i28;
@@ -124,34 +124,28 @@ abstract class $AppRouter extends _i29.RootStackRouter {
         child: const _i7.EmailAndPasswordSignInPage(),
       );
     },
-    FcmTokenRoute.name: (routeData) {
-      return _i29.AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const _i8.FcmTokenPage(),
-      );
-    },
     FirebaseMessagingRoute.name: (routeData) {
       return _i29.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const _i9.FirebaseMessagingPage(),
+        child: const _i8.FirebaseMessagingPage(),
       );
     },
     FirebaseStorageSampleRoute.name: (routeData) {
       return _i29.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const _i10.FirebaseStorageSamplePage(),
+        child: const _i9.FirebaseStorageSamplePage(),
       );
     },
     ForceUpdateSampleRoute.name: (routeData) {
       return _i29.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const _i11.ForceUpdateSamplePage(),
+        child: const _i10.ForceUpdateSamplePage(),
       );
     },
     GenericImagesRoute.name: (routeData) {
       return _i29.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const _i12.GenericImagesPage(),
+        child: const _i11.GenericImagesPage(),
       );
     },
     HostRoute.name: (routeData) {
@@ -160,7 +154,7 @@ abstract class $AppRouter extends _i29.RootStackRouter {
           orElse: () => HostRouteArgs(userId: pathParams.getString('userId')));
       return _i29.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: _i13.HostPage(
+        child: _i12.HostPage(
           userId: args.userId,
           key: args.key,
         ),
@@ -169,25 +163,25 @@ abstract class $AppRouter extends _i29.RootStackRouter {
     ImageDetailViewStubRoute.name: (routeData) {
       return _i29.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const _i14.ImageDetailViewStubPage(),
+        child: const _i13.ImageDetailViewStubPage(),
       );
     },
     ImagePickerSampleRoute.name: (routeData) {
       return _i29.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const _i15.ImagePickerSamplePage(),
+        child: const _i14.ImagePickerSamplePage(),
       );
     },
     InReviewRoute.name: (routeData) {
       return _i29.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const _i16.InReviewPage(),
+        child: const _i15.InReviewPage(),
       );
     },
     JobCreateRoute.name: (routeData) {
       return _i29.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const _i17.JobCreatePage(),
+        child: const _i16.JobCreatePage(),
       );
     },
     JobDetailRoute.name: (routeData) {
@@ -197,7 +191,7 @@ abstract class $AppRouter extends _i29.RootStackRouter {
               JobDetailRouteArgs(jobId: pathParams.getString('jobId')));
       return _i29.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: _i18.JobDetailPage(
+        child: _i17.JobDetailPage(
           jobId: args.jobId,
           key: args.key,
         ),
@@ -210,7 +204,7 @@ abstract class $AppRouter extends _i29.RootStackRouter {
               JobUpdateRouteArgs(jobId: pathParams.getString('jobId')));
       return _i29.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: _i19.JobUpdatePage(
+        child: _i18.JobUpdatePage(
           jobId: args.jobId,
           key: args.key,
         ),
@@ -219,37 +213,43 @@ abstract class $AppRouter extends _i29.RootStackRouter {
     MapRoute.name: (routeData) {
       return _i29.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const _i20.MapPage(),
+        child: const _i19.MapPage(),
       );
     },
     MyAccountRoute.name: (routeData) {
       return _i29.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const _i21.MyAccountPage(),
+        child: const _i20.MyAccountPage(),
       );
     },
     ReviewsRoute.name: (routeData) {
       return _i29.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const _i22.ReviewsPage(),
+        child: const _i21.ReviewsPage(),
       );
     },
     RootRoute.name: (routeData) {
       return _i29.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const _i23.RootPage(),
+        child: const _i22.RootPage(),
       );
     },
     SampleTodosRoute.name: (routeData) {
       return _i29.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const _i24.SampleTodosPage(),
+        child: const _i23.SampleTodosPage(),
       );
     },
     SignInSampleRoute.name: (routeData) {
       return _i29.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const _i25.SignInSamplePage(),
+        child: const _i24.SignInSamplePage(),
+      );
+    },
+    UserFcmTokenRoute.name: (routeData) {
+      return _i29.AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const _i25.UserFcmTokenPage(),
       );
     },
     UserSocialLoginSampleRoute.name: (routeData) {
@@ -464,21 +464,7 @@ class EmailAndPasswordSignInRoute extends _i29.PageRouteInfo<void> {
 }
 
 /// generated route for
-/// [_i8.FcmTokenPage]
-class FcmTokenRoute extends _i29.PageRouteInfo<void> {
-  const FcmTokenRoute({List<_i29.PageRouteInfo>? children})
-      : super(
-          FcmTokenRoute.name,
-          initialChildren: children,
-        );
-
-  static const String name = 'FcmTokenRoute';
-
-  static const _i29.PageInfo<void> page = _i29.PageInfo<void>(name);
-}
-
-/// generated route for
-/// [_i9.FirebaseMessagingPage]
+/// [_i8.FirebaseMessagingPage]
 class FirebaseMessagingRoute extends _i29.PageRouteInfo<void> {
   const FirebaseMessagingRoute({List<_i29.PageRouteInfo>? children})
       : super(
@@ -492,7 +478,7 @@ class FirebaseMessagingRoute extends _i29.PageRouteInfo<void> {
 }
 
 /// generated route for
-/// [_i10.FirebaseStorageSamplePage]
+/// [_i9.FirebaseStorageSamplePage]
 class FirebaseStorageSampleRoute extends _i29.PageRouteInfo<void> {
   const FirebaseStorageSampleRoute({List<_i29.PageRouteInfo>? children})
       : super(
@@ -506,7 +492,7 @@ class FirebaseStorageSampleRoute extends _i29.PageRouteInfo<void> {
 }
 
 /// generated route for
-/// [_i11.ForceUpdateSamplePage]
+/// [_i10.ForceUpdateSamplePage]
 class ForceUpdateSampleRoute extends _i29.PageRouteInfo<void> {
   const ForceUpdateSampleRoute({List<_i29.PageRouteInfo>? children})
       : super(
@@ -520,7 +506,7 @@ class ForceUpdateSampleRoute extends _i29.PageRouteInfo<void> {
 }
 
 /// generated route for
-/// [_i12.GenericImagesPage]
+/// [_i11.GenericImagesPage]
 class GenericImagesRoute extends _i29.PageRouteInfo<void> {
   const GenericImagesRoute({List<_i29.PageRouteInfo>? children})
       : super(
@@ -534,7 +520,7 @@ class GenericImagesRoute extends _i29.PageRouteInfo<void> {
 }
 
 /// generated route for
-/// [_i13.HostPage]
+/// [_i12.HostPage]
 class HostRoute extends _i29.PageRouteInfo<HostRouteArgs> {
   HostRoute({
     required String userId,
@@ -573,7 +559,7 @@ class HostRouteArgs {
 }
 
 /// generated route for
-/// [_i14.ImageDetailViewStubPage]
+/// [_i13.ImageDetailViewStubPage]
 class ImageDetailViewStubRoute extends _i29.PageRouteInfo<void> {
   const ImageDetailViewStubRoute({List<_i29.PageRouteInfo>? children})
       : super(
@@ -587,7 +573,7 @@ class ImageDetailViewStubRoute extends _i29.PageRouteInfo<void> {
 }
 
 /// generated route for
-/// [_i15.ImagePickerSamplePage]
+/// [_i14.ImagePickerSamplePage]
 class ImagePickerSampleRoute extends _i29.PageRouteInfo<void> {
   const ImagePickerSampleRoute({List<_i29.PageRouteInfo>? children})
       : super(
@@ -601,7 +587,7 @@ class ImagePickerSampleRoute extends _i29.PageRouteInfo<void> {
 }
 
 /// generated route for
-/// [_i16.InReviewPage]
+/// [_i15.InReviewPage]
 class InReviewRoute extends _i29.PageRouteInfo<void> {
   const InReviewRoute({List<_i29.PageRouteInfo>? children})
       : super(
@@ -615,7 +601,7 @@ class InReviewRoute extends _i29.PageRouteInfo<void> {
 }
 
 /// generated route for
-/// [_i17.JobCreatePage]
+/// [_i16.JobCreatePage]
 class JobCreateRoute extends _i29.PageRouteInfo<void> {
   const JobCreateRoute({List<_i29.PageRouteInfo>? children})
       : super(
@@ -629,7 +615,7 @@ class JobCreateRoute extends _i29.PageRouteInfo<void> {
 }
 
 /// generated route for
-/// [_i18.JobDetailPage]
+/// [_i17.JobDetailPage]
 class JobDetailRoute extends _i29.PageRouteInfo<JobDetailRouteArgs> {
   JobDetailRoute({
     required String jobId,
@@ -668,7 +654,7 @@ class JobDetailRouteArgs {
 }
 
 /// generated route for
-/// [_i19.JobUpdatePage]
+/// [_i18.JobUpdatePage]
 class JobUpdateRoute extends _i29.PageRouteInfo<JobUpdateRouteArgs> {
   JobUpdateRoute({
     required String jobId,
@@ -707,7 +693,7 @@ class JobUpdateRouteArgs {
 }
 
 /// generated route for
-/// [_i20.MapPage]
+/// [_i19.MapPage]
 class MapRoute extends _i29.PageRouteInfo<void> {
   const MapRoute({List<_i29.PageRouteInfo>? children})
       : super(
@@ -721,7 +707,7 @@ class MapRoute extends _i29.PageRouteInfo<void> {
 }
 
 /// generated route for
-/// [_i21.MyAccountPage]
+/// [_i20.MyAccountPage]
 class MyAccountRoute extends _i29.PageRouteInfo<void> {
   const MyAccountRoute({List<_i29.PageRouteInfo>? children})
       : super(
@@ -735,7 +721,7 @@ class MyAccountRoute extends _i29.PageRouteInfo<void> {
 }
 
 /// generated route for
-/// [_i22.ReviewsPage]
+/// [_i21.ReviewsPage]
 class ReviewsRoute extends _i29.PageRouteInfo<void> {
   const ReviewsRoute({List<_i29.PageRouteInfo>? children})
       : super(
@@ -749,7 +735,7 @@ class ReviewsRoute extends _i29.PageRouteInfo<void> {
 }
 
 /// generated route for
-/// [_i23.RootPage]
+/// [_i22.RootPage]
 class RootRoute extends _i29.PageRouteInfo<void> {
   const RootRoute({List<_i29.PageRouteInfo>? children})
       : super(
@@ -763,7 +749,7 @@ class RootRoute extends _i29.PageRouteInfo<void> {
 }
 
 /// generated route for
-/// [_i24.SampleTodosPage]
+/// [_i23.SampleTodosPage]
 class SampleTodosRoute extends _i29.PageRouteInfo<void> {
   const SampleTodosRoute({List<_i29.PageRouteInfo>? children})
       : super(
@@ -777,7 +763,7 @@ class SampleTodosRoute extends _i29.PageRouteInfo<void> {
 }
 
 /// generated route for
-/// [_i25.SignInSamplePage]
+/// [_i24.SignInSamplePage]
 class SignInSampleRoute extends _i29.PageRouteInfo<void> {
   const SignInSampleRoute({List<_i29.PageRouteInfo>? children})
       : super(
@@ -786,6 +772,20 @@ class SignInSampleRoute extends _i29.PageRouteInfo<void> {
         );
 
   static const String name = 'SignInSampleRoute';
+
+  static const _i29.PageInfo<void> page = _i29.PageInfo<void>(name);
+}
+
+/// generated route for
+/// [_i25.UserFcmTokenPage]
+class UserFcmTokenRoute extends _i29.PageRouteInfo<void> {
+  const UserFcmTokenRoute({List<_i29.PageRouteInfo>? children})
+      : super(
+          UserFcmTokenRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'UserFcmTokenRoute';
 
   static const _i29.PageInfo<void> page = _i29.PageInfo<void>(name);
 }

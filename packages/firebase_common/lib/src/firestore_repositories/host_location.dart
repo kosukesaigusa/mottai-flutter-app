@@ -21,11 +21,13 @@ class HostLocationRepository {
 
   /// [HostLocation] の情報を作成する。
   Future<void> create({
+    required String hostLocationId,
     required String hostId,
     required String address,
     required Geo geo,
   }) =>
-      _query.add(
+      _query.set(
+        hostLocationId: hostLocationId,
         createHostLocation: CreateHostLocation(
           hostId: hostId,
           address: address,

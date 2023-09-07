@@ -38,6 +38,7 @@ class HostLocationService {
   }) =>
       _hostLocationRepository.create(
         hostId: hostId,
+        hostLocationId: hostId,
         address: address,
         geo: geo,
       );

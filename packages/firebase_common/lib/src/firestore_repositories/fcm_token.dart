@@ -4,7 +4,7 @@ class FcmTokenRepository {
   final _query = UserFcmTokenQuery();
 
   /// 指定した [userId], [token]、[deviceInfo]をもとに ユーザーのFCMトークン情報を作成する。
-  Future<void> setUserFcmToken({
+  Future<void> set({
     required String userId,
     required String token,
     required String deviceInfo,
@@ -18,8 +18,8 @@ class FcmTokenRepository {
         ),
       );
 
-  /// 指定した [userFcmTokenId]をもとに ユーザーのFCMトークン情報を取得する。
-  Future<ReadUserFcmToken?> fetchUserFcmToken({
+  /// 指定した [userFcmTokenId]をもとにドキュメントを取得する。
+  Future<ReadUserFcmToken?> fetchDocument({
     required String userFcmTokenId,
   }) =>
       _query.fetchDocument(userFcmTokenId: userFcmTokenId);

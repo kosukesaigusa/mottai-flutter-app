@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:device_info_plus/device_info_plus.dart';
-import 'package:firebase_common/firebase_common.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -12,6 +11,7 @@ import '../../auth/auth.dart';
 import '../../auth/ui/auth_controller.dart';
 import '../../development/development_items/ui/development_items.dart';
 import '../../development/email_and_password_sign_in/ui/email_and_password_sign_in.dart';
+import '../../development/fcm_token/fcm_token.dart';
 import '../../development/sign_in/ui/sign_in.dart';
 import '../../package_info.dart';
 import '../../push_notification/firebase_messaging.dart';
@@ -37,33 +37,6 @@ class RootPage extends ConsumerStatefulWidget {
   ConsumerState<RootPage> createState() => _RootPageState();
 }
 
-// TODO: パッケージ依存なのでcommonではない？
-Future<String> getDeviceInfo() async {
-  final _deviceInfoPlugin = DeviceInfoPlugin();
-  late final String _os;
-  late final String _osVersion;
-  late final String _device;
-
-  if (Platform.isAndroid) {
-    final _androidInfo = await _deviceInfoPlugin.androidInfo;
-    _os = 'Android';
-    _osVersion = _androidInfo.version.release;
-    _device = _androidInfo.device;
-  } else if (Platform.isIOS) {
-    final _iosInfo = await _deviceInfoPlugin.iosInfo;
-    _os = 'iOS';
-    _osVersion = _iosInfo.systemVersion;
-    _device = _iosInfo.utsname.machine;
-  } else {
-    _os = '';
-    _osVersion = '';
-    _device = '';
-  }
-
-  final _deviceInfo = 'os: $_os, osVersion: $_osVersion, device: $_device';
-  return _deviceInfo;
-}
-
 class _RootPageState extends ConsumerState<RootPage> {
   @override
   void initState() {
@@ -72,22 +45,7 @@ class _RootPageState extends ConsumerState<RootPage> {
       ref.read(initializeFirebaseMessagingProvider)(),
       ref.read(getFcmTokenProvider)(),
     ]).then((value) async {
-      /// [FcmTokenRepository] のインスタンス。
-      final _fcmTokenRepository = FcmTokenRepository();
-      final _token = await ref.read(getFcmTokenProvider).call();
-      final _userId = ref.read(userIdProvider);
-
-      final _deviceInfo = await getDeviceInfo();
-
-      if (_token == null || _userId == null) {
-        return;
-      }
-
-      await _fcmTokenRepository.setUserFcmToken(
-        userId: _userId,
-        token: _token,
-        deviceInfo: _deviceInfo,
-      );
+      await setFcmTokenWithDeviceInfo(ref);
     });
   }
 
@@ -230,5 +188,28 @@ class _DrawerChild extends ConsumerWidget {
         ),
       ],
     );
+  }
+}
+
+// NOTE: パッケージ依存なのでcommonではない。
+Future<String> getDeviceInfo() async {
+  final _deviceInfoPlugin = DeviceInfoPlugin();
+
+  if (Platform.isAndroid) {
+    const os = 'Android';
+    final androidInfo = await _deviceInfoPlugin.androidInfo;
+    final osVersion = androidInfo.version.release;
+    final device = androidInfo.device;
+
+    return 'os: $os, osVersion: $osVersion, device: $device';
+  } else if (Platform.isIOS) {
+    const os = 'iOS';
+    final iosInfo = await _deviceInfoPlugin.iosInfo;
+    final osVersion = iosInfo.systemVersion;
+    final device = iosInfo.model;
+
+    return 'os: $os, osVersion: $osVersion, device: $device';
+  } else {
+    throw UnimplementedError();
   }
 }

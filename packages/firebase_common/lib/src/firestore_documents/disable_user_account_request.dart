@@ -7,8 +7,8 @@ part 'disable_user_account_request.flutterfire_gen.dart';
   path: 'disableUserAccountRequests',
   documentName: 'disableUserAccountRequest',
 )
-class DisableUserAccountRequests {
-  const DisableUserAccountRequests({
+class DisableUserAccountRequest {
+  const DisableUserAccountRequest({
     required this.userId,
     this.createdAt,
   });

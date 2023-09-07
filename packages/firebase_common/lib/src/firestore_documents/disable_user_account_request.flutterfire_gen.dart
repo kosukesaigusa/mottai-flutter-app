@@ -4,8 +4,8 @@
 
 part of 'disable_user_account_request.dart';
 
-class ReadDisableUserAccountRequests {
-  const ReadDisableUserAccountRequests({
+class ReadDisableUserAccountRequest {
+  const ReadDisableUserAccountRequest({
     required this.disableUserAccountRequestId,
     required this.path,
     required this.userId,
@@ -20,8 +20,8 @@ class ReadDisableUserAccountRequests {
 
   final DateTime? createdAt;
 
-  factory ReadDisableUserAccountRequests._fromJson(Map<String, dynamic> json) {
-    return ReadDisableUserAccountRequests(
+  factory ReadDisableUserAccountRequest._fromJson(Map<String, dynamic> json) {
+    return ReadDisableUserAccountRequest(
       disableUserAccountRequestId:
           json['disableUserAccountRequestId'] as String,
       path: json['path'] as String,
@@ -30,10 +30,10 @@ class ReadDisableUserAccountRequests {
     );
   }
 
-  factory ReadDisableUserAccountRequests.fromDocumentSnapshot(
+  factory ReadDisableUserAccountRequest.fromDocumentSnapshot(
       DocumentSnapshot ds) {
     final data = ds.data()! as Map<String, dynamic>;
-    return ReadDisableUserAccountRequests._fromJson(<String, dynamic>{
+    return ReadDisableUserAccountRequest._fromJson(<String, dynamic>{
       ...data,
       'disableUserAccountRequestId': ds.id,
       'path': ds.reference.path,
@@ -41,8 +41,8 @@ class ReadDisableUserAccountRequests {
   }
 }
 
-class CreateDisableUserAccountRequests {
-  const CreateDisableUserAccountRequests({
+class CreateDisableUserAccountRequest {
+  const CreateDisableUserAccountRequest({
     required this.userId,
   });
 
@@ -56,8 +56,8 @@ class CreateDisableUserAccountRequests {
   }
 }
 
-class UpdateDisableUserAccountRequests {
-  const UpdateDisableUserAccountRequests({
+class UpdateDisableUserAccountRequest {
+  const UpdateDisableUserAccountRequest({
     this.userId,
     this.createdAt,
   });
@@ -73,91 +73,91 @@ class UpdateDisableUserAccountRequests {
   }
 }
 
-class DeleteDisableUserAccountRequests {}
+class DeleteDisableUserAccountRequest {}
 
 /// Provides a reference to the disableUserAccountRequests collection for reading.
-final readDisableUserAccountRequestsCollectionReference = FirebaseFirestore
+final readDisableUserAccountRequestCollectionReference = FirebaseFirestore
     .instance
     .collection('disableUserAccountRequests')
-    .withConverter<ReadDisableUserAccountRequests>(
+    .withConverter<ReadDisableUserAccountRequest>(
       fromFirestore: (ds, _) =>
-          ReadDisableUserAccountRequests.fromDocumentSnapshot(ds),
+          ReadDisableUserAccountRequest.fromDocumentSnapshot(ds),
       toFirestore: (_, __) => throw UnimplementedError(),
     );
 
 /// Provides a reference to a disableUserAccountRequest document for reading.
-DocumentReference<ReadDisableUserAccountRequests>
-    readDisableUserAccountRequestsDocumentReference({
+DocumentReference<ReadDisableUserAccountRequest>
+    readDisableUserAccountRequestDocumentReference({
   required String disableUserAccountRequestId,
 }) =>
-        readDisableUserAccountRequestsCollectionReference
+        readDisableUserAccountRequestCollectionReference
             .doc(disableUserAccountRequestId);
 
 /// Provides a reference to the disableUserAccountRequests collection for creating.
-final createDisableUserAccountRequestsCollectionReference = FirebaseFirestore
+final createDisableUserAccountRequestCollectionReference = FirebaseFirestore
     .instance
     .collection('disableUserAccountRequests')
-    .withConverter<CreateDisableUserAccountRequests>(
+    .withConverter<CreateDisableUserAccountRequest>(
       fromFirestore: (_, __) => throw UnimplementedError(),
       toFirestore: (obj, _) => obj.toJson(),
     );
 
 /// Provides a reference to a disableUserAccountRequest document for creating.
-DocumentReference<CreateDisableUserAccountRequests>
-    createDisableUserAccountRequestsDocumentReference({
+DocumentReference<CreateDisableUserAccountRequest>
+    createDisableUserAccountRequestDocumentReference({
   required String disableUserAccountRequestId,
 }) =>
-        createDisableUserAccountRequestsCollectionReference
+        createDisableUserAccountRequestCollectionReference
             .doc(disableUserAccountRequestId);
 
 /// Provides a reference to the disableUserAccountRequests collection for updating.
-final updateDisableUserAccountRequestsCollectionReference = FirebaseFirestore
+final updateDisableUserAccountRequestCollectionReference = FirebaseFirestore
     .instance
     .collection('disableUserAccountRequests')
-    .withConverter<UpdateDisableUserAccountRequests>(
+    .withConverter<UpdateDisableUserAccountRequest>(
       fromFirestore: (_, __) => throw UnimplementedError(),
       toFirestore: (obj, _) => obj.toJson(),
     );
 
 /// Provides a reference to a disableUserAccountRequest document for updating.
-DocumentReference<UpdateDisableUserAccountRequests>
-    updateDisableUserAccountRequestsDocumentReference({
+DocumentReference<UpdateDisableUserAccountRequest>
+    updateDisableUserAccountRequestDocumentReference({
   required String disableUserAccountRequestId,
 }) =>
-        updateDisableUserAccountRequestsCollectionReference
+        updateDisableUserAccountRequestCollectionReference
             .doc(disableUserAccountRequestId);
 
 /// Provides a reference to the disableUserAccountRequests collection for deleting.
-final deleteDisableUserAccountRequestsCollectionReference = FirebaseFirestore
+final deleteDisableUserAccountRequestCollectionReference = FirebaseFirestore
     .instance
     .collection('disableUserAccountRequests')
-    .withConverter<DeleteDisableUserAccountRequests>(
+    .withConverter<DeleteDisableUserAccountRequest>(
       fromFirestore: (_, __) => throw UnimplementedError(),
       toFirestore: (_, __) => throw UnimplementedError(),
     );
 
 /// Provides a reference to a disableUserAccountRequest document for deleting.
-DocumentReference<DeleteDisableUserAccountRequests>
-    deleteDisableUserAccountRequestsDocumentReference({
+DocumentReference<DeleteDisableUserAccountRequest>
+    deleteDisableUserAccountRequestDocumentReference({
   required String disableUserAccountRequestId,
 }) =>
-        deleteDisableUserAccountRequestsCollectionReference
+        deleteDisableUserAccountRequestCollectionReference
             .doc(disableUserAccountRequestId);
 
 /// Manages queries against the disableUserAccountRequests collection.
-class DisableUserAccountRequestsQuery {
-  /// Fetches [ReadDisableUserAccountRequests] documents.
-  Future<List<ReadDisableUserAccountRequests>> fetchDocuments({
+class DisableUserAccountRequestQuery {
+  /// Fetches [ReadDisableUserAccountRequest] documents.
+  Future<List<ReadDisableUserAccountRequest>> fetchDocuments({
     GetOptions? options,
-    Query<ReadDisableUserAccountRequests>? Function(
-            Query<ReadDisableUserAccountRequests> query)?
+    Query<ReadDisableUserAccountRequest>? Function(
+            Query<ReadDisableUserAccountRequest> query)?
         queryBuilder,
-    int Function(ReadDisableUserAccountRequests lhs,
-            ReadDisableUserAccountRequests rhs)?
+    int Function(ReadDisableUserAccountRequest lhs,
+            ReadDisableUserAccountRequest rhs)?
         compare,
   }) async {
-    Query<ReadDisableUserAccountRequests> query =
-        readDisableUserAccountRequestsCollectionReference;
+    Query<ReadDisableUserAccountRequest> query =
+        readDisableUserAccountRequestCollectionReference;
     if (queryBuilder != null) {
       query = queryBuilder(query)!;
     }
@@ -169,19 +169,19 @@ class DisableUserAccountRequestsQuery {
     return result;
   }
 
-  /// Subscribes [DisableUserAccountRequests] documents.
-  Stream<List<ReadDisableUserAccountRequests>> subscribeDocuments({
-    Query<ReadDisableUserAccountRequests>? Function(
-            Query<ReadDisableUserAccountRequests> query)?
+  /// Subscribes [DisableUserAccountRequest] documents.
+  Stream<List<ReadDisableUserAccountRequest>> subscribeDocuments({
+    Query<ReadDisableUserAccountRequest>? Function(
+            Query<ReadDisableUserAccountRequest> query)?
         queryBuilder,
-    int Function(ReadDisableUserAccountRequests lhs,
-            ReadDisableUserAccountRequests rhs)?
+    int Function(ReadDisableUserAccountRequest lhs,
+            ReadDisableUserAccountRequest rhs)?
         compare,
     bool includeMetadataChanges = false,
     bool excludePendingWrites = false,
   }) {
-    Query<ReadDisableUserAccountRequests> query =
-        readDisableUserAccountRequestsCollectionReference;
+    Query<ReadDisableUserAccountRequest> query =
+        readDisableUserAccountRequestCollectionReference;
     if (queryBuilder != null) {
       query = queryBuilder(query)!;
     }
@@ -199,24 +199,24 @@ class DisableUserAccountRequestsQuery {
     });
   }
 
-  /// Fetches a specific [ReadDisableUserAccountRequests] document.
-  Future<ReadDisableUserAccountRequests?> fetchDocument({
+  /// Fetches a specific [ReadDisableUserAccountRequest] document.
+  Future<ReadDisableUserAccountRequest?> fetchDocument({
     required String disableUserAccountRequestId,
     GetOptions? options,
   }) async {
-    final ds = await readDisableUserAccountRequestsDocumentReference(
+    final ds = await readDisableUserAccountRequestDocumentReference(
       disableUserAccountRequestId: disableUserAccountRequestId,
     ).get(options);
     return ds.data();
   }
 
-  /// Subscribes a specific [DisableUserAccountRequests] document.
-  Stream<ReadDisableUserAccountRequests?> subscribeDocument({
+  /// Subscribes a specific [DisableUserAccountRequest] document.
+  Stream<ReadDisableUserAccountRequest?> subscribeDocument({
     required String disableUserAccountRequestId,
     bool includeMetadataChanges = false,
     bool excludePendingWrites = false,
   }) {
-    var streamDs = readDisableUserAccountRequestsDocumentReference(
+    var streamDs = readDisableUserAccountRequestDocumentReference(
       disableUserAccountRequestId: disableUserAccountRequestId,
     ).snapshots(includeMetadataChanges: includeMetadataChanges);
     if (excludePendingWrites) {
@@ -225,37 +225,37 @@ class DisableUserAccountRequestsQuery {
     return streamDs.map((ds) => ds.data());
   }
 
-  /// Adds a [DisableUserAccountRequests] document.
-  Future<DocumentReference<CreateDisableUserAccountRequests>> add({
-    required CreateDisableUserAccountRequests createDisableUserAccountRequests,
+  /// Adds a [DisableUserAccountRequest] document.
+  Future<DocumentReference<CreateDisableUserAccountRequest>> add({
+    required CreateDisableUserAccountRequest createDisableUserAccountRequest,
   }) =>
-      createDisableUserAccountRequestsCollectionReference
-          .add(createDisableUserAccountRequests);
+      createDisableUserAccountRequestCollectionReference
+          .add(createDisableUserAccountRequest);
 
-  /// Sets a [DisableUserAccountRequests] document.
+  /// Sets a [DisableUserAccountRequest] document.
   Future<void> set({
     required String disableUserAccountRequestId,
-    required CreateDisableUserAccountRequests createDisableUserAccountRequests,
+    required CreateDisableUserAccountRequest createDisableUserAccountRequest,
     SetOptions? options,
   }) =>
-      createDisableUserAccountRequestsDocumentReference(
+      createDisableUserAccountRequestDocumentReference(
         disableUserAccountRequestId: disableUserAccountRequestId,
-      ).set(createDisableUserAccountRequests, options);
+      ).set(createDisableUserAccountRequest, options);
 
-  /// Updates a specific [DisableUserAccountRequests] document.
+  /// Updates a specific [DisableUserAccountRequest] document.
   Future<void> update({
     required String disableUserAccountRequestId,
-    required UpdateDisableUserAccountRequests updateDisableUserAccountRequests,
+    required UpdateDisableUserAccountRequest updateDisableUserAccountRequest,
   }) =>
-      updateDisableUserAccountRequestsDocumentReference(
+      updateDisableUserAccountRequestDocumentReference(
         disableUserAccountRequestId: disableUserAccountRequestId,
-      ).update(updateDisableUserAccountRequests.toJson());
+      ).update(updateDisableUserAccountRequest.toJson());
 
-  /// Deletes a specific [DisableUserAccountRequests] document.
+  /// Deletes a specific [DisableUserAccountRequest] document.
   Future<void> delete({
     required String disableUserAccountRequestId,
   }) =>
-      deleteDisableUserAccountRequestsDocumentReference(
+      deleteDisableUserAccountRequestDocumentReference(
         disableUserAccountRequestId: disableUserAccountRequestId,
       ).delete();
 }

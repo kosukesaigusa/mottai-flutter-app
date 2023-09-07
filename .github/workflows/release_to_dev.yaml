@@ -93,10 +93,10 @@ jobs:
           cd packages/mottai_flutter_app/ios
           xcodebuild -showBuildSettings
 
-      - name: Save AuthKey.p8 file
+      - name: Save AuthKey_X6578RX35S.p8 file
         run: |
           mkdir -p packages/mottai_flutter_app/private_keys
-          echo "${{ secrets.DEV_IOS_AUTH_KEY }}" > packages/mottai_flutter_app/private_keys/AuthKey.p8
+          echo "${{ secrets.DEV_IOS_AUTH_KEY }}" > packages/mottai_flutter_app/private_keys/AuthKey_X6578RX35S.p8
 
       - name: Validate ipa
         run: |
@@ -106,7 +106,7 @@ jobs:
             -t ios \
             --apiKey ${{ secrets.DEV_IOS_API_KEY }} \
             --apiIssuer ${{ secrets.DEV_IOS_API_ISSUER }} \
-            --private-key "./private_keys/AuthKey.p8"
+            --private-key "./private_keys/AuthKey_X6578RX35S.p8"
 
       - name: Upload ipa to TestFlight
         run: |
@@ -116,4 +116,4 @@ jobs:
             -t ios \
             --apiKey ${{ secrets.DEV_IOS_API_KEY }} \
             --apiIssuer ${{ secrets.DEV_IOS_API_ISSUER }} \
-            --private-key "./private_keys/AuthKey.p8"
+            --private-key "./private_keys/AuthKey_X6578RX35S.p8"

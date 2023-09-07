@@ -37,6 +37,7 @@ class DisableUserAccountRequestController {
                   .createDisableUserAccountRequest(
                 userId: userId,
               );
+              //TODO 退会処理が完了したことをユーザーに示す
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.red,

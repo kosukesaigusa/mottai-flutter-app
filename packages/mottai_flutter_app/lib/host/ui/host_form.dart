@@ -12,6 +12,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../development/firebase_storage/firebase_storage.dart';
 import '../../development/firebase_storage/ui/firebase_storage_controller.dart';
 import '../../host_location/ui/host_location_select_dialog.dart';
+import '../../widgets/optional_badge.dart';
 import 'host_controller.dart';
 
 /// 東京駅の緯度経度（テスト用）初期位置は現在地？
@@ -57,11 +58,14 @@ class HostForm extends ConsumerStatefulWidget {
 }
 
 class HostFormState extends ConsumerState<HostForm> {
+  /// urlの最大数
+  static const urlMaxCount = 5;
+
   /// フォームのグローバルキー
   final formKey = GlobalKey<FormState>();
 
   /// 選択中のホストタイプ
-  final List<HostType> _selectedHosyTypes = [];
+  final List<HostType> _selectedHostTypes = [];
 
   /// [Host.displayName] のテキストフィールド用コントローラー
   late final TextEditingController _nameController;
@@ -88,24 +92,15 @@ class HostFormState extends ConsumerState<HostForm> {
   Set<Marker> _markers = {};
 
   /// [Geo] から [LatLng] に変換する関数
-  static LatLng convertGeoToLatLng(Geo? geo) {
-    var latitude = 0.0;
-
-    var longitude = 0.0;
-
-    if (geo != null) {
-      latitude = geo.geopoint.latitude;
-      longitude = geo.geopoint.longitude;
-    }
-
-    return LatLng(latitude, longitude);
+  LatLng _convertGeoToLatLng(Geo geo) {
+    return LatLng(geo.geopoint.latitude, geo.geopoint.longitude);
   }
 
   /// [LatLng] から [Geo] に変換する関数
-  static Geo convertLatLngToGeo(LatLng? latLng) {
+  Geo _convertLatLngToGeo(LatLng latLng) {
     final geoPoint = GeoPoint(
-      latLng?.latitude ?? 0,
-      latLng?.longitude ?? 0,
+      latLng.latitude,
+      latLng.longitude,
     );
     final geoFirePoint = GeoFirePoint(geoPoint);
     return Geo(
@@ -122,7 +117,7 @@ class HostFormState extends ConsumerState<HostForm> {
         TextEditingController(text: widget._host?.introduction);
     _locationController =
         TextEditingController(text: widget._hostLocation?.address);
-    for (var i = 0; i < Host.urlMaxCount; i++) {
+    for (var i = 0; i < urlMaxCount; i++) {
       _urlControllers
           .add(TextEditingController(text: widget._host?.urls.elementAt(i)));
     }
@@ -131,13 +126,13 @@ class HostFormState extends ConsumerState<HostForm> {
 
     // ホストタイプ設定
     if (widget._host != null) {
-      _selectedHosyTypes.addAll(widget._host!.hostTypes.toList());
+      _selectedHostTypes.addAll(widget._host!.hostTypes.toList());
     }
 
     // ホスト所在設定
     final hostLocation = widget._hostLocation;
     if (hostLocation != null) {
-      _geo = convertLatLngToGeo(
+      _geo = _convertLatLngToGeo(
         LatLng(
           hostLocation.geo.geopoint.latitude,
           hostLocation.geo.geopoint.longitude,
@@ -151,7 +146,7 @@ class HostFormState extends ConsumerState<HostForm> {
         ),
       );
     } else {
-      _geo = convertLatLngToGeo(
+      _geo = _convertLatLngToGeo(
         _tokyoStation,
       );
       _markers.add(
@@ -168,7 +163,7 @@ class HostFormState extends ConsumerState<HostForm> {
     final textValidate = formKey.currentState?.validate();
     final isExistImage =
         (pickedImageFile != null) || (widget._host?.imageUrl != null);
-    final isSelectedHostType = _selectedHosyTypes.isNotEmpty;
+    final isSelectedHostType = _selectedHostTypes.isNotEmpty;
 
     var result = textValidate ?? true; // テキストの検証結果を代入(すべてのアンドをとるため)
 
@@ -292,12 +287,12 @@ class HostFormState extends ConsumerState<HostForm> {
                     },
                     isRequired: true,
                     errorMessage: ref.watch(hostTypeErrorStateProvider),
-                    enabledChoices: _selectedHosyTypes,
+                    enabledChoices: _selectedHostTypes,
                     onChoiceSelected: (item) {
-                      if (_selectedHosyTypes.contains(item)) {
-                        _selectedHosyTypes.remove(item);
+                      if (_selectedHostTypes.contains(item)) {
+                        _selectedHostTypes.remove(item);
                       } else {
-                        _selectedHosyTypes.add(item);
+                        _selectedHostTypes.add(item);
                       }
                       setState(() {});
                     },
@@ -322,7 +317,7 @@ class HostFormState extends ConsumerState<HostForm> {
                           height: 160,
                           child: GoogleMap(
                             initialCameraPosition: CameraPosition(
-                              target: convertGeoToLatLng(
+                              target: _convertGeoToLatLng(
                                 _geo,
                               ),
                               zoom: 20,
@@ -343,7 +338,7 @@ class HostFormState extends ConsumerState<HostForm> {
                               context: context,
                               builder: (context) => HostLocationSelectDialog(
                                 initialCameraPosition: CameraPosition(
-                                  target: convertGeoToLatLng(
+                                  target: _convertGeoToLatLng(
                                     _geo,
                                   ),
                                   zoom: 20,
@@ -356,7 +351,7 @@ class HostFormState extends ConsumerState<HostForm> {
 
                               await _googleMapController.moveCamera(
                                 CameraUpdate.newLatLng(
-                                  convertGeoToLatLng(
+                                  _convertGeoToLatLng(
                                     _geo,
                                   ),
                                 ),
@@ -368,7 +363,7 @@ class HostFormState extends ConsumerState<HostForm> {
                                       '${_geo.geopoint.latitude},'
                                       '${_geo.geopoint.longitude}',
                                     ),
-                                    position: convertGeoToLatLng(_geo),
+                                    position: _convertGeoToLatLng(_geo),
                                   ),
                                 );
                               _markers = markers;
@@ -384,7 +379,7 @@ class HostFormState extends ConsumerState<HostForm> {
                     title: 'URL',
                     titleBadge: const Padding(
                       padding: EdgeInsets.only(left: 8),
-                      child: _OptionalBadge(),
+                      child: OptionalBadge(),
                     ),
                     titleStyle: Theme.of(context).textTheme.titleLarge,
                     description: '農園や各種 SNS の URL があれば入力してください（最大 5 件）。',
@@ -422,7 +417,7 @@ class HostFormState extends ConsumerState<HostForm> {
                               displayName: _nameController.text,
                               introduction: _introductionController.text,
                               imageFile: pickedImageFile,
-                              hostTypes: _selectedHosyTypes.toSet(),
+                              hostTypes: _selectedHostTypes.toSet(),
                               urls: _urlControllers
                                   .map((controller) => controller.text)
                                   .toList(),
@@ -435,7 +430,7 @@ class HostFormState extends ConsumerState<HostForm> {
                               displayName: _nameController.text,
                               introduction: _introductionController.text,
                               imageFile: pickedImageFile!,
-                              hostTypes: _selectedHosyTypes.toSet(),
+                              hostTypes: _selectedHostTypes.toSet(),
                               urls: _urlControllers
                                   .map((controller) => controller.text)
                                   .toList(),
@@ -543,7 +538,7 @@ class _TextInputSection<T extends dynamic> extends StatelessWidget {
       title: title,
       titleBadge: Padding(
         padding: const EdgeInsets.only(left: 8),
-        child: _OptionalBadge(isRequired: isRequired),
+        child: OptionalBadge(isRequired: isRequired),
       ),
       titleStyle: Theme.of(context).textTheme.bodyLarge,
       description: description,
@@ -631,29 +626,6 @@ class _InputTextField extends StatelessWidget {
         labelText: labelText,
       ),
     );
-  }
-}
-
-/// 入力が必須か任意かを表すバッジ
-/// [isRequired] の値によって、必須か任意の文字を選択して返す。
-class _OptionalBadge extends StatelessWidget {
-  const _OptionalBadge({this.isRequired = false});
-
-  /// 必須か否か
-  final bool isRequired;
-
-  @override
-  Widget build(BuildContext context) {
-    if (isRequired) {
-      return const Badge(
-        label: Text('必須'),
-      );
-    } else {
-      return const Badge(
-        label: Text('任意'),
-        backgroundColor: Colors.grey,
-      );
-    }
   }
 }
 

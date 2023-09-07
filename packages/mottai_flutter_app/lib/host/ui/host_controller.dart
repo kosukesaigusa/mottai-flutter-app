@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:firebase_common/firebase_common.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../host_location/host_location.dart';
 import '../../image/firebase_storage.dart';
 import '../../user/host.dart';
 
@@ -11,7 +10,6 @@ final hostControllerProvider =
     Provider.family.autoDispose<HostController, String>(
   (ref, userId) => HostController(
     hostService: ref.watch(hostServiceProvider),
-    locationService: ref.watch(hostLocationServiceProvider),
     firebaseStorageService: ref.watch(firebaseStorageServiceProvider),
     userId: userId,
   ),
@@ -20,11 +18,9 @@ final hostControllerProvider =
 class HostController {
   HostController({
     required HostService hostService,
-    required HostLocationService locationService,
     required FirebaseStorageService firebaseStorageService,
     required String userId,
   })  : _hostService = hostService,
-        _locationService = locationService,
         _firebaseStorageService = firebaseStorageService,
         _userId = userId;
 
@@ -32,7 +28,6 @@ class HostController {
   static const _storagePath = 'hosts';
 
   final HostService _hostService;
-  final HostLocationService _locationService;
   final FirebaseStorageService _firebaseStorageService;
   final String _userId;
 
@@ -56,11 +51,6 @@ class HostController {
       hostTypes: hostTypes,
       urls: urls,
       imageUrl: imageUrl,
-    );
-
-    // Locationの作成
-    await _locationService.create(
-      hostId: workerId,
       address: address,
       geo: geo,
     );
@@ -89,18 +79,9 @@ class HostController {
       hostTypes: hostTypes,
       urls: urls,
       imageUrl: imageUrl,
+      address: address,
+      geo: geo,
     );
-
-    // Locationの更新
-    final locations =
-        await _locationService.fetchHostLocationsFromHost(hostId: hostId);
-    if (locations != null && locations.isNotEmpty) {
-      await _locationService.update(
-        hostLocationId: locations.first.hostLocationId,
-        address: address,
-        geo: geo,
-      );
-    }
   }
 
   Future<String> _uploadImage(File imageFile) {

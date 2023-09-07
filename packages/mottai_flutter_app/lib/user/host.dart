@@ -1,6 +1,7 @@
 import 'package:firebase_common/firebase_common.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../../host_location/host_location.dart';
 import '../firestore_repository.dart';
 
 /// 指定した [Host] ドキュメントを購読する [StreamProvider].
@@ -33,14 +34,19 @@ final hostFutureProvider = FutureProvider.family.autoDispose<ReadHost?, String>(
 final hostServiceProvider = Provider.autoDispose<HostService>(
   (ref) => HostService(
     hostRepository: ref.watch(hostRepositoryProvider),
+    locationService: ref.watch(hostLocationServiceProvider),
   ),
 );
 
 class HostService {
-  const HostService({required HostRepository hostRepository})
-      : _hostRepository = hostRepository;
+  const HostService({
+    required HostLocationService locationService,
+    required HostRepository hostRepository,
+  })  : _hostRepository = hostRepository,
+        _locationService = locationService;
 
   final HostRepository _hostRepository;
+  final HostLocationService _locationService;
 
   /// 指定した [Host] が存在するかどうかを返す。
   Future<bool> hostExists({required String hostId}) async {
@@ -52,7 +58,7 @@ class HostService {
   Future<ReadHost?> fetchHost({required String hostId}) =>
       _hostRepository.fetchHost(hostId: hostId);
 
-  /// [Host] の情報を作成する。
+  /// [Host] と [HostLocation] の情報を作成する。
   Future<void> create({
     required String workerId,
     required String displayName,
@@ -60,17 +66,27 @@ class HostService {
     required Set<HostType> hostTypes,
     required List<String> urls,
     required String imageUrl,
-  }) =>
-      _hostRepository.create(
-        workerId: workerId,
-        displayName: displayName,
-        introduction: introduction,
-        hostTypes: hostTypes,
-        urls: urls,
-        imageUrl: imageUrl,
-      );
+    required String address,
+    required Geo geo,
+  }) async {
+    await _hostRepository.create(
+      workerId: workerId,
+      displayName: displayName,
+      introduction: introduction,
+      hostTypes: hostTypes,
+      urls: urls,
+      imageUrl: imageUrl,
+    );
 
-  /// [Host] の情報を更新する。
+    // Locationの作成
+    await _locationService.create(
+      hostId: workerId,
+      address: address,
+      geo: geo,
+    );
+  }
+
+  /// [Host] と [HostLocation] の情報を更新する。
   Future<void> update({
     required String hostId,
     String? displayName,
@@ -78,13 +94,27 @@ class HostService {
     Set<HostType>? hostTypes,
     List<String>? urls,
     String? imageUrl,
-  }) =>
-      _hostRepository.update(
-        hostId: hostId,
-        displayName: displayName,
-        introduction: introduction,
-        hostTypes: hostTypes,
-        urls: urls,
-        imageUrl: imageUrl,
+    String? address,
+    Geo? geo,
+  }) async {
+    await _hostRepository.update(
+      hostId: hostId,
+      displayName: displayName,
+      introduction: introduction,
+      hostTypes: hostTypes,
+      urls: urls,
+      imageUrl: imageUrl,
+    );
+
+    // Locationの更新
+    final locations =
+        await _locationService.fetchHostLocationsFromHost(hostId: hostId);
+    if (locations != null && locations.isNotEmpty) {
+      await _locationService.update(
+        hostLocationId: locations.first.hostLocationId,
+        address: address,
+        geo: geo,
       );
+    }
+  }
 }

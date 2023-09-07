@@ -31,26 +31,26 @@ jobs:
       - name: flutter pub get (mottai_flutter_app)
         run: cd packages/mottai_flutter_app && flutter pub get
 
-      # - name: Create dev-dart-define.json from GitHub secret
-      #   run: |
-      #     cd packages/mottai_flutter_app
-      #     echo '${{ secrets.DEV_DART_DEFINE_JSON_STRING }}' > dev-dart-define.json
-      #     cat dev-dart-define.json
+      - name: Create dev-dart-define.json from GitHub secret
+        run: |
+          cd packages/mottai_flutter_app
+          echo '${{ secrets.DEV_DART_DEFINE_JSON_STRING }}' > dev-dart-define.json
 
       - name: Prepare Xcode build settings
         run: |
-          # dart_define.json から各値を読み込む
-          # FLAVOR=$(jq -r '.flavor' dart_define.json)
-          # APP_NAME=$(jq -r '.appName' dart_define.json)
-          # APP_ID_SUFFIX=$(jq -r '.appIdSuffix' dart_define.json)
+          # dev-dart-define.json から各値を読み込む
+          cd packages/mottai_flutter_app
+          FLAVOR=$(jq -r '.flavor' dev-dart-define.json)
+          APP_NAME=$(jq -r '.appName' dev-dart-define.json)
+          APP_ID_SUFFIX=$(jq -r '.appIdSuffix' dev-dart-define.json)
 
           # DartDefines.xcconfig ファイルに書き込む
           echo "flavor = dev" > DartDefines.xcconfig
           echo "appName = mottai_dev" >> DartDefines.xcconfig
           echo "appIdSuffix = .dev" >> DartDefines.xcconfig
 
-          # このファイルを Xcode が参照できるように移動する（オプション）
-          mv DartDefines.xcconfig packages/mottai_flutter_app/ios/
+          # このファイルを Xcode が参照できるように ios ディレクトリに移動する
+          mv DartDefines.xcconfig ios/
 
       - name: Decode and install provisioning profile
         run: |
@@ -82,7 +82,7 @@ jobs:
         run: |
           cd packages/mottai_flutter_app
           flutter build ipa --release \
-            --dart-define-from-file="dart-define.json" \
+            --dart-define-from-file="dev-dart-define.json" \
             -t "lib/main.dart" \
             --build-name=$(grep 'version:' pubspec.yaml | cut -d ' ' -f 2 | cut -d '+' -f 1) \
             --build-number=$GITHUB_RUN_NUMBER \
@@ -93,7 +93,7 @@ jobs:
           cd packages/mottai_flutter_app/ios
           xcodebuild -showBuildSettings
 
-      - name: Save AuthKey_X6578RX35S.p8 file
+      - name: Save AuthKey_***.p8 file
         run: |
           mkdir -p packages/mottai_flutter_app/private_keys
           echo "${{ secrets.DEV_IOS_AUTH_KEY }}" > packages/mottai_flutter_app/private_keys/AuthKey_X6578RX35S.p8

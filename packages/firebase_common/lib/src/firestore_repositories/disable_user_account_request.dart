@@ -13,5 +13,4 @@ class DisableUserAccountRequestRepository {
           userId: userId,
         ),
       );
-
 }

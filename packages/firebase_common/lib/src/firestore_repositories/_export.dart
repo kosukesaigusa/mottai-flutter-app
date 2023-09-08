@@ -1,6 +1,5 @@
 export 'chat_message.dart';
 export 'chat_room.dart';
-export 'fcm_token.dart';
 export 'force_update_config.dart';
 export 'host.dart';
 export 'host_location.dart';
@@ -9,5 +8,6 @@ export 'job.dart';
 export 'read_status.dart';
 export 'review.dart';
 export 'sample_todo.dart';
+export 'user_fcm_token.dart';
 export 'user_social_login.dart';
 export 'worker.dart';

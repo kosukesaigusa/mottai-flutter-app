@@ -24,6 +24,7 @@ import '../../image_picker/ui/image_picker_sample.dart';
 import '../../in_review/ui/in_review.dart';
 import '../../sample_todo/ui/sample_todos.dart';
 import '../../sign_in/ui/sign_in.dart';
+import '../../user_fcm_token/ui/user_fcm_token.dart';
 import '../../user_social_login/user_social_login.dart';
 import '../../web_link/ui/web_link_stub.dart';
 
@@ -167,9 +168,9 @@ class DevelopmentItemsPage extends ConsumerWidget {
             onTap: () =>
                 context.router.pushNamed(UserSocialLoginSamplePage.location),
           ),
-          const ListTile(
-            title: Text('FCM トークン（トークン追加, device_info_plus）'),
-            // onTap: () => context.router.pushNamed(FcmTokenPage.location),
+          ListTile(
+            title: const Text('UserFcmToken 確認ページ'),
+            onTap: () => context.router.pushNamed(UserFcmTokenPage.location),
           ),
           ListTile(
             title: const Text(

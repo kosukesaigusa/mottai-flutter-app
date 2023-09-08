@@ -15,6 +15,7 @@ import '../../router/router.gr.dart';
 import '../../scaffold_messenger_controller.dart';
 import '../../user/user.dart';
 import '../../user/user_mode.dart';
+import '../../user_fcm_token/user_fcm_token.dart';
 
 final rootPageKey = Provider((ref) => GlobalKey<NavigatorState>());
 
@@ -39,8 +40,21 @@ class _RootPageState extends ConsumerState<RootPage> {
     super.initState();
     Future.wait<void>([
       ref.read(initializeFirebaseMessagingProvider)(),
-      ref.read(getFcmTokenProvider)(),
+      _setFcmTokenIfSignedIn(),
     ]);
+  }
+
+  /// FCM トークンを取得し、サインイン済みなら FCM トークンを保存する。
+  Future<void> _setFcmTokenIfSignedIn() async {
+    final fcmToken = await ref.read(getFcmTokenProvider)();
+    if (fcmToken == null) {
+      return;
+    }
+    final userId = ref.read(userIdProvider);
+    if (userId == null) {
+      return;
+    }
+    await ref.read(fcmTokenServiceProvider).setUserFcmToken(userId: userId);
   }
 
   @override

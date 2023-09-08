@@ -88,10 +88,20 @@ jobs:
             --build-number=$GITHUB_RUN_NUMBER \
             --export-options-plist="ios/ExportOptions.plist"
 
-      - name: Debug ipa file path
+      - name: Detect ipa file path
         run: |
           cd packages/mottai_flutter_app
-          find build/ios/ipa -type f -name '*.ipa'
+          if [ ! -d "build/ios/ipa" ]; then
+            echo "build/ios/ipa directory does not exist."
+            exit 1
+          fi
+          IPA_PATH=$(find build/ios/ipa -type f -name '*.ipa')
+          if [ -z "$IPA_PATH" ]; then
+            echo "No .ipa file found."
+            exit 1
+          fi
+          echo "IPA_PATH=$IPA_PATH" >> $GITHUB_ENV
+          echo $IPA_PATH
 
       - name: Save AuthKey_${DEV_IOS_API_KEY}.p8 file
         run: |

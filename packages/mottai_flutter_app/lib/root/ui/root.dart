@@ -6,6 +6,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../assets.dart';
 import '../../auth/auth.dart';
 import '../../auth/ui/auth_controller.dart';
+import '../../auth/ui/auth_dependent_builder.dart';
 import '../../development/development_items/ui/development_items.dart';
 import '../../development/disable_user_account_request/ui/disable_user_account_request_controller.dart';
 import '../../development/email_and_password_sign_in/ui/email_and_password_sign_in.dart';
@@ -181,20 +182,19 @@ class _DrawerChild extends ConsumerWidget {
           title: const Text('開発ページへ'),
           onTap: () => context.router.pushNamed(DevelopmentItemsPage.location),
         ),
-        Visibility(
-          //TODO ref.watch(userIdProvider)が複数呼ばれているため共通化すべき
-          visible: ref.watch(userIdProvider) != null,
-          child: ListTile(
+        AuthDependentBuilder(
+          onAuthenticated: (userId) => ListTile(
             leading: const Icon(Icons.person_off),
             title: const Text('退会する'),
             onTap: () async {
               await ref
                   .read(disableUserAccountRequestControllerProvider)
                   .disableUserAccountRequest(
-                    userId: ref.watch(userIdProvider)!,
+                    userId: userId,
                   );
             },
           ),
+          onUnAuthenticated: () => const SizedBox(),
         ),
       ],
     );

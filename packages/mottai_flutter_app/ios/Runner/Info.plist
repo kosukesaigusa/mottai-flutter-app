@@ -36,6 +36,8 @@
 	</array>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>https</string>
@@ -45,13 +47,11 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>プロフィール画像などを撮影するために端末のカメラを使用します。</string>
+	<string>プロフィール画像や投稿する写真などを撮影するために端末のカメラを使用します。</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>プロフィール画像や投稿する写真などを選択するために端末の画像ライブラリを使用します。</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>現在地を取得するため位置情報サービスを使用します。</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>This app requires to add file to your photo library your microphone</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>プロフィール画像などを選択するために端末の画像ライブラリを使用します。</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>

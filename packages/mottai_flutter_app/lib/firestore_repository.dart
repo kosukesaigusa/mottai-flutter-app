@@ -7,9 +7,6 @@ final chatMessageRepositoryProvider =
 final chatRoomRepositoryProvider =
     Provider.autoDispose<ChatRoomRepository>((_) => ChatRoomRepository());
 
-final fcmTokenRepositoryProvider =
-    Provider.autoDispose<FcmTokenRepository>((_) => FcmTokenRepository());
-
 final forceUpdateConfigRepositoryProvider =
     Provider.autoDispose<ForceUpdateConfigRepository>(
   (_) => ForceUpdateConfigRepository(),
@@ -39,6 +36,11 @@ final reviewRepositoryProvider =
 
 final sampleTodoRepositoryProvider =
     Provider.autoDispose<SampleTodoRepository>((_) => SampleTodoRepository());
+
+final userFcmTokenRepositoryProvider =
+    Provider.autoDispose<UserFcmTokenRepository>(
+  (_) => UserFcmTokenRepository(),
+);
 
 final userSocialLoginRepositoryProvider =
     Provider.autoDispose<UserSocialLoginRepository>(

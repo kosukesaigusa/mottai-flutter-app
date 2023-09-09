@@ -116,7 +116,7 @@ jobs:
         run: |
           cd packages/mottai_flutter_app
           xcrun altool --validate-app \
-            -f "./build/ios/ipa/mottai_dev.ipa" \
+            -f $IPA_PATH \
             -t ios \
             --apiKey ${{ secrets.DEV_IOS_API_KEY }} \
             --apiIssuer ${{ secrets.DEV_IOS_API_ISSUER }} \
@@ -126,7 +126,7 @@ jobs:
         run: |
           cd packages/mottai_flutter_app
           xcrun altool --upload-app \
-            -f "./build/ios/ipa/mottai_dev.ipa" \
+            -f $IPA_PATH \
             -t ios \
             --apiKey ${{ secrets.DEV_IOS_API_KEY }} \
             --apiIssuer ${{ secrets.DEV_IOS_API_ISSUER }} \

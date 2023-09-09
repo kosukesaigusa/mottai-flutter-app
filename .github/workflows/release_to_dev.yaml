@@ -52,6 +52,9 @@ jobs:
           # このファイルを Xcode が参照できるように ios ディレクトリに移動する
           mv DartDefines.xcconfig ios/
 
+          # ios/Flutter/Release.xcconfig ファイルに追記する
+          echo "#include "DartDefines.xcconfig"" >> ios/Flutter/Release.xcconfig
+
       - name: Decode and install provisioning profile
         run: |
           echo ${{ secrets.DEV_APPLE_DISTRIBUTION_PROVISIONING_PROFILE_BASE64_STRING }} | base64 --decode > profile.mobileprovision

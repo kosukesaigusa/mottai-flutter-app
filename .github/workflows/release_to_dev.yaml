@@ -53,7 +53,7 @@ jobs:
           mv DartDefines.xcconfig ios/
 
           # ios/Flutter/Release.xcconfig ファイルに追記する
-          echo "#include "DartDefines.xcconfig"" >> ios/Flutter/Release.xcconfig
+          echo "#include DartDefines.xcconfig" >> ios/Flutter/Release.xcconfig
 
       - name: Decode and install provisioning profile
         run: |

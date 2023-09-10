@@ -31,9 +31,9 @@ import 'package:mottai_flutter_app/development/image_picker/ui/image_picker_samp
     as _i15;
 import 'package:mottai_flutter_app/development/in_review/ui/in_review.dart'
     as _i16;
-import 'package:mottai_flutter_app/development/sample_todo/ui/sample_todos.dart'
-    as _i24;
-import 'package:mottai_flutter_app/development/sign_in/ui/sign_in.dart' as _i25;
+import 'package:mottai_flutter_app/development/sample_todo/ui/todos.dart'
+    as _i25;
+import 'package:mottai_flutter_app/development/sign_in/ui/sign_in.dart' as _i24;
 import 'package:mottai_flutter_app/development/user_fcm_token/ui/user_fcm_token.dart'
     as _i26;
 import 'package:mottai_flutter_app/development/user_social_login/user_social_login.dart'
@@ -238,16 +238,16 @@ abstract class $AppRouter extends _i30.RootStackRouter {
         child: const _i23.RootPage(),
       );
     },
-    SampleTodosRoute.name: (routeData) {
-      return _i30.AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const _i24.SampleTodosPage(),
-      );
-    },
     SignInSampleRoute.name: (routeData) {
       return _i30.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const _i25.SignInSamplePage(),
+        child: const _i24.SignInSamplePage(),
+      );
+    },
+    TodosRoute.name: (routeData) {
+      return _i30.AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const _i25.TodosPage(),
       );
     },
     UserFcmTokenRoute.name: (routeData) {
@@ -758,21 +758,7 @@ class RootRoute extends _i30.PageRouteInfo<void> {
 }
 
 /// generated route for
-/// [_i24.SampleTodosPage]
-class SampleTodosRoute extends _i30.PageRouteInfo<void> {
-  const SampleTodosRoute({List<_i30.PageRouteInfo>? children})
-      : super(
-          SampleTodosRoute.name,
-          initialChildren: children,
-        );
-
-  static const String name = 'SampleTodosRoute';
-
-  static const _i30.PageInfo<void> page = _i30.PageInfo<void>(name);
-}
-
-/// generated route for
-/// [_i25.SignInSamplePage]
+/// [_i24.SignInSamplePage]
 class SignInSampleRoute extends _i30.PageRouteInfo<void> {
   const SignInSampleRoute({List<_i30.PageRouteInfo>? children})
       : super(
@@ -781,6 +767,20 @@ class SignInSampleRoute extends _i30.PageRouteInfo<void> {
         );
 
   static const String name = 'SignInSampleRoute';
+
+  static const _i30.PageInfo<void> page = _i30.PageInfo<void>(name);
+}
+
+/// generated route for
+/// [_i25.TodosPage]
+class TodosRoute extends _i30.PageRouteInfo<void> {
+  const TodosRoute({List<_i30.PageRouteInfo>? children})
+      : super(
+          TodosRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'TodosRoute';
 
   static const _i30.PageInfo<void> page = _i30.PageInfo<void>(name);
 }

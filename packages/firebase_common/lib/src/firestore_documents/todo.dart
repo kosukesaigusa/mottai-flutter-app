@@ -1,11 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutterfire_gen_annotation/flutterfire_gen_annotation.dart';
 
-part 'sample_todo.flutterfire_gen.dart';
+part 'todo.flutterfire_gen.dart';
 
-@FirestoreDocument(path: 'sampleTodos', documentName: 'sampleTodo')
-class SampleTodo {
-  const SampleTodo({
+@FirestoreDocument(path: 'sampleTodos', documentName: 'todo')
+class Todo {
+  const Todo({
     required this.title,
     required this.description,
     required this.isDone,

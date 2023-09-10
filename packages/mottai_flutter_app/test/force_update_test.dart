@@ -12,7 +12,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'force_update_test.mocks.dart';
 
 @GenerateNiceMocks([MockSpec<ForceUpdateConfigRepository>()])
-Future<void> main() async {
+void main() {
   group('データローディング中はfalseを返す', () {
     test('iOSの時ローディング中はfalseを返す', () async {
       debugDefaultTargetPlatformOverride = TargetPlatform.iOS;

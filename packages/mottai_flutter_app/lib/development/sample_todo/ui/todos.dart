@@ -5,17 +5,17 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../sample_todos.dart';
-import 'sample_todos_controller.dart';
+import '../todos.dart';
+import 'todos_controller.dart';
 
 @RoutePage()
-class SampleTodosPage extends ConsumerWidget {
-  const SampleTodosPage({super.key});
+class TodosPage extends ConsumerWidget {
+  const TodosPage({super.key});
 
   /// [AutoRoute] で指定するパス文字列。
-  static const path = '/sampleTodos';
+  static const path = '/todos';
 
-  /// [SampleTodosPage] に遷移する際に `context.router.pushNamed` で指定する文字列。
+  /// [TodosPage] に遷移する際に `context.router.pushNamed` で指定する文字列。
   static const location = path;
 
   @override
@@ -25,11 +25,10 @@ class SampleTodosPage extends ConsumerWidget {
         title: const Text('Todo 一覧'),
         actions: const [_OrderByDropdownButton()],
       ),
-      body: ref.watch(sampleTodosFutureProvider).when(
-            data: (sampleTodos) => ListView.builder(
-              itemCount: sampleTodos.length,
-              itemBuilder: (context, index) =>
-                  _SampleTodoItem(sampleTodos[index]),
+      body: ref.watch(todosStreamProvider).when(
+            data: (todos) => ListView.builder(
+              itemCount: todos.length,
+              itemBuilder: (context, index) => _TodoItem(todos[index]),
             ),
             error: (_, __) => const SizedBox(),
             loading: () => const Center(child: CircularProgressIndicator()),
@@ -46,8 +45,8 @@ class SampleTodosPage extends ConsumerWidget {
   }
 }
 
-/// [SampleTodo] の並び替え順。
-enum SampleTodosOrderBy {
+/// [Todo] の並び替え順。
+enum TodosOrderBy {
   dueDateTimeDesc,
   dueDateTimeAsc,
   ;
@@ -67,11 +66,11 @@ class _OrderByDropdownButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return DropdownButton<SampleTodosOrderBy>(
-      value: ref.watch(sampleTodosOrderByStateProvider),
-      items: SampleTodosOrderBy.values
+    return DropdownButton<TodosOrderBy>(
+      value: ref.watch(todosOrderByStateProvider),
+      items: TodosOrderBy.values
           .map(
-            (orderBy) => DropdownMenuItem<SampleTodosOrderBy>(
+            (orderBy) => DropdownMenuItem<TodosOrderBy>(
               value: orderBy,
               child: Text(
                 orderBy.label,
@@ -84,36 +83,36 @@ class _OrderByDropdownButton extends ConsumerWidget {
         if (orderBy == null) {
           return;
         }
-        ref
-            .read(sampleTodosOrderByStateProvider.notifier)
-            .update((_) => orderBy);
+        ref.read(todosOrderByStateProvider.notifier).update((_) => orderBy);
       },
     );
   }
 }
 
-class _SampleTodoItem extends ConsumerWidget {
-  const _SampleTodoItem(this.readSampleTodo);
+class _TodoItem extends ConsumerWidget {
+  const _TodoItem(this.todo);
 
-  final ReadSampleTodo readSampleTodo;
+  final ReadTodo todo;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return ListTile(
       leading: IconButton(
         icon: Icon(
-          readSampleTodo.isDone
+          todo.isDone
               ? Icons.check_box_outlined
               : Icons.check_box_outline_blank,
         ),
-        onPressed: () => ref
-            .read(sampleTodosControllerProvider)
-            .toggleCompletionStatus(readSampleTodo: readSampleTodo),
+        onPressed: () =>
+            ref.read(todosControllerProvider).toggleCompletionStatus(
+                  todoId: todo.todoId,
+                  isDone: !todo.isDone,
+                ),
       ),
-      title: Text(readSampleTodo.title),
+      title: Text(todo.title),
       titleTextStyle: Theme.of(context).textTheme.titleMedium,
-      subtitle: Text(readSampleTodo.description),
-      trailing: Text(readSampleTodo.dueDateTime.formatDate()),
+      subtitle: Text(todo.description),
+      trailing: Text(todo.dueDateTime.formatDate()),
     );
   }
 }
@@ -213,7 +212,8 @@ class _AddTodoBottomSheetState extends ConsumerState<_AddTodoBottomSheet> {
             child: ElevatedButton(
               onPressed: () async {
                 final navigator = Navigator.of(context);
-                await ref.read(sampleTodosControllerProvider).addTodo(
+                await ref.read(todosControllerProvider).addTodo(
+                      context: context,
                       title: _titleTextEditingController.text,
                       description: _descriptionTextEditingController.text,
                       dueDateTime: _selectedDateTime,

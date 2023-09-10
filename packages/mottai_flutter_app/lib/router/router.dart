@@ -12,7 +12,7 @@ import '../development/generic_image/ui/generic_images.dart';
 import '../development/image_detail_view/ui/image_detail_view_stub.dart';
 import '../development/image_picker/ui/image_picker_sample.dart';
 import '../development/in_review/ui/in_review.dart';
-import '../development/sample_todo/ui/sample_todos.dart';
+import '../development/sample_todo/ui/todos.dart';
 import '../development/sign_in/ui/sign_in.dart';
 import '../development/user_fcm_token/ui/user_fcm_token.dart';
 import '../development/user_social_login/user_social_login.dart';
@@ -136,8 +136,8 @@ class AppRouter extends $AppRouter {
       page: InReviewRoute.page,
     ),
     AutoRoute(
-      path: SampleTodosPage.path,
-      page: SampleTodosRoute.page,
+      path: TodosPage.path,
+      page: TodosRoute.page,
     ),
     AutoRoute(
       path: SignInSamplePage.path,

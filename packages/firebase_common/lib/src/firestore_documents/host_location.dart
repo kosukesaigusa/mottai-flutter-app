@@ -4,17 +4,15 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'host_location.flutterfire_gen.dart';
 
+// NOT: ドキュメント ID は hostId と一致する。
 @FirestoreDocument(path: 'hostLocations', documentName: 'hostLocation')
 class HostLocation {
   const HostLocation({
-    required this.hostId,
     required this.address,
     required this.geo,
     this.createdAt,
     this.updatedAt,
   });
-
-  final String hostId;
 
   @ReadDefault('')
   final String address;

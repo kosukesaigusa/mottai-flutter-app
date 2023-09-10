@@ -6,7 +6,8 @@ import '../firestore_repository.dart';
 import 'user_mode.dart';
 
 /// サインイン中のユーザーの [Worker] ドキュメントを購読する [StreamProvider].
-final workerStreamProvider = StreamProvider.autoDispose<ReadWorker?>((ref) {
+final currentUserWorkerStreamProvider =
+    StreamProvider.autoDispose<ReadWorker?>((ref) {
   ref.watch(userModeStateProvider);
   final userId = ref.watch(userIdProvider);
   if (userId == null) {
@@ -16,16 +17,18 @@ final workerStreamProvider = StreamProvider.autoDispose<ReadWorker?>((ref) {
 });
 
 /// サインイン中のユーザーがホストかどうか判定する [Provider].
-final isHostProvider = Provider.autoDispose<bool>(
-  (ref) => ref.watch(workerStreamProvider).valueOrNull?.isHost ?? false,
+final isCurrentUserHostProvider = Provider.autoDispose<bool>(
+  (ref) =>
+      ref.watch(currentUserWorkerStreamProvider).valueOrNull?.isHost ?? false,
 );
 
 /// サインイン中のユーザーがホストであるとき、対応する [Host] ドキュメントを購読
 /// する [StreamProvider].
-final hostStreamProvider = StreamProvider.autoDispose<ReadHost?>((ref) {
+final currentUserHostStreamProvider =
+    StreamProvider.autoDispose<ReadHost?>((ref) {
   ref.watch(userModeStateProvider);
   final userId = ref.watch(userIdProvider);
-  final isHost = ref.watch(isHostProvider);
+  final isHost = ref.watch(isCurrentUserHostProvider);
   if (userId == null || !isHost) {
     return Stream.value(null);
   }

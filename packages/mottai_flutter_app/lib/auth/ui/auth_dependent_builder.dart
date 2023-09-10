@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../auth.dart';
@@ -15,12 +14,12 @@ class AuthDependentBuilder extends ConsumerWidget {
     this.onUnAuthenticated,
   });
 
-  /// Firebase に Auth にサインイン済みの場合に表示されるウィジェットを `userId` とともに
+  /// Firebase Auth にサインイン済みの場合に表示されるウィジェットを `userId` とともに
   /// 返すビルダー関数。
   final Widget Function(String userId) onAuthenticated;
 
-  ///  Firebase Auth にサインインしていない場合に表示されるウィジェットを返すビルダー関数（任意）。
-  /// 渡さなければ共通の [_SignedOut] ウィジェットが表示される。
+  /// Firebase Auth にサインインしていない場合に表示されるウィジェットを返すビルダー関数（任意）。
+  /// 渡さなければ共通の [SignedOut] ウィジェットが表示される。
   final Widget Function()? onUnAuthenticated;
 
   @override
@@ -30,50 +29,35 @@ class AuthDependentBuilder extends ConsumerWidget {
       if (onUnAuthenticated != null) {
         return onUnAuthenticated!();
       } else {
-        return const _SignedOut();
+        return const SignedOut();
       }
     }
     return onAuthenticated(userId);
   }
 }
 
-class _SignedOut extends StatelessWidget {
-  const _SignedOut();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text('機能を使用するには、サインインが必要です。'),
-          Text('下記のいずれかの方法でサインインしてください。'),
-          Gap(24),
-          SignInButtons(),
-        ],
-      ),
-    );
-  }
-}
-
-/// Firebase Auth にサインイン済みであり、そのユーザーが指定した [userId] に一致する場合
-/// にのみ [onUserAuthenticated] で渡したウィジェットを表示する。
-/// その際、サインイン済みのユーザーの [userId] が使用できる。
+/// Firebase に Auth にサインイン済みの場合にのみ [onAuthenticated] で渡した
+/// ウィジェットを表示する。
+/// その際、サインイン済みのユーザーの `userId` が使用できる。また、それが指定した [userId]
+/// と一致するかどうかを表す `isUserAuthenticated` が使用できる。
 class UserAuthDependentBuilder extends ConsumerWidget {
   const UserAuthDependentBuilder({
     super.key,
     required this.userId,
-    required this.onUserAuthenticated,
-    this.onUserUnAuthenticated,
+    required this.onAuthenticated,
+    this.onUnAuthenticated,
   });
 
   /// Firebase Auth にサインイン済みであり、そのユーザーが指定した [userId] に一致する場合
-  /// に表示されるウィジェットを [userId] とともに返すビルダー関数。
-  final Widget Function(String userId) onUserAuthenticated;
+  /// に表示されるウィジェットを [userId] および、それが [userId] と一致するかどうかを表す
+  /// `isUserAuthenticated` とともに返すビルダー関数。
+  // ignore: avoid_positional_boolean_parameters
+  final Widget Function(String userId, bool isUserAuthenticated)
+      onAuthenticated;
 
-  /// Firebase Auth にサインインしていない、またはサインイン済みでもそのユーザーが指定した
-  /// [userId] に一致しない場合表示されるウィジェットを返すビルダー関数（任意）。
-  final Widget Function()? onUserUnAuthenticated;
+  ///  Firebase Auth にサインインしていない場合に表示されるウィジェットを返すビルダー関数（任意）。
+  /// 渡さなければ共通の [SignedOut] ウィジェットが表示される。
+  final Widget Function()? onUnAuthenticated;
 
   /// 表示するユーザーの uid.
   final String userId;
@@ -81,13 +65,13 @@ class UserAuthDependentBuilder extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final userId = ref.watch(userIdProvider);
-    if (userId == null || userId != this.userId) {
-      if (onUserUnAuthenticated != null) {
-        return onUserUnAuthenticated!();
+    if (userId == null) {
+      if (onUnAuthenticated != null) {
+        return onUnAuthenticated!();
       } else {
-        return const SizedBox();
+        return const SignedOut();
       }
     }
-    return onUserAuthenticated(userId);
+    return onAuthenticated(userId, userId == this.userId);
   }
 }

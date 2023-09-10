@@ -18,3 +18,10 @@ final reviewsStateNotifierProvider = StateNotifierProvider.autoDispose<
     idFromObject: (obj) => obj.reviewId,
   ),
 );
+
+/// 指定した `workerId` の [Review] 一覧を購読する [StreamProvider].
+final userReviewsStreamProvider =
+    StreamProvider.family.autoDispose<List<ReadReview>, String>(
+  (ref, userId) =>
+      ref.read(reviewRepositoryProvider).subscribeUserReviews(workerId: userId),
+);

@@ -7,6 +7,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../auth/ui/auth_dependent_builder.dart';
 import '../../auth/ui/social_link_buttons.dart';
 import '../../host/ui/host_create.dart';
+import '../../review/review.dart';
 import '../../user/ui/user_mode.dart';
 import '../../user/user.dart';
 import '../../user/worker.dart';
@@ -55,11 +56,13 @@ class WorkerPageBody extends ConsumerWidget {
             return UserAuthDependentBuilder(
               userId: userId,
               onAuthenticated: (userId, isUserAuthenticated) {
+                final userReviews =
+                    ref.watch(userReviewsStreamProvider(userId)).value ?? [];
                 return SingleChildScrollView(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Gap(16),
+                      const Gap(32),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: Row(
@@ -92,7 +95,7 @@ class WorkerPageBody extends ConsumerWidget {
                           ],
                         ),
                       ),
-                      const Gap(32),
+                      const Gap(16),
                       if (isUserAuthenticated) ...[
                         const Gap(16),
                         Padding(
@@ -114,21 +117,20 @@ class WorkerPageBody extends ConsumerWidget {
                       ),
                       const Gap(32),
                       const Divider(height: 48),
-                      // TODO 投稿した感想をDBに追加する
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: Section(
-                          titleBottomMargin: 8,
-                          title: '投稿した感想',
-                          titleStyle: Theme.of(context).textTheme.titleLarge,
-                          content: const MaterialHorizontalCard(
-                            header: '矢郷農園でレモンの収穫をお手...あああああああああああああああ',
-                            subhead: '先週末、矢郷農園でレモンの収穫を...あああああああああああ',
-                            mediaImageUrl:
-                                'https://www.kaku-ichi.co.jp/media/wp-content/uploads/2020/02/20200226001.jpg',
+                      for (final userReview in userReviews)
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Section(
+                            titleBottomMargin: 8,
+                            title: userReview.title,
+                            titleStyle: Theme.of(context).textTheme.titleLarge,
+                            content: MaterialHorizontalCard(
+                              header: userReview.title,
+                              subhead: userReview.content,
+                              mediaImageUrl: userReview.imageUrl,
+                            ),
                           ),
                         ),
-                      ),
                       const Divider(height: 48),
                       if (isUserAuthenticated)
                         Padding(

@@ -51,7 +51,6 @@ class ReviewRepository {
     return _query.subscribeDocuments(
       queryBuilder: (query) => query
           .where('workerId', isEqualTo: workerId)
-          .orderBy('workerId')
           .orderBy('createdAt', descending: true),
     );
   }

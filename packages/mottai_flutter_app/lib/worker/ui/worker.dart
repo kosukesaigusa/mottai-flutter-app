@@ -57,7 +57,7 @@ class WorkerPageBody extends ConsumerWidget {
               userId: userId,
               onAuthenticated: (userId, isUserAuthenticated) {
                 final userReviews =
-                    ref.watch(userReviewsStreamProvider(userId)).value ?? [];
+                    ref.watch(workerReviewsStreamProvider(userId)).value ?? [];
                 return SingleChildScrollView(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -115,24 +115,26 @@ class WorkerPageBody extends ConsumerWidget {
                           ),
                         ),
                       ),
-                      const Gap(32),
-                      const Divider(height: 48),
-                      for (final userReview in userReviews)
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: Section(
-                            titleBottomMargin: 8,
-                            title: userReview.title,
-                            titleStyle: Theme.of(context).textTheme.titleLarge,
-                            content: MaterialHorizontalCard(
-                              header: userReview.title,
-                              subhead: userReview.content,
-                              mediaImageUrl: userReview.imageUrl,
+                      if (userReviews.isNotEmpty) ...[
+                        const Divider(height: 48),
+                        for (final userReview in userReviews)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: Section(
+                              titleBottomMargin: 8,
+                              title: userReview.title,
+                              titleStyle:
+                                  Theme.of(context).textTheme.titleLarge,
+                              content: MaterialHorizontalCard(
+                                header: userReview.title,
+                                subhead: userReview.content,
+                                mediaImageUrl: userReview.imageUrl,
+                              ),
                             ),
                           ),
-                        ),
-                      const Divider(height: 48),
-                      if (isUserAuthenticated)
+                      ],
+                      if (isUserAuthenticated) ...[
+                        const Divider(height: 48),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           child: Section(
@@ -141,9 +143,10 @@ class WorkerPageBody extends ConsumerWidget {
                             content: const SocialLinkButtons(),
                           ),
                         ),
-                      const Divider(height: 48),
+                      ],
                       if (isUserAuthenticated &&
                           !ref.watch(isCurrentUserHostProvider)) ...[
+                        const Divider(height: 48),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           child: Section(

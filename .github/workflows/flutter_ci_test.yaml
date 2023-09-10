@@ -28,13 +28,20 @@ jobs:
         id: dartfile
         run: |
           echo "Checking for changes in Dart files..."
-          changes=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} -- '*.dart')
-          if [ -z "$changes" ]; then
-            echo "No Dart files changed."
-            echo "run-tests=false" >> $GITHUB_ENV
-          else
+          base_sha=${{ github.event.pull_request.base.sha }}
+          current_sha=${{ github.event.pull_request.head.sha }} 
+
+          echo "Base SHA: $base_sha"
+          echo "Current SHA: $current_sha"
+          git diff --name-only $base_sha $current_sha || true
+
+          changed_files=$(git diff $base_sha $current_sha --name-only | grep '\.dart$' || true)
+          if [[ -n "$changed_files" ]]; then
             echo "Dart files changed."
-            echo "run-tests=true" >> $GITHUB_ENV
+            echo "dart-changes=true" >> $GITHUB_ENV
+          else
+            echo "No Dart files changed."
+            echo "dart-changes=false" >> $GITHUB_ENV
           fi
 
       # fvm のバージョンとチャネルを環境変数に設定する

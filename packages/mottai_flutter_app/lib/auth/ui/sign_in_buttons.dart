@@ -8,6 +8,27 @@ import '../auth.dart';
 import 'auth_controller.dart';
 import 'button_builder.dart' as login_button;
 
+/// サインアウト時に表示する UI.
+class SignedOut extends StatelessWidget {
+  const SignedOut({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text('機能を使用するには、サインインが必要です。'),
+          Text('下記のいずれかの方法でサインインしてください。'),
+          Gap(24),
+          SignInButtons(),
+        ],
+      ),
+    );
+  }
+}
+
+/// サインイン方法のボタン一覧を表示する UI.
 class SignInButtons extends ConsumerWidget {
   const SignInButtons({super.key});
 
@@ -25,6 +46,7 @@ class SignInButtons extends ConsumerWidget {
                 ref.read(authControllerProvider).signIn(SignInMethod.google),
           ),
         ),
+        // TODO: Apple の審査中のみ表示するようにする
         if (defaultTargetPlatform == TargetPlatform.iOS) ...[
           const Gap(32),
           SizedBox(

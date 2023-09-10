@@ -73,7 +73,10 @@ class WorkerPageBody extends ConsumerWidget {
                 ),
                 UserAuthDependentBuilder(
                   userId: userId,
-                  onUserAuthenticated: (_) {
+                  onAuthenticated: (_, isUserAuthenticated) {
+                    if (isUserAuthenticated) {
+                      return const SizedBox();
+                    }
                     return CircleAvatar(
                       backgroundColor: Theme.of(context).focusColor,
                       child: IconButton(
@@ -90,7 +93,10 @@ class WorkerPageBody extends ConsumerWidget {
             ),
             UserAuthDependentBuilder(
               userId: userId,
-              onUserAuthenticated: (_) {
+              onAuthenticated: (userId, isUserAuthenticated) {
+                if (!isUserAuthenticated) {
+                  return const SizedBox();
+                }
                 return Column(
                   children: [
                     const Gap(16),
@@ -127,7 +133,10 @@ class WorkerPageBody extends ConsumerWidget {
             ),
             UserAuthDependentBuilder(
               userId: userId,
-              onUserAuthenticated: (userId) {
+              onAuthenticated: (_, isUserAuthenticated) {
+                if (!isUserAuthenticated) {
+                  return const SizedBox();
+                }
                 return Column(
                   children: [
                     const Divider(height: 36),

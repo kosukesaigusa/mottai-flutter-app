@@ -73,7 +73,10 @@ class HostPageBody extends ConsumerWidget {
                   ),
                 ),
                 UserAuthDependentBuilder(
-                  onUserAuthenticated: (userId) {
+                  onAuthenticated: (userId, isUserAuthenticated) {
+                    if (!isUserAuthenticated) {
+                      return const SizedBox();
+                    }
                     return CircleAvatar(
                       backgroundColor: Theme.of(context).focusColor,
                       child: IconButton(
@@ -91,7 +94,10 @@ class HostPageBody extends ConsumerWidget {
             ),
             UserAuthDependentBuilder(
               userId: userId,
-              onUserAuthenticated: (_) {
+              onAuthenticated: (userId, isUserAuthenticated) {
+                if (!isUserAuthenticated) {
+                  return const SizedBox();
+                }
                 return Column(
                   children: [
                     const Gap(16),
@@ -246,17 +252,22 @@ class HostPageBody extends ConsumerWidget {
                   ),
             ),
             UserAuthDependentBuilder(
-              onUserAuthenticated: (userId) => Column(
-                children: [
-                  const Divider(height: 36),
-                  Section(
-                    title: 'ソーシャル連携',
-                    titleStyle: Theme.of(context).textTheme.titleLarge,
-                    content: const SocialLinkButtons(),
-                  ),
-                ],
-              ),
               userId: userId,
+              onAuthenticated: (userId, isUserAuthenticated) {
+                if (!isUserAuthenticated) {
+                  return const SizedBox();
+                }
+                return Column(
+                  children: [
+                    const Divider(height: 36),
+                    Section(
+                      title: 'ソーシャル連携',
+                      titleStyle: Theme.of(context).textTheme.titleLarge,
+                      content: const SocialLinkButtons(),
+                    ),
+                  ],
+                );
+              },
             ),
           ],
         ),

@@ -61,7 +61,8 @@ class FirestorePaginationStateNotifier<T>
       final result = await fetch(perPage, _lastFetchedId);
       final newItems = [...state.valueOrNull ?? <T>[], ...result];
       state = AsyncValue.data(newItems);
-      _hasNext = result.isNotEmpty;
+      // _hasNext = result.isNotEmpty;
+      _hasNext = result.length == perPage;
       _lastFetchedId = idFromObject(result.last);
     } on Exception catch (e, stackTrace) {
       state = AsyncValue<List<T>>.error(e, stackTrace);

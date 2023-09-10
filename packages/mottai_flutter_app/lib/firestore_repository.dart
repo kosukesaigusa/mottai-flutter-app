@@ -34,8 +34,8 @@ final readStatusRepositoryProvider =
 final reviewRepositoryProvider =
     Provider.autoDispose<ReviewRepository>((_) => ReviewRepository());
 
-final sampleTodoRepositoryProvider =
-    Provider.autoDispose<SampleTodoRepository>((_) => SampleTodoRepository());
+final todoRepositoryProvider =
+    Provider.autoDispose<TodoRepository>((_) => TodoRepository());
 
 final userFcmTokenRepositoryProvider =
     Provider.autoDispose<UserFcmTokenRepository>(

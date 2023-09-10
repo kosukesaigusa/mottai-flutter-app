@@ -3,6 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../firestore_documents/_export.dart';
 
 class ReviewRepository {
+  final _query = ReviewQuery();
+
   /// [fetchReviewsWithIdCursor] メソッドにおいて、最後に読み込んだ
   /// [QueryDocumentSnapshot] を保持するための [Map] 型の変数。
   /// キーはそのドキュメント ID で、バリューが [QueryDocumentSnapshot].
@@ -42,5 +44,15 @@ class ReviewRepository {
     final lastFetchedQds = qs.docs.lastOrNull;
     _updateLastReadQueryDocumentSnapshotCache(lastFetchedQds);
     return reviews;
+  }
+
+  /// 指定した [workerId] の投稿した [Review] 一覧を購読する。
+  Stream<List<ReadReview>> subscribeUserReviews({required String workerId}) {
+    return _query.subscribeDocuments(
+      queryBuilder: (query) => query
+          .where('workerId', isEqualTo: workerId)
+          .orderBy('workerId')
+          .orderBy('createdAt', descending: true),
+    );
   }
 }

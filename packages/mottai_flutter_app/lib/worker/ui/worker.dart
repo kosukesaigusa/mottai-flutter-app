@@ -58,6 +58,7 @@ class WorkerPageBody extends ConsumerWidget {
               onAuthenticated: (userId, isUserAuthenticated) {
                 final userReviews =
                     ref.watch(workerReviewsStreamProvider(userId)).value ?? [];
+                final isCurrentUserHost = ref.watch(isCurrentUserHostProvider);
                 return SingleChildScrollView(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -68,17 +69,15 @@ class WorkerPageBody extends ConsumerWidget {
                         child: Row(
                           children: [
                             GenericImage.circle(imageUrl: worker.imageUrl),
-                            if (worker.displayName.isNotEmpty) ...[
-                              const Gap(16),
-                              Expanded(
-                                child: Text(
-                                  worker.displayName,
-                                  style: Theme.of(context).textTheme.titleLarge,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
+                            const Gap(16),
+                            Expanded(
+                              child: Text(
+                                worker.displayName,
+                                style: Theme.of(context).textTheme.titleLarge,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                               ),
-                            ],
+                            ),
                             if (isUserAuthenticated)
                               CircleAvatar(
                                 backgroundColor: Theme.of(context).focusColor,
@@ -96,7 +95,7 @@ class WorkerPageBody extends ConsumerWidget {
                         ),
                       ),
                       const Gap(16),
-                      if (isUserAuthenticated) ...[
+                      if (isUserAuthenticated && isCurrentUserHost) ...[
                         const Gap(16),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -122,7 +121,7 @@ class WorkerPageBody extends ConsumerWidget {
                             padding: const EdgeInsets.symmetric(horizontal: 16),
                             child: Section(
                               titleBottomMargin: 8,
-                              title: userReview.title,
+                              title: '投稿した感想',
                               titleStyle:
                                   Theme.of(context).textTheme.titleLarge,
                               content: MaterialHorizontalCard(
@@ -144,8 +143,7 @@ class WorkerPageBody extends ConsumerWidget {
                           ),
                         ),
                       ],
-                      if (isUserAuthenticated &&
-                          !ref.watch(isCurrentUserHostProvider)) ...[
+                      if (isUserAuthenticated && !isCurrentUserHost) ...[
                         const Divider(height: 48),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16),

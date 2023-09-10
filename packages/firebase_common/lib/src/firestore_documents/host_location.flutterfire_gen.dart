@@ -8,7 +8,6 @@ class ReadHostLocation {
   const ReadHostLocation({
     required this.hostLocationId,
     required this.path,
-    required this.hostId,
     required this.address,
     required this.geo,
     required this.createdAt,
@@ -18,8 +17,6 @@ class ReadHostLocation {
   final String hostLocationId;
 
   final String path;
-
-  final String hostId;
 
   final String address;
 
@@ -33,7 +30,6 @@ class ReadHostLocation {
     return ReadHostLocation(
       hostLocationId: json['hostLocationId'] as String,
       path: json['path'] as String,
-      hostId: json['hostId'] as String,
       address: json['address'] as String? ?? '',
       geo: _geoConverter.fromJson(json['geo'] as Map<String, dynamic>),
       createdAt: (json['createdAt'] as Timestamp?)?.toDate(),
@@ -53,18 +49,15 @@ class ReadHostLocation {
 
 class CreateHostLocation {
   const CreateHostLocation({
-    required this.hostId,
     required this.address,
     required this.geo,
   });
 
-  final String hostId;
   final String address;
   final Geo geo;
 
   Map<String, dynamic> toJson() {
     return {
-      'hostId': hostId,
       'address': address,
       'geo': _geoConverter.toJson(geo),
       'createdAt': FieldValue.serverTimestamp(),
@@ -75,20 +68,17 @@ class CreateHostLocation {
 
 class UpdateHostLocation {
   const UpdateHostLocation({
-    this.hostId,
     this.address,
     this.geo,
     this.createdAt,
   });
 
-  final String? hostId;
   final String? address;
   final Geo? geo;
   final DateTime? createdAt;
 
   Map<String, dynamic> toJson() {
     return {
-      if (hostId != null) 'hostId': hostId,
       if (address != null) 'address': address,
       if (geo != null) 'geo': _geoConverter.toJson(geo!),
       if (createdAt != null) 'createdAt': createdAt,

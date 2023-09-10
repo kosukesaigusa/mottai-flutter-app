@@ -1,12 +1,9 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:firebase_common/firebase_common.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../auth/ui/auth_dependent_builder.dart';
-import '../../host_location/host_location.dart';
 import '../../user/host.dart';
-import 'host_form.dart';
 
 /// 仕事情報更新ページ。
 @RoutePage()
@@ -34,28 +31,29 @@ class HostUpdatePage extends ConsumerWidget {
                   if (host == null) {
                     return const Center(child: Text('ホストが存在していません。'));
                   }
-                  return ref
-                      .watch(hostLocationsFromHostFutureProvider(hostId))
-                      .when(
-                        data: (hostLocations) {
-                          ReadHostLocation? location;
-                          if (hostLocations != null &&
-                              hostLocations.isNotEmpty) {
-                            location = hostLocations.first;
-                          }
+                  return const SizedBox();
+                  // return ref
+                  //     .watch(hostLocationsFromHostFutureProvider(hostId))
+                  //     .when(
+                  //       data: (hostLocations) {
+                  //         ReadHostLocation? location;
+                  //         if (hostLocations != null &&
+                  //             hostLocations.isNotEmpty) {
+                  //           location = hostLocations.first;
+                  //         }
 
-                          return HostForm.update(
-                            workerId: hostId,
-                            host: host,
-                            location: location,
-                          );
-                        },
-                        error: (_, __) => const Center(
-                          child: Text('ホスト所在地が取得できませんでした。'),
-                        ),
-                        loading: () =>
-                            const Center(child: CircularProgressIndicator()),
-                      );
+                  //         return HostForm.update(
+                  //           workerId: hostId,
+                  //           host: host,
+                  //           location: location,
+                  //         );
+                  //       },
+                  //       error: (_, __) => const Center(
+                  //         child: Text('ホスト所在地が取得できませんでした。'),
+                  //       ),
+                  //       loading: () =>
+                  //           const Center(child: CircularProgressIndicator()),
+                  //     );
                 },
                 loading: () => const Center(child: CircularProgressIndicator()),
                 error: (_, __) => const Center(

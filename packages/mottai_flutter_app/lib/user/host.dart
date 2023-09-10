@@ -34,19 +34,19 @@ final hostFutureProvider = FutureProvider.family.autoDispose<ReadHost?, String>(
 final hostServiceProvider = Provider.autoDispose<HostService>(
   (ref) => HostService(
     hostRepository: ref.watch(hostRepositoryProvider),
-    locationService: ref.watch(hostLocationServiceProvider),
+    hostLocationService: ref.watch(hostLocationServiceProvider),
   ),
 );
 
 class HostService {
   const HostService({
-    required HostLocationService locationService,
+    required HostLocationService hostLocationService,
     required HostRepository hostRepository,
   })  : _hostRepository = hostRepository,
-        _locationService = locationService;
+        _hostLocationService = hostLocationService;
 
   final HostRepository _hostRepository;
-  final HostLocationService _locationService;
+  final HostLocationService _hostLocationService;
 
   /// 指定した [Host] が存在するかどうかを返す。
   Future<bool> hostExists({required String hostId}) async {
@@ -77,9 +77,7 @@ class HostService {
       urls: urls,
       imageUrl: imageUrl,
     );
-
-    // Locationの作成
-    await _locationService.create(
+    await _hostLocationService.create(
       hostId: workerId,
       address: address,
       geo: geo,
@@ -106,15 +104,14 @@ class HostService {
       imageUrl: imageUrl,
     );
 
-    // Locationの更新
-    final locations =
-        await _locationService.fetchHostLocationsFromHost(hostId: hostId);
-    if (locations != null && locations.isNotEmpty) {
-      await _locationService.update(
-        hostLocationId: locations.first.hostLocationId,
-        address: address,
-        geo: geo,
-      );
-    }
+    // final locations =
+    //     await _hostLocationService.fetchHostLocationsFromHost(hostId: hostId);
+    // if (locations != null && locations.isNotEmpty) {
+    //   await _hostLocationService.update(
+    //     hostLocationId: locations.first.hostLocationId,
+    //     address: address,
+    //     geo: geo,
+    //   );
+    // }
   }
 }

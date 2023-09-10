@@ -27,12 +27,15 @@ jobs:
       - name: Check for Dart file changes
         id: dartfile
         run: |
-          base_sha=${{ github.event.pull_request.base.sha }}
-          current_sha=${{ github.sha }}
-
           echo "Checking for changes in Dart files..."
-          # 変更された Dart ファイルを取得
-          changed_files=$(git diff --name-only $base_sha $current_sha | grep '\.dart$')
+          base_sha=${{ github.event.pull_request.base.sha }}
+          current_sha=${{ github.event.pull_request.head.sha }} 
+
+          echo "Base SHA: $base_sha"
+          echo "Current SHA: $current_sha"
+          git diff --name-only $base_sha $current_sha || true
+
+          changed_files=$(git diff $base_sha $current_sha --name-only | grep '\.dart$' || true)
           if [[ -n "$changed_files" ]]; then
             echo "Dart files changed."
             echo "dart-changes=true" >> $GITHUB_ENV

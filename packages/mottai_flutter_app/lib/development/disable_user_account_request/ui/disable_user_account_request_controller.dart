@@ -1,3 +1,4 @@
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -33,10 +34,14 @@ class DisableUserAccountRequestController {
         actions: [
           ElevatedButton(
             onPressed: () async {
-              await _disableUserAccountRequestService
-                  .disableUserAccount(
-                userId: userId,
-              );
+              try {
+                await _disableUserAccountRequestService.disableUserAccount(
+                  userId: userId,
+                );
+              } on FirebaseException catch (e) {
+                _appScaffoldMessengerController
+                    .showSnackBarByFirebaseException(e);
+              }
               //TODO 退会処理が完了したことをユーザーに示す
             },
             style: ElevatedButton.styleFrom(

@@ -18,22 +18,29 @@ class DisableUserAccountRequestService {
   const DisableUserAccountRequestService({
     required DisableUserAccountRequestRepository
         disableUserAccountRequestRepository,
-        required AuthService authService,
-  }) : _disableUserAccountRequestRepository =
+    required AuthService authService,
+  })  : _disableUserAccountRequestRepository =
             disableUserAccountRequestRepository,
-      _authService = authService;
+        _authService = authService;
 
   final DisableUserAccountRequestRepository
       _disableUserAccountRequestRepository;
-      final AuthService _authService;
+  final AuthService _authService;
 
-  /// 引数で受ける [userId] を用いて [DisableUserAccountRequest] ドキュメントを作成し、サインアウトする
-  Future<void> createDisableUserAccountRequest({
+  /// 引数で受ける [userId] を用いて [DisableUserAccountRequest] ドキュメントを作成した後、サインアウトする。
+  Future<void> disableUserAccount({
+    required String userId,
+  }) async {
+    await _createDisableUserAccountRequest(userId: userId);
+    await _authService.signOut();
+  }
+
+  /// 引数で受ける [userId] を用いて [DisableUserAccountRequest] ドキュメントを作成する。
+  Future<void> _createDisableUserAccountRequest({
     required String userId,
   }) async {
     await _disableUserAccountRequestRepository.setDisableUserAccountRequest(
       userId: userId,
     );
-    await _authService.signOut(); 
   }
 }

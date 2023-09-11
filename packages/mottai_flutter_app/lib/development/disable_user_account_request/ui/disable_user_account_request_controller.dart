@@ -34,7 +34,7 @@ class DisableUserAccountRequestController {
           ElevatedButton(
             onPressed: () async {
               await _disableUserAccountRequestService
-                  .createDisableUserAccountRequest(
+                  .disableUserAccount(
                 userId: userId,
               );
               //TODO 退会処理が完了したことをユーザーに示す

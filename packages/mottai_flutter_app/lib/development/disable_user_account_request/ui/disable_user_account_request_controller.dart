@@ -38,11 +38,15 @@ class DisableUserAccountRequestController {
                 await _disableUserAccountRequestService.disableUserAccount(
                   userId: userId,
                 );
+                if (!context.mounted) {
+                  return;
+                }
+                Navigator.pop(context);
+                await _showDisableUserAccountCompletedDialog();
               } on FirebaseException catch (e) {
                 _appScaffoldMessengerController
                     .showSnackBarByFirebaseException(e);
               }
-              //TODO 退会処理が完了したことをユーザーに示す
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.red,
@@ -61,6 +65,24 @@ class DisableUserAccountRequestController {
             },
             child: const Text('戻る'),
           )
+        ],
+      ),
+    );
+  }
+
+  /// 退会処理が完了したことをユーザーに通知するダイアログを表示する
+  Future<void> _showDisableUserAccountCompletedDialog() async {
+    await _appScaffoldMessengerController.showDialogByBuilder<void>(
+      builder: (context) => AlertDialog(
+        title: const Text('退会処理が完了しました。'),
+        content: const Text('ご利用いただきありがとうございました。'),
+        actions: [
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: const Text('閉じる'),
+          ),
         ],
       ),
     );

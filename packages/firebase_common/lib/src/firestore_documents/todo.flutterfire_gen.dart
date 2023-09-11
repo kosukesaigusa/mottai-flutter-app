@@ -2,11 +2,11 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'sample_todo.dart';
+part of 'todo.dart';
 
-class ReadSampleTodo {
-  const ReadSampleTodo({
-    required this.sampleTodoId,
+class ReadTodo {
+  const ReadTodo({
+    required this.todoId,
     required this.path,
     required this.title,
     required this.description,
@@ -15,7 +15,7 @@ class ReadSampleTodo {
     required this.updatedAt,
   });
 
-  final String sampleTodoId;
+  final String todoId;
 
   final String path;
 
@@ -29,9 +29,9 @@ class ReadSampleTodo {
 
   final DateTime? updatedAt;
 
-  factory ReadSampleTodo._fromJson(Map<String, dynamic> json) {
-    return ReadSampleTodo(
-      sampleTodoId: json['sampleTodoId'] as String,
+  factory ReadTodo._fromJson(Map<String, dynamic> json) {
+    return ReadTodo(
+      todoId: json['todoId'] as String,
       path: json['path'] as String,
       title: json['title'] as String? ?? '',
       description: json['description'] as String? ?? '',
@@ -41,18 +41,18 @@ class ReadSampleTodo {
     );
   }
 
-  factory ReadSampleTodo.fromDocumentSnapshot(DocumentSnapshot ds) {
+  factory ReadTodo.fromDocumentSnapshot(DocumentSnapshot ds) {
     final data = ds.data()! as Map<String, dynamic>;
-    return ReadSampleTodo._fromJson(<String, dynamic>{
+    return ReadTodo._fromJson(<String, dynamic>{
       ...data,
-      'sampleTodoId': ds.id,
+      'todoId': ds.id,
       'path': ds.reference.path,
     });
   }
 }
 
-class CreateSampleTodo {
-  const CreateSampleTodo({
+class CreateTodo {
+  const CreateTodo({
     required this.title,
     required this.description,
     required this.isDone,
@@ -75,8 +75,8 @@ class CreateSampleTodo {
   }
 }
 
-class UpdateSampleTodo {
-  const UpdateSampleTodo({
+class UpdateTodo {
+  const UpdateTodo({
     this.title,
     this.description,
     this.isDone,
@@ -99,73 +99,73 @@ class UpdateSampleTodo {
   }
 }
 
-class DeleteSampleTodo {}
+class DeleteTodo {}
 
 /// Provides a reference to the sampleTodos collection for reading.
-final readSampleTodoCollectionReference = FirebaseFirestore.instance
+final readTodoCollectionReference = FirebaseFirestore.instance
     .collection('sampleTodos')
-    .withConverter<ReadSampleTodo>(
-      fromFirestore: (ds, _) => ReadSampleTodo.fromDocumentSnapshot(ds),
+    .withConverter<ReadTodo>(
+      fromFirestore: (ds, _) => ReadTodo.fromDocumentSnapshot(ds),
       toFirestore: (_, __) => throw UnimplementedError(),
     );
 
-/// Provides a reference to a sampleTodo document for reading.
-DocumentReference<ReadSampleTodo> readSampleTodoDocumentReference({
-  required String sampleTodoId,
+/// Provides a reference to a todo document for reading.
+DocumentReference<ReadTodo> readTodoDocumentReference({
+  required String todoId,
 }) =>
-    readSampleTodoCollectionReference.doc(sampleTodoId);
+    readTodoCollectionReference.doc(todoId);
 
 /// Provides a reference to the sampleTodos collection for creating.
-final createSampleTodoCollectionReference = FirebaseFirestore.instance
+final createTodoCollectionReference = FirebaseFirestore.instance
     .collection('sampleTodos')
-    .withConverter<CreateSampleTodo>(
+    .withConverter<CreateTodo>(
       fromFirestore: (_, __) => throw UnimplementedError(),
       toFirestore: (obj, _) => obj.toJson(),
     );
 
-/// Provides a reference to a sampleTodo document for creating.
-DocumentReference<CreateSampleTodo> createSampleTodoDocumentReference({
-  required String sampleTodoId,
+/// Provides a reference to a todo document for creating.
+DocumentReference<CreateTodo> createTodoDocumentReference({
+  required String todoId,
 }) =>
-    createSampleTodoCollectionReference.doc(sampleTodoId);
+    createTodoCollectionReference.doc(todoId);
 
 /// Provides a reference to the sampleTodos collection for updating.
-final updateSampleTodoCollectionReference = FirebaseFirestore.instance
+final updateTodoCollectionReference = FirebaseFirestore.instance
     .collection('sampleTodos')
-    .withConverter<UpdateSampleTodo>(
+    .withConverter<UpdateTodo>(
       fromFirestore: (_, __) => throw UnimplementedError(),
       toFirestore: (obj, _) => obj.toJson(),
     );
 
-/// Provides a reference to a sampleTodo document for updating.
-DocumentReference<UpdateSampleTodo> updateSampleTodoDocumentReference({
-  required String sampleTodoId,
+/// Provides a reference to a todo document for updating.
+DocumentReference<UpdateTodo> updateTodoDocumentReference({
+  required String todoId,
 }) =>
-    updateSampleTodoCollectionReference.doc(sampleTodoId);
+    updateTodoCollectionReference.doc(todoId);
 
 /// Provides a reference to the sampleTodos collection for deleting.
-final deleteSampleTodoCollectionReference = FirebaseFirestore.instance
+final deleteTodoCollectionReference = FirebaseFirestore.instance
     .collection('sampleTodos')
-    .withConverter<DeleteSampleTodo>(
+    .withConverter<DeleteTodo>(
       fromFirestore: (_, __) => throw UnimplementedError(),
       toFirestore: (_, __) => throw UnimplementedError(),
     );
 
-/// Provides a reference to a sampleTodo document for deleting.
-DocumentReference<DeleteSampleTodo> deleteSampleTodoDocumentReference({
-  required String sampleTodoId,
+/// Provides a reference to a todo document for deleting.
+DocumentReference<DeleteTodo> deleteTodoDocumentReference({
+  required String todoId,
 }) =>
-    deleteSampleTodoCollectionReference.doc(sampleTodoId);
+    deleteTodoCollectionReference.doc(todoId);
 
 /// Manages queries against the sampleTodos collection.
-class SampleTodoQuery {
-  /// Fetches [ReadSampleTodo] documents.
-  Future<List<ReadSampleTodo>> fetchDocuments({
+class TodoQuery {
+  /// Fetches [ReadTodo] documents.
+  Future<List<ReadTodo>> fetchDocuments({
     GetOptions? options,
-    Query<ReadSampleTodo>? Function(Query<ReadSampleTodo> query)? queryBuilder,
-    int Function(ReadSampleTodo lhs, ReadSampleTodo rhs)? compare,
+    Query<ReadTodo>? Function(Query<ReadTodo> query)? queryBuilder,
+    int Function(ReadTodo lhs, ReadTodo rhs)? compare,
   }) async {
-    Query<ReadSampleTodo> query = readSampleTodoCollectionReference;
+    Query<ReadTodo> query = readTodoCollectionReference;
     if (queryBuilder != null) {
       query = queryBuilder(query)!;
     }
@@ -177,14 +177,14 @@ class SampleTodoQuery {
     return result;
   }
 
-  /// Subscribes [SampleTodo] documents.
-  Stream<List<ReadSampleTodo>> subscribeDocuments({
-    Query<ReadSampleTodo>? Function(Query<ReadSampleTodo> query)? queryBuilder,
-    int Function(ReadSampleTodo lhs, ReadSampleTodo rhs)? compare,
+  /// Subscribes [Todo] documents.
+  Stream<List<ReadTodo>> subscribeDocuments({
+    Query<ReadTodo>? Function(Query<ReadTodo> query)? queryBuilder,
+    int Function(ReadTodo lhs, ReadTodo rhs)? compare,
     bool includeMetadataChanges = false,
     bool excludePendingWrites = false,
   }) {
-    Query<ReadSampleTodo> query = readSampleTodoCollectionReference;
+    Query<ReadTodo> query = readTodoCollectionReference;
     if (queryBuilder != null) {
       query = queryBuilder(query)!;
     }
@@ -202,25 +202,25 @@ class SampleTodoQuery {
     });
   }
 
-  /// Fetches a specific [ReadSampleTodo] document.
-  Future<ReadSampleTodo?> fetchDocument({
-    required String sampleTodoId,
+  /// Fetches a specific [ReadTodo] document.
+  Future<ReadTodo?> fetchDocument({
+    required String todoId,
     GetOptions? options,
   }) async {
-    final ds = await readSampleTodoDocumentReference(
-      sampleTodoId: sampleTodoId,
+    final ds = await readTodoDocumentReference(
+      todoId: todoId,
     ).get(options);
     return ds.data();
   }
 
-  /// Subscribes a specific [SampleTodo] document.
-  Stream<ReadSampleTodo?> subscribeDocument({
-    required String sampleTodoId,
+  /// Subscribes a specific [Todo] document.
+  Stream<ReadTodo?> subscribeDocument({
+    required String todoId,
     bool includeMetadataChanges = false,
     bool excludePendingWrites = false,
   }) {
-    var streamDs = readSampleTodoDocumentReference(
-      sampleTodoId: sampleTodoId,
+    var streamDs = readTodoDocumentReference(
+      todoId: todoId,
     ).snapshots(includeMetadataChanges: includeMetadataChanges);
     if (excludePendingWrites) {
       streamDs = streamDs.where((ds) => !ds.metadata.hasPendingWrites);
@@ -228,36 +228,36 @@ class SampleTodoQuery {
     return streamDs.map((ds) => ds.data());
   }
 
-  /// Adds a [SampleTodo] document.
-  Future<DocumentReference<CreateSampleTodo>> add({
-    required CreateSampleTodo createSampleTodo,
+  /// Adds a [Todo] document.
+  Future<DocumentReference<CreateTodo>> add({
+    required CreateTodo createTodo,
   }) =>
-      createSampleTodoCollectionReference.add(createSampleTodo);
+      createTodoCollectionReference.add(createTodo);
 
-  /// Sets a [SampleTodo] document.
+  /// Sets a [Todo] document.
   Future<void> set({
-    required String sampleTodoId,
-    required CreateSampleTodo createSampleTodo,
+    required String todoId,
+    required CreateTodo createTodo,
     SetOptions? options,
   }) =>
-      createSampleTodoDocumentReference(
-        sampleTodoId: sampleTodoId,
-      ).set(createSampleTodo, options);
+      createTodoDocumentReference(
+        todoId: todoId,
+      ).set(createTodo, options);
 
-  /// Updates a specific [SampleTodo] document.
+  /// Updates a specific [Todo] document.
   Future<void> update({
-    required String sampleTodoId,
-    required UpdateSampleTodo updateSampleTodo,
+    required String todoId,
+    required UpdateTodo updateTodo,
   }) =>
-      updateSampleTodoDocumentReference(
-        sampleTodoId: sampleTodoId,
-      ).update(updateSampleTodo.toJson());
+      updateTodoDocumentReference(
+        todoId: todoId,
+      ).update(updateTodo.toJson());
 
-  /// Deletes a specific [SampleTodo] document.
+  /// Deletes a specific [Todo] document.
   Future<void> delete({
-    required String sampleTodoId,
+    required String todoId,
   }) =>
-      deleteSampleTodoDocumentReference(
-        sampleTodoId: sampleTodoId,
+      deleteTodoDocumentReference(
+        todoId: todoId,
       ).delete();
 }

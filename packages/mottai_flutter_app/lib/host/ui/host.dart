@@ -10,7 +10,7 @@ import '../../auth/ui/social_link_buttons.dart';
 import '../../job/job.dart';
 import '../../user/host.dart';
 import '../../user/ui/user_mode.dart';
-import 'create_or_update_host.dart';
+import 'host_update.dart';
 
 /// ホストページ。
 @RoutePage()
@@ -79,10 +79,7 @@ class HostPageBody extends ConsumerWidget {
                       child: IconButton(
                         color: Theme.of(context).shadowColor,
                         onPressed: () => context.router.pushNamed(
-                          CreateOrUpdateHostPage.location(
-                            userId: userId,
-                            actionType: ActionType.update.name,
-                          ),
+                          HostUpdatePage.location(hostId: userId),
                         ),
                         icon: const Icon(Icons.edit),
                       ),

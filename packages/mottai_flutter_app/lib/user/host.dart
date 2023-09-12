@@ -103,6 +103,7 @@ class HostService {
       urls: urls,
       imageUrl: imageUrl,
     );
+    // TODO: 修正する
 
     // final locations =
     //     await _hostLocationService.fetchHostLocationsFromHost(hostId: hostId);

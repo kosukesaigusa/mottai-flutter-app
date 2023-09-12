@@ -4,6 +4,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../auth/ui/auth_dependent_builder.dart';
 import '../../user/host.dart';
+import 'host_form.dart';
 
 /// 仕事情報更新ページ。
 @RoutePage()
@@ -22,44 +23,26 @@ class HostUpdatePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final hostAsyncValue = ref.watch(hostFutureProvider(hostId));
+    final host = hostAsyncValue.valueOrNull;
+    final isLoading = hostAsyncValue.isLoading;
+    if (host == null) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('ホスト情報編集')),
+        body: isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : const Center(child: Text('ホストが存在しません。')),
+      );
+    }
     return Scaffold(
       appBar: AppBar(title: const Text('ホスト情報編集')),
-      body: AuthDependentBuilder(
-        onAuthenticated: (hostId) {
-          return ref.watch(hostFutureProvider(hostId)).when(
-                data: (host) {
-                  if (host == null) {
-                    return const Center(child: Text('ホストが存在していません。'));
-                  }
-                  return const SizedBox();
-                  // return ref
-                  //     .watch(hostLocationsFromHostFutureProvider(hostId))
-                  //     .when(
-                  //       data: (hostLocations) {
-                  //         ReadHostLocation? location;
-                  //         if (hostLocations != null &&
-                  //             hostLocations.isNotEmpty) {
-                  //           location = hostLocations.first;
-                  //         }
-
-                  //         return HostForm.update(
-                  //           workerId: hostId,
-                  //           host: host,
-                  //           location: location,
-                  //         );
-                  //       },
-                  //       error: (_, __) => const Center(
-                  //         child: Text('ホスト所在地が取得できませんでした。'),
-                  //       ),
-                  //       loading: () =>
-                  //           const Center(child: CircularProgressIndicator()),
-                  //     );
-                },
-                loading: () => const Center(child: CircularProgressIndicator()),
-                error: (_, __) => const Center(
-                  child: Text('ホスト情報が取得できませんでした。'),
-                ),
-              );
+      body: UserAuthDependentBuilder(
+        userId: hostId,
+        onAuthenticated: (userId, isUserAuthenticated) {
+          if (!isUserAuthenticated) {
+            return const Center(child: Text('このホスト情報は編集できません。'));
+          }
+          return HostForm.update(hostId: userId, host: host);
         },
       ),
     );

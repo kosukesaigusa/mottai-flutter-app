@@ -3,7 +3,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../firestore_repository.dart';
 
-final jobServiceProvider = Provider.autoDispose<JobService>(
+final jobServiceProvider = Provider.autoDispose<UserGenerateContentService>(
   (ref) => UserGenerateContentService(
     jobRepository: ref.watch(jobRepositoryProvider),
   ),

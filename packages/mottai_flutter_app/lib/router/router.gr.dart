@@ -258,6 +258,12 @@ abstract class $AppRouter extends _i31.RootStackRouter {
         child: const _i26.UgcSamplePage(),
       );
     },
+    UgcSampleRoute.name: (routeData) {
+      return _i31.AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const _i26.UgcSamplePage(),
+      );
+    },
     UserFcmTokenRoute.name: (routeData) {
       return _i31.AutoRoutePage<dynamic>(
         routeData: routeData,

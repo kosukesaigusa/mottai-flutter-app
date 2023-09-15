@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutterfire_gen_annotation/flutterfire_gen_annotation.dart';
 part 'user_inappropriate_report.flutterfire_gen.dart';
 

@@ -2,6 +2,9 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../../../auth/ui/auth_dependent_builder.dart';
+import '../user_generate_content.dart';
+
 @RoutePage()
 class UgcSamplePage extends ConsumerStatefulWidget {
   const UgcSamplePage({super.key});
@@ -32,26 +35,66 @@ class UgcSampleState extends ConsumerState<UgcSamplePage> {
     'xQvXmRr26wythvz9wizf',
   ];
 
+  static const _reviewIds = [
+    '2TPCqigw8xTvju9t6hAh',
+    'MlWDXBME1CSLdTNaNsmF',
+  ];
+
   String? _selectJobId;
+  String? _selectReviewId;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('UGC機能サンプルページ')),
-      body: Column(
-        children: [
-          // =====Jobの通報機能=====
-          _UgcContent(
-            title: 'Jobの通報処理',
-            executeText: 'Jobを通報',
-            targetItems: _jobIds,
-            item: _selectJobId,
-            onSelected: (jobId) => setState(() {
-              _selectJobId = jobId;
-            }),
-            onPressed: () {},
-          ),
-        ],
+      body: AuthDependentBuilder(
+        onAuthenticated: (userId) {
+          return Column(
+            children: [
+              // =====Jobの通報機能=====
+              _UgcContent(
+                title: 'Jobの通報処理',
+                executeText: 'Jobを通報',
+                targetItems: _jobIds,
+                item: _selectJobId,
+                onSelected: (jobId) => setState(() {
+                  _selectJobId = jobId;
+                }),
+                onPressed: () {
+                  final jobId = _selectJobId;
+                  if (jobId == null) {
+                    return;
+                  }
+                  ref.watch(inappropriateReportJobServiceProvider).create(
+                        userId: userId,
+                        targetId: jobId,
+                      );
+                },
+              ),
+
+              // =====Reviewの通報機能=====
+              _UgcContent(
+                title: 'Reviewの通報処理',
+                executeText: 'Reviewを通報',
+                targetItems: _reviewIds,
+                item: _selectReviewId,
+                onSelected: (reviewId) => setState(() {
+                  _selectReviewId = reviewId;
+                }),
+                onPressed: () {
+                  final reviewId = _selectReviewId;
+                  if (reviewId == null) {
+                    return;
+                  }
+                  ref.watch(inappropriateReportReviewServiceProvider).create(
+                        userId: userId,
+                        targetId: reviewId,
+                      );
+                },
+              ),
+            ],
+          );
+        },
       ),
     );
   }

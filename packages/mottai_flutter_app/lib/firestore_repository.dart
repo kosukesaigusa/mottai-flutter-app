@@ -49,3 +49,13 @@ final userSocialLoginRepositoryProvider =
 
 final workerRepositoryProvider =
     Provider.autoDispose<WorkerRepository>((_) => WorkerRepository());
+
+final inappropriateReportJobRepositoryProvider =
+    Provider.autoDispose<InappropriateReportJobRepository>(
+  (_) => InappropriateReportJobRepository(),
+);
+
+final inappropriateReportReviewRepositoryProvider =
+    Provider.autoDispose<InappropriateReportReviewRepository>(
+  (_) => InappropriateReportReviewRepository(),
+);

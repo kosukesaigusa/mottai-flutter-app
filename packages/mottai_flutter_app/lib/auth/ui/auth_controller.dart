@@ -53,6 +53,12 @@ class AuthController {
       await _setFcmToken(userCredential);
     } on AppException catch (e) {
       _appScaffoldMessengerController.showSnackBarByException(e);
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-disabled') {
+        _appScaffoldMessengerController.showSnackBar('このアカウントは退会済みのため無効です。');
+      } else {
+        _appScaffoldMessengerController.showSnackBarByFirebaseException(e);
+      }
     }
   }
 

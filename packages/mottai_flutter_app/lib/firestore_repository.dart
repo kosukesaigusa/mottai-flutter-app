@@ -59,3 +59,12 @@ final inappropriateReportReviewRepositoryProvider =
     Provider.autoDispose<InappropriateReportReviewRepository>(
   (_) => InappropriateReportReviewRepository(),
 );
+
+final blockedJobRepositoryProvider = Provider.autoDispose<BlockedJobRepository>(
+  (_) => BlockedJobRepository(),
+);
+
+final blockedReviewRepositoryProvider =
+    Provider.autoDispose<BlockedReviewRepository>(
+  (_) => BlockedReviewRepository(),
+);

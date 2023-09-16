@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../auth/ui/auth_dependent_builder.dart';
+import '../../../firestore_repository.dart';
 import '../user_generate_content.dart';
 
 @RoutePage()
@@ -40,8 +41,10 @@ class UgcSampleState extends ConsumerState<UgcSamplePage> {
     'MlWDXBME1CSLdTNaNsmF',
   ];
 
-  String? _selectJobId;
-  String? _selectReviewId;
+  String? _selectedReportJobId;
+  String? _selectedReportReviewId;
+  String? _selectedBlockJobId;
+  String? _selectedBlockReviewId;
 
   @override
   Widget build(BuildContext context) {
@@ -49,50 +52,94 @@ class UgcSampleState extends ConsumerState<UgcSamplePage> {
       appBar: AppBar(title: const Text('UGC機能サンプルページ')),
       body: AuthDependentBuilder(
         onAuthenticated: (userId) {
-          return Column(
-            children: [
-              // =====Jobの通報機能=====
-              _UgcContent(
-                title: 'Jobの通報処理',
-                executeText: 'Jobを通報',
-                targetItems: _jobIds,
-                item: _selectJobId,
-                onSelected: (jobId) => setState(() {
-                  _selectJobId = jobId;
-                }),
-                onPressed: () {
-                  final jobId = _selectJobId;
-                  if (jobId == null) {
-                    return;
-                  }
-                  ref.watch(inappropriateReportJobServiceProvider).create(
-                        userId: userId,
-                        targetId: jobId,
-                      );
-                },
-              ),
+          return SingleChildScrollView(
+            child: Column(
+              children: [
+                // =====Jobの通報機能=====
+                _UgcContent(
+                  title: 'Jobの通報処理',
+                  executeText: 'Jobを通報',
+                  targetItems: _jobIds,
+                  item: _selectedReportJobId,
+                  onSelected: (jobId) => setState(() {
+                    _selectedReportJobId = jobId;
+                  }),
+                  onPressed: () {
+                    final jobId = _selectedReportJobId;
+                    if (jobId == null) {
+                      return;
+                    }
+                    ref.watch(inappropriateReportJobServiceProvider).create(
+                          userId: userId,
+                          targetId: jobId,
+                        );
+                  },
+                ),
 
-              // =====Reviewの通報機能=====
-              _UgcContent(
-                title: 'Reviewの通報処理',
-                executeText: 'Reviewを通報',
-                targetItems: _reviewIds,
-                item: _selectReviewId,
-                onSelected: (reviewId) => setState(() {
-                  _selectReviewId = reviewId;
-                }),
-                onPressed: () {
-                  final reviewId = _selectReviewId;
-                  if (reviewId == null) {
-                    return;
-                  }
-                  ref.watch(inappropriateReportReviewServiceProvider).create(
-                        userId: userId,
-                        targetId: reviewId,
-                      );
-                },
-              ),
-            ],
+                // =====Reviewの通報機能=====
+                _UgcContent(
+                  title: 'Reviewの通報処理',
+                  executeText: 'Reviewを通報',
+                  targetItems: _reviewIds,
+                  item: _selectedReportReviewId,
+                  onSelected: (reviewId) => setState(() {
+                    _selectedReportReviewId = reviewId;
+                  }),
+                  onPressed: () {
+                    final reviewId = _selectedReportReviewId;
+                    if (reviewId == null) {
+                      return;
+                    }
+                    ref.watch(inappropriateReportReviewServiceProvider).create(
+                          userId: userId,
+                          targetId: reviewId,
+                        );
+                  },
+                ),
+
+                // =====Jobのブロック機能=====
+                _UgcContent(
+                  title: 'Jobのブロック処理',
+                  executeText: 'Jobをブロック',
+                  targetItems: _jobIds,
+                  item: _selectedBlockJobId,
+                  onSelected: (jobId) => setState(() {
+                    _selectedBlockJobId = jobId;
+                  }),
+                  onPressed: () {
+                    final jobId = _selectedBlockJobId;
+                    if (jobId == null) {
+                      return;
+                    }
+                    ref.watch(blockedJobRepositoryProvider).create(
+                          userId: userId,
+                          targetId: jobId,
+                        );
+                  },
+                ),
+
+                // =====Reviewのブロック機能=====
+                _UgcContent(
+                  title: 'Reviewのブロック処理',
+                  executeText: 'Reviewをブロック',
+                  targetItems: _reviewIds,
+                  item: _selectedBlockReviewId,
+                  onSelected: (reviewId) => setState(() {
+                    _selectedBlockReviewId = reviewId;
+                  }),
+                  onPressed: () {
+                    final reviewId = _selectedBlockReviewId;
+                    if (reviewId == null) {
+                      return;
+                    }
+                    ref.watch(blockedReviewRepositoryProvider).create(
+                          userId: userId,
+                          targetId: reviewId,
+                        );
+                  },
+                ),
+              ],
+            ),
           );
         },
       ),

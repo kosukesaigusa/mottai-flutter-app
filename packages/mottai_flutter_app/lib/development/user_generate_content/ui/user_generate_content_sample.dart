@@ -111,7 +111,7 @@ class UgcSampleState extends ConsumerState<UgcSamplePage> {
                     if (jobId == null) {
                       return;
                     }
-                    ref.watch(blockedJobRepositoryProvider).create(
+                    ref.watch(blockJobServiceProvider).create(
                           userId: userId,
                           targetId: jobId,
                         );
@@ -132,7 +132,7 @@ class UgcSampleState extends ConsumerState<UgcSamplePage> {
                     if (reviewId == null) {
                       return;
                     }
-                    ref.watch(blockedReviewRepositoryProvider).create(
+                    ref.watch(blockReviewServiceProvider).create(
                           userId: userId,
                           targetId: reviewId,
                         );

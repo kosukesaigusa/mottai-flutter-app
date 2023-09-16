@@ -37,3 +37,38 @@ class UserInappropriateReportService {
     );
   }
 }
+
+/// jobブロックサービス
+final blockJobServiceProvider =
+    Provider.autoDispose<UserBlockedDocumentService>(
+  (ref) => UserBlockedDocumentService(
+    blockRepository: ref.watch(blockedJobRepositoryProvider),
+  ),
+);
+
+/// reviewブロックサービス
+final blockReviewServiceProvider =
+    Provider.autoDispose<UserBlockedDocumentService>(
+  (ref) => UserBlockedDocumentService(
+    blockRepository: ref.watch(blockedReviewRepositoryProvider),
+  ),
+);
+
+class UserBlockedDocumentService {
+  const UserBlockedDocumentService(
+      {required UserBlockedDocumentRepository blockRepository})
+      : _blockRepository = blockRepository;
+
+  final UserBlockedDocumentRepository _blockRepository;
+
+  /// ブロックの情報を作成する。
+  Future<void> create({
+    required String userId,
+    required String targetId,
+  }) async {
+    await _blockRepository.create(
+      userId: userId,
+      targetId: targetId,
+    );
+  }
+}

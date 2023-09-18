@@ -3,6 +3,7 @@ import 'package:auto_route/auto_route.dart';
 import '../chat/ui/chat_room.dart';
 import '../chat/ui/chat_rooms.dart';
 import '../development/color/ui/color.dart';
+import '../development/crashlytics/ui/crashlytics.dart';
 import '../development/development_items/ui/development_items.dart';
 import '../development/email_and_password_sign_in/ui/email_and_password_sign_in.dart';
 import '../development/firebase_messaging/ui/firebase_messaging.dart';
@@ -102,6 +103,10 @@ class AppRouter extends $AppRouter {
     AutoRoute(
       path: ColorPage.path,
       page: ColorRoute.page,
+    ),
+    AutoRoute(
+      path: CrashlyticsPage.path,
+      page: CrashlyticsRoute.page,
     ),
     AutoRoute(
       path: DevelopmentItemsPage.path,

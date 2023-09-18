@@ -20,6 +20,7 @@ dependencies:
   firebase_common:
     path: ../firebase_common
   firebase_core: ^2.15.0
+  firebase_crashlytics: ^3.3.5
   firebase_dynamic_links: ^5.3.4
   firebase_messaging: ^14.6.5
   firebase_storage: ^11.2.5

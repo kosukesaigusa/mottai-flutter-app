@@ -15,6 +15,7 @@ import '../../../job/ui/job_update.dart';
 import '../../../map/ui/map.dart';
 import '../../../worker/ui/worker.dart';
 import '../../color/ui/color.dart';
+import '../../crashlytics/ui/crashlytics.dart';
 import '../../firebase_messaging/ui/firebase_messaging.dart';
 import '../../firebase_storage/ui/firebase_storage.dart';
 import '../../force_update/ui/force_update.dart';
@@ -91,9 +92,7 @@ class DevelopmentItemsPage extends ConsumerWidget {
                   await context.router.pushNamed(
                     ChatRoomPage.location(chatRoomId: chatRoomId),
                   );
-                  await ref
-                      .read(readStatusServiceProvider)
-                      .setReadStatus(chatRoomId: chatRoomId, userId: userId);
+                  await ref.read(readStatusServiceProvider).setReadStatus(chatRoomId: chatRoomId, userId: userId);
                 },
               );
             },
@@ -148,18 +147,15 @@ class DevelopmentItemsPage extends ConsumerWidget {
           ),
           ListTile(
             title: const Text('画像選択・圧縮（1 枚 or 複数）'),
-            onTap: () =>
-                context.router.pushNamed(ImagePickerSamplePage.location),
+            onTap: () => context.router.pushNamed(ImagePickerSamplePage.location),
           ),
           ListTile(
             title: const Text('画像アップロード'),
-            onTap: () =>
-                context.router.pushNamed(FirebaseStorageSamplePage.location),
+            onTap: () => context.router.pushNamed(FirebaseStorageSamplePage.location),
           ),
           ListTile(
             title: const Text('強制アップデート'),
-            onTap: () =>
-                context.router.pushNamed(ForceUpdateSamplePage.location),
+            onTap: () => context.router.pushNamed(ForceUpdateSamplePage.location),
           ),
           ListTile(
             title: const Text('レビュー中かどうか'),
@@ -171,8 +167,7 @@ class DevelopmentItemsPage extends ConsumerWidget {
           ),
           ListTile(
             title: const Text('ソーシャル認証連携 (Google, Apple)'),
-            onTap: () =>
-                context.router.pushNamed(UserSocialLoginSamplePage.location),
+            onTap: () => context.router.pushNamed(UserSocialLoginSamplePage.location),
           ),
           ListTile(
             title: const Text('UserFcmToken 確認ページ'),
@@ -182,8 +177,7 @@ class DevelopmentItemsPage extends ConsumerWidget {
             title: const Text(
               '通知 (firebase_messaging, local_notification, dynamic_links)',
             ),
-            onTap: () =>
-                context.router.pushNamed(FirebaseMessagingPage.location),
+            onTap: () => context.router.pushNamed(FirebaseMessagingPage.location),
           ),
           ListTile(
             title: const Text('汎用画像ウィジェット'),
@@ -193,8 +187,7 @@ class DevelopmentItemsPage extends ConsumerWidget {
             title: const Text(
               '画像の詳細拡大画面サンプル',
             ),
-            onTap: () =>
-                context.router.pushNamed(ImageDetailViewStubPage.location),
+            onTap: () => context.router.pushNamed(ImageDetailViewStubPage.location),
           ),
           ListTile(
             title: const Text(
@@ -243,6 +236,12 @@ class DevelopmentItemsPage extends ConsumerWidget {
                 builder: (context) => const GeoflutterfirePlusSample(),
               ),
             ),
+          ),
+          ListTile(
+            title: const Text(
+              'Crashlytics のテスト',
+            ),
+            onTap: () => context.router.pushNamed(CrashlyticsPage.location),
           ),
         ],
       ),

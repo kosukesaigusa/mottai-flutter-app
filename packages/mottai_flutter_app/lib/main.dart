@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_line_sdk/flutter_line_sdk.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -16,39 +19,43 @@ import 'user/user.dart';
 import 'user/user_mode.dart';
 
 void main() async {
-  // 実行されている環境名を取得する
-  const flavorName = String.fromEnvironment('flavor');
-  final flavor = Flavor.values.byName(flavorName);
+  await runZonedGuarded(() async {
+    // 実行されている環境名を取得する
+    const flavorName = String.fromEnvironment('flavor');
+    final flavor = Flavor.values.byName(flavorName);
 
-  WidgetsFlutterBinding.ensureInitialized();
-  // 環境ごとに読み込むfirebase情報を分ける
-  await Firebase.initializeApp(options: firebaseOptionsWithFlavor(flavor));
-  if (const String.fromEnvironment('FLAVOR') == 'local') {
-    await setUpLocalEmulator();
-  }
-  await LineSDK.instance
-      .setup(const String.fromEnvironment('LINE_CHANNEL_ID'))
-      .then((_) {
-    debugPrint('LineSDK Prepared');
+    WidgetsFlutterBinding.ensureInitialized();
+    // 環境ごとに読み込むfirebase情報を分ける
+    await Firebase.initializeApp(options: firebaseOptionsWithFlavor(flavor));
+    if (const String.fromEnvironment('FLAVOR') == 'local') {
+      await setUpLocalEmulator();
+    }
+    await LineSDK.instance.setup(const String.fromEnvironment('LINE_CHANNEL_ID')).then((_) {
+      debugPrint('LineSDK Prepared');
+    });
+    final container = ProviderContainer();
+    final hostDocumentExists = await container.read(hostDocumentExistsProvider).call();
+    container.dispose();
+
+    // DartのエラーをCrashlyticsに報告する
+    FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
+
+    runApp(
+      ProviderScope(
+        overrides: [
+          packageInfoProvider.overrideWithValue(await PackageInfo.fromPlatform()),
+          deviceInfoProvider.overrideWithValue(await getDeviceInfo()),
+          firebaseMessagingProvider.overrideWithValue(await getFirebaseMessagingInstance()),
+          userModeStateProvider.overrideWith(
+            (ref) => hostDocumentExists ? UserMode.host : UserMode.worker,
+          ),
+        ],
+        child: const MainApp(),
+      ),
+    );
+  }, (error, stack) {
+    FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
   });
-  final container = ProviderContainer();
-  final hostDocumentExists =
-      await container.read(hostDocumentExistsProvider).call();
-  container.dispose();
-  runApp(
-    ProviderScope(
-      overrides: [
-        packageInfoProvider.overrideWithValue(await PackageInfo.fromPlatform()),
-        deviceInfoProvider.overrideWithValue(await getDeviceInfo()),
-        firebaseMessagingProvider
-            .overrideWithValue(await getFirebaseMessagingInstance()),
-        userModeStateProvider.overrideWith(
-          (ref) => hostDocumentExists ? UserMode.host : UserMode.worker,
-        ),
-      ],
-      child: const MainApp(),
-    ),
-  );
 }
 
 final _appRouterProvider = Provider.autoDispose<AppRouter>((_) => AppRouter());

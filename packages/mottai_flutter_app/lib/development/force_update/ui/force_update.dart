@@ -75,7 +75,7 @@ class ForceUpdateSamplePage extends ConsumerWidget {
                             await ref
                                 .read(appScaffoldMessengerControllerProvider)
                                 .showDialogByBuilder<void>(
-                                  builder: (_) => const _ForceUpdateDialog(),
+                                  builder: (_) => const ForceUpdateDialog(),
                                   barrierDismissible: false,
                                 );
                           },
@@ -92,8 +92,8 @@ class ForceUpdateSamplePage extends ConsumerWidget {
   }
 }
 
-class _ForceUpdateDialog extends StatelessWidget {
-  const _ForceUpdateDialog();
+class ForceUpdateDialog extends StatelessWidget {
+  const ForceUpdateDialog();
 
   @override
   Widget build(BuildContext context) {

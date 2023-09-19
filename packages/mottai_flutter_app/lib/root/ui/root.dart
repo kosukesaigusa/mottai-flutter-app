@@ -105,6 +105,7 @@ class _RootPageState extends ConsumerState<RootPage> {
           },
         ),
         // 強制アップデートが必要な場合に、ストアへの導線を持つダイアログを表示する
+        // そのダイアログ以外の操作ができないよう画面全体をColoredBoxで覆い、その上にダイアログのみを表示する
         if (ref.watch(isForceUpdateRequiredProvider))
           const ColoredBox(
             color: Colors.black54,

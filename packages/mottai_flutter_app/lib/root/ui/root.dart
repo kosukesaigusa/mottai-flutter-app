@@ -108,6 +108,7 @@ class _RootPageState extends ConsumerState<RootPage> {
         if (ref.watch(isForceUpdateRequiredProvider))
           const ColoredBox(
             color: Colors.black54,
+            //TODO developフォルダ内のダイアログを使用しているため、必要に応じて修正する
             child: ForceUpdateDialog(),
           ),
       ],

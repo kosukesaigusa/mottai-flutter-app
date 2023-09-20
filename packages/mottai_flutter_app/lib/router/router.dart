@@ -7,7 +7,6 @@ import '../development/development_items/ui/development_items.dart';
 import '../development/email_and_password_sign_in/ui/email_and_password_sign_in.dart';
 import '../development/firebase_messaging/ui/firebase_messaging.dart';
 import '../development/firebase_storage/ui/firebase_storage.dart';
-import '../development/force_update/ui/force_update.dart';
 import '../development/generic_image/ui/generic_images.dart';
 import '../development/image_detail_view/ui/image_detail_view_stub.dart';
 import '../development/image_picker/ui/image_picker_sample.dart';
@@ -114,10 +113,6 @@ class AppRouter extends $AppRouter {
     AutoRoute(
       path: FirebaseStorageSamplePage.path,
       page: FirebaseStorageSampleRoute.page,
-    ),
-    AutoRoute(
-      path: ForceUpdateSamplePage.path,
-      page: ForceUpdateSampleRoute.page,
     ),
     AutoRoute(
       path: GenericImagesPage.path,

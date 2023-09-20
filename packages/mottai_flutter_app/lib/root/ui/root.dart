@@ -10,9 +10,9 @@ import '../../auth/ui/auth_dependent_builder.dart';
 import '../../development/development_items/ui/development_items.dart';
 import '../../development/disable_user_account_request/ui/disable_user_account_request_controller.dart';
 import '../../development/email_and_password_sign_in/ui/email_and_password_sign_in.dart';
-import '../../development/force_update/ui/force_update.dart';
 import '../../development/sign_in/ui/sign_in.dart';
 import '../../force_update/force_update.dart';
+import '../../force_update/ui/force_update.dart';
 import '../../package_info.dart';
 import '../../push_notification/firebase_messaging.dart';
 import '../../router/router.gr.dart';
@@ -109,7 +109,6 @@ class _RootPageState extends ConsumerState<RootPage> {
         if (ref.watch(isForceUpdateRequiredProvider))
           const ColoredBox(
             color: Colors.black54,
-            //TODO developフォルダ内のダイアログを使用しているため、必要に応じて修正する
             child: ForceUpdateDialog(),
           ),
       ],

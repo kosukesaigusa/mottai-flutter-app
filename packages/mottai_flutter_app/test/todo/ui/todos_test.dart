@@ -59,7 +59,7 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
-          todoRepositoryProvider.overrideWithValue(mockTodoRepository)
+          todoRepositoryProvider.overrideWithValue(mockTodoRepository),
         ],
         child: const _TodosPage(),
       ),

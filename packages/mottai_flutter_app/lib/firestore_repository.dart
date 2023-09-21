@@ -7,6 +7,11 @@ final chatMessageRepositoryProvider =
 final chatRoomRepositoryProvider =
     Provider.autoDispose<ChatRoomRepository>((_) => ChatRoomRepository());
 
+final disableUserAccountRequestRepositoryProvider =
+    Provider.autoDispose<DisableUserAccountRequestRepository>(
+  (_) => DisableUserAccountRequestRepository(),
+);
+
 final forceUpdateConfigRepositoryProvider =
     Provider.autoDispose<ForceUpdateConfigRepository>(
   (_) => ForceUpdateConfigRepository(),

@@ -173,7 +173,7 @@ class ChatRoomStateNotifier extends StateNotifier<ChatRoomState> {
     state = state.copyWith(
       readChatMessages: [
         ...state.newReadChatMessages,
-        ...state.pastReadChatMessages
+        ...state.pastReadChatMessages,
       ],
     );
   }

@@ -62,6 +62,12 @@ class AuthController {
       _appScaffoldMessengerController.showSnackBar('サインインしました');
     } on AppException catch (e) {
       _appScaffoldMessengerController.showSnackBarByException(e);
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-disabled') {
+        _appScaffoldMessengerController.showSnackBar('このアカウントは退会済みのため無効です。');
+      } else {
+        _appScaffoldMessengerController.showSnackBarByFirebaseException(e);
+      }
     } finally {
       _overlayLoadingStateController.update((state) => false);
     }

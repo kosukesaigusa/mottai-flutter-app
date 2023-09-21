@@ -1,13 +1,15 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+// TODO: AsyncNotifier で書き換える
 /// Firestore のパジネーションを行うための [StateNotifier].
 class FirestorePaginationStateNotifier<T>
     extends StateNotifier<AsyncValue<List<T>>> {
   FirestorePaginationStateNotifier({
     required this.fetch,
     required this.idFromObject,
+    int initialPerPage = 10,
   }) : super(AsyncValue<List<T>>.data(const [])) {
-    _initialize();
+    _initialize(perPage: initialPerPage);
   }
 
   /// データを取得する関数。
@@ -25,9 +27,6 @@ class FirestorePaginationStateNotifier<T>
   /// 次のページがあるかどうか。
   bool _hasNext = true;
 
-  /// リクエスト一回あたりの取得件数のデフォルト値。
-  static const _defaultPerPage = 10;
-
   /// 取得処理中かどうか。
   bool get isFetching => _isFetching;
 
@@ -35,13 +34,16 @@ class FirestorePaginationStateNotifier<T>
   bool get hasNext => _hasNext;
 
   /// 初期化処理。
-  Future<List<T>> _initialize({int perPage = _defaultPerPage}) async {
+  Future<List<T>> _initialize({required int perPage}) async {
     state = AsyncValue<List<T>>.loading();
     _isFetching = true;
     try {
       final items = await fetch(perPage, null);
+      state = AsyncValue.data(items);
       _hasNext = items.isNotEmpty;
-      state = AsyncValue<List<T>>.data(items);
+      if (items.isNotEmpty) {
+        _lastFetchedId = idFromObject(items.last);
+      }
     } on Exception catch (e, s) {
       state = AsyncValue<List<T>>.error(e, s);
     } finally {
@@ -51,37 +53,23 @@ class FirestorePaginationStateNotifier<T>
   }
 
   /// 次のページを取得する。
-  Future<void> fetchNext({int perPage = _defaultPerPage}) async {
+  Future<void> fetchNext({required int perPage}) async {
     final items = state;
     if (_isFetching || items.isRefreshing || !items.hasValue || !_hasNext) {
       return;
     }
     _isFetching = true;
     try {
-      final result = await fetch(perPage, _lastFetchedId);
-      final newItems = [...state.valueOrNull ?? <T>[], ...result];
+      final items = await fetch(perPage, _lastFetchedId);
+      final newItems = [...state.valueOrNull ?? <T>[], ...items];
       state = AsyncValue.data(newItems);
-      // _hasNext = result.isNotEmpty;
-      _hasNext = result.length == perPage;
-      _lastFetchedId = idFromObject(result.last);
+      _hasNext = items.isNotEmpty;
+      if (items.isNotEmpty) {
+        _lastFetchedId = idFromObject(items.last);
+      }
     } on Exception catch (e, stackTrace) {
       state = AsyncValue<List<T>>.error(e, stackTrace);
       return;
-    } finally {
-      _isFetching = false;
-    }
-  }
-
-  /// リフレッシュする。
-  Future<void> refresh({int perPage = _defaultPerPage}) async {
-    _isFetching = true;
-    _lastFetchedId = null;
-    try {
-      final items = await fetch(perPage, null);
-      _hasNext = items.isNotEmpty;
-      state = AsyncValue<List<T>>.data(items);
-    } on Exception catch (e, s) {
-      state = AsyncValue<List<T>>.error(e, s);
     } finally {
       _isFetching = false;
     }

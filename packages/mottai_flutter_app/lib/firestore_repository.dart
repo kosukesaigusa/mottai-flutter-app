@@ -1,6 +1,15 @@
 import 'package:firebase_common/firebase_common.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+final blockedJobRepositoryProvider = Provider.autoDispose<BlockedJobRepository>(
+  (_) => BlockedJobRepository(),
+);
+
+final blockedReviewRepositoryProvider =
+    Provider.autoDispose<BlockedReviewRepository>(
+  (_) => BlockedReviewRepository(),
+);
+
 final chatMessageRepositoryProvider =
     Provider.autoDispose<ChatMessageRepository>((_) => ChatMessageRepository());
 

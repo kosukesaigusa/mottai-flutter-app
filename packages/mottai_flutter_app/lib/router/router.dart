@@ -14,6 +14,7 @@ import '../development/in_review/ui/in_review.dart';
 import '../development/sample_todo/ui/todos.dart';
 import '../development/sign_in/ui/sign_in.dart';
 import '../development/user_fcm_token/ui/user_fcm_token.dart';
+import '../development/user_generate_content/ui/user_generate_content_sample.dart';
 import '../development/user_social_login/user_social_login.dart';
 import '../development/web_link/ui/web_link_stub.dart';
 import '../host/ui/host.dart';
@@ -88,10 +89,6 @@ class AppRouter extends $AppRouter {
       path: HostUpdatePage.path,
       page: HostUpdateRoute.page,
     ),
-    // AutoRoute(
-    //   path: UserPage.path,
-    //   page: UserRoute.page,
-    // ),
     AutoRoute(
       path: CreateOrUpdateWorkerPage.path,
       page: CreateOrUpdateWorkerRoute.page,
@@ -149,6 +146,10 @@ class AppRouter extends $AppRouter {
     AutoRoute(
       path: UserFcmTokenPage.path,
       page: UserFcmTokenRoute.page,
+    ),
+    AutoRoute(
+      path: UgcSamplePage.path,
+      page: UgcSampleRoute.page,
     ),
     AutoRoute(
       path: FirebaseMessagingPage.path,

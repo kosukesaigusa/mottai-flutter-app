@@ -268,7 +268,7 @@ class HostFormState extends ConsumerState<HostForm> {
                                     color: Theme.of(context).colorScheme.error,
                                   ),
                             ),
-                          )
+                          ),
                       ],
                     ),
                   ),
@@ -578,7 +578,7 @@ class _TextInputSection<T extends dynamic> extends StatelessWidget {
           ],
           if (child != null) ...[
             child!,
-          ]
+          ],
         ],
       ),
     );

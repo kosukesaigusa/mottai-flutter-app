@@ -134,7 +134,7 @@ class SignInButtonBuilder extends StatelessWidget {
               separator!,
               SizedBox(
                 width: separatorSpaceRight,
-              )
+              ),
             ],
             Text(
               text,

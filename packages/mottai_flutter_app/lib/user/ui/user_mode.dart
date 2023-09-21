@@ -53,7 +53,7 @@ class UserModeSection extends ConsumerWidget {
                     .read(userModeStateProvider.notifier)
                     .update((_) => newSelection.first);
               },
-            )
+            ),
           ],
         );
       },

@@ -9,12 +9,21 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../development/firebase_storage/firebase_storage.dart';
 import '../../development/firebase_storage/ui/firebase_storage_controller.dart';
+import '../../exception.dart';
 import '../../host_location/ui/host_location_select_dialog.dart';
+import '../../loading/ui/loading.dart';
+import '../../scaffold_messenger_controller.dart';
 import '../../widgets/optional_badge.dart';
 import 'host_controller.dart';
 
+// TODO: 現在の位置情報を反映する。
 /// 東京駅の緯度経度（テスト用）初期位置は現在地？
 const _tokyoStation = LatLng(35.681236, 139.767125);
+
+class _ValidationException extends AppException {
+  const _ValidationException({required String message})
+      : super(message: message);
+}
 
 enum _HostFormMode { create, update }
 
@@ -67,9 +76,6 @@ class HostFormState extends ConsumerState<HostForm> {
 
   /// [Host.urls] のテキストフィールド用コントローラ。
   final List<TextEditingController> _urlControllers = [];
-
-  // /// [HostController] インスタンス。
-  // late final HostController _controller;
 
   /// 選択中のホストの位置を表す [Geo].
   late Geo _geo;
@@ -145,32 +151,24 @@ class HostFormState extends ConsumerState<HostForm> {
     );
   }
 
-  // bool _validate(File? pickedImageFile) {
-  //   final textValidate = _formKey.currentState?.validate();
-  //   final isExistImage =
-  //       (pickedImageFile != null) || (widget._host?.imageUrl != null);
-  //   final isSelectedHostType = _selectedHostTypes.isNotEmpty;
-
-  //   var result = textValidate ?? true; // テキストの検証結果を代入(すべてのアンドをとるため)
-
-  //   // エラーメッセージの初期化
-  //   ref.watch(hostTypeErrorStateProvider.notifier).state = null;
-  //   ref.watch(imageFieldErrorStateProvider.notifier).state = null;
-
-  //   // 画像のチェック
-  //   if (!isExistImage) {
-  //     ref.watch(imageFieldErrorStateProvider.notifier).state = '画像を選択してください';
-  //     result = false;
-  //   }
-
-  //   // ホストタイプのチェック
-  //   if (!isSelectedHostType) {
-  //     ref.watch(hostTypeErrorStateProvider.notifier).state =
-  //         'ホストタイプを1つ以上選択してください';
-  //     result = false;
-  //   }
-  //   return result;
-  // }
+  /// フォームの入力前にバリデーションを行い、不適切な場合には例外をスローする。
+  void _validate() {
+    if (ref.read(pickedImageFileStateProvider) == null) {
+      throw const _ValidationException(message: '画像を選択してください。');
+    }
+    if (_nameController.text.isEmpty) {
+      throw const _ValidationException(message: '名前を入力してください。');
+    }
+    if (_selectedHostTypes.isEmpty) {
+      throw const _ValidationException(message: 'ホストタイプを選択してください。');
+    }
+    if (_introductionController.text.isEmpty) {
+      throw const _ValidationException(message: '自己紹介を入力してください。');
+    }
+    if (_locationController.text.isEmpty) {
+      throw const _ValidationException(message: '場所を入力してください。');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -372,39 +370,49 @@ class HostFormState extends ConsumerState<HostForm> {
                   child: Center(
                     child: ElevatedButton(
                       onPressed: () {
-                        // if (!_validate(pickedImageFile)) {
-                        //   return;
-                        // }
-                        final controller =
-                            ref.read(hostControllerProvider(widget._hostId));
-
-                        switch (_hostFormMode) {
-                          case _HostFormMode.create:
-                            controller.create(
-                              workerId: widget._hostId,
-                              displayName: _nameController.text,
-                              introduction: _introductionController.text,
-                              imageFile: pickedImageFile!,
-                              hostTypes: _selectedHostTypes.toSet(),
-                              urls: _urlControllers
-                                  .map((controller) => controller.text)
-                                  .toList(),
-                              address: _locationController.text,
-                              geo: _geo,
-                            );
-                          case _HostFormMode.update:
-                            controller.update(
-                              hostId: widget._hostId,
-                              displayName: _nameController.text,
-                              introduction: _introductionController.text,
-                              imageFile: pickedImageFile,
-                              hostTypes: _selectedHostTypes.toSet(),
-                              urls: _urlControllers
-                                  .map((controller) => controller.text)
-                                  .toList(),
-                              address: _locationController.text,
-                              geo: _geo,
-                            );
+                        ref
+                            .read(overlayLoadingStateProvider.notifier)
+                            .update((_) => true);
+                        try {
+                          _validate();
+                          final controller =
+                              ref.read(hostControllerProvider(widget._hostId));
+                          switch (_hostFormMode) {
+                            case _HostFormMode.create:
+                              controller.create(
+                                workerId: widget._hostId,
+                                displayName: _nameController.text,
+                                introduction: _introductionController.text,
+                                imageFile: pickedImageFile!,
+                                hostTypes: _selectedHostTypes.toSet(),
+                                urls: _urlControllers
+                                    .map((controller) => controller.text)
+                                    .toList(),
+                                address: _locationController.text,
+                                geo: _geo,
+                              );
+                            case _HostFormMode.update:
+                              controller.update(
+                                hostId: widget._hostId,
+                                displayName: _nameController.text,
+                                introduction: _introductionController.text,
+                                imageFile: pickedImageFile,
+                                hostTypes: _selectedHostTypes.toSet(),
+                                urls: _urlControllers
+                                    .map((controller) => controller.text)
+                                    .toList(),
+                                address: _locationController.text,
+                                geo: _geo,
+                              );
+                          }
+                        } on AppException catch (e) {
+                          ref
+                              .read(appScaffoldMessengerControllerProvider)
+                              .showSnackBarByException(e);
+                        } finally {
+                          ref
+                              .read(overlayLoadingStateProvider.notifier)
+                              .update((_) => false);
                         }
                       },
                       child: const Text('この内容で登録する'),

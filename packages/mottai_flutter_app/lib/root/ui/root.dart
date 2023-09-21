@@ -6,9 +6,13 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../assets.dart';
 import '../../auth/auth.dart';
 import '../../auth/ui/auth_controller.dart';
+import '../../auth/ui/auth_dependent_builder.dart';
 import '../../development/development_items/ui/development_items.dart';
+import '../../development/disable_user_account_request/ui/disable_user_account_request_controller.dart';
 import '../../development/email_and_password_sign_in/ui/email_and_password_sign_in.dart';
 import '../../development/sign_in/ui/sign_in.dart';
+import '../../force_update/force_update.dart';
+import '../../force_update/ui/force_update.dart';
 import '../../package_info.dart';
 import '../../push_notification/firebase_messaging.dart';
 import '../../router/router.gr.dart';
@@ -59,43 +63,55 @@ class _RootPageState extends ConsumerState<RootPage> {
 
   @override
   Widget build(BuildContext context) {
-    return AutoTabsScaffold(
-      key: ref.watch(rootPageKey),
-      appBarBuilder: (_, __) => AppBar(
-        title: Image.asset(MottaiAssets.appBarLogo, height: 40),
-      ),
-      drawer: const Drawer(child: _DrawerChild()),
-      routes: const [
-        MapRoute(),
-        ChatRoomsRoute(),
-        ReviewsRoute(),
-        MyAccountRoute(),
-      ],
-      bottomNavigationBuilder: (_, tabsRouter) {
-        return BottomNavigationBar(
-          type: BottomNavigationBarType.fixed,
-          currentIndex: tabsRouter.activeIndex,
-          onTap: tabsRouter.setActiveIndex,
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.search),
-              label: '探す',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.chat),
-              label: 'チャット',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.record_voice_over),
-              label: '感想',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person),
-              label: 'アカウント',
-            ),
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        AutoTabsScaffold(
+          key: ref.watch(rootPageKey),
+          appBarBuilder: (_, __) => AppBar(
+            title: Image.asset(MottaiAssets.appBarLogo, height: 40),
+          ),
+          drawer: const Drawer(child: _DrawerChild()),
+          routes: const [
+            MapRoute(),
+            ChatRoomsRoute(),
+            ReviewsRoute(),
+            MyAccountRoute(),
           ],
-        );
-      },
+          bottomNavigationBuilder: (_, tabsRouter) {
+            return BottomNavigationBar(
+              type: BottomNavigationBarType.fixed,
+              currentIndex: tabsRouter.activeIndex,
+              onTap: tabsRouter.setActiveIndex,
+              items: const [
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.search),
+                  label: '探す',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.chat),
+                  label: 'チャット',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.record_voice_over),
+                  label: '感想',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.person),
+                  label: 'アカウント',
+                ),
+              ],
+            );
+          },
+        ),
+        // 強制アップデートが必要な場合に、ストアへの導線を持つダイアログを表示する
+        // そのダイアログ以外の操作ができないよう画面全体をColoredBoxで覆い、その上にダイアログのみを表示する
+        if (ref.watch(isForceUpdateRequiredProvider))
+          const ColoredBox(
+            color: Colors.black54,
+            child: ForceUpdateDialog(),
+          ),
+      ],
     );
   }
 }
@@ -193,6 +209,20 @@ class _DrawerChild extends ConsumerWidget {
           leading: const Icon(Icons.settings),
           title: const Text('開発ページへ'),
           onTap: () => context.router.pushNamed(DevelopmentItemsPage.location),
+        ),
+        AuthDependentBuilder(
+          onAuthenticated: (userId) => ListTile(
+            leading: const Icon(Icons.person_off),
+            title: const Text('退会する'),
+            onTap: () async {
+              await ref
+                  .read(disableUserAccountRequestControllerProvider)
+                  .disableUserAccountRequest(
+                    userId: userId,
+                  );
+            },
+          ),
+          onUnAuthenticated: () => const SizedBox(),
         ),
       ],
     );

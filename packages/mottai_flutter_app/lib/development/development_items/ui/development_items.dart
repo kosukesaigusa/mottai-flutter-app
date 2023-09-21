@@ -17,7 +17,6 @@ import '../../../worker/ui/worker.dart';
 import '../../color/ui/color.dart';
 import '../../firebase_messaging/ui/firebase_messaging.dart';
 import '../../firebase_storage/ui/firebase_storage.dart';
-import '../../force_update/ui/force_update.dart';
 import '../../generic_image/ui/generic_images.dart';
 import '../../geoflutterfire_plus/geoflutterfire_plus.dart';
 import '../../image_detail_view/ui/image_detail_view_stub.dart';
@@ -156,11 +155,6 @@ class DevelopmentItemsPage extends ConsumerWidget {
             title: const Text('画像アップロード'),
             onTap: () =>
                 context.router.pushNamed(FirebaseStorageSamplePage.location),
-          ),
-          ListTile(
-            title: const Text('強制アップデート'),
-            onTap: () =>
-                context.router.pushNamed(ForceUpdateSamplePage.location),
           ),
           ListTile(
             title: const Text('レビュー中かどうか'),

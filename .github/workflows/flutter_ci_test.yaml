@@ -38,10 +38,10 @@ jobs:
           changed_files=$(git diff $base_sha $current_sha --name-only | grep '\.dart$' || true)
           if [[ -n "$changed_files" ]]; then
             echo "Dart files changed."
-            echo "dart-changes=true" >> $GITHUB_ENV
+            echo "run-tests=true" >> $GITHUB_ENV
           else
             echo "No Dart files changed."
-            echo "dart-changes=false" >> $GITHUB_ENV
+            echo "run-tests=false" >> $GITHUB_ENV
           fi
 
       # fvm のバージョンとチャネルを環境変数に設定する

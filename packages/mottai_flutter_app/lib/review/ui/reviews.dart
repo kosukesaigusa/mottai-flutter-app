@@ -21,25 +21,32 @@ class ReviewsPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return FirestorePaginationListView<ReadReview>(
+    return FirestorePaginationView<ReadReview>(
       stateNotifierProvider: reviewsStateNotifierProvider,
-      itemBuilder: (context, review) => MaterialVerticalCard(
-        headerImageUrl: ref.watch(workerImageUrlProvider(review.workerId)),
-        header: ref.watch(workerDisplayNameProvider(review.workerId)),
-        subhead: review.createdAt?.formatRelativeDate(),
-        imageUrl: review.imageUrl,
-        title: review.title,
-        content: review.content,
-        menuButtonOnPressed: () {},
-        actions: [
-          ElevatedButton(
-            onPressed: () {
-              // TODO: 感想詳細ページへ遷移する
-            },
-            child: const Text('もっと見る'),
-          ),
-        ],
+      whenData: (context, reviews) => ListView.builder(
+        itemCount: reviews.length,
+        itemBuilder: (context, index) {
+          final review = reviews[index];
+          return MaterialVerticalCard(
+            headerImageUrl: ref.watch(workerImageUrlProvider(review.workerId)),
+            header: ref.watch(workerDisplayNameProvider(review.workerId)),
+            subhead: review.createdAt?.formatRelativeDate(),
+            imageUrl: review.imageUrl,
+            title: review.title,
+            content: review.content,
+            menuButtonOnPressed: () {},
+            actions: [
+              ElevatedButton(
+                onPressed: () {
+                  // TODO: 感想詳細ページへ遷移する
+                },
+                child: const Text('もっと見る'),
+              ),
+            ],
+          );
+        },
       ),
+      whenEmpty: (_) => const SizedBox(),
     );
   }
 }

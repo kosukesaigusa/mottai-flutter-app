@@ -159,7 +159,7 @@ class HostPageBody extends ConsumerWidget {
                                       .ifIsEmpty('お手伝いの場所が登録されていません'),
                                 )
                               else
-                                const Text('お手伝いの場所が登録されていません')
+                                const Text('お手伝いの場所が登録されていません'),
                             ],
                           ),
                         ),

@@ -52,7 +52,7 @@ class UserModeSection extends ConsumerWidget {
                 .read(appScaffoldMessengerControllerProvider)
                 .showSnackBar('${newSelection.first.label}に切り替えました。');
           },
-        )
+        ),
       ],
     );
   }

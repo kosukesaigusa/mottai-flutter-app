@@ -64,7 +64,7 @@ class DisableUserAccountRequestController {
               Navigator.pop(context);
             },
             child: const Text('戻る'),
-          )
+          ),
         ],
       ),
     );

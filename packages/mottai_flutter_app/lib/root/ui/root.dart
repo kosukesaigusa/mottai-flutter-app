@@ -184,7 +184,7 @@ class _DrawerChild extends ConsumerWidget {
             leading: const Icon(Icons.login),
             title: const Text('サインイン（ソーシャル）'),
             onTap: () => context.router.pushNamed(SignInSamplePage.location),
-          )
+          ),
         ],
         ListTile(
           leading: const Icon(Icons.notifications),

@@ -116,7 +116,7 @@ class _FirebaseStorageSampleState
           else
             const Center(
               child: Text('未アップロード'),
-            )
+            ),
         ],
       ),
     );

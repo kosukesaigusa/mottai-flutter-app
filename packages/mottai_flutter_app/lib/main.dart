@@ -7,6 +7,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'device_info.dart';
 import 'environment/src/firebase_options.dart';
 import 'environment/src/flavor_type.dart';
+import 'loading/ui/loading.dart';
 import 'package_info.dart';
 import 'push_notification/firebase_messaging.dart';
 import 'router/router.dart';
@@ -94,7 +95,8 @@ class MainApp extends ConsumerWidget {
                       child: child!,
                     ),
                   ),
-                  // if (isLoading) const OverlayLoading(),
+                  if (ref.watch(overlayLoadingStateProvider))
+                    const OverlayLoading(),
                 ],
               ),
             ),

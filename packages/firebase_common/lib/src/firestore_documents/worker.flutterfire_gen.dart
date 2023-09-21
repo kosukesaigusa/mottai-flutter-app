@@ -10,6 +10,7 @@ class ReadWorker {
     required this.path,
     required this.displayName,
     required this.imageUrl,
+    required this.introduction,
     required this.isHost,
     required this.createdAt,
     required this.updatedAt,
@@ -23,6 +24,8 @@ class ReadWorker {
 
   final String imageUrl;
 
+  final String introduction;
+
   final bool isHost;
 
   final DateTime? createdAt;
@@ -35,6 +38,7 @@ class ReadWorker {
       path: json['path'] as String,
       displayName: json['displayName'] as String? ?? '',
       imageUrl: json['imageUrl'] as String? ?? '',
+      introduction: json['introduction'] as String? ?? '',
       isHost: json['isHost'] as bool? ?? false,
       createdAt: (json['createdAt'] as Timestamp?)?.toDate(),
       updatedAt: (json['updatedAt'] as Timestamp?)?.toDate(),
@@ -55,17 +59,20 @@ class CreateWorker {
   const CreateWorker({
     required this.displayName,
     this.imageUrl = '',
+    this.introduction = '',
     required this.isHost,
   });
 
   final String displayName;
   final String imageUrl;
+  final String introduction;
   final bool isHost;
 
   Map<String, dynamic> toJson() {
     return {
       'displayName': displayName,
       'imageUrl': imageUrl,
+      'introduction': introduction,
       'isHost': isHost,
       'createdAt': FieldValue.serverTimestamp(),
       'updatedAt': FieldValue.serverTimestamp(),
@@ -77,12 +84,14 @@ class UpdateWorker {
   const UpdateWorker({
     this.displayName,
     this.imageUrl,
+    this.introduction,
     this.isHost,
     this.createdAt,
   });
 
   final String? displayName;
   final String? imageUrl;
+  final String? introduction;
   final bool? isHost;
   final DateTime? createdAt;
 
@@ -90,6 +99,7 @@ class UpdateWorker {
     return {
       if (displayName != null) 'displayName': displayName,
       if (imageUrl != null) 'imageUrl': imageUrl,
+      if (introduction != null) 'introduction': introduction,
       if (isHost != null) 'isHost': isHost,
       if (createdAt != null) 'createdAt': createdAt,
       'updatedAt': FieldValue.serverTimestamp(),

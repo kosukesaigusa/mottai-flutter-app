@@ -1,38 +1,29 @@
-// import '../firestore_documents/host_location.dart';
-
-import '../../firebase_common.dart';
+import '../firestore_documents/host_location.dart';
 
 class HostLocationRepository {
   final _query = HostLocationQuery();
 
-  /// 指定した [HostLocation] を取得する。
+  /// 指定した [hostLocationId] の [HostLocation] を取得する。
   Future<ReadHostLocation?> fetchHostLocation({
     required String hostLocationId,
   }) =>
       _query.fetchDocument(hostLocationId: hostLocationId);
 
-  /// [Host]から関連する[HostLocation]をすべて取得する。
-  Future<List<ReadHostLocation>> fetchHostLocationsFromHost({
-    required String hostId,
+  /// 指定した [hostLocationId] の [HostLocation] を購読する。
+  Stream<ReadHostLocation?> subscribeHostLocation({
+    required String hostLocationId,
   }) =>
-      _query.fetchDocuments(
-        queryBuilder: (query) => query.where('hostId', isEqualTo: hostId),
-      );
+      _query.subscribeDocument(hostLocationId: hostLocationId);
 
   /// [HostLocation] の情報を作成する。
   Future<void> create({
-    required String hostLocationId,
     required String hostId,
     required String address,
     required Geo geo,
   }) =>
       _query.set(
-        hostLocationId: hostLocationId,
-        createHostLocation: CreateHostLocation(
-          hostId: hostId,
-          address: address,
-          geo: geo,
-        ),
+        hostLocationId: hostId,
+        createHostLocation: CreateHostLocation(address: address, geo: geo),
       );
 
   /// [HostLocation] の情報を更新する。
@@ -44,9 +35,6 @@ class HostLocationRepository {
   }) =>
       _query.update(
         hostLocationId: hostLocationId,
-        updateHostLocation: UpdateHostLocation(
-          address: address,
-          geo: geo,
-        ),
+        updateHostLocation: UpdateHostLocation(address: address, geo: geo),
       );
 }

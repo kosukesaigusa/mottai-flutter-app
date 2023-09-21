@@ -3,13 +3,13 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../firestore_repository.dart';
 
-/// [Host] に関連する[HostLocation] を返す [FutureProvider].
-final hostLocationsFromHostFutureProvider =
-    FutureProvider.family.autoDispose<List<ReadHostLocation>?, String>(
-  (ref, hostId) => ref
-      .watch(hostLocationServiceProvider)
-      .fetchHostLocationsFromHost(hostId: hostId),
-);
+/// 指定した `hostId` に対応する [HostLocation] を購読する [StreamProvider].
+final hostLocationStreamProvider =
+    StreamProvider.family.autoDispose<ReadHostLocation?, String>((ref, hostId) {
+  return ref
+      .watch(hostLocationRepositoryProvider)
+      .subscribeHostLocation(hostLocationId: hostId);
+});
 
 final hostLocationServiceProvider = Provider.autoDispose<HostLocationService>(
   (ref) => HostLocationService(
@@ -24,12 +24,6 @@ class HostLocationService {
 
   final HostLocationRepository _hostLocationRepository;
 
-  /// [Host] に関連する[HostLocation]をすべて取得する。
-  Future<List<ReadHostLocation>>? fetchHostLocationsFromHost({
-    required String hostId,
-  }) =>
-      _hostLocationRepository.fetchHostLocationsFromHost(hostId: hostId);
-
   /// [HostLocation] の情報を作成する。
   Future<void> create({
     required String hostId,
@@ -38,7 +32,6 @@ class HostLocationService {
   }) =>
       _hostLocationRepository.create(
         hostId: hostId,
-        hostLocationId: hostId,
         address: address,
         geo: geo,
       );

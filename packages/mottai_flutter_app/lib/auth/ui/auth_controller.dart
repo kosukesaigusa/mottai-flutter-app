@@ -4,6 +4,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../scaffold_messenger_controller.dart';
 import '../../exception.dart';
+import '../../loading/ui/loading.dart';
 import '../../user/host.dart';
 import '../../user/user_mode.dart';
 import '../../user_fcm_token/user_fcm_token.dart';
@@ -15,6 +16,8 @@ final authControllerProvider = Provider.autoDispose<AuthController>(
     hostService: ref.watch(hostServiceProvider),
     fcmTokenService: ref.watch(fcmTokenServiceProvider),
     userModeStateController: ref.watch(userModeStateProvider.notifier),
+    overlayLoadingStateController:
+        ref.watch(overlayLoadingStateProvider.notifier),
     appScaffoldMessengerController:
         ref.watch(appScaffoldMessengerControllerProvider),
   ),
@@ -26,11 +29,13 @@ class AuthController {
     required HostService hostService,
     required FcmTokenService fcmTokenService,
     required StateController<UserMode> userModeStateController,
+    required StateController<bool> overlayLoadingStateController,
     required AppScaffoldMessengerController appScaffoldMessengerController,
   })  : _authService = authService,
         _hostService = hostService,
         _fcmTokenService = fcmTokenService,
         _userModeStateController = userModeStateController,
+        _overlayLoadingStateController = overlayLoadingStateController,
         _appScaffoldMessengerController = appScaffoldMessengerController;
 
   final AuthService _authService;
@@ -41,16 +46,20 @@ class AuthController {
 
   final StateController<UserMode> _userModeStateController;
 
+  final StateController<bool> _overlayLoadingStateController;
+
   final AppScaffoldMessengerController _appScaffoldMessengerController;
 
   /// 選択した [SignInMethod] でサインインする。
   /// サインイン後、必要性を確認して [UserMode] を `UserMode.Host` にする。
   /// サインインに成功した際は、[UserFcmToken] を登録する。
   Future<void> signIn(SignInMethod signInMethod) async {
+    _overlayLoadingStateController.update((state) => true);
     try {
       final userCredential = await _signIn(signInMethod);
       await _maybeSetUserModeToHost(userCredential);
       await _setFcmToken(userCredential);
+      _appScaffoldMessengerController.showSnackBar('サインインしました');
     } on AppException catch (e) {
       _appScaffoldMessengerController.showSnackBarByException(e);
     } on FirebaseAuthException catch (e) {
@@ -59,6 +68,8 @@ class AuthController {
       } else {
         _appScaffoldMessengerController.showSnackBarByFirebaseException(e);
       }
+    } finally {
+      _overlayLoadingStateController.update((state) => false);
     }
   }
 

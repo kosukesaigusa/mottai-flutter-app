@@ -5,6 +5,15 @@ enum UserMode {
   worker,
   host,
   ;
+
+  String get label {
+    switch (this) {
+      case UserMode.worker:
+        return 'ワーカーモード';
+      case UserMode.host:
+        return 'ホストモード';
+    }
+  }
 }
 
 /// Worker or Host のどちらとしてアプリを利用しているかを保持する [StateProvider].

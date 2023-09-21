@@ -23,30 +23,26 @@ class JobUpdatePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final asyncValue = ref.watch(jobFutureProvider(jobId));
+    final job = asyncValue.valueOrNull;
+    final isLoading = asyncValue.isLoading;
+    if (job == null) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('お手伝い募集内容を入力')),
+        body: isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : const Center(child: Text('お手伝いが存在しません。')),
+      );
+    }
     return Scaffold(
       appBar: AppBar(title: const Text('お手伝い募集内容を入力')),
-      // TODO:なるんさんが実装中の「本人かどうかビルダー」に後で書き換える。
-      // すると 「編集の権限がありません。」のチェックはその時点で済んでいることになる。
-      body: AuthDependentBuilder(
-        onAuthenticated: (hostId) {
-          return ref.watch(jobFutureProvider(jobId)).when(
-                data: (job) {
-                  if (job == null) {
-                    return const Center(child: Text('お手伝いが存在していません。'));
-                  }
-                  // UrlのhostIdとログイン中のユーザーのhostIdが違う場合
-                  if (job.hostId != hostId) {
-                    return const Center(
-                      child: Text('編集の権限がありません。'),
-                    );
-                  }
-                  return JobForm.update(hostId: hostId, job: job);
-                },
-                loading: () => const Center(child: CircularProgressIndicator()),
-                error: (_, __) => const Center(
-                  child: Text('仕事情報が取得できませんでした。'),
-                ),
-              );
+      body: UserAuthDependentBuilder(
+        userId: job.hostId,
+        onAuthenticated: (userId, isUserAuthenticated) {
+          if (!isUserAuthenticated) {
+            return const Center(child: Text('このお手伝いは編集できません。'));
+          }
+          return JobForm.update(hostId: userId, job: job);
         },
       ),
     );

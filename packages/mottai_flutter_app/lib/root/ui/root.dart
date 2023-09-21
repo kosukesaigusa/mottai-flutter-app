@@ -132,7 +132,7 @@ class _DrawerChild extends ConsumerWidget {
                 '${packageInfo.packageName} '
                 '(${packageInfo.version}+${packageInfo.buildNumber})',
               ),
-              if (ref.watch(isHostProvider)) ...[
+              if (ref.watch(isCurrentUserHostProvider)) ...[
                 const Gap(8),
                 Text(
                   'ユーザーモード',

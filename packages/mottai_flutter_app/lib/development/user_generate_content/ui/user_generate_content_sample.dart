@@ -206,7 +206,7 @@ class _UgcContent extends StatelessWidget {
             icon: const Icon(Icons.lightbulb),
             label: Text(executeText),
             onPressed: onPressed,
-          )
+          ),
         ],
       ),
     );

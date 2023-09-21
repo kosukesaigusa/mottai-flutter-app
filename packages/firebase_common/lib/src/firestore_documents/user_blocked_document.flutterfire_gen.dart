@@ -4,247 +4,10 @@
 
 part of 'user_blocked_document.dart';
 
-class ReadUserBlockedDocument {
-  const ReadUserBlockedDocument({
-    required this.userBlockedDocumentId,
-    required this.path,
-    required this.userId,
-  });
-
-  final String userBlockedDocumentId;
-
-  final String path;
-
-  final String userId;
-
-  factory ReadUserBlockedDocument._fromJson(Map<String, dynamic> json) {
-    return ReadUserBlockedDocument(
-      userBlockedDocumentId: json['userBlockedDocumentId'] as String,
-      path: json['path'] as String,
-      userId: json['userId'] as String,
-    );
-  }
-
-  factory ReadUserBlockedDocument.fromDocumentSnapshot(DocumentSnapshot ds) {
-    final data = ds.data()! as Map<String, dynamic>;
-    return ReadUserBlockedDocument._fromJson(<String, dynamic>{
-      ...data,
-      'userBlockedDocumentId': ds.id,
-      'path': ds.reference.path,
-    });
-  }
-}
-
-class CreateUserBlockedDocument {
-  const CreateUserBlockedDocument({
-    required this.userId,
-  });
-
-  final String userId;
-
-  Map<String, dynamic> toJson() {
-    return {
-      'userId': userId,
-    };
-  }
-}
-
-class UpdateUserBlockedDocument {
-  const UpdateUserBlockedDocument({
-    this.userId,
-  });
-
-  final String? userId;
-
-  Map<String, dynamic> toJson() {
-    return {
-      if (userId != null) 'userId': userId,
-    };
-  }
-}
-
-class DeleteUserBlockedDocument {}
-
-/// Provides a reference to the userBlockedDocuments collection for reading.
-final readUserBlockedDocumentCollectionReference = FirebaseFirestore.instance
-    .collection('userBlockedDocuments')
-    .withConverter<ReadUserBlockedDocument>(
-      fromFirestore: (ds, _) =>
-          ReadUserBlockedDocument.fromDocumentSnapshot(ds),
-      toFirestore: (_, __) => throw UnimplementedError(),
-    );
-
-/// Provides a reference to a userBlockedDocument document for reading.
-DocumentReference<ReadUserBlockedDocument>
-    readUserBlockedDocumentDocumentReference({
-  required String userBlockedDocumentId,
-}) =>
-        readUserBlockedDocumentCollectionReference.doc(userBlockedDocumentId);
-
-/// Provides a reference to the userBlockedDocuments collection for creating.
-final createUserBlockedDocumentCollectionReference = FirebaseFirestore.instance
-    .collection('userBlockedDocuments')
-    .withConverter<CreateUserBlockedDocument>(
-      fromFirestore: (_, __) => throw UnimplementedError(),
-      toFirestore: (obj, _) => obj.toJson(),
-    );
-
-/// Provides a reference to a userBlockedDocument document for creating.
-DocumentReference<CreateUserBlockedDocument>
-    createUserBlockedDocumentDocumentReference({
-  required String userBlockedDocumentId,
-}) =>
-        createUserBlockedDocumentCollectionReference.doc(userBlockedDocumentId);
-
-/// Provides a reference to the userBlockedDocuments collection for updating.
-final updateUserBlockedDocumentCollectionReference = FirebaseFirestore.instance
-    .collection('userBlockedDocuments')
-    .withConverter<UpdateUserBlockedDocument>(
-      fromFirestore: (_, __) => throw UnimplementedError(),
-      toFirestore: (obj, _) => obj.toJson(),
-    );
-
-/// Provides a reference to a userBlockedDocument document for updating.
-DocumentReference<UpdateUserBlockedDocument>
-    updateUserBlockedDocumentDocumentReference({
-  required String userBlockedDocumentId,
-}) =>
-        updateUserBlockedDocumentCollectionReference.doc(userBlockedDocumentId);
-
-/// Provides a reference to the userBlockedDocuments collection for deleting.
-final deleteUserBlockedDocumentCollectionReference = FirebaseFirestore.instance
-    .collection('userBlockedDocuments')
-    .withConverter<DeleteUserBlockedDocument>(
-      fromFirestore: (_, __) => throw UnimplementedError(),
-      toFirestore: (_, __) => throw UnimplementedError(),
-    );
-
-/// Provides a reference to a userBlockedDocument document for deleting.
-DocumentReference<DeleteUserBlockedDocument>
-    deleteUserBlockedDocumentDocumentReference({
-  required String userBlockedDocumentId,
-}) =>
-        deleteUserBlockedDocumentCollectionReference.doc(userBlockedDocumentId);
-
-/// Manages queries against the userBlockedDocuments collection.
-class UserBlockedDocumentQuery {
-  /// Fetches [ReadUserBlockedDocument] documents.
-  Future<List<ReadUserBlockedDocument>> fetchDocuments({
-    GetOptions? options,
-    Query<ReadUserBlockedDocument>? Function(
-            Query<ReadUserBlockedDocument> query)?
-        queryBuilder,
-    int Function(ReadUserBlockedDocument lhs, ReadUserBlockedDocument rhs)?
-        compare,
-  }) async {
-    Query<ReadUserBlockedDocument> query =
-        readUserBlockedDocumentCollectionReference;
-    if (queryBuilder != null) {
-      query = queryBuilder(query)!;
-    }
-    final qs = await query.get(options);
-    final result = qs.docs.map((qds) => qds.data()).toList();
-    if (compare != null) {
-      result.sort(compare);
-    }
-    return result;
-  }
-
-  /// Subscribes [UserBlockedDocument] documents.
-  Stream<List<ReadUserBlockedDocument>> subscribeDocuments({
-    Query<ReadUserBlockedDocument>? Function(
-            Query<ReadUserBlockedDocument> query)?
-        queryBuilder,
-    int Function(ReadUserBlockedDocument lhs, ReadUserBlockedDocument rhs)?
-        compare,
-    bool includeMetadataChanges = false,
-    bool excludePendingWrites = false,
-  }) {
-    Query<ReadUserBlockedDocument> query =
-        readUserBlockedDocumentCollectionReference;
-    if (queryBuilder != null) {
-      query = queryBuilder(query)!;
-    }
-    var streamQs =
-        query.snapshots(includeMetadataChanges: includeMetadataChanges);
-    if (excludePendingWrites) {
-      streamQs = streamQs.where((qs) => !qs.metadata.hasPendingWrites);
-    }
-    return streamQs.map((qs) {
-      final result = qs.docs.map((qds) => qds.data()).toList();
-      if (compare != null) {
-        result.sort(compare);
-      }
-      return result;
-    });
-  }
-
-  /// Fetches a specific [ReadUserBlockedDocument] document.
-  Future<ReadUserBlockedDocument?> fetchDocument({
-    required String userBlockedDocumentId,
-    GetOptions? options,
-  }) async {
-    final ds = await readUserBlockedDocumentDocumentReference(
-      userBlockedDocumentId: userBlockedDocumentId,
-    ).get(options);
-    return ds.data();
-  }
-
-  /// Subscribes a specific [UserBlockedDocument] document.
-  Stream<ReadUserBlockedDocument?> subscribeDocument({
-    required String userBlockedDocumentId,
-    bool includeMetadataChanges = false,
-    bool excludePendingWrites = false,
-  }) {
-    var streamDs = readUserBlockedDocumentDocumentReference(
-      userBlockedDocumentId: userBlockedDocumentId,
-    ).snapshots(includeMetadataChanges: includeMetadataChanges);
-    if (excludePendingWrites) {
-      streamDs = streamDs.where((ds) => !ds.metadata.hasPendingWrites);
-    }
-    return streamDs.map((ds) => ds.data());
-  }
-
-  /// Adds a [UserBlockedDocument] document.
-  Future<DocumentReference<CreateUserBlockedDocument>> add({
-    required CreateUserBlockedDocument createUserBlockedDocument,
-  }) =>
-      createUserBlockedDocumentCollectionReference
-          .add(createUserBlockedDocument);
-
-  /// Sets a [UserBlockedDocument] document.
-  Future<void> set({
-    required String userBlockedDocumentId,
-    required CreateUserBlockedDocument createUserBlockedDocument,
-    SetOptions? options,
-  }) =>
-      createUserBlockedDocumentDocumentReference(
-        userBlockedDocumentId: userBlockedDocumentId,
-      ).set(createUserBlockedDocument, options);
-
-  /// Updates a specific [UserBlockedDocument] document.
-  Future<void> update({
-    required String userBlockedDocumentId,
-    required UpdateUserBlockedDocument updateUserBlockedDocument,
-  }) =>
-      updateUserBlockedDocumentDocumentReference(
-        userBlockedDocumentId: userBlockedDocumentId,
-      ).update(updateUserBlockedDocument.toJson());
-
-  /// Deletes a specific [UserBlockedDocument] document.
-  Future<void> delete({
-    required String userBlockedDocumentId,
-  }) =>
-      deleteUserBlockedDocumentDocumentReference(
-        userBlockedDocumentId: userBlockedDocumentId,
-      ).delete();
-}
-
 class ReadBlockedJob {
   const ReadBlockedJob({
     required this.jobId,
     required this.path,
-    required this.userId,
     required this.createdAt,
   });
 
@@ -252,15 +15,12 @@ class ReadBlockedJob {
 
   final String path;
 
-  final String userId;
-
   final DateTime? createdAt;
 
   factory ReadBlockedJob._fromJson(Map<String, dynamic> json) {
     return ReadBlockedJob(
       jobId: json['jobId'] as String,
       path: json['path'] as String,
-      userId: json['userId'] as String,
       createdAt: (json['createdAt'] as Timestamp?)?.toDate(),
     );
   }
@@ -276,15 +36,10 @@ class ReadBlockedJob {
 }
 
 class CreateBlockedJob {
-  const CreateBlockedJob({
-    required this.userId,
-  });
-
-  final String userId;
+  const CreateBlockedJob();
 
   Map<String, dynamic> toJson() {
     return {
-      'userId': userId,
       'createdAt': FieldValue.serverTimestamp(),
     };
   }
@@ -292,16 +47,13 @@ class CreateBlockedJob {
 
 class UpdateBlockedJob {
   const UpdateBlockedJob({
-    this.userId,
     this.createdAt,
   });
 
-  final String? userId;
   final DateTime? createdAt;
 
   Map<String, dynamic> toJson() {
     return {
-      if (userId != null) 'userId': userId,
       if (createdAt != null) 'createdAt': createdAt,
     };
   }
@@ -513,7 +265,6 @@ class ReadBlockedReview {
   const ReadBlockedReview({
     required this.reviewId,
     required this.path,
-    required this.userId,
     required this.createdAt,
   });
 
@@ -521,15 +272,12 @@ class ReadBlockedReview {
 
   final String path;
 
-  final String userId;
-
   final DateTime? createdAt;
 
   factory ReadBlockedReview._fromJson(Map<String, dynamic> json) {
     return ReadBlockedReview(
       reviewId: json['reviewId'] as String,
       path: json['path'] as String,
-      userId: json['userId'] as String,
       createdAt: (json['createdAt'] as Timestamp?)?.toDate(),
     );
   }
@@ -545,15 +293,10 @@ class ReadBlockedReview {
 }
 
 class CreateBlockedReview {
-  const CreateBlockedReview({
-    required this.userId,
-  });
-
-  final String userId;
+  const CreateBlockedReview();
 
   Map<String, dynamic> toJson() {
     return {
-      'userId': userId,
       'createdAt': FieldValue.serverTimestamp(),
     };
   }
@@ -561,16 +304,13 @@ class CreateBlockedReview {
 
 class UpdateBlockedReview {
   const UpdateBlockedReview({
-    this.userId,
     this.createdAt,
   });
 
-  final String? userId;
   final DateTime? createdAt;
 
   Map<String, dynamic> toJson() {
     return {
-      if (userId != null) 'userId': userId,
       if (createdAt != null) 'createdAt': createdAt,
     };
   }

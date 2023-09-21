@@ -10,6 +10,5 @@ export 'review.dart';
 export 'todo.dart';
 export 'user_blocked_document.dart';
 export 'user_fcm_token.dart';
-export 'user_inappropriate_report.dart';
 export 'user_social_login.dart';
 export 'worker.dart';

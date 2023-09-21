@@ -3,8 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../auth/ui/auth_dependent_builder.dart';
-import '../../../firestore_repository.dart';
-import '../user_generate_content.dart';
+import '../../../block/block.dart';
 
 @RoutePage()
 class UgcSamplePage extends ConsumerStatefulWidget {
@@ -69,9 +68,9 @@ class UgcSampleState extends ConsumerState<UgcSamplePage> {
                     if (jobId == null) {
                       return;
                     }
-                    ref.watch(inappropriateReportJobServiceProvider).create(
+                    ref.watch(blockJobServiceProvider).create(
                           userId: userId,
-                          targetId: jobId,
+                          jobId: jobId,
                         );
                   },
                 ),
@@ -90,9 +89,9 @@ class UgcSampleState extends ConsumerState<UgcSamplePage> {
                     if (reviewId == null) {
                       return;
                     }
-                    ref.watch(inappropriateReportReviewServiceProvider).create(
+                    ref.watch(blockReviewServiceProvider).create(
                           userId: userId,
-                          targetId: reviewId,
+                          reviewId: reviewId,
                         );
                   },
                 ),
@@ -113,7 +112,7 @@ class UgcSampleState extends ConsumerState<UgcSamplePage> {
                     }
                     ref.watch(blockJobServiceProvider).create(
                           userId: userId,
-                          targetId: jobId,
+                          jobId: jobId,
                         );
                   },
                 ),
@@ -134,7 +133,7 @@ class UgcSampleState extends ConsumerState<UgcSamplePage> {
                     }
                     ref.watch(blockReviewServiceProvider).create(
                           userId: userId,
-                          targetId: reviewId,
+                          reviewId: reviewId,
                         );
                   },
                 ),

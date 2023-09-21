@@ -257,7 +257,7 @@ class MapPageState extends ConsumerState<MapPage> {
                           );
                         },
                         icon: const Icon(Icons.near_me),
-                      )
+                      ),
                     ],
                   ),
                 ),

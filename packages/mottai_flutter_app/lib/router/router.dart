@@ -7,7 +7,6 @@ import '../development/development_items/ui/development_items.dart';
 import '../development/email_and_password_sign_in/ui/email_and_password_sign_in.dart';
 import '../development/firebase_messaging/ui/firebase_messaging.dart';
 import '../development/firebase_storage/ui/firebase_storage.dart';
-import '../development/force_update/ui/force_update.dart';
 import '../development/generic_image/ui/generic_images.dart';
 import '../development/image_detail_view/ui/image_detail_view_stub.dart';
 import '../development/image_picker/ui/image_picker_sample.dart';
@@ -15,6 +14,7 @@ import '../development/in_review/ui/in_review.dart';
 import '../development/sample_todo/ui/todos.dart';
 import '../development/sign_in/ui/sign_in.dart';
 import '../development/user_fcm_token/ui/user_fcm_token.dart';
+import '../development/user_generate_content/ui/user_generate_content_sample.dart';
 import '../development/user_social_login/user_social_login.dart';
 import '../development/web_link/ui/web_link_stub.dart';
 import '../host/ui/host.dart';
@@ -89,10 +89,6 @@ class AppRouter extends $AppRouter {
       path: HostUpdatePage.path,
       page: HostUpdateRoute.page,
     ),
-    // AutoRoute(
-    //   path: UserPage.path,
-    //   page: UserRoute.page,
-    // ),
     AutoRoute(
       path: CreateOrUpdateWorkerPage.path,
       page: CreateOrUpdateWorkerRoute.page,
@@ -114,10 +110,6 @@ class AppRouter extends $AppRouter {
     AutoRoute(
       path: FirebaseStorageSamplePage.path,
       page: FirebaseStorageSampleRoute.page,
-    ),
-    AutoRoute(
-      path: ForceUpdateSamplePage.path,
-      page: ForceUpdateSampleRoute.page,
     ),
     AutoRoute(
       path: GenericImagesPage.path,
@@ -154,6 +146,10 @@ class AppRouter extends $AppRouter {
     AutoRoute(
       path: UserFcmTokenPage.path,
       page: UserFcmTokenRoute.page,
+    ),
+    AutoRoute(
+      path: UgcSamplePage.path,
+      page: UgcSampleRoute.page,
     ),
     AutoRoute(
       path: FirebaseMessagingPage.path,

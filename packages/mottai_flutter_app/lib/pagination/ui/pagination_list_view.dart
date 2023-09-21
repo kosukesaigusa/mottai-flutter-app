@@ -6,11 +6,14 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../firestore_pagination.dart';
 
-/// [FirestorePaginationStateNotifier] を使用した無限スクロールの [ListView] UI.
-class FirestorePaginationListView<T> extends ConsumerWidget {
-  const FirestorePaginationListView({
+/// [FirestorePaginationStateNotifier] を使用したパジネーション UI.
+class FirestorePaginationView<T> extends ConsumerWidget {
+  const FirestorePaginationView({
     required this.stateNotifierProvider,
-    required this.itemBuilder,
+    required this.whenData,
+    required this.whenEmpty,
+    this.perPage = 10,
+    this.scrollValueThreshold = 0.8,
     this.showDebugIndicator = false,
     super.key,
   });
@@ -20,13 +23,19 @@ class FirestorePaginationListView<T> extends ConsumerWidget {
       AsyncValue<List<T>>> stateNotifierProvider;
 
   /// [ListView.builder] で表示する各要素のビルダー関数。
-  final Widget Function(BuildContext, T) itemBuilder;
+  final Widget Function(BuildContext, List<T>) whenData;
 
-  /// 開発時のみ表示する、無限スクロールのデバッグ用ウィジェットを表示するか。
-  final bool showDebugIndicator;
+  /// 表示するものがないときに表示する内容
+  final Widget Function(BuildContext) whenEmpty;
+
+  /// 一度に取得する件数。
+  final int perPage;
 
   /// 画面の何割をスクロールした時点で次の _limit 件のメッセージを取得するか。
-  static const _scrollValueThreshold = 0.8;
+  final double scrollValueThreshold;
+
+  /// デバッグ用のウィジェットを表示するかどうか。
+  final bool showDebugIndicator;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -40,18 +49,12 @@ class FirestorePaginationListView<T> extends ConsumerWidget {
               onNotification: (notification) {
                 final metrics = notification.metrics;
                 final scrollValue = metrics.pixels / metrics.maxScrollExtent;
-                if (scrollValue > _scrollValueThreshold) {
-                  notifier.fetchNext();
+                if (scrollValue > scrollValueThreshold) {
+                  notifier.fetchNext(perPage: perPage);
                 }
                 return false;
               },
-              child: ListView.builder(
-                itemCount: items.length,
-                itemBuilder: (context, index) {
-                  final item = items[index];
-                  return itemBuilder(context, item);
-                },
-              ),
+              child: whenData(context, items),
             ),
             if (kDebugMode && showDebugIndicator)
               Positioned(
@@ -71,7 +74,6 @@ class FirestorePaginationListView<T> extends ConsumerWidget {
   }
 }
 
-// TODO: あとで消す。
 /// 開発時のみ表示する、無限スクロールのデバッグ用ウィジェット。
 class _DebugIndicator<T> extends ConsumerWidget {
   const _DebugIndicator({
@@ -79,7 +81,7 @@ class _DebugIndicator<T> extends ConsumerWidget {
     required this.items,
   });
 
-  /// [FirestorePaginationStateNotifier]
+  /// [FirestorePaginationStateNotifier] インスタンス。
   final FirestorePaginationStateNotifier<T> notifier;
 
   /// 取得したアイテム一覧。

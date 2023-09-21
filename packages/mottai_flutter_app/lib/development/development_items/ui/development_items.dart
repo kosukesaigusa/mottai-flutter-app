@@ -17,7 +17,6 @@ import '../../../worker/ui/worker.dart';
 import '../../color/ui/color.dart';
 import '../../firebase_messaging/ui/firebase_messaging.dart';
 import '../../firebase_storage/ui/firebase_storage.dart';
-import '../../force_update/ui/force_update.dart';
 import '../../generic_image/ui/generic_images.dart';
 import '../../geoflutterfire_plus/geoflutterfire_plus.dart';
 import '../../image_detail_view/ui/image_detail_view_stub.dart';
@@ -26,6 +25,7 @@ import '../../in_review/ui/in_review.dart';
 import '../../sample_todo/ui/todos.dart';
 import '../../sign_in/ui/sign_in.dart';
 import '../../user_fcm_token/ui/user_fcm_token.dart';
+import '../../user_generate_content/ui/user_generate_content_sample.dart';
 import '../../user_social_login/user_social_login.dart';
 import '../../web_link/ui/web_link_stub.dart';
 
@@ -157,11 +157,6 @@ class DevelopmentItemsPage extends ConsumerWidget {
                 context.router.pushNamed(FirebaseStorageSamplePage.location),
           ),
           ListTile(
-            title: const Text('強制アップデート'),
-            onTap: () =>
-                context.router.pushNamed(ForceUpdateSamplePage.location),
-          ),
-          ListTile(
             title: const Text('レビュー中かどうか'),
             onTap: () => context.router.pushNamed(InReviewPage.location),
           ),
@@ -212,7 +207,10 @@ class DevelopmentItemsPage extends ConsumerWidget {
           ),
           const ListTile(title: Text('Security Rules')),
           const ListTile(title: Text('お問い合わせ')),
-          const ListTile(title: Text('不適切 UGC の通報 or 非表示')),
+          ListTile(
+            title: const Text('不適切 UGC の通報 or 非表示'),
+            onTap: () => context.router.pushNamed(UgcSamplePage.location),
+          ),
           const Divider(),
           Padding(
             padding: const EdgeInsets.all(16),

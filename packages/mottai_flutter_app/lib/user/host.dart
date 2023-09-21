@@ -106,7 +106,8 @@ class HostService {
     // TODO: 修正する
 
     // final locations =
-    //     await _hostLocationService.fetchHostLocationsFromHost(hostId: hostId);
+    //     await _hostLocationService
+    //           .fetchHostLocationsFromHost(hostId: hostId);
     // if (locations != null && locations.isNotEmpty) {
     //   await _hostLocationService.update(
     //     hostLocationId: locations.first.hostLocationId,

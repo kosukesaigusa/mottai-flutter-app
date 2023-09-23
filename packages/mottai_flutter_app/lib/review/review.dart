@@ -27,6 +27,12 @@ final workerReviewsStreamProvider =
       .subscribeUserReviews(workerId: workerId),
 );
 
+final reviewServiceProvider = Provider.autoDispose<ReviewService>(
+  (ref) => ReviewService(
+    reviewRepository: ref.watch(reviewRepositoryProvider),
+  ),
+);
+
 class ReviewService {
   const ReviewService({required ReviewRepository reviewRepository})
       : _reviewRepository = reviewRepository;

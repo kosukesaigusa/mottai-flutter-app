@@ -26,3 +26,40 @@ final workerReviewsStreamProvider =
       .read(reviewRepositoryProvider)
       .subscribeUserReviews(workerId: workerId),
 );
+
+class ReviewService {
+  const ReviewService({required ReviewRepository reviewRepository})
+      : _reviewRepository = reviewRepository;
+
+  final ReviewRepository _reviewRepository;
+
+  /// [Review] の情報を作成する。
+  Future<void> create({
+    required String workerId,
+    required String jobId,
+    required String title,
+    required String content,
+    required String imageUrl,
+  }) =>
+      _reviewRepository.create(
+        workerId: workerId,
+        jobId: jobId,
+        title: title,
+        content: content,
+        imageUrl: imageUrl,
+      );
+
+  /// [Review] の情報を更新する。
+  Future<void> update({
+    required String reviewId,
+    String? title,
+    String? content,
+    String? imageUrl,
+  }) =>
+      _reviewRepository.update(
+        reviewId: reviewId,
+        title: title,
+        content: content,
+        imageUrl: imageUrl,
+      );
+}

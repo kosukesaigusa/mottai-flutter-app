@@ -54,4 +54,38 @@ class ReviewRepository {
           .orderBy('createdAt', descending: true),
     );
   }
+
+  /// [Review] の情報を作成する。
+  Future<void> create({
+    required String workerId,
+    required String jobId,
+    required String imageUrl,
+    required String title,
+    required String content,
+  }) =>
+      _query.add(
+        createReview: CreateReview(
+          workerId: workerId,
+          jobId: jobId,
+          title: title,
+          content: content,
+          imageUrl: imageUrl,
+        ),
+      );
+
+  /// [Review] の情報を更新する。
+  Future<void> update({
+    required String reviewId,
+    String? title,
+    String? content,
+    String? imageUrl,
+  }) =>
+      _query.update(
+        reviewId: reviewId,
+        updateReview: UpdateReview(
+          title: title,
+          content: content,
+          imageUrl: imageUrl,
+        ),
+      );
 }

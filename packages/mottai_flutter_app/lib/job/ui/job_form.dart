@@ -308,7 +308,7 @@ class _TextInputSection<T extends dynamic> extends StatelessWidget {
       title: title,
       titleBadge: Padding(
         padding: const EdgeInsets.only(left: 8),
-        child: _OptionalBadge(isRequired: isRequired),
+        child: OptionalBadge(isRequired: isRequired),
       ),
       titleStyle: Theme.of(context).textTheme.titleLarge,
       description: description,
@@ -344,28 +344,5 @@ class _TextInputSection<T extends dynamic> extends StatelessWidget {
         ],
       ),
     );
-  }
-}
-
-/// 入力が必須か任意かを表すバッジ
-/// [isRequired] の値によって、必須か任意の文字を選択して返す。
-class _OptionalBadge extends StatelessWidget {
-  const _OptionalBadge({this.isRequired = false});
-
-  /// 必須か否か
-  final bool isRequired;
-
-  @override
-  Widget build(BuildContext context) {
-    if (isRequired) {
-      return const Badge(
-        label: Text('必須'),
-      );
-    } else {
-      return const Badge(
-        label: Text('任意'),
-        backgroundColor: Colors.grey,
-      );
-    }
   }
 }

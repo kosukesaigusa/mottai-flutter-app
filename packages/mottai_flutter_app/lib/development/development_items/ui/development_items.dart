@@ -22,7 +22,7 @@ import '../../geoflutterfire_plus/geoflutterfire_plus.dart';
 import '../../image_detail_view/ui/image_detail_view_stub.dart';
 import '../../image_picker/ui/image_picker_sample.dart';
 import '../../in_review/ui/in_review.dart';
-import '../../post_review/post_review.dart';
+import '../../review/review_create.dart';
 import '../../sample_todo/ui/todos.dart';
 import '../../sign_in/ui/sign_in.dart';
 import '../../user_fcm_token/ui/user_fcm_token.dart';

@@ -7,13 +7,13 @@ import 'review_form.dart';
 
 /// レビュー一覧画面。
 @RoutePage()
-class PostReviewPage extends ConsumerWidget {
-  const PostReviewPage({super.key});
+class ReviewCreatePage extends ConsumerWidget {
+  const ReviewCreatePage({super.key});
 
   /// [AutoRoute] で指定するパス文字列。
   static const path = '/postReview';
 
-  /// [PostReviewPage] に遷移する際に `context.router.pushNamed` で指定する文字列。
+  /// [ReviewCreatePage] に遷移する際に `context.router.pushNamed` で指定する文字列。
   static const location = path;
 
   @override

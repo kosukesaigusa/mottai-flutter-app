@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../development/firebase_storage/firebase_storage.dart';
-import '../../development/firebase_storage/ui/firebase_storage_controller.dart';
+import '../firebase_storage/firebase_storage.dart';
+import '../firebase_storage/ui/firebase_storage_controller.dart';
 import '../../review/ui/review_controller.dart';
 import '../../widgets/optional_badge.dart';
 

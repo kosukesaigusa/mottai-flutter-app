@@ -129,8 +129,8 @@ class AppRouter extends $AppRouter {
       page: InReviewRoute.page,
     ),
     AutoRoute(
-      path: PostReviewPage.path,
-      page: PostReviewRoute.page,
+      path: ReviewCreatePage.path,
+      page: ReviewCreateRoute.page,
     ),
     AutoRoute(
       path: TodosPage.path,

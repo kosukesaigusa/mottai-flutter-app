@@ -17,7 +17,7 @@ class ReviewCreatePage extends ConsumerWidget {
   static const path = '/jobs/:jobId/reviews/create';
 
   /// [ReviewCreatePage] に遷移する際に `context.router.pushNamed` で指定する文字列。
-  static const location = path;
+  static String location({required String jobId}) => '/jobs/$jobId/reviews/create';
 
   final String jobId;
 

@@ -143,7 +143,9 @@ class DevelopmentItemsPage extends ConsumerWidget {
             title: const Text(
               '感想投稿ページ',
             ),
-            onTap: () => context.router.pushNamed(PostReviewPage.location),
+            onTap: () => context.router.pushNamed(
+              ReviewCreatePage.location(jobId: 'PYRsrMSOApEgZ6lzMuUK'),
+            ),
           ),
           const Divider(),
           Padding(

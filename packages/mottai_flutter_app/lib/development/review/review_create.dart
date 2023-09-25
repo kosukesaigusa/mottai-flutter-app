@@ -5,7 +5,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../auth/ui/auth_dependent_builder.dart';
 import 'review_form.dart';
 
-/// レビュー一覧画面。
+/// レビュー投稿画面。
 @RoutePage()
 class ReviewCreatePage extends ConsumerWidget {
   const ReviewCreatePage({

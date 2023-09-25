@@ -68,7 +68,7 @@ jobs:
           export GOOGLE_APPLICATION_CREDENTIALS=/tmp/dev_firebase_service_account_key.json
           firebase use dev
           firebase appdistribution:distribute packages/mottai_flutter_app/build/app/outputs/bundle/release/app-release.aab \
-            --app 1:${{ secrets.DEV_FIREBASE_ANDROID_APP_ID }} \
+            --app ${{ secrets.DEV_FIREBASE_ANDROID_APP_ID }} \
             --groups internal-testers  \
             --release-notes "${LATEST_COMMIT_MESSAGES}"
 

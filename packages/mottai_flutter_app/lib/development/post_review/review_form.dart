@@ -6,6 +6,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../development/firebase_storage/firebase_storage.dart';
 import '../../development/firebase_storage/ui/firebase_storage_controller.dart';
+import '../../review/ui/review_controller.dart';
 import '../../widgets/optional_badge.dart';
 
 /// - `create` の場合、ログイン済みの `workerId`（ユーザー ID）
@@ -15,20 +16,26 @@ import '../../widgets/optional_badge.dart';
 class ReviewForm extends ConsumerStatefulWidget {
   const ReviewForm.create({
     required String workerId,
+    required String jobId,
     super.key,
-  })  : _workerId = workerId,
+  })  : _jobId = jobId,
+        _workerId = workerId,
         _review = null;
 
   const ReviewForm.update({
     required String workerId,
+    required String jobId,
     required ReadReview review,
     super.key,
-  })  : _workerId = workerId,
+  })  : _jobId = jobId,
+        _workerId = workerId,
         _review = review;
 
   final ReadReview? _review;
 
   final String _workerId;
+
+  final String _jobId;
 
   @override
   ReviewFormState createState() => ReviewFormState();
@@ -59,8 +66,7 @@ class ReviewFormState extends ConsumerState<ReviewForm> {
     final firebaseStorageController =
         ref.watch(firebaseStorageControllerProvider);
     final pickedImageFile = ref.watch(pickedImageFileStateProvider);
-    // final controller = ref.watch(jobControllerProvider(widget._hostId));
-    // final jobId = widget._job?.jobId;
+    final controller = ref.watch(reviewControllerProvider);
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -122,40 +128,30 @@ class ReviewFormState extends ConsumerState<ReviewForm> {
                     child: Center(
                       child: ElevatedButton(
                         onPressed: () {
-                          // final isValidate = formKey.currentState?.validate();
-                          // if (!(isValidate ?? true)) {
-                          //   return;
-                          // }
+                          final isValidate = formKey.currentState?.validate();
+                          if (!(isValidate ?? true)) {
+                            return;
+                          }
 
-                          // if (jobId != null) {
-                          //   controller.updateJob(
-                          //     jobId: jobId,
-                          //     title: _titleController.text,
-                          //     place: _locationController.text,
-                          //     content: _contentController.text,
-                          //     belongings: _belongingsController.text,
-                          //     reward: _rewardController.text,
-                          //     accessDescription:
-                          //         _accessDescriptionController.text,
-                          //     comment: _commentController.text,
-                          //     imageFile: pickedImageFile,
-                          //     accessTypes: _selectedAccessTypes.toSet(),
-                          //   );
-                          // } else {
-                          //   controller.create(
-                          //     hostId: widget._hostId,
-                          //     title: _titleController.text,
-                          //     place: _locationController.text,
-                          //     content: _contentController.text,
-                          //     belongings: _belongingsController.text,
-                          //     reward: _rewardController.text,
-                          //     accessDescription:
-                          //         _accessDescriptionController.text,
-                          //     comment: _commentController.text,
-                          //     imageFile: pickedImageFile,
-                          //     accessTypes: _selectedAccessTypes.toSet(),
-                          //   );
-                          // }
+                          final review = widget._review;
+
+                          if (review != null) {
+                            controller.updateReview(
+                              reviewId: review.reviewId,
+                              workerId: widget._workerId,
+                              title: _titleController.text,
+                              content: _contentController.text,
+                              imageFile: pickedImageFile,
+                            );
+                          } else {
+                            controller.create(
+                              workerId: widget._workerId,
+                              jobId: widget._jobId,
+                              title: _titleController.text,
+                              content: _contentController.text,
+                              imageFile: pickedImageFile,
+                            );
+                          }
                         },
                         child: const Text('この内容で登録する'),
                       ),

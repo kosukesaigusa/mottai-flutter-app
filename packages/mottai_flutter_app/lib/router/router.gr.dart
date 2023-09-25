@@ -29,7 +29,7 @@ import 'package:mottai_flutter_app/development/image_picker/ui/image_picker_samp
     as _i14;
 import 'package:mottai_flutter_app/development/in_review/ui/in_review.dart'
     as _i15;
-import 'package:mottai_flutter_app/development/review/review_create.dart'
+import 'package:mottai_flutter_app/development/review/ui/review_create.dart'
     as _i21;
 import 'package:mottai_flutter_app/development/sample_todo/ui/todos.dart'
     as _i25;

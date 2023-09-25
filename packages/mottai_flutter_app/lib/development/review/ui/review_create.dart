@@ -2,7 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../auth/ui/auth_dependent_builder.dart';
+import '../../../auth/ui/auth_dependent_builder.dart';
 import 'review_form.dart';
 
 /// レビュー投稿画面。

@@ -21,10 +21,9 @@ class JobCreatePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(title: const Text('お手伝い募集内容を入力')),
-      // TODO:なるんさんが実装中の「本人かどうかビルダー」に後で書き換える。
       body: AuthDependentBuilder(
-        onAuthenticated: (hostId) {
-          return JobForm.create(hostId: hostId);
+        onAuthenticated: (userId) {
+          return JobForm.create(hostId: userId);
         },
       ),
     );

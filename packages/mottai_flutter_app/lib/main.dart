@@ -4,8 +4,10 @@ import 'package:flutter_line_sdk/flutter_line_sdk.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
+import 'device_info.dart';
 import 'environment/src/firebase_options.dart';
 import 'environment/src/flavor_type.dart';
+import 'loading/ui/loading.dart';
 import 'package_info.dart';
 import 'push_notification/firebase_messaging.dart';
 import 'router/router.dart';
@@ -38,6 +40,7 @@ void main() async {
     ProviderScope(
       overrides: [
         packageInfoProvider.overrideWithValue(await PackageInfo.fromPlatform()),
+        deviceInfoProvider.overrideWithValue(await getDeviceInfo()),
         firebaseMessagingProvider
             .overrideWithValue(await getFirebaseMessagingInstance()),
         userModeStateProvider.overrideWith(
@@ -92,7 +95,8 @@ class MainApp extends ConsumerWidget {
                       child: child!,
                     ),
                   ),
-                  // if (isLoading) const OverlayLoading(),
+                  if (ref.watch(overlayLoadingStateProvider))
+                    const OverlayLoading(),
                 ],
               ),
             ),

@@ -1,14 +1,25 @@
 import 'package:firebase_common/firebase_common.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+final blockedJobRepositoryProvider = Provider.autoDispose<BlockedJobRepository>(
+  (_) => BlockedJobRepository(),
+);
+
+final blockedReviewRepositoryProvider =
+    Provider.autoDispose<BlockedReviewRepository>(
+  (_) => BlockedReviewRepository(),
+);
+
 final chatMessageRepositoryProvider =
     Provider.autoDispose<ChatMessageRepository>((_) => ChatMessageRepository());
 
 final chatRoomRepositoryProvider =
     Provider.autoDispose<ChatRoomRepository>((_) => ChatRoomRepository());
 
-final fcmTokenRepositoryProvider =
-    Provider.autoDispose<FcmTokenRepository>((_) => FcmTokenRepository());
+final disableUserAccountRequestRepositoryProvider =
+    Provider.autoDispose<DisableUserAccountRequestRepository>(
+  (_) => DisableUserAccountRequestRepository(),
+);
 
 final forceUpdateConfigRepositoryProvider =
     Provider.autoDispose<ForceUpdateConfigRepository>(
@@ -34,8 +45,16 @@ final jobRepositoryProvider =
 final readStatusRepositoryProvider =
     Provider.autoDispose<ReadStatusRepository>((_) => ReadStatusRepository());
 
-final sampleTodoRepositoryProvider =
-    Provider.autoDispose<SampleTodoRepository>((_) => SampleTodoRepository());
+final reviewRepositoryProvider =
+    Provider.autoDispose<ReviewRepository>((_) => ReviewRepository());
+
+final todoRepositoryProvider =
+    Provider.autoDispose<TodoRepository>((_) => TodoRepository());
+
+final userFcmTokenRepositoryProvider =
+    Provider.autoDispose<UserFcmTokenRepository>(
+  (_) => UserFcmTokenRepository(),
+);
 
 final userSocialLoginRepositoryProvider =
     Provider.autoDispose<UserSocialLoginRepository>(

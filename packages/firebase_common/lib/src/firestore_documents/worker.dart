@@ -8,6 +8,7 @@ class Worker {
   const Worker({
     required this.displayName,
     required this.imageUrl,
+    required this.introduction,
     required this.isHost,
     required this.introduction,
     this.createdAt,
@@ -20,6 +21,10 @@ class Worker {
   @ReadDefault('')
   @CreateDefault('')
   final String imageUrl;
+
+  @ReadDefault('')
+  @CreateDefault('')
+  final String introduction;
 
   @ReadDefault(false)
   final bool isHost;

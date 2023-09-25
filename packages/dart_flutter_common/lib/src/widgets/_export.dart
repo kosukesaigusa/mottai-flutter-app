@@ -1,6 +1,6 @@
 export 'generic_chat_room.dart';
 export 'generic_image.dart';
-export 'material_horizontal_card.dart';
+export 'material_card.dart';
 export 'optional_badge.dart';
 export 'section.dart';
 export 'selectable_chips.dart';

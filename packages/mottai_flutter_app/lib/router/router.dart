@@ -7,17 +7,19 @@ import '../development/development_items/ui/development_items.dart';
 import '../development/email_and_password_sign_in/ui/email_and_password_sign_in.dart';
 import '../development/firebase_messaging/ui/firebase_messaging.dart';
 import '../development/firebase_storage/ui/firebase_storage.dart';
-import '../development/force_update/ui/force_update.dart';
 import '../development/generic_image/ui/generic_images.dart';
 import '../development/image_detail_view/ui/image_detail_view_stub.dart';
 import '../development/image_picker/ui/image_picker_sample.dart';
 import '../development/in_review/ui/in_review.dart';
-import '../development/sample_todo/ui/sample_todos.dart';
+import '../development/sample_todo/ui/todos.dart';
 import '../development/sign_in/ui/sign_in.dart';
+import '../development/user_fcm_token/ui/user_fcm_token.dart';
+import '../development/user_generate_content/ui/user_generate_content_sample.dart';
 import '../development/user_social_login/user_social_login.dart';
 import '../development/web_link/ui/web_link_stub.dart';
-import '../host/ui/create_or_update_host.dart';
 import '../host/ui/host.dart';
+import '../host/ui/host_create.dart';
+import '../host/ui/host_update.dart';
 import '../job/ui/job_create.dart';
 import '../job/ui/job_detail.dart';
 import '../job/ui/job_update.dart';
@@ -76,21 +78,20 @@ class AppRouter extends $AppRouter {
       page: WorkerRoute.page,
     ),
     AutoRoute(
+      path: HostCreatePage.path,
+      page: HostCreateRoute.page,
+    ),
+    AutoRoute(
       path: HostPage.path,
       page: HostRoute.page,
     ),
-    // AutoRoute(
-    //   path: UserPage.path,
-    //   page: UserRoute.page,
-    // ),
+    AutoRoute(
+      path: HostUpdatePage.path,
+      page: HostUpdateRoute.page,
+    ),
     AutoRoute(
       path: CreateOrUpdateWorkerPage.path,
       page: CreateOrUpdateWorkerRoute.page,
-      fullscreenDialog: true,
-    ),
-    AutoRoute(
-      path: CreateOrUpdateHostPage.path,
-      page: CreateOrUpdateHostRoute.page,
       fullscreenDialog: true,
     ),
     // NOTE: 以下、開発用のページ。
@@ -111,10 +112,6 @@ class AppRouter extends $AppRouter {
       page: FirebaseStorageSampleRoute.page,
     ),
     AutoRoute(
-      path: ForceUpdateSamplePage.path,
-      page: ForceUpdateSampleRoute.page,
-    ),
-    AutoRoute(
       path: GenericImagesPage.path,
       page: GenericImagesRoute.page,
     ),
@@ -131,8 +128,8 @@ class AppRouter extends $AppRouter {
       page: InReviewRoute.page,
     ),
     AutoRoute(
-      path: SampleTodosPage.path,
-      page: SampleTodosRoute.page,
+      path: TodosPage.path,
+      page: TodosRoute.page,
     ),
     AutoRoute(
       path: SignInSamplePage.path,
@@ -145,6 +142,14 @@ class AppRouter extends $AppRouter {
     AutoRoute(
       path: UserSocialLoginSamplePage.path,
       page: UserSocialLoginSampleRoute.page,
+    ),
+    AutoRoute(
+      path: UserFcmTokenPage.path,
+      page: UserFcmTokenRoute.page,
+    ),
+    AutoRoute(
+      path: UgcSamplePage.path,
+      page: UgcSampleRoute.page,
     ),
     AutoRoute(
       path: FirebaseMessagingPage.path,

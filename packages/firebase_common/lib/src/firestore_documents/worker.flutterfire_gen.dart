@@ -10,6 +10,7 @@ class ReadWorker {
     required this.path,
     required this.displayName,
     required this.imageUrl,
+    required this.introduction,
     required this.isHost,
     required this.introduction,
     required this.createdAt,
@@ -23,6 +24,8 @@ class ReadWorker {
   final String displayName;
 
   final String imageUrl;
+
+  final String introduction;
 
   final bool isHost;
 
@@ -38,6 +41,7 @@ class ReadWorker {
       path: json['path'] as String,
       displayName: json['displayName'] as String? ?? '',
       imageUrl: json['imageUrl'] as String? ?? '',
+      introduction: json['introduction'] as String? ?? '',
       isHost: json['isHost'] as bool? ?? false,
       introduction: json['introduction'] as String? ?? '',
       createdAt: (json['createdAt'] as Timestamp?)?.toDate(),
@@ -59,12 +63,14 @@ class CreateWorker {
   const CreateWorker({
     required this.displayName,
     this.imageUrl = '',
+    this.introduction = '',
     required this.isHost,
     required this.introduction,
   });
 
   final String displayName;
   final String imageUrl;
+  final String introduction;
   final bool isHost;
   final String introduction;
 
@@ -72,6 +78,7 @@ class CreateWorker {
     return {
       'displayName': displayName,
       'imageUrl': imageUrl,
+      'introduction': introduction,
       'isHost': isHost,
       'introduction': introduction,
       'createdAt': FieldValue.serverTimestamp(),
@@ -84,6 +91,7 @@ class UpdateWorker {
   const UpdateWorker({
     this.displayName,
     this.imageUrl,
+    this.introduction,
     this.isHost,
     this.introduction,
     this.createdAt,
@@ -91,6 +99,7 @@ class UpdateWorker {
 
   final String? displayName;
   final String? imageUrl;
+  final String? introduction;
   final bool? isHost;
   final String? introduction;
   final DateTime? createdAt;
@@ -99,6 +108,7 @@ class UpdateWorker {
     return {
       if (displayName != null) 'displayName': displayName,
       if (imageUrl != null) 'imageUrl': imageUrl,
+      if (introduction != null) 'introduction': introduction,
       if (isHost != null) 'isHost': isHost,
       if (introduction != null) 'introduction': introduction,
       if (createdAt != null) 'createdAt': createdAt,

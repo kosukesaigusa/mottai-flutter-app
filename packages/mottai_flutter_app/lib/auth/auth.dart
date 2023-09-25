@@ -285,7 +285,7 @@ class AuthService {
 
       // サインインダイアログでキャンセルが選択された場合には、AppException をスローし、キャンセルされたことを通知する
       if (googleUser == null) {
-        throw const AppException(message: 'キャンセルされました');
+        throw const AppException(message: 'キャンセルされました。');
       }
 
       final googleAuth = await googleUser.authentication; // アカウントからトークン生成
@@ -298,7 +298,7 @@ class AuthService {
       if (e.code == 'network_error') {
         throw const AppException(message: '接続できませんでした。\nネットワーク状況を確認してください。');
       }
-      throw const AppException(message: 'Google認証に失敗しました');
+      throw const AppException(message: 'Google 認証に失敗しました。');
     }
   }
 
@@ -328,7 +328,7 @@ class AuthService {
       if (e.code == AuthorizationErrorCode.canceled) {
         throw const AppException(message: 'キャンセルされました');
       }
-      throw const AppException(message: 'Apple認証に失敗しました');
+      throw const AppException(message: 'Apple 認証に失敗しました。');
     }
   }
 
@@ -348,7 +348,7 @@ class AuthService {
     } on PlatformException catch (e) {
       // サインインダイアログでユーザーによりキャンセルが選択された場合には、AppException をスローし、キャンセルされたことを通知する
       if (e.message == 'User cancelled or interrupted the login process.') {
-        throw const AppException(message: 'キャンセルされました');
+        throw const AppException(message: 'キャンセルされました。');
       }
       rethrow;
     }

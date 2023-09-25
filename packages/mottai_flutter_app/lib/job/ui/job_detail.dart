@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../auth/auth.dart';
 import '../../auth/ui/auth_dependent_builder.dart';
 import '../../chat/chat_rooms.dart';
 import '../../chat/ui/chat_room.dart';
@@ -34,32 +33,37 @@ class JobDetailPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final userId = ref.watch(userIdProvider);
-    final jobAsyncValue = ref.watch(jobFutureProvider(jobId));
-    final isLoading = jobAsyncValue.isLoading;
     final job = ref.watch(jobFutureProvider(jobId)).valueOrNull;
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('お手伝い募集'),
-        // TODO:なるんさんが実装中の「本人かどうかビルダー」に後で書き換える。
-        actions: [
-          if (!isLoading && userId != null && job != null)
-            IconButton(
-              onPressed: () => context.router
-                  .pushNamed(JobUpdatePage.location(jobId: jobId)),
-              icon: const Icon(Icons.edit),
-            ),
-        ],
-      ),
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : job == null
-              ? const Text('お手伝い募集の情報が見つかりませんでした。')
+    if (job == null) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('お手伝い募集')),
+        body: const Center(child: Text('お手伝い募集の情報が見つかりません。')),
+      );
+    }
+    final isLoading = ref.watch(jobFutureProvider(jobId)).isLoading;
+    final hostId = job.hostId;
+    return UserAuthDependentBuilder(
+      userId: hostId,
+      onAuthenticated: (userId, isUserAuthenticated) {
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text('お手伝い募集'),
+            actions: [
+              if (!isLoading && isUserAuthenticated)
+                IconButton(
+                  onPressed: () => context.router
+                      .pushNamed(JobUpdatePage.location(jobId: jobId)),
+                  icon: const Icon(Icons.edit),
+                ),
+            ],
+          ),
+          body: isLoading
+              ? const Center(child: CircularProgressIndicator())
               : ref.watch(hostFutureProvider(job.hostId)).when(
                     data: (readHost) {
                       if (readHost == null) {
                         return const Center(
-                          child: Text('ホストが存在していません。'),
+                          child: Text('ホストが存在しません。'),
                         );
                       }
                       return _JobDetail(job: job, readHost: readHost);
@@ -70,6 +74,8 @@ class JobDetailPage extends ConsumerWidget {
                       child: Text('ホスト情報の取得に失敗しました。'),
                     ),
                   ),
+        );
+      },
     );
   }
 }
@@ -90,11 +96,7 @@ class _JobDetail extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (readHost.imageUrl.isNotEmpty)
-            GenericImage.rectangle(
-              imageUrl: readHost.imageUrl,
-              height: 300,
-              width: MediaQuery.of(context).size.width,
-            ),
+            GenericImage.rectangle(imageUrl: readHost.imageUrl),
           Padding(
             padding: const EdgeInsets.symmetric(
               vertical: 8,

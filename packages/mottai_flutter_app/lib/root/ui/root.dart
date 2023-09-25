@@ -6,15 +6,20 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../assets.dart';
 import '../../auth/auth.dart';
 import '../../auth/ui/auth_controller.dart';
+import '../../auth/ui/auth_dependent_builder.dart';
 import '../../development/development_items/ui/development_items.dart';
+import '../../development/disable_user_account_request/ui/disable_user_account_request_controller.dart';
 import '../../development/email_and_password_sign_in/ui/email_and_password_sign_in.dart';
 import '../../development/sign_in/ui/sign_in.dart';
+import '../../force_update/force_update.dart';
+import '../../force_update/ui/force_update.dart';
 import '../../package_info.dart';
 import '../../push_notification/firebase_messaging.dart';
 import '../../router/router.gr.dart';
 import '../../scaffold_messenger_controller.dart';
 import '../../user/user.dart';
 import '../../user/user_mode.dart';
+import '../../user_fcm_token/user_fcm_token.dart';
 
 final rootPageKey = Provider((ref) => GlobalKey<NavigatorState>());
 
@@ -39,49 +44,74 @@ class _RootPageState extends ConsumerState<RootPage> {
     super.initState();
     Future.wait<void>([
       ref.read(initializeFirebaseMessagingProvider)(),
-      ref.read(getFcmTokenProvider)(),
+      _setFcmTokenIfSignedIn(),
     ]);
+  }
+
+  /// FCM トークンを取得し、サインイン済みなら FCM トークンを保存する。
+  Future<void> _setFcmTokenIfSignedIn() async {
+    final fcmToken = await ref.read(getFcmTokenProvider)();
+    if (fcmToken == null) {
+      return;
+    }
+    final userId = ref.read(userIdProvider);
+    if (userId == null) {
+      return;
+    }
+    await ref.read(fcmTokenServiceProvider).setUserFcmToken(userId: userId);
   }
 
   @override
   Widget build(BuildContext context) {
-    return AutoTabsScaffold(
-      key: ref.watch(rootPageKey),
-      appBarBuilder: (_, __) => AppBar(
-        title: Image.asset(MottaiAssets.appBarLogo, height: 40),
-      ),
-      drawer: const Drawer(child: _DrawerChild()),
-      routes: const [
-        MapRoute(),
-        ChatRoomsRoute(),
-        ReviewsRoute(),
-        MyAccountRoute(),
-      ],
-      bottomNavigationBuilder: (_, tabsRouter) {
-        return BottomNavigationBar(
-          type: BottomNavigationBarType.fixed,
-          currentIndex: tabsRouter.activeIndex,
-          onTap: tabsRouter.setActiveIndex,
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.search),
-              label: '探す',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.chat),
-              label: 'チャット',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.record_voice_over),
-              label: '感想',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person),
-              label: 'アカウント',
-            ),
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        AutoTabsScaffold(
+          key: ref.watch(rootPageKey),
+          appBarBuilder: (_, __) => AppBar(
+            title: Image.asset(MottaiAssets.appBarLogo, height: 40),
+          ),
+          drawer: const Drawer(child: _DrawerChild()),
+          routes: const [
+            MapRoute(),
+            ChatRoomsRoute(),
+            ReviewsRoute(),
+            MyAccountRoute(),
           ],
-        );
-      },
+          bottomNavigationBuilder: (_, tabsRouter) {
+            return BottomNavigationBar(
+              type: BottomNavigationBarType.fixed,
+              currentIndex: tabsRouter.activeIndex,
+              onTap: tabsRouter.setActiveIndex,
+              items: const [
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.search),
+                  label: '探す',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.chat),
+                  label: 'チャット',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.record_voice_over),
+                  label: '感想',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.person),
+                  label: 'アカウント',
+                ),
+              ],
+            );
+          },
+        ),
+        // 強制アップデートが必要な場合に、ストアへの導線を持つダイアログを表示する
+        // そのダイアログ以外の操作ができないよう画面全体をColoredBoxで覆い、その上にダイアログのみを表示する
+        if (ref.watch(isForceUpdateRequiredProvider))
+          const ColoredBox(
+            color: Colors.black54,
+            child: ForceUpdateDialog(),
+          ),
+      ],
     );
   }
 }
@@ -102,7 +132,7 @@ class _DrawerChild extends ConsumerWidget {
                 '${packageInfo.packageName} '
                 '(${packageInfo.version}+${packageInfo.buildNumber})',
               ),
-              if (ref.watch(isHostProvider)) ...[
+              if (ref.watch(isCurrentUserHostProvider)) ...[
                 const Gap(8),
                 Text(
                   'ユーザーモード',
@@ -154,7 +184,7 @@ class _DrawerChild extends ConsumerWidget {
             leading: const Icon(Icons.login),
             title: const Text('サインイン（ソーシャル）'),
             onTap: () => context.router.pushNamed(SignInSamplePage.location),
-          )
+          ),
         ],
         ListTile(
           leading: const Icon(Icons.notifications),
@@ -179,6 +209,20 @@ class _DrawerChild extends ConsumerWidget {
           leading: const Icon(Icons.settings),
           title: const Text('開発ページへ'),
           onTap: () => context.router.pushNamed(DevelopmentItemsPage.location),
+        ),
+        AuthDependentBuilder(
+          onAuthenticated: (userId) => ListTile(
+            leading: const Icon(Icons.person_off),
+            title: const Text('退会する'),
+            onTap: () async {
+              await ref
+                  .read(disableUserAccountRequestControllerProvider)
+                  .disableUserAccountRequest(
+                    userId: userId,
+                  );
+            },
+          ),
+          onUnAuthenticated: () => const SizedBox(),
         ),
       ],
     );

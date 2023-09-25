@@ -6,7 +6,8 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../auth/ui/auth_dependent_builder.dart';
 import '../../auth/ui/social_link_buttons.dart';
-import '../../host/ui/create_or_update_host.dart';
+import '../../host/ui/host_create.dart';
+import '../../review/review.dart';
 import '../../user/ui/user_mode.dart';
 import '../../user/user.dart';
 import '../../user/worker.dart';
@@ -47,126 +48,135 @@ class WorkerPageBody extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final workerImageUrl = ref.watch(workerImageUrlProvider(userId));
-    final workerDisplayName = ref.watch(workerDisplayNameProvider(userId));
-    final isHost = ref.watch(isHostProvider);
-    return SingleChildScrollView(
-      // TODO: Divider は横いっぱいに表示したいので Padding の水平方向の全体適用はやめたい。
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                GenericImage.circle(
-                  imageUrl: workerImageUrl,
-                ),
-                const Gap(16),
-                Expanded(
-                  child: Text(
-                    workerDisplayName,
-                    style: Theme.of(context).textTheme.titleLarge,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                UserAuthDependentBuilder(
-                  userId: userId,
-                  onUserAuthenticated: (_) {
-                    return CircleAvatar(
-                      backgroundColor: Theme.of(context).focusColor,
-                      child: IconButton(
-                        color: Theme.of(context).shadowColor,
-                        onPressed: () => context.router.pushNamed(
-                          CreateOrUpdateWorkerPage.location(userId: userId),
-                        ),
-                        icon: const Icon(Icons.edit),
-                      ),
-                    );
-                  },
-                ),
-              ],
-            ),
-            UserAuthDependentBuilder(
+    return ref.watch(workerStreamProvider(userId)).when(
+          data: (worker) {
+            if (worker == null) {
+              return const Center(child: Text('ワーカーが見つかりません。'));
+            }
+            return UserAuthDependentBuilder(
               userId: userId,
-              onUserAuthenticated: (_) {
-                return Column(
-                  children: [
-                    const Gap(16),
-                    UserModeSection(userId: userId),
-                  ],
-                );
-              },
-            ),
-            const Gap(16),
-            // TODO 自己紹介をDBに追加する
-            Section(
-              titleBottomMargin: 8,
-              title: '自己紹介',
-              titleStyle: Theme.of(context).textTheme.titleLarge,
-              content: const Text(
-                '''
-東京都内に住んでいます。農家さんや漁師さんのお手伝いをすることに興味があります。こんな感じでここには自己紹介文を表示する。表示するのは最大 8 行表くらいでいいだろうか。あいうえお、かきくけこ、さしすせそ、たちつてと、なにぬねの、はひふへほ、まみむめも、やゆよ、わをん、あいうえお、かきくけこ、さしすせそ、たちつてと、なにぬねの、はひふへほ、まみむめも、やゆよ、わをん、あいうえお、か...''',
-              ),
-            ),
-            const Divider(
-              height: 36,
-            ),
-            // TODO 投稿した感想をDBに追加する
-            Section(
-              titleBottomMargin: 8,
-              title: '投稿した感想',
-              titleStyle: Theme.of(context).textTheme.titleLarge,
-              content: const MaterialHorizontalCard(
-                title: '矢郷農園でレモンの収穫をお手...あああああああああああああああ',
-                description: '先週末、矢郷農園でレモンの収穫を...あああああああああああ',
-                imageUrl:
-                    'https://www.kaku-ichi.co.jp/media/wp-content/uploads/2020/02/20200226001.jpg',
-              ),
-            ),
-            UserAuthDependentBuilder(
-              userId: userId,
-              onUserAuthenticated: (userId) {
-                return Column(
-                  children: [
-                    const Divider(height: 36),
-                    Section(
-                      title: 'ソーシャル連携',
-                      titleStyle: Theme.of(context).textTheme.titleLarge,
-                      content: const SocialLinkButtons(),
-                    ),
-                    if (!isHost) ...[
-                      const Divider(height: 36),
-                      Section(
-                        title: 'ホストとして登録',
-                        titleStyle: Theme.of(context).textTheme.titleLarge,
-                        titleBottomMargin: 8,
-                        content: const Text(
-                          '''
-ホスト（農家、猟師、猟師など）として登録・利用しますか？ホストとして利用すると、自分の農園や仕事の情報を掲載して、お手伝いをしてくれるワーカーとマッチングしますか？''',
+              onAuthenticated: (userId, isUserAuthenticated) {
+                final userReviews =
+                    ref.watch(workerReviewsStreamProvider(userId)).value ?? [];
+                final isCurrentUserHost = ref.watch(isCurrentUserHostProvider);
+                return SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Gap(32),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Row(
+                          children: [
+                            GenericImage.circle(imageUrl: worker.imageUrl),
+                            const Gap(16),
+                            Expanded(
+                              child: Text(
+                                worker.displayName,
+                                style: Theme.of(context).textTheme.titleLarge,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            if (isUserAuthenticated)
+                              CircleAvatar(
+                                backgroundColor: Theme.of(context).focusColor,
+                                child: IconButton(
+                                  color: Theme.of(context).shadowColor,
+                                  onPressed: () => context.router.pushNamed(
+                                    CreateOrUpdateWorkerPage.location(
+                                      userId: userId,
+                                    ),
+                                  ),
+                                  icon: const Icon(Icons.edit),
+                                ),
+                              ),
+                          ],
                         ),
                       ),
-                      Align(
-                        child: ElevatedButton(
-                          onPressed: () => context.router.pushNamed(
-                            CreateOrUpdateHostPage.location(
-                              userId: userId,
-                              actionType: ActionType.create.name,
+                      const Gap(16),
+                      if (isUserAuthenticated && isCurrentUserHost) ...[
+                        const Gap(16),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: UserModeSection(userId: userId),
+                        ),
+                      ],
+                      const Gap(32),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Section(
+                          titleBottomMargin: 8,
+                          title: '自己紹介',
+                          titleStyle: Theme.of(context).textTheme.titleLarge,
+                          content: Text(
+                            worker.introduction.ifIsEmpty('自己紹介が登録されていません。'),
+                          ),
+                        ),
+                      ),
+                      if (userReviews.isNotEmpty) ...[
+                        const Divider(height: 48),
+                        for (final userReview in userReviews)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: Section(
+                              titleBottomMargin: 8,
+                              title: '投稿した感想',
+                              titleStyle:
+                                  Theme.of(context).textTheme.titleLarge,
+                              content: MaterialHorizontalCard(
+                                header: userReview.title,
+                                subhead: userReview.content,
+                                mediaImageUrl: userReview.imageUrl,
+                              ),
                             ),
                           ),
-                          child: const Text('ホストとして登録'),
+                      ],
+                      if (isUserAuthenticated) ...[
+                        const Divider(height: 48),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Section(
+                            title: 'ソーシャル連携',
+                            titleStyle: Theme.of(context).textTheme.titleLarge,
+                            content: const SocialLinkButtons(),
+                          ),
                         ),
-                      ),
+                      ],
+                      if (isUserAuthenticated && !isCurrentUserHost) ...[
+                        const Divider(height: 48),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Section(
+                            title: 'ホストとして登録',
+                            titleStyle: Theme.of(context).textTheme.titleLarge,
+                            titleBottomMargin: 8,
+                            content: const Text(
+                              'ホスト（農家、猟師、猟師など）として登録・利用しますか？'
+                              'ホストとして利用すると、自分の農園や仕事の情報を掲載して、'
+                              'お手伝いをしてくれるワーカーとマッチングしますか？',
+                            ),
+                          ),
+                        ),
+                        const Gap(16),
+                        Align(
+                          child: ElevatedButton(
+                            onPressed: () => context.router.pushNamed(
+                              HostCreatePage.location,
+                            ),
+                            child: const Text('ホストとして登録'),
+                          ),
+                        ),
+                      ],
+                      const Gap(32),
                     ],
-                  ],
+                  ),
                 );
               },
-            ),
-            const Gap(32),
-          ],
-        ),
-      ),
-    );
+            );
+          },
+          error: (_, __) => const SizedBox(),
+          loading: () => const Center(child: CircularProgressIndicator()),
+        );
   }
 }

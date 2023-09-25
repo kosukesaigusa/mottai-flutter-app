@@ -118,7 +118,7 @@ class MapPageState extends ConsumerState<MapPage> {
       if (readHostLocation == null) {
         continue;
       }
-      final hostId = readHostLocation.hostId;
+      final hostId = readHostLocation.hostLocationId;
       final geoPoint = readHostLocation.geo.geopoint;
       markers.add(_createMarker(id: id, hostId: hostId, geoPoint: geoPoint));
       readHostLocations.add(readHostLocation);
@@ -257,7 +257,7 @@ class MapPageState extends ConsumerState<MapPage> {
                           );
                         },
                         icon: const Icon(Icons.near_me),
-                      )
+                      ),
                     ],
                   ),
                 ),
@@ -298,7 +298,7 @@ class _HostLocationPageViewItem extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final hostId = readHostLocation.hostId;
+    final hostId = readHostLocation.hostLocationId;
     final readHost = ref.watch(hostStreamProvider(hostId)).valueOrNull;
     final readJob = ref.watch(hostFirstJobFutureProvider(hostId));
     return Card(

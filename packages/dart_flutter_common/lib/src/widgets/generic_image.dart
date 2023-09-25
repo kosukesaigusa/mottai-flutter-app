@@ -26,8 +26,9 @@ class GenericImage extends StatelessWidget {
     super.key,
   })  : imageShape = ImageShape.circle,
         borderRadius = null,
-        height = null,
-        width = null;
+        aspectRatio = null,
+        maxHeight = null,
+        maxWidth = null;
 
   /// 正方形の画像を表示する。
   const GenericImage.square({
@@ -39,16 +40,18 @@ class GenericImage extends StatelessWidget {
     this.loadingWidget,
     super.key,
   })  : imageShape = ImageShape.square,
-        height = null,
-        width = null;
+        aspectRatio = null,
+        maxHeight = null,
+        maxWidth = null;
 
   /// 長方形の画像を表示する。
   const GenericImage.rectangle({
     required this.imageUrl,
     this.onTap,
     this.showDetailOnTap = true,
-    required this.height,
-    required this.width,
+    this.aspectRatio = 16 / 9,
+    this.maxHeight = double.infinity,
+    this.maxWidth = double.infinity,
     this.borderRadius,
     this.loadingWidget,
     super.key,
@@ -71,11 +74,14 @@ class GenericImage extends StatelessWidget {
   /// 円形・正方形で指定する画像のサイズ（直径、一辺の長さ）。
   final double? size;
 
-  /// 長方形で指定する画像の横幅。
-  final double? width;
+  /// 長方形で指定する画像のアスペクト比。
+  final double? aspectRatio;
 
-  /// 長方形で指定する画像の高さ。
-  final double? height;
+  /// 長方形で指定する画像の最大高さ。
+  final double? maxHeight;
+
+  /// 長方形で指定する画像の最大横幅。
+  final double? maxWidth;
 
   /// 角丸の半径。
   final double? borderRadius;
@@ -95,8 +101,9 @@ class GenericImage extends StatelessWidget {
       return _Image.placeholder(
         imageShape: imageShape,
         size: size,
-        height: height,
-        width: width,
+        aspectRatio: aspectRatio,
+        maxHeight: maxHeight,
+        maxWidth: maxWidth,
         borderRadius: borderRadius,
       );
     }
@@ -125,8 +132,9 @@ class GenericImage extends StatelessWidget {
           imageUrl: imageUrl,
           imageShape: imageShape,
           size: size,
-          width: width,
-          height: height,
+          aspectRatio: aspectRatio,
+          maxWidth: maxWidth,
+          maxHeight: maxHeight,
           borderRadius: borderRadius,
           loadingWidget: loadingWidget,
         ),
@@ -140,8 +148,9 @@ class _GenericCachedNetworkImage extends StatelessWidget {
     required this.imageUrl,
     required this.imageShape,
     required this.size,
-    required this.width,
-    required this.height,
+    required this.aspectRatio,
+    required this.maxWidth,
+    required this.maxHeight,
     required this.borderRadius,
     required this.loadingWidget,
   });
@@ -155,11 +164,14 @@ class _GenericCachedNetworkImage extends StatelessWidget {
   /// 円形・正方形で指定する画像のサイズ（直径、一辺の長さ）。
   final double? size;
 
-  /// 長方形で指定する画像の横幅。
-  final double? width;
+  /// 長方形で指定する画像のアスペクト比。
+  final double? aspectRatio;
 
-  /// 長方形で指定する画像の高さ。
-  final double? height;
+  /// 長方形で指定する画像の高さの最大値。
+  final double? maxHeight;
+
+  /// 長方形で指定する画像の横幅の最大値。
+  final double? maxWidth;
 
   /// 角丸の半径。
   final double? borderRadius;
@@ -175,8 +187,9 @@ class _GenericCachedNetworkImage extends StatelessWidget {
         return _Image(
           imageShape: imageShape,
           size: size,
-          height: height,
-          width: width,
+          aspectRatio: aspectRatio,
+          maxHeight: maxHeight,
+          maxWidth: maxWidth,
           borderRadius: borderRadius,
           decorationImage: DecorationImage(
             image: imageProvider,
@@ -189,15 +202,17 @@ class _GenericCachedNetworkImage extends StatelessWidget {
           _Image.placeholder(
             imageShape: imageShape,
             size: size,
-            height: height,
-            width: width,
+            aspectRatio: aspectRatio,
+            maxHeight: maxHeight,
+            maxWidth: maxWidth,
             borderRadius: borderRadius,
           ),
       errorWidget: (context, url, error) => _Image.errorWidget(
         imageShape: imageShape,
         size: size,
-        height: height,
-        width: width,
+        aspectRatio: aspectRatio,
+        maxHeight: maxHeight,
+        maxWidth: maxWidth,
         borderRadius: borderRadius,
       ),
     );
@@ -208,46 +223,74 @@ class _Image extends StatelessWidget {
   const _Image({
     required this.imageShape,
     this.size,
-    this.height,
-    this.width,
+    this.aspectRatio,
+    this.maxHeight,
+    this.maxWidth,
     this.borderRadius,
     this.decorationImage,
   })  : color = null,
-        icon = null;
+        errorIcon = null;
 
   const _Image.placeholder({
     required this.imageShape,
     this.size,
-    this.height,
-    this.width,
+    this.aspectRatio,
+    this.maxHeight,
+    this.maxWidth,
     this.borderRadius,
   })  : color = Colors.grey,
         decorationImage = null,
-        icon = null;
+        errorIcon = null;
 
   const _Image.errorWidget({
     required this.imageShape,
     this.size,
-    this.height,
-    this.width,
+    this.aspectRatio,
+    this.maxHeight,
+    this.maxWidth,
     this.borderRadius,
   })  : color = Colors.grey,
         decorationImage = null,
-        icon = const Icon(
+        errorIcon = const Icon(
           Icons.broken_image,
           color: Colors.white,
         );
 
   final ImageShape imageShape;
   final Color? color;
-  final double? size;
-  final double? height;
-  final double? width;
-  final double? borderRadius;
-  final DecorationImage? decorationImage;
-  final Icon? icon;
 
+  /// 円形・正方形で指定する画像のサイズ（直径、一辺の長さ）。
+  final double? size;
+
+  /// 円形・正方形で指定する画像のデフォルトサイズ。
   static const double _defaultSize = 64;
+
+  /// 長方形で指定する画像のアスペクト比。
+  final double? aspectRatio;
+
+  /// 長方形で指定する画像のアスペクト比のデフォルト値。
+  static const double _defaultAspectRatio = 16 / 9;
+
+  /// 長方形で指定する画像の高さ。
+  final double? maxHeight;
+
+  /// 長方形で指定する画像の高さのデフォルト値。
+  static const double _defaultMaxHeight = double.infinity;
+
+  /// 長方形で指定する画像の横幅の最大値。
+  final double? maxWidth;
+
+  /// 長方形で指定する画像の横幅の最大値のデフォルト値。
+  static const double _defaultMaxWidth = double.infinity;
+
+  /// 角丸の半径。
+  final double? borderRadius;
+
+  /// 表示する画像。
+  final DecorationImage? decorationImage;
+
+  /// エラー時に表示するアイコン。
+  final Icon? errorIcon;
 
   @override
   Widget build(BuildContext context) {
@@ -261,7 +304,7 @@ class _Image extends StatelessWidget {
             shape: BoxShape.circle,
             image: decorationImage,
           ),
-          child: icon,
+          child: errorIcon,
         );
 
       case ImageShape.square:
@@ -273,19 +316,26 @@ class _Image extends StatelessWidget {
             image: decorationImage,
             borderRadius: BorderRadius.circular(borderRadius ?? 0),
           ),
-          child: icon,
+          child: errorIcon,
         );
 
       case ImageShape.rectangle:
-        return Container(
-          height: height,
-          width: width,
-          decoration: BoxDecoration(
-            color: color,
-            image: decorationImage,
-            borderRadius: BorderRadius.circular(borderRadius ?? 0),
+        return ConstrainedBox(
+          constraints: BoxConstraints(
+            maxWidth: maxWidth ?? _defaultMaxWidth,
+            maxHeight: maxHeight ?? _defaultMaxHeight,
           ),
-          child: icon,
+          child: AspectRatio(
+            aspectRatio: aspectRatio ?? _defaultAspectRatio,
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                color: color,
+                image: decorationImage,
+                borderRadius: BorderRadius.circular(borderRadius ?? 0),
+              ),
+              child: errorIcon,
+            ),
+          ),
         );
     }
   }

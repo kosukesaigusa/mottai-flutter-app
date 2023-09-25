@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../auth/ui/auth_dependent_builder.dart';
+import '../../scaffold_messenger_controller.dart';
 import '../user_mode.dart';
 
 /// ワーカーページ、ホストページなどで使用する、[UserMode] を選択する [Section].
@@ -15,48 +15,45 @@ class UserModeSection extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final userMode = ref.watch(userModeStateProvider);
-    // TODO:「自分かどうか Builder」を使用する。
-    return UserAuthDependentBuilder(
-      userId: userId,
-      onUserAuthenticated: (userId) {
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Section(
-              titleBottomMargin: 8,
-              title: 'ユーザーモード',
-              titleStyle: Theme.of(context).textTheme.titleLarge,
-              content: Text(_userModeDescription(userMode)),
-            ),
-            const Gap(8),
-            SegmentedButton<UserMode>(
-              style: ButtonStyle(
-                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                  RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Section(
+          titleBottomMargin: 8,
+          title: 'ユーザーモード',
+          titleStyle: Theme.of(context).textTheme.titleLarge,
+          content: Text(_userModeDescription(userMode)),
+        ),
+        const Gap(8),
+        SegmentedButton<UserMode>(
+          style: ButtonStyle(
+            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+              RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
               ),
-              segments: const <ButtonSegment<UserMode>>[
-                ButtonSegment<UserMode>(
-                  value: UserMode.host,
-                  label: Text('ホスト'),
-                ),
-                ButtonSegment<UserMode>(
-                  value: UserMode.worker,
-                  label: Text('ワーカー'),
-                ),
-              ],
-              selected: <UserMode>{userMode},
-              onSelectionChanged: (newSelection) {
-                ref
-                    .read(userModeStateProvider.notifier)
-                    .update((_) => newSelection.first);
-              },
-            )
+            ),
+          ),
+          segments: const <ButtonSegment<UserMode>>[
+            ButtonSegment<UserMode>(
+              value: UserMode.host,
+              label: Text('ホスト'),
+            ),
+            ButtonSegment<UserMode>(
+              value: UserMode.worker,
+              label: Text('ワーカー'),
+            ),
           ],
-        );
-      },
+          selected: <UserMode>{userMode},
+          onSelectionChanged: (newSelection) {
+            ref
+                .read(userModeStateProvider.notifier)
+                .update((_) => newSelection.first);
+            ref
+                .read(appScaffoldMessengerControllerProvider)
+                .showSnackBar('${newSelection.first.label}に切り替えました。');
+          },
+        ),
+      ],
     );
   }
 }

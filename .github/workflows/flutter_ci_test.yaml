@@ -10,18 +10,48 @@ on:
 jobs:
   flutter_test:
     runs-on: ubuntu-latest
-    # timeout-minutesのデフォルト値は6時間
-    # タイムアウトを設定しないと処理が終わらないまま放置され、莫大な請求額になるため短めに設定する
+    # timeout-minutesのデフォルト値は 6 時間となっている。
+    # タイムアウトを設定しないと処理が終わらないまま放置され、莫大な請求額になるため短めに設定する。
     timeout-minutes: 10
+    env:
+      run-tests: 'false'
+
     steps:
-      # ソースコードをチェックアウト
+      # ソースコードをチェックアウトする。
       - name: Checkout
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      # Dart ファイルが変更されたかチェックする。
+      - name: Check for Dart file changes
+        id: dartfile
+        run: |
+          echo "Checking for changes in Dart files..."
+          base_sha=${{ github.event.pull_request.base.sha }}
+          current_sha=${{ github.event.pull_request.head.sha }} 
+
+          echo "Base SHA: $base_sha"
+          echo "Current SHA: $current_sha"
+          git diff --name-only $base_sha $current_sha || true
+
+          changed_files=$(git diff $base_sha $current_sha --name-only | grep '\.dart$' || true)
+          if [[ -n "$changed_files" ]]; then
+            echo "Dart files changed."
+            echo "::set-output name=run-tests::true"
+          else
+            echo "No Dart files changed."
+            echo "::set-output name=run-tests::false"
+          fi
+
       # fvm のバージョンとチャネルを環境変数に設定する
       - name: Check fvm
+        if: steps.dartfile.outputs.run-tests == 'true'
         uses: kuhnroyal/flutter-fvm-config-action@v1
+
       # Flutter SDK の設定
       - name: Setup Flutter SDK
+        if: steps.dartfile.outputs.run-tests == 'true'
         uses: subosito/flutter-action@v2
         with:
           # バージョンとチャネルは fvm の値を使う
@@ -32,41 +62,55 @@ jobs:
           cache-key: flutter
           cache-path: ${{ runner.tool_cache }}/flutter
           # /opt/hostedtoolcache/flutter
+
       # melosの設定
       # デフォルトでmelos bootstrapコマンドが実行される
       - name: Setup melos
+        if: steps.dartfile.outputs.run-tests == 'true'
         uses: bluefireteam/melos-action@v1
         with:
           run-bootstrap: false
-      # melos bootstrap
+
+      # melos bootstrap を実行する。
       - name: melos bootstrap
+        if: steps.dartfile.outputs.run-tests == 'true'
         run: melos bootstrap --sdk-path=${{ runner.tool_cache }}/flutter
-      # 依存関係を解決
+
+      # 依存関係を解決する。
       - name: Install Flutter dependencies by melos
+        if: steps.dartfile.outputs.run-tests == 'true'
         run: melos pg --sdk-path=${{ runner.tool_cache }}/flutter
-      # コードフォーマットを実行
-      # フォーマットの結果変更が発生した場合はエラー扱いにする
+
+      # コードフォーマットを実行する。
+      # フォーマットの結果変更が発生した場合はエラー扱いにする。
       - name: Run Flutter format
+        if: steps.dartfile.outputs.run-tests == 'true'
         run: melos exec --sdk-path=${{ runner.tool_cache }}/flutter -- "dart format --set-exit-if-changed ."
-      # 静的解析を実行
+
+      # 静的解析を実行する。
       - name: Analyze project source
+        if: steps.dartfile.outputs.run-tests == 'true'
         run: melos exec --sdk-path=${{ runner.tool_cache }}/flutter -- "flutter analyze ."
-      # テストを実行
+
+      # テストを実行する。
       - name: Run-Flutter-Test
+        if: steps.dartfile.outputs.run-tests == 'true'
         run: melos exec --sdk-path=${{ runner.tool_cache }}/flutter -- "flutter test --machine --coverage > test-report.log"
 
-      # mottai_flutter_appのテスト結果を GitHub Actions に表示する
+      # mottai_flutter_app のテスト結果を GitHub Actions に表示する。
       - name: Report Test mottai_flutter_app
         uses: dorny/test-reporter@v1
-        # テスト結果を表示するのでテストが失敗しても実行する
-        # ただし、コードフォーマットや静的解析でCIが失敗した場合は処理を行わない
-        if: steps.Run-Flutter-Test.outputs.return-code == '0'
+        # テスト結果を表示するのでテストが失敗しても実行する。
+        # ただし、コードフォーマットや静的解析で CI が失敗した場合は処理を行わない。
+        if: steps.dartfile.outputs.run-tests == 'true' && steps.Run-Flutter-Test.outputs.return-code == '0'
         with:
           name: Flutter Test Report mottai_flutter_app
           path: /home/runner/work/mottai-flutter-app/mottai-flutter-app/packages/mottai_flutter_app/test-report.log
           reporter: flutter-json
-      # Codecov に結果を送信
+
+      # Codecov に結果を送信する。
       - name: Upload coverage to Codecov
+        if: steps.dartfile.outputs.run-tests == 'true'
         uses: codecov/codecov-action@v2
         with:
           token: ${{secrets.CODECOV_TOKEN}}
@@ -75,18 +119,20 @@ jobs:
           flags: unittests_mottai_flutter_app
           verbose: true
 
-      # firebase_commonのテスト結果を GitHub Actions に表示する
+      # firebase_common のテスト結果を GitHub Actions に表示する。
       - name: Report Test firebase_common
         uses: dorny/test-reporter@v1
-        # テスト結果を表示するのでテストが失敗しても実行する
-        # ただし、コードフォーマットや静的解析でCIが失敗した場合は処理を行わない
-        if: steps.Run-Flutter-Test.outputs.return-code == '0'
+        # テスト結果を表示するのでテストが失敗しても実行する。
+        # ただし、コードフォーマットや静的解析で CI が失敗した場合は処理を行わない。
+        if: steps.dartfile.outputs.run-tests == 'true' && steps.Run-Flutter-Test.outputs.return-code == '0'
         with:
           name: Flutter Test Report mottai_flutter_app
           path: /home/runner/work/mottai-flutter-app/mottai-flutter-app/packages/firebase_common/test-report.log
           reporter: flutter-json
-      # Codecov に結果を送信
+
+      # Codecov に結果を送信する。
       - name: Upload coverage to Codecov
+        if: steps.dartfile.outputs.run-tests == 'true'
         uses: codecov/codecov-action@v2
         with:
           token: ${{secrets.CODECOV_TOKEN}}
@@ -95,18 +141,20 @@ jobs:
           flags: unittests_firebase_common
           verbose: true
 
-      # dart_flutter_commonのテスト結果を GitHub Actions に表示する
+      # dart_flutter_common のテスト結果を GitHub Actions に表示する。
       - name: Report Test dart_flutter_common
         uses: dorny/test-reporter@v1
-        # テスト結果を表示するのでテストが失敗しても実行する
-        # ただし、コードフォーマットや静的解析でCIが失敗した場合は処理を行わない
-        if: steps.Run-Flutter-Test.outputs.return-code == '0'
+        # テスト結果を表示するのでテストが失敗しても実行する。
+        # ただし、コードフォーマットや静的解析でCIが失敗した場合は処理を行わない。
+        if: steps.dartfile.outputs.run-tests == 'true' && steps.Run-Flutter-Test.outputs.return-code == '0'
         with:
           name: Flutter Test Report dart_flutter_common
           path: /home/runner/work/mottai-flutter-app/mottai-flutter-app/packages/dart_flutter_common/test-report.log
           reporter: flutter-json
-      # Codecov に結果を送信
+
+      # Codecov に結果を送信する。
       - name: Upload coverage to Codecov
+        if: steps.dartfile.outputs.run-tests == 'true'
         uses: codecov/codecov-action@v2
         with:
           token: ${{secrets.CODECOV_TOKEN}}

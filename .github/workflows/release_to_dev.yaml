@@ -1,0 +1,133 @@
+name: Release to Dev
+
+on:
+  push:
+    branches:
+      - release_to_dev
+
+jobs:
+  build:
+    runs-on: macOS-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Read Flutter SDK version
+        run: echo "FLUTTER_VERSION=$(jq -r '.flutterSdkVersion' .fvm/fvm_config.json)" >> $GITHUB_ENV
+        shell: bash
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+
+      - name: flutter pub get (dart_flutter_common)
+        run: cd packages/dart_flutter_common && flutter pub get
+
+      - name: flutter pub get (firebase_common)
+        run: cd packages/firebase_common && flutter pub get
+
+      - name: flutter pub get (mottai_flutter_app)
+        run: cd packages/mottai_flutter_app && flutter pub get
+
+      - name: Create dev-dart-define.json from GitHub secret
+        run: |
+          cd packages/mottai_flutter_app
+          echo '${{ secrets.DEV_DART_DEFINE_JSON_STRING }}' > dev-dart-define.json
+
+      - name: Prepare Xcode build settings
+        run: |
+          # dev-dart-define.json から各値を読み込む
+          cd packages/mottai_flutter_app
+          FLAVOR=$(jq -r '.flavor' dev-dart-define.json)
+          APP_NAME=$(jq -r '.appName' dev-dart-define.json)
+          APP_ID_SUFFIX=$(jq -r '.appIdSuffix' dev-dart-define.json)
+
+          # DartDefines.xcconfig ファイルに書き込む
+          echo "flavor = dev" > DartDefines.xcconfig
+          echo "appName = mottai_dev" >> DartDefines.xcconfig
+          echo "appIdSuffix = .dev" >> DartDefines.xcconfig
+
+          # このファイルを Xcode が参照できるように ios ディレクトリに移動する
+          mv DartDefines.xcconfig ios/
+
+          # ios/Flutter/Release.xcconfig ファイルに追記する
+          echo "#include "DartDefines.xcconfig"" >> ios/Flutter/Release.xcconfig
+
+      - name: Decode and install provisioning profile
+        run: |
+          echo ${{ secrets.DEV_APPLE_DISTRIBUTION_PROVISIONING_PROFILE_BASE64_STRING }} | base64 --decode > profile.mobileprovision
+          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+          cp profile.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles/
+
+      - name: Run import-codesign-certs
+        uses: Apple-Actions/import-codesign-certs@v2
+        with:
+          p12-file-base64: ${{ secrets.DEV_APPLE_DISTRIBUTION_CERTIFICATE_P12_BASE64_STRING }}
+          p12-password: ${{ secrets.DEV_APPLE_DISTRIBUTION_CERTIFICATE_P12_PASSWORD }}
+
+      - name: Prepare Xcode build settings for Distribution
+        run: |
+          # 適切なプロビジョニングプロファイルの名前を指定する
+          echo "PROVISIONING_PROFILE_SPECIFIER = Mottai Flutter App Dev" >> DartDefines.xcconfig
+          # 手動署名を選択する
+          echo "CODE_SIGN_STYLE = Manual" >> DartDefines.xcconfig
+
+      - name: Create Environment.swift
+        run: |
+          echo "import Foundation" > packages/mottai_flutter_app/ios/Runner/Environment.swift
+          echo "struct Env {" >> packages/mottai_flutter_app/ios/Runner/Environment.swift
+          echo "  static let googleMapApiKey = \"${{ secrets.DEV_GOOGLE_MAP_API_KEY }}\"" >> packages/mottai_flutter_app/ios/Runner/Environment.swift
+          echo "}" >> packages/mottai_flutter_app/ios/Runner/Environment.swift
+
+      - name: flutter build ipa
+        run: |
+          cd packages/mottai_flutter_app
+          flutter build ipa --release \
+            --dart-define-from-file="dev-dart-define.json" \
+            -t "lib/main.dart" \
+            --build-name=$(grep 'version:' pubspec.yaml | cut -d ' ' -f 2 | cut -d '+' -f 1) \
+            --build-number=$GITHUB_RUN_NUMBER \
+            --export-options-plist="ios/ExportOptions.plist"
+
+      - name: Detect ipa file path
+        run: |
+          cd packages/mottai_flutter_app
+          if [ ! -d "build/ios/ipa" ]; then
+            echo "build/ios/ipa directory does not exist."
+            exit 1
+          fi
+          IPA_PATH=$(find build/ios/ipa -type f -name '*.ipa')
+          if [ -z "$IPA_PATH" ]; then
+            echo "No .ipa file found."
+            exit 1
+          fi
+          echo "IPA_PATH=$IPA_PATH" >> $GITHUB_ENV
+          echo $IPA_PATH
+
+      - name: Save AuthKey_${DEV_IOS_API_KEY}.p8 file
+        run: |
+          cd packages/mottai_flutter_app
+          mkdir private_keys
+          echo "${{ secrets.DEV_IOS_AUTH_KEY }}" > private_keys/AuthKey_${{ secrets.DEV_IOS_API_KEY }}.p8
+
+      - name: Validate ipa
+        run: |
+          cd packages/mottai_flutter_app
+          xcrun altool --validate-app \
+            -f "./build/ios/ipa/mottai_dev.ipa" \
+            -t ios \
+            --apiKey ${{ secrets.DEV_IOS_API_KEY }} \
+            --apiIssuer ${{ secrets.DEV_IOS_API_ISSUER }} \
+            --private-key "./private_keys/AuthKey_${{ secrets.DEV_IOS_API_KEY }}.p8"
+
+      - name: Upload ipa to TestFlight
+        run: |
+          cd packages/mottai_flutter_app
+          xcrun altool --upload-app \
+            -f "./build/ios/ipa/mottai_dev.ipa" \
+            -t ios \
+            --apiKey ${{ secrets.DEV_IOS_API_KEY }} \
+            --apiIssuer ${{ secrets.DEV_IOS_API_ISSUER }} \
+            --private-key "./private_keys/AuthKey_${{ secrets.DEV_IOS_API_KEY }}.p8"

@@ -35,9 +35,7 @@ jobs:
         run: cd packages/mottai_flutter_app && flutter pub get
 
       - name: Create dev-dart-define.json from GitHub secret
-        run: |
-          cd packages/mottai_flutter_app
-          echo '${{ secrets.DEV_DART_DEFINE_JSON_STRING }}' > dev-dart-define.json
+        run: echo '${{ secrets.DEV_DART_DEFINE_JSON_STRING }}' > packages/mottai_flutter_app/dev-dart-define.json
 
       - name: Create secret.properties
         run: |
@@ -45,11 +43,11 @@ jobs:
 
       - name: Create keystore.properties
         run: |
-        echo '${{ secrets.KEYSTORE_PROPERTIES }}' > packages/mottai_flutter_app/android/keystore.properties
+          echo '${{ secrets.KEYSTORE_PROPERTIES }}' > packages/mottai_flutter_app/android/keystore.properties
 
       - name: Decode release.jks from GitHub secrets
         run: echo "${{ secrets.RELEASE_JKS_BASE64_STRING }}" | base64 --decode > packages/mottai_flutter_app/android/app/release.jks
-  
+
       - name: flutter build appbundle
         run: |
           cd packages/mottai_flutter_app
@@ -100,9 +98,7 @@ jobs:
         run: cd packages/mottai_flutter_app && flutter pub get
 
       - name: Create dev-dart-define.json from GitHub secret
-        run: |
-          cd packages/mottai_flutter_app
-          echo '${{ secrets.DEV_DART_DEFINE_JSON_STRING }}' > dev-dart-define.json
+        run: echo '${{ secrets.DEV_DART_DEFINE_JSON_STRING }}' > packages/mottai_flutter_app/dev-dart-define.json
 
       - name: Prepare Xcode build settings
         run: |

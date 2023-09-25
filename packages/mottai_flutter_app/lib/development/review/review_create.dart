@@ -8,13 +8,18 @@ import 'review_form.dart';
 /// レビュー一覧画面。
 @RoutePage()
 class ReviewCreatePage extends ConsumerWidget {
-  const ReviewCreatePage({super.key});
+  const ReviewCreatePage({
+    @PathParam('jobId') required this.jobId,
+    super.key,
+  });
 
   /// [AutoRoute] で指定するパス文字列。
-  static const path = '/postReview';
+  static const path = '/jobs/:jobId/reviews/create';
 
   /// [ReviewCreatePage] に遷移する際に `context.router.pushNamed` で指定する文字列。
   static const location = path;
+
+  final String jobId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -22,7 +27,10 @@ class ReviewCreatePage extends ConsumerWidget {
       appBar: AppBar(title: const Text('感想を投稿する')),
       body: AuthDependentBuilder(
         onAuthenticated: (userId) {
-          return ReviewForm.create(workerId: userId);
+          return ReviewForm.create(
+            workerId: userId,
+            jobId: jobId,
+          );
         },
       ),
     );

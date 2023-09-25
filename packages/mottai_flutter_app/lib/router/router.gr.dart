@@ -222,10 +222,17 @@ abstract class $AppRouter extends _i31.RootStackRouter {
         child: const _i20.MyAccountPage(),
       );
     },
-    PostReviewRoute.name: (routeData) {
+    ReviewCreateRoute.name: (routeData) {
+      final pathParams = routeData.inheritedPathParams;
+      final args = routeData.argsAs<ReviewCreateRouteArgs>(
+          orElse: () =>
+              ReviewCreateRouteArgs(jobId: pathParams.getString('jobId')));
       return _i31.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const _i21.PostReviewPage(),
+        child: _i21.ReviewCreatePage(
+          jobId: args.jobId,
+          key: args.key,
+        ),
       );
     },
     ReviewsRoute.name: (routeData) {
@@ -724,17 +731,42 @@ class MyAccountRoute extends _i31.PageRouteInfo<void> {
 }
 
 /// generated route for
-/// [_i21.PostReviewPage]
-class PostReviewRoute extends _i31.PageRouteInfo<void> {
-  const PostReviewRoute({List<_i31.PageRouteInfo>? children})
-      : super(
-          PostReviewRoute.name,
+/// [_i21.ReviewCreatePage]
+class ReviewCreateRoute extends _i31.PageRouteInfo<ReviewCreateRouteArgs> {
+  ReviewCreateRoute({
+    required String jobId,
+    _i32.Key? key,
+    List<_i31.PageRouteInfo>? children,
+  }) : super(
+          ReviewCreateRoute.name,
+          args: ReviewCreateRouteArgs(
+            jobId: jobId,
+            key: key,
+          ),
+          rawPathParams: {'jobId': jobId},
           initialChildren: children,
         );
 
-  static const String name = 'PostReviewRoute';
+  static const String name = 'ReviewCreateRoute';
 
-  static const _i31.PageInfo<void> page = _i31.PageInfo<void>(name);
+  static const _i31.PageInfo<ReviewCreateRouteArgs> page =
+      _i31.PageInfo<ReviewCreateRouteArgs>(name);
+}
+
+class ReviewCreateRouteArgs {
+  const ReviewCreateRouteArgs({
+    required this.jobId,
+    this.key,
+  });
+
+  final String jobId;
+
+  final _i32.Key? key;
+
+  @override
+  String toString() {
+    return 'ReviewCreateRouteArgs{jobId: $jobId, key: $key}';
+  }
 }
 
 /// generated route for

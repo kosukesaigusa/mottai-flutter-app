@@ -153,7 +153,10 @@ class DevelopmentItemsPage extends ConsumerWidget {
               '感想更新ページ',
             ),
             onTap: () => context.router.pushNamed(
-              ReviewUpdatePage.location(jobId: 'PYRsrMSOApEgZ6lzMuUK'),
+              ReviewUpdatePage.location(
+                jobId: 'PYRsrMSOApEgZ6lzMuUK',
+                reviewId: '2TPCqigw8xTvju9t6hAh',
+              ),
             ),
           ),
           const Divider(),

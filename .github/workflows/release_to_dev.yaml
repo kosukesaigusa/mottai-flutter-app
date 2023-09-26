@@ -78,7 +78,7 @@ jobs:
       - name: Upload to GPC
         uses: r0adkll/upload-google-play@v1
         with:
-          serviceAccountJson: service_account_key.json.json
+          serviceAccountJson: service_account_key.json
           packageName: com.kosukesaigusa.mottai_flutter_app.dev2
           releaseFiles: packages/mottai_flutter_app/build/app/outputs/bundle/release/app-release.aab
           track: internal

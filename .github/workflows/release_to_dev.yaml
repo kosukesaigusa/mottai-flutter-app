@@ -72,6 +72,17 @@ jobs:
             --groups internal-testers  \
             --release-notes "${LATEST_COMMIT_MESSAGES}"
 
+      - name: Create service account key
+        run: echo "${{ secrets.GPC_API_KEY_BASE64 }}" | base64 --decode > packages/mottai_flutter_app/android/service_account_key.json
+
+      - name: Upload to GPC
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJson: service_account_key.json.json
+          packageName: com.kosukesaigusa.mottai_flutter_app.dev2
+          releaseFiles: packages/mottai_flutter_app/build/app/outputs/bundle/release/app-release.aab
+          track: internal
+
   release-ios-to-dev-testflight:
     runs-on: macOS-latest
 

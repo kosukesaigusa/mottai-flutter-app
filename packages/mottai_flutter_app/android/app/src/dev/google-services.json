@@ -14,6 +14,75 @@
       },
       "oauth_client": [
         {
+          "client_id": "709197089170-1ag90aipfrq9hsdobogbtfci0efmgaea.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.kosukesaigusa.mottai_flutter_app.dev",
+            "certificate_hash": "e40a3161ff6c8155a5461bb2f6012713653035a6"
+          }
+        },
+        {
+          "client_id": "709197089170-7r1q09vr5g5ipeh5n5p1qdndig47bet5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.kosukesaigusa.mottai_flutter_app.dev",
+            "certificate_hash": "43737e207d9b07c8f3435b6add912af5ad7c5236"
+          }
+        },
+        {
+          "client_id": "709197089170-vr0qlak6fl65rn3e8rcbesko660eh5u7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.kosukesaigusa.mottai_flutter_app.dev",
+            "certificate_hash": "968f3fb49f0d6f8bf0f930d8188522f588728d73"
+          }
+        },
+        {
+          "client_id": "709197089170-so0p0jb6k3hatq065fpgmij2v8e4a2s4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAR_-jpRLOtS59zlNI1KCufmI4OOwBERkM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "709197089170-so0p0jb6k3hatq065fpgmij2v8e4a2s4.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "709197089170-1lr8vaboc73s41u7l2vijfqs2c7udu0n.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.kosukesaigusa.mottaiFlutterApp.dev",
+                "app_store_id": "1611315150"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:709197089170:android:34a5db658be064737ed94b",
+        "android_client_info": {
+          "package_name": "com.kosukesaigusa.mottai_flutter_app.dev2"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "709197089170-uq4nh0sucgsseko6d55qgt20t2im54sl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.kosukesaigusa.mottai_flutter_app.dev2",
+            "certificate_hash": "43737e207d9b07c8f3435b6add912af5ad7c5236"
+          }
+        },
+        {
           "client_id": "709197089170-so0p0jb6k3hatq065fpgmij2v8e4a2s4.apps.googleusercontent.com",
           "client_type": 3
         }

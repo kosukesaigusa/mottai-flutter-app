@@ -55,7 +55,7 @@ jobs:
             --dart-define-from-file="dev-dart-define.json" \
             -t "lib/main.dart" \
             --build-name=$(grep 'version:' pubspec.yaml | cut -d ' ' -f 2 | cut -d '+' -f 1) \
-            --build-number=$GITHUB_RUN_NUMBER \
+            --build-number=$GITHUB_RUN_NUMBER
 
       - name: Get latest 10 commit messages
         run: echo "LATEST_COMMIT_MESSAGES=$(git log -n 10 --pretty=format:'%s' | tr '\n' '; ')" >> $GITHUB_ENV

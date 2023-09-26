@@ -27,6 +27,13 @@ final workerReviewsStreamProvider =
       .subscribeUserReviews(workerId: workerId),
 );
 
+/// 指定した [Review] を取得する [FutureProvider].
+final reviewFutureProvider =
+    FutureProvider.family.autoDispose<ReadReview?, String>(
+  (ref, reviewId) =>
+      ref.watch(reviewServiceProvider).fetchReview(reviewId: reviewId),
+);
+
 final reviewServiceProvider = Provider.autoDispose<ReviewService>(
   (ref) => ReviewService(
     reviewRepository: ref.watch(reviewRepositoryProvider),
@@ -38,6 +45,10 @@ class ReviewService {
       : _reviewRepository = reviewRepository;
 
   final ReviewRepository _reviewRepository;
+
+  /// 指定した [Review] を取得する。
+  Future<ReadReview?> fetchReview({required String reviewId}) =>
+      _reviewRepository.fetchReview(reviewId: reviewId);
 
   /// [Review] の情報を作成する。
   Future<void> create({

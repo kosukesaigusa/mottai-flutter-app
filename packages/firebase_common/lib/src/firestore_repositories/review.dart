@@ -55,6 +55,10 @@ class ReviewRepository {
     );
   }
 
+  /// 指定した [Review] を取得する。
+  Future<ReadReview?> fetchReview({required String reviewId}) =>
+      _query.fetchDocument(reviewId: reviewId);
+
   /// [Review] の情報を作成する。
   Future<void> create({
     required String workerId,

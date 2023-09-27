@@ -6,7 +6,7 @@ import '../../../auth/ui/auth_dependent_builder.dart';
 import '../../../review/review.dart';
 import 'review_form.dart';
 
-/// レビュー更新画面。
+/// `Job` に紐づく `Review` (＝感想)の更新画面。
 @RoutePage()
 class ReviewUpdatePage extends ConsumerWidget {
   const ReviewUpdatePage({

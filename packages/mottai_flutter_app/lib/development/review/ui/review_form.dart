@@ -9,8 +9,8 @@ import '../../../widgets/optional_badge.dart';
 import '../../firebase_storage/firebase_storage.dart';
 import '../../firebase_storage/ui/firebase_storage_controller.dart';
 
-/// - `create` の場合、ログイン済みの `workerId`（ユーザー ID）
-/// - `update` の場合、更新対象の [Review] とその本人であることが確認された `workerId`（ユーザー ID）
+/// - `create` の場合、ログイン済みの `workerId`（ユーザー ID）と、対象の `jobId`
+/// - `update` の場合、更新対象の [Review] と、対象の`jobId`、本人であることが確認された `workerId`（ユーザー ID）
 ///
 /// を受け取り、それに応じた [Review] の作成または更新を行うフォーム。
 class ReviewForm extends ConsumerStatefulWidget {

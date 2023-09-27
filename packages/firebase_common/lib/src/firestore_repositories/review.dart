@@ -59,7 +59,7 @@ class ReviewRepository {
   Future<ReadReview?> fetchReview({required String reviewId}) =>
       _query.fetchDocument(reviewId: reviewId);
 
-  /// [Review] の情報を作成する。
+  /// [Review] を作成する。
   Future<void> create({
     required String workerId,
     required String jobId,
@@ -77,7 +77,7 @@ class ReviewRepository {
         ),
       );
 
-  /// [Review] の情報を更新する。
+  /// [Review] を更新する。
   Future<void> update({
     required String reviewId,
     String? title,

@@ -40,6 +40,9 @@ final reviewServiceProvider = Provider.autoDispose<ReviewService>(
   ),
 );
 
+/// [Job] に紐づく [Review] （＝感想）に関する振る舞いを担当するサービスクラス。
+///
+/// [Review] （＝感想）の取得、作成、更新のメソッドを提供する。
 class ReviewService {
   const ReviewService({required ReviewRepository reviewRepository})
       : _reviewRepository = reviewRepository;
@@ -50,7 +53,7 @@ class ReviewService {
   Future<ReadReview?> fetchReview({required String reviewId}) =>
       _reviewRepository.fetchReview(reviewId: reviewId);
 
-  /// [Review] の情報を作成する。
+  /// [Review] を作成する。
   Future<void> create({
     required String workerId,
     required String jobId,
@@ -66,7 +69,7 @@ class ReviewService {
         imageUrl: imageUrl,
       );
 
-  /// [Review] の情報を更新する。
+  /// [Review] を更新する。
   Future<void> update({
     required String reviewId,
     String? title,

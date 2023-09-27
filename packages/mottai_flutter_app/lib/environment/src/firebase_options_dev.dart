@@ -51,7 +51,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyAR_-jpRLOtS59zlNI1KCufmI4OOwBERkM',
-    appId: '1:709197089170:android:ea115cc56387c6c37ed94b',
+    appId: '1:709197089170:android:34a5db658be064737ed94b',
     messagingSenderId: '709197089170',
     projectId: 'mottai-app-dev-2',
     storageBucket: 'mottai-app-dev-2.appspot.com',
@@ -64,7 +64,7 @@ class DefaultFirebaseOptions {
     projectId: 'mottai-app-dev-2',
     storageBucket: 'mottai-app-dev-2.appspot.com',
     androidClientId:
-        '709197089170-eoscur7kmv2s45ikpgkvdjtim6b6sbgb.apps.googleusercontent.com',
+        '709197089170-1ag90aipfrq9hsdobogbtfci0efmgaea.apps.googleusercontent.com',
     iosClientId:
         '709197089170-1lr8vaboc73s41u7l2vijfqs2c7udu0n.apps.googleusercontent.com',
     iosBundleId: 'com.kosukesaigusa.mottaiFlutterApp.dev',

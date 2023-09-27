@@ -6,7 +6,84 @@ on:
       - release_to_dev
 
 jobs:
-  build:
+  release-android-to-dev-firebase:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Install Firebase CLI
+        run: npm install -g firebase-tools
+
+      - name: Read Flutter SDK version
+        run: echo "FLUTTER_VERSION=$(jq -r '.flutterSdkVersion' .fvm/fvm_config.json)" >> $GITHUB_ENV
+        shell: bash
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+
+      - name: flutter pub get (dart_flutter_common)
+        run: cd packages/dart_flutter_common && flutter pub get
+
+      - name: flutter pub get (firebase_common)
+        run: cd packages/firebase_common && flutter pub get
+
+      - name: flutter pub get (mottai_flutter_app)
+        run: cd packages/mottai_flutter_app && flutter pub get
+
+      - name: Create dev-dart-define.json from GitHub secret
+        run: echo '${{ secrets.DEV_DART_DEFINE_JSON_STRING }}' > packages/mottai_flutter_app/dev-dart-define.json
+
+      - name: Create secret.properties
+        run: |
+          echo "googleMap.apiKey=${{ secrets.DEV_GOOGLE_MAP_API_KEY }}" > packages/mottai_flutter_app/android/secret.properties
+
+      - name: Create keystore.properties
+        run: |
+          echo '${{ secrets.KEYSTORE_PROPERTIES }}' > packages/mottai_flutter_app/android/keystore.properties
+
+      - name: Decode release.jks from GitHub secrets
+        run: echo "${{ secrets.RELEASE_JKS_BASE64_STRING }}" | base64 --decode > packages/mottai_flutter_app/android/app/release.jks
+
+      - name: flutter build appbundle
+        run: |
+          cd packages/mottai_flutter_app
+          flutter build appbundle --release \
+            --dart-define-from-file="dev-dart-define.json" \
+            -t "lib/main.dart" \
+            --build-name=$(grep 'version:' pubspec.yaml | cut -d ' ' -f 2 | cut -d '+' -f 1) \
+            --build-number=$GITHUB_RUN_NUMBER
+
+      - name: Get latest 10 commit messages
+        run: echo "LATEST_COMMIT_MESSAGES=$(git log -n 10 --pretty=format:'%s' | tr '\n' '; ')" >> $GITHUB_ENV
+
+      - name: Deploy to Firebase
+        env:
+          DEV_FIREBASE_SERVICE_ACCOUNT_KEY_BASE64: ${{ secrets.DEV_FIREBASE_SERVICE_ACCOUNT_KEY_BASE64 }}
+        run: |
+          echo $DEV_FIREBASE_SERVICE_ACCOUNT_KEY_BASE64 | base64 -d > /tmp/dev_firebase_service_account_key.json
+          export GOOGLE_APPLICATION_CREDENTIALS=/tmp/dev_firebase_service_account_key.json
+          firebase use dev
+          firebase appdistribution:distribute packages/mottai_flutter_app/build/app/outputs/bundle/release/app-release.aab \
+            --app ${{ secrets.DEV_FIREBASE_ANDROID_APP_ID }} \
+            --groups internal-testers  \
+            --release-notes "${LATEST_COMMIT_MESSAGES}"
+
+      - name: Create service_account.json
+        run: echo "${{ secrets.GPC_API_KEY_BASE64 }}" | base64 --decode > service_account.json
+
+      - name: Upload to GPC
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJson: service_account.json
+          packageName: com.kosukesaigusa.mottai_flutter_app.dev2
+          releaseFiles: packages/mottai_flutter_app/build/app/outputs/bundle/release/app-release.aab
+          track: internal
+
+  release-ios-to-dev-testflight:
     runs-on: macOS-latest
 
     steps:
@@ -32,9 +109,7 @@ jobs:
         run: cd packages/mottai_flutter_app && flutter pub get
 
       - name: Create dev-dart-define.json from GitHub secret
-        run: |
-          cd packages/mottai_flutter_app
-          echo '${{ secrets.DEV_DART_DEFINE_JSON_STRING }}' > dev-dart-define.json
+        run: echo '${{ secrets.DEV_DART_DEFINE_JSON_STRING }}' > packages/mottai_flutter_app/dev-dart-define.json
 
       - name: Prepare Xcode build settings
         run: |
@@ -53,7 +128,7 @@ jobs:
           mv DartDefines.xcconfig ios/
 
           # ios/Flutter/Release.xcconfig ファイルに追記する
-          echo "#include "DartDefines.xcconfig"" >> ios/Flutter/Release.xcconfig
+          echo '#include "DartDefines.xcconfig"' >> ios/Flutter/Release.xcconfig
 
       - name: Decode and install provisioning profile
         run: |
@@ -116,7 +191,7 @@ jobs:
         run: |
           cd packages/mottai_flutter_app
           xcrun altool --validate-app \
-            -f "./build/ios/ipa/mottai_dev.ipa" \
+            -f $IPA_PATH \
             -t ios \
             --apiKey ${{ secrets.DEV_IOS_API_KEY }} \
             --apiIssuer ${{ secrets.DEV_IOS_API_ISSUER }} \
@@ -126,7 +201,7 @@ jobs:
         run: |
           cd packages/mottai_flutter_app
           xcrun altool --upload-app \
-            -f "./build/ios/ipa/mottai_dev.ipa" \
+            -f $IPA_PATH \
             -t ios \
             --apiKey ${{ secrets.DEV_IOS_API_KEY }} \
             --apiIssuer ${{ secrets.DEV_IOS_API_ISSUER }} \

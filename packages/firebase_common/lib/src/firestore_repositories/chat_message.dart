@@ -115,6 +115,6 @@ class ChatMessageRepository {
                 )
                 .orderBy('createdAt', descending: true)
                 .limit(limit)
-            : query.orderBy('createAt', descending: true).limit(limit),
+            : query.orderBy('createdAt', descending: true).limit(limit),
       );
 }

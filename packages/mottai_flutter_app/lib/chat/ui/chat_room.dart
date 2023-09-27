@@ -103,45 +103,32 @@ class _ChatRoomPageState extends ConsumerState<ChatRoomPage> {
             )) {
               return const Unavailable('そのチャットルームは表示できません。');
             }
-            return Stack(
+            return Column(
               children: [
-                Column(
-                  children: [
-                    Expanded(
-                      child: ListView.builder(
-                        itemCount: state.readChatMessages.length,
-                        reverse: true,
-                        controller: _scrollController,
-                        itemBuilder: (context, index) {
-                          final readChatMessage = state.readChatMessages[index];
-                          return Padding(
-                            padding: const EdgeInsets.only(bottom: 24),
-                            child: _ChatMessageItem(
-                              readChatRoom: readChatRoom,
-                              readChatMessage: readChatMessage,
-                              isMyMessage: readChatMessage.senderId == userId,
-                              chatRoomId: widget.chatRoomId,
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                    _MessageTextField(
-                      chatRoomId: widget.chatRoomId,
-                      userId: userId,
-                    ),
-                    const Gap(24),
-                  ],
-                ),
-                Positioned(
-                  child: Align(
-                    alignment: Alignment.topCenter,
-                    child: _DebugIndicator(
-                      chatRoomId: widget.chatRoomId,
-                      readChatRoom: readChatRoom,
-                    ),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: state.readChatMessages.length,
+                    reverse: true,
+                    controller: _scrollController,
+                    itemBuilder: (context, index) {
+                      final readChatMessage = state.readChatMessages[index];
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 24),
+                        child: _ChatMessageItem(
+                          readChatRoom: readChatRoom,
+                          readChatMessage: readChatMessage,
+                          isMyMessage: readChatMessage.senderId == userId,
+                          chatRoomId: widget.chatRoomId,
+                        ),
+                      );
+                    },
                   ),
                 ),
+                _MessageTextField(
+                  chatRoomId: widget.chatRoomId,
+                  userId: userId,
+                ),
+                const Gap(24),
               ],
             );
           },
@@ -434,91 +421,5 @@ class _MessageTextFieldState extends ConsumerState<_MessageTextField> {
       case UserMode.host:
         return ChatMessageType.host;
     }
-  }
-}
-
-// TODO: 後で消す
-/// 開発時のみ表示する、無限スクロールのデバッグ用ウィジェット。
-class _DebugIndicator extends ConsumerWidget {
-  const _DebugIndicator({
-    required this.chatRoomId,
-    required this.readChatRoom,
-  });
-
-  final String chatRoomId;
-
-  final ReadChatRoom readChatRoom;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(chatRoomStateNotifierProvider(chatRoomId));
-    final readChatMessages = state.readChatMessages;
-    final lastReadChatMessageId = state.lastReadChatMessageId;
-    final partnerLastReadAt = ref.watch(
-      chatPartnerLastReadAtProvider(
-        readChatRoom,
-      ),
-    );
-    return Container(
-      width: double.infinity,
-      margin: const EdgeInsets.only(top: 16, left: 16, right: 16),
-      padding: const EdgeInsets.all(16),
-      decoration: const BoxDecoration(
-        color: Colors.black38,
-        borderRadius: BorderRadius.all(Radius.circular(8)),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            'デバッグウィンドウ',
-            style: Theme.of(context)
-                .textTheme
-                .titleSmall!
-                .copyWith(color: Colors.white),
-          ),
-          const Gap(4),
-          Text(
-            '取得したメッセージ：${readChatMessages.length.withComma} 件',
-            style: Theme.of(context)
-                .textTheme
-                .bodySmall!
-                .copyWith(color: Colors.white),
-          ),
-          Text(
-            '取得中？：${state.fetching}',
-            style: Theme.of(context)
-                .textTheme
-                .bodySmall!
-                .copyWith(color: Colors.white),
-          ),
-          Text(
-            'まだ取得できる？：${state.hasMore}',
-            style: Theme.of(context)
-                .textTheme
-                .bodySmall!
-                .copyWith(color: Colors.white),
-          ),
-          if (lastReadChatMessageId != null)
-            Text(
-              '最後に取得したドキュメント ID：$lastReadChatMessageId',
-              style: Theme.of(context)
-                  .textTheme
-                  .bodySmall!
-                  .copyWith(color: Colors.white),
-            ),
-          Text(
-            'パートナーの既読時間：$partnerLastReadAt',
-            style: Theme.of(context)
-                .textTheme
-                .bodySmall!
-                .copyWith(color: Colors.white),
-          ),
-          const Gap(8),
-        ],
-      ),
-    );
   }
 }

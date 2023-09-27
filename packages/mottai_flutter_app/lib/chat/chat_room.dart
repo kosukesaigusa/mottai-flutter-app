@@ -235,7 +235,8 @@ class StartChat {
     await _chatMessageRepository.addChatMessage(
       chatRoomId: chatRoomId,
       senderId: workerId,
-      chatMessageType: ChatMessageType.host,
+      // メッセージを始めるのは常にワーカー。
+      chatMessageType: ChatMessageType.worker,
       content: content,
     );
     return chatRoomId;

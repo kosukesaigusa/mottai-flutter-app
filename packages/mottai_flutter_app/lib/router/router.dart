@@ -11,6 +11,8 @@ import '../development/generic_image/ui/generic_images.dart';
 import '../development/image_detail_view/ui/image_detail_view_stub.dart';
 import '../development/image_picker/ui/image_picker_sample.dart';
 import '../development/in_review/ui/in_review.dart';
+import '../development/review/ui/review_create.dart';
+import '../development/review/ui/review_update.dart';
 import '../development/sample_todo/ui/todos.dart';
 import '../development/sign_in/ui/sign_in.dart';
 import '../development/user_fcm_token/ui/user_fcm_token.dart';
@@ -126,6 +128,14 @@ class AppRouter extends $AppRouter {
     AutoRoute(
       path: InReviewPage.path,
       page: InReviewRoute.page,
+    ),
+    AutoRoute(
+      path: ReviewCreatePage.path,
+      page: ReviewCreateRoute.page,
+    ),
+    AutoRoute(
+      path: ReviewUpdatePage.path,
+      page: ReviewUpdateRoute.page,
     ),
     AutoRoute(
       path: TodosPage.path,

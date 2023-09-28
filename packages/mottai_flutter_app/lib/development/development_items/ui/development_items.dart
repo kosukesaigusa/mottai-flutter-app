@@ -22,6 +22,8 @@ import '../../geoflutterfire_plus/geoflutterfire_plus.dart';
 import '../../image_detail_view/ui/image_detail_view_stub.dart';
 import '../../image_picker/ui/image_picker_sample.dart';
 import '../../in_review/ui/in_review.dart';
+import '../../review/ui/review_create.dart';
+import '../../review/ui/review_update.dart';
 import '../../sample_todo/ui/todos.dart';
 import '../../sign_in/ui/sign_in.dart';
 import '../../user_fcm_token/ui/user_fcm_token.dart';
@@ -136,6 +138,25 @@ class DevelopmentItemsPage extends ConsumerWidget {
             ),
             onTap: () => context.router.pushNamed(
               HostUpdatePage.location(hostId: 'b1M4bcp7zEVpgHXYhOVWt8BMkq23'),
+            ),
+          ),
+          ListTile(
+            title: const Text(
+              '感想投稿ページ',
+            ),
+            onTap: () => context.router.pushNamed(
+              ReviewCreatePage.location(jobId: 'PYRsrMSOApEgZ6lzMuUK'),
+            ),
+          ),
+          ListTile(
+            title: const Text(
+              '感想更新ページ',
+            ),
+            onTap: () => context.router.pushNamed(
+              ReviewUpdatePage.location(
+                jobId: 'PYRsrMSOApEgZ6lzMuUK',
+                reviewId: '2TPCqigw8xTvju9t6hAh',
+              ),
             ),
           ),
           const Divider(),

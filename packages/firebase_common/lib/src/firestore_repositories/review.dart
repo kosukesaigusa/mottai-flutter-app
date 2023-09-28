@@ -54,4 +54,42 @@ class ReviewRepository {
           .orderBy('createdAt', descending: true),
     );
   }
+
+  /// 指定した [Review] を取得する。
+  Future<ReadReview?> fetchReview({required String reviewId}) =>
+      _query.fetchDocument(reviewId: reviewId);
+
+  /// [Review] を作成する。
+  Future<void> create({
+    required String workerId,
+    required String jobId,
+    required String imageUrl,
+    required String title,
+    required String content,
+  }) =>
+      _query.add(
+        createReview: CreateReview(
+          workerId: workerId,
+          jobId: jobId,
+          title: title,
+          content: content,
+          imageUrl: imageUrl,
+        ),
+      );
+
+  /// [Review] を更新する。
+  Future<void> update({
+    required String reviewId,
+    String? title,
+    String? content,
+    String? imageUrl,
+  }) =>
+      _query.update(
+        reviewId: reviewId,
+        updateReview: UpdateReview(
+          title: title,
+          content: content,
+          imageUrl: imageUrl,
+        ),
+      );
 }

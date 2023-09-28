@@ -16,6 +16,7 @@ class WorkerRepository {
     required String workerId,
     required String displayName,
     String imageUrl = '',
+    String introduction = '',
     bool isHost = false,
   }) =>
       _query.set(
@@ -24,6 +25,7 @@ class WorkerRepository {
           displayName: displayName,
           imageUrl: imageUrl,
           isHost: isHost,
+          introduction: introduction,
         ),
       );
 }

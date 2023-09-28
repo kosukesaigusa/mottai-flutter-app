@@ -6,7 +6,6 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../development/firebase_storage/firebase_storage.dart';
 import '../../development/firebase_storage/ui/firebase_storage_controller.dart';
-import '../../widgets/optional_badge.dart';
 import 'job_controller.dart';
 
 /// - `create` の場合、ログイン済みの `hostId`（ユーザー ID）

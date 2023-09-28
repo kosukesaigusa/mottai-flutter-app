@@ -13,7 +13,6 @@ import '../../exception.dart';
 import '../../host_location/ui/host_location_select_dialog.dart';
 import '../../loading/ui/loading.dart';
 import '../../scaffold_messenger_controller.dart';
-import '../../widgets/optional_badge.dart';
 import 'host_controller.dart';
 
 // TODO: 現在の位置情報を反映する。

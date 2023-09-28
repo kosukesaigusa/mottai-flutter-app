@@ -6,7 +6,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../development/firebase_storage/firebase_storage.dart';
 import '../../development/firebase_storage/ui/firebase_storage_controller.dart';
-import '../../widgets/optional_badge.dart';
+import '../../widgets/text_input_section.dart';
 import 'job_controller.dart';
 
 /// - `create` の場合、ログイン済みの `hostId`（ユーザー ID）
@@ -130,7 +130,7 @@ class JobFormState extends ConsumerState<JobForm> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _TextInputSection(
+                  TextInputSection(
                     title: 'お手伝いのタイトル',
                     description: 'お手伝いのタイトルを最大2行程度で入力してください。',
                     maxLines: 2,
@@ -138,14 +138,14 @@ class JobFormState extends ConsumerState<JobForm> {
                     controller: _titleController,
                     isRequired: true,
                   ),
-                  _TextInputSection(
+                  TextInputSection(
                     title: 'お手伝いの場所',
                     description: 'お手伝いを行う場所（農場や作業場所など）を入力してください。'
                         '作業内容や曜日によって複数の場所の可能性がある場合は、それも入力してください。',
                     controller: _locationController,
                     isRequired: true,
                   ),
-                  _TextInputSection(
+                  TextInputSection(
                     title: 'お手伝いの内容',
                     description: 'お手伝いの作業内容、作業時間帯やその他の情報をできるだけ詳しくを入力してください。'
                         'お手伝い可能な曜日や時間帯、時期や季節が限られている場合や、'
@@ -154,20 +154,20 @@ class JobFormState extends ConsumerState<JobForm> {
                     controller: _contentController,
                     isRequired: true,
                   ),
-                  _TextInputSection(
+                  TextInputSection(
                     title: '持ち物',
                     description: 'お手伝いに必要な服装や持ち物などを書いてください。'
                         '特に必要ない場合や貸出を行う場合はその内容も入力してください。',
                     controller: _belongingsController,
                     isRequired: true,
                   ),
-                  _TextInputSection(
+                  TextInputSection(
                     title: '報酬',
                     description: 'お手伝いをしてくれたワーカーにお渡しする報酬（食べ物など）を入力してください。',
                     controller: _rewardController,
                     isRequired: true,
                   ),
-                  _TextInputSection<AccessType>.withChoice(
+                  TextInputSection<AccessType>.withChoice(
                     title: 'アクセス',
                     description: 'お手伝いの場所までのアクセス方法について補足説明をしてください。'
                         '最寄りの駅やバス停まで送迎ができる場合などは、その内容も入力してください。',
@@ -185,7 +185,7 @@ class JobFormState extends ConsumerState<JobForm> {
                       setState(() {});
                     },
                   ),
-                  _TextInputSection(
+                  TextInputSection(
                     title: 'ひとこと',
                     description: 'お手伝いを検討してくれるワーカーの方が、ぜひお手伝いをしてみたくなるようひとことや、'
                         '募集するお手伝いの魅力を入力しましょう！',
@@ -240,107 +240,6 @@ class JobFormState extends ConsumerState<JobForm> {
               ),
             ),
           ),
-        ],
-      ),
-    );
-  }
-}
-
-/// タイトルと説明、テキストフィールドからなるセクション。
-/// [Section] を使用し、`Section.content` にフィールドを与えている。
-class _TextInputSection<T extends dynamic> extends StatelessWidget {
-  /// テキスト入力のみをさせる通常の [_TextInputSection] を作成する。
-  const _TextInputSection({
-    required this.title,
-    this.description,
-    this.maxLines,
-    this.defaultDisplayLines = 1,
-    this.controller,
-    this.isRequired = false,
-  })  : choices = const {},
-        enabledChoices = const [],
-        onChoiceSelected = null;
-
-  /// テキスト入力と選択肢を併せて入力させる [_TextInputSection] を作成する。
-  const _TextInputSection.withChoice({
-    required this.title,
-    this.description,
-    this.maxLines,
-    this.defaultDisplayLines = 1,
-    required this.choices,
-    required this.enabledChoices,
-    required this.onChoiceSelected,
-    this.controller,
-    this.isRequired = false,
-  });
-
-  /// セクションのタイトル。
-  final String title;
-
-  /// セクションの説明。
-  final String? description;
-
-  /// テキストフィールドの最大行数
-  final int? maxLines;
-
-  /// 初期表示時のテキストフィールドの行数
-  final int defaultDisplayLines;
-
-  /// テキストフィールドの下に表示する選択肢
-  /// 選択された際の値がkeyで、表示する値がvalueの[Map]で受け取る。
-  final Map<T, String> choices;
-
-  /// [choices] の有効な値のリスト
-  final List<T> enabledChoices;
-
-  /// [choices] が選択された際のコールバック
-  final void Function(T item)? onChoiceSelected;
-
-  /// テキストフィールドのコントローラー
-  final TextEditingController? controller;
-
-  /// 必須入力か否か
-  final bool isRequired;
-
-  @override
-  Widget build(BuildContext context) {
-    return Section(
-      title: title,
-      titleBadge: Padding(
-        padding: const EdgeInsets.only(left: 8),
-        child: OptionalBadge(isRequired: isRequired),
-      ),
-      titleStyle: Theme.of(context).textTheme.titleLarge,
-      description: description,
-      descriptionStyle: Theme.of(context).textTheme.bodyMedium,
-      sectionPadding: const EdgeInsets.only(bottom: 32),
-      content: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          TextFormField(
-            controller: controller,
-            maxLines: maxLines,
-            validator: (value) {
-              if (isRequired && (value ?? '').isEmpty) {
-                return '入力してください。';
-              }
-              return null;
-            },
-            decoration: InputDecoration(
-              hintText: List.filled(defaultDisplayLines - 1, '\n').join(),
-              border: const OutlineInputBorder(),
-            ),
-          ),
-          if (choices.isNotEmpty) ...[
-            const Gap(16),
-            SelectableChips<T>(
-              allItems: choices.keys,
-              labels: choices,
-              runSpacing: 8,
-              enabledItems: enabledChoices,
-              onTap: onChoiceSelected,
-            ),
-          ],
         ],
       ),
     );

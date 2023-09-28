@@ -343,7 +343,7 @@ SPEC CHECKSUMS:
   FirebaseCoreExtension: 976638051b1a46b503afce7ec80277f9161f2040
   FirebaseCoreInternal: d558159ee6cc4b823c2296ecc193de9f6d9a5bb3
   FirebaseDynamicLinks: 1a387da899779e5ef34f4d6f8bdba882f90d0e67
-  FirebaseFirestore: 8d9dd05bb50e0891ebe4fdd9bd0f9b9d22ea5556
+  FirebaseFirestore: 5d42819d1b219bc20e91c0cc854ed562680f31da
   FirebaseFunctions: d49c7920b289d85029882927e4056ad04a906e19
   FirebaseInstallations: f672b1eda64e6381c21d424a2f680a943fd83f3b
   FirebaseMessaging: bb2c4f6422a753038fe137d90ae7c1af57251316
@@ -379,6 +379,6 @@ SPEC CHECKSUMS:
   sqflite: 31f7eba61e3074736dff8807a9b41581e4f7f15a
   url_launcher_ios: 08a3dfac5fb39e8759aeb0abbd5d9480f30fc8b4
 
-PODFILE CHECKSUM: e5e57377bd5fff00d6d1c5fa3559e4346fd8c03e
+PODFILE CHECKSUM: 1d2d2d154c27a38a128199d975526f28373f2b4f
 
-COCOAPODS: 1.12.0
+COCOAPODS: 1.13.0

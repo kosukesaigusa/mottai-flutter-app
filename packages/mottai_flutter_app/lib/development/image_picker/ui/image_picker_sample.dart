@@ -7,7 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../../scaffold_messenger_controller.dart';
+import '../../../app_ui_feedback_controller.dart';
 import '../../../widgets/dialog/permission_handler_dialog.dart';
 
 @RoutePage()
@@ -145,9 +145,7 @@ class _ImagePickerSamplePageState extends ConsumerState<ImagePickerSamplePage> {
       if (e.code != 'photo_access_denied') {
         return;
       }
-      await ref
-          .read(appScaffoldMessengerControllerProvider)
-          .showDialogByBuilder<bool>(
+      await ref.read(appUIFeedbackControllerProvider).showDialogByBuilder<bool>(
             builder: (context) => const AccessDeniedDialog.gallery(),
           );
     }
@@ -166,9 +164,7 @@ class _ImagePickerSamplePageState extends ConsumerState<ImagePickerSamplePage> {
       if (e.code != 'camera_access_denied') {
         return;
       }
-      await ref
-          .read(appScaffoldMessengerControllerProvider)
-          .showDialogByBuilder<bool>(
+      await ref.read(appUIFeedbackControllerProvider).showDialogByBuilder<bool>(
             builder: (context) => const AccessDeniedDialog.camera(),
           );
     }
@@ -189,9 +185,7 @@ class _ImagePickerSamplePageState extends ConsumerState<ImagePickerSamplePage> {
       if (e.code != 'photo_access_denied') {
         return;
       }
-      await ref
-          .read(appScaffoldMessengerControllerProvider)
-          .showDialogByBuilder<bool>(
+      await ref.read(appUIFeedbackControllerProvider).showDialogByBuilder<bool>(
             builder: (context) => const AccessDeniedDialog.camera(),
           );
     }

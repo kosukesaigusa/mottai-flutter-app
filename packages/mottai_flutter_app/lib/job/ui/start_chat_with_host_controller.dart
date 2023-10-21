@@ -1,27 +1,26 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../../app_ui_feedback_controller.dart';
 import '../../chat/chat_room.dart';
-import '../../scaffold_messenger_controller.dart';
 
 final startChatControllerProvider = Provider.autoDispose<StartChatController>(
   (ref) => StartChatController(
     startChat: ref.watch(startChatProvider),
-    appScaffoldMessengerController:
-        ref.watch(appScaffoldMessengerControllerProvider),
+    appUIFeedbackController: ref.watch(appUIFeedbackControllerProvider),
   ),
 );
 
 class StartChatController {
   StartChatController({
     required StartChat startChat,
-    required AppScaffoldMessengerController appScaffoldMessengerController,
+    required AppUIFeedbackController appUIFeedbackController,
   })  : _startChat = startChat,
-        _appScaffoldMessengerController = appScaffoldMessengerController;
+        _appUIFeedbackController = appUIFeedbackController;
 
   final StartChat _startChat;
 
-  final AppScaffoldMessengerController _appScaffoldMessengerController;
+  final AppUIFeedbackController _appUIFeedbackController;
 
   /// 指定した [workerId], [hostId] との間のチャットルームを作成する。
   /// ワーカーからの最初のメッセージ [content] も送信する。
@@ -32,7 +31,7 @@ class StartChatController {
     required String content,
   }) async {
     if (content.isEmpty) {
-      _appScaffoldMessengerController.showSnackBar('メッセージを入力してください');
+      _appUIFeedbackController.showSnackBar('メッセージを入力してください');
       return null;
     }
     try {
@@ -43,7 +42,7 @@ class StartChatController {
       );
       return chatRoomId;
     } on FirebaseException catch (e) {
-      _appScaffoldMessengerController.showSnackBarByFirebaseException(e);
+      _appUIFeedbackController.showSnackBarByFirebaseException(e);
     }
     return null;
   }

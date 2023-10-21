@@ -7,12 +7,12 @@ import 'package:geoflutterfire_plus/geoflutterfire_plus.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../../app_ui_feedback_controller.dart';
 import '../../development/firebase_storage/firebase_storage.dart';
 import '../../development/firebase_storage/ui/firebase_storage_controller.dart';
 import '../../exception.dart';
 import '../../host_location/ui/host_location_select_dialog.dart';
 import '../../loading/ui/loading.dart';
-import '../../scaffold_messenger_controller.dart';
 import '../../widgets/optional_badge.dart';
 import 'host_controller.dart';
 
@@ -211,7 +211,6 @@ class HostFormState extends ConsumerState<HostForm> {
                             GenericImage.circle(
                               onTap: firebaseStorageController
                                   .pickImageFromGallery,
-                              showDetailOnTap: false,
                               imageUrl: pickedImageFile?.path ??
                                   widget._host!.imageUrl,
                               size: 64,
@@ -407,7 +406,7 @@ class HostFormState extends ConsumerState<HostForm> {
                           }
                         } on AppException catch (e) {
                           ref
-                              .read(appScaffoldMessengerControllerProvider)
+                              .read(appUIFeedbackControllerProvider)
                               .showSnackBarByException(e);
                         } finally {
                           ref

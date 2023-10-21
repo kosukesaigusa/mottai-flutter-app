@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 
 import 'string.dart';
 
-/// ツリー上部の [ScaffoldMessenger] 上でスナックバーやダイアログの表示を操作する。
-class ScaffoldMessengerController {
-  /// [ScaffoldMessengerController] を作成する。
-  ScaffoldMessengerController({
+/// ツリー上部に設置した [_scaffoldMessengerKey] や [_navigatorKey] から [BuildContext]
+/// を得て、スナックバーやダイアログの表示を操作するコントローラ。
+class UIFeedbackController {
+  /// [UIFeedbackController] を作成する。
+  UIFeedbackController({
     required GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey,
     required GlobalKey<NavigatorState> navigatorKey,
   })  : _scaffoldMessengerKey = scaffoldMessengerKey,

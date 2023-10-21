@@ -5,10 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../../app_ui_feedback_controller.dart';
 import '../../auth/ui/auth_dependent_builder.dart';
 import '../../chat/chat_rooms.dart';
 import '../../chat/ui/chat_room.dart';
-import '../../scaffold_messenger_controller.dart';
 import '../../user/host.dart';
 import '../../user/user_mode.dart';
 import '../job.dart';
@@ -268,7 +268,7 @@ class _StartChatWithHostButton extends ConsumerWidget {
                           }
                           final stackRouter = context.router;
                           final chatRoomId = await ref
-                              .read(appScaffoldMessengerControllerProvider)
+                              .read(appUIFeedbackControllerProvider)
                               .showDialogByBuilder<String>(
                                 builder: (context) => _StartChatWithHostDialog(
                                   hostId: readHost.hostId,

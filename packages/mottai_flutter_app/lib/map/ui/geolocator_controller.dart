@@ -1,7 +1,7 @@
 import 'package:geolocator/geolocator.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../../scaffold_messenger_controller.dart';
+import '../../app_ui_feedback_controller.dart';
 import '../../widgets/dialog/permission_handler_dialog.dart';
 import '../geolocator.dart';
 
@@ -9,8 +9,8 @@ final currentLocationControllerProvider =
     Provider.autoDispose<CurrentLocationController>(
   (ref) => CurrentLocationController(
     locationService: ref.watch(locationServiceProvider),
-    appScaffoldMessengerController: ref.watch(
-      appScaffoldMessengerControllerProvider,
+    appUIFeedbackController: ref.watch(
+      appUIFeedbackControllerProvider,
     ),
   ),
 );
@@ -18,12 +18,12 @@ final currentLocationControllerProvider =
 class CurrentLocationController {
   const CurrentLocationController({
     required LocationService locationService,
-    required AppScaffoldMessengerController appScaffoldMessengerController,
+    required AppUIFeedbackController appUIFeedbackController,
   })  : _locationService = locationService,
-        _appScaffoldMessengerController = appScaffoldMessengerController;
+        _appUIFeedbackController = appUIFeedbackController;
 
   final LocationService _locationService;
-  final AppScaffoldMessengerController _appScaffoldMessengerController;
+  final AppUIFeedbackController _appUIFeedbackController;
 
   /// 端末の位置情報を使用するための権限を確認しつつ、現在地を取得する。
   Future<Position?> getCurrentPosition() async {
@@ -31,7 +31,7 @@ class CurrentLocationController {
 
     if (locationPermission == LocationPermission.denied ||
         locationPermission == LocationPermission.deniedForever) {
-      await _appScaffoldMessengerController.showDialogByBuilder<bool>(
+      await _appUIFeedbackController.showDialogByBuilder<bool>(
         builder: (context) => const AccessDeniedDialog.location(),
       );
       return null;
@@ -39,7 +39,7 @@ class CurrentLocationController {
     try {
       return _locationService.getCurrentPosition();
     } on LocationPermissionException {
-      await _appScaffoldMessengerController.showDialogByBuilder<bool>(
+      await _appUIFeedbackController.showDialogByBuilder<bool>(
         builder: (context) => const AccessDeniedDialog.location(),
       );
     }

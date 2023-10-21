@@ -5,9 +5,9 @@ import 'package:firebase_common/firebase_common.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../../../app_ui_feedback_controller.dart';
 import '../../../image/firebase_storage.dart';
 import '../../../image/image_picker.dart';
-import '../../../scaffold_messenger_controller.dart';
 import '../../../widgets/dialog/permission_handler_dialog.dart';
 import '../firebase_storage.dart';
 
@@ -20,8 +20,7 @@ final firebaseStorageControllerProvider = Provider.autoDispose(
         ref.watch(uploadedImagePathStateProvider.notifier),
     uploadedImageUrlController:
         ref.watch(uploadedImageUrlStateProvider.notifier),
-    appScaffoldMessengerController:
-        ref.watch(appScaffoldMessengerControllerProvider),
+    appUIFeedbackController: ref.watch(appUIFeedbackControllerProvider),
     pickedImageFromGalleryController:
         ref.watch(pickedImageFileStateProvider.notifier),
   ),
@@ -35,14 +34,14 @@ class FirebaseStorageController {
     required StateController<String> uploadedImagePathController,
     required StateController<String> uploadedImageUrlController,
     required StateController<List<String>> imageUrlsController,
-    required AppScaffoldMessengerController appScaffoldMessengerController,
+    required AppUIFeedbackController appUIFeedbackController,
   })  : _firebaseStorageService = firebaseStorageService,
         _imagePickerService = imagePickerService,
         _uploadedImagePathController = uploadedImagePathController,
         _uploadedImageUrlController = uploadedImageUrlController,
         _pickedImageFromGalleryController = pickedImageFromGalleryController,
         _imageUrlsController = imageUrlsController,
-        _appScaffoldMessengerController = appScaffoldMessengerController;
+        _appUIFeedbackController = appUIFeedbackController;
 
   final FirebaseStorageService _firebaseStorageService;
 
@@ -56,7 +55,7 @@ class FirebaseStorageController {
 
   final StateController<File?> _pickedImageFromGalleryController;
 
-  final AppScaffoldMessengerController _appScaffoldMessengerController;
+  final AppUIFeedbackController _appUIFeedbackController;
 
   /// 画像を 1 つ端末のギャラリーから選択する。
   Future<void> pickImageFromGallery() async {
@@ -69,7 +68,7 @@ class FirebaseStorageController {
       if (e.code != 'photo_access_denied') {
         return;
       }
-      await _appScaffoldMessengerController.showDialogByBuilder<bool>(
+      await _appUIFeedbackController.showDialogByBuilder<bool>(
         builder: (context) => const AccessDeniedDialog.gallery(),
       );
     }
@@ -89,7 +88,7 @@ class FirebaseStorageController {
       _uploadedImagePathController.update((_) => imagePath);
       _uploadedImageUrlController.update((_) => imageUrl);
     } on Exception catch (e) {
-      _appScaffoldMessengerController.showSnackBarByException(e);
+      _appUIFeedbackController.showSnackBarByException(e);
     }
   }
 
@@ -100,7 +99,7 @@ class FirebaseStorageController {
       _uploadedImagePathController.update((_) => '');
       _uploadedImageUrlController.update((_) => '');
     } on Exception catch (e) {
-      _appScaffoldMessengerController.showSnackBarByException(e);
+      _appUIFeedbackController.showSnackBarByException(e);
     }
   }
 
@@ -111,7 +110,7 @@ class FirebaseStorageController {
           await _firebaseStorageService.fetchAllImageUrls(path: path);
       _imageUrlsController.update((state) => imageUrls);
     } on Exception catch (e) {
-      _appScaffoldMessengerController.showSnackBarByException(e);
+      _appUIFeedbackController.showSnackBarByException(e);
     }
   }
 }

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../scaffold_messenger_controller.dart';
+import '../../app_ui_feedback_controller.dart';
 import '../user_mode.dart';
 
 /// ワーカーページ、ホストページなどで使用する、[UserMode] を選択する [Section].
@@ -49,7 +49,7 @@ class UserModeSection extends ConsumerWidget {
                 .read(userModeStateProvider.notifier)
                 .update((_) => newSelection.first);
             ref
-                .read(appScaffoldMessengerControllerProvider)
+                .read(appUIFeedbackControllerProvider)
                 .showSnackBar('${newSelection.first.label}に切り替えました。');
           },
         ),

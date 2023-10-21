@@ -4,6 +4,7 @@ import 'package:flutter_line_sdk/flutter_line_sdk.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
+import 'app_ui_feedback_controller.dart';
 import 'device_info.dart';
 import 'environment/src/firebase_options.dart';
 import 'environment/src/flavor_type.dart';
@@ -11,7 +12,6 @@ import 'loading/ui/loading.dart';
 import 'package_info.dart';
 import 'push_notification/firebase_messaging.dart';
 import 'router/router.dart';
-import 'scaffold_messenger_controller.dart';
 import 'setup_local_emulator.dart';
 import 'user/user.dart';
 import 'user/user_mode.dart';

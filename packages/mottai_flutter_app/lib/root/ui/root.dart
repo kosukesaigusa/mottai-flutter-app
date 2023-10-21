@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../../app_ui_feedback_controller.dart';
 import '../../assets.dart';
 import '../../auth/auth.dart';
 import '../../auth/ui/auth_controller.dart';
@@ -16,7 +17,6 @@ import '../../force_update/ui/force_update.dart';
 import '../../package_info.dart';
 import '../../push_notification/firebase_messaging.dart';
 import '../../router/router.gr.dart';
-import '../../scaffold_messenger_controller.dart';
 import '../../user/user.dart';
 import '../../user/user_mode.dart';
 import '../../user_fcm_token/user_fcm_token.dart';
@@ -196,7 +196,7 @@ class _DrawerChild extends ConsumerWidget {
             }
             debugPrint(token);
             await ref
-                .read(appScaffoldMessengerControllerProvider)
+                .read(appUIFeedbackControllerProvider)
                 .showDialogByBuilder<void>(
                   builder: (context) => AlertDialog(
                     title: const SelectableText('FCM トークン'),

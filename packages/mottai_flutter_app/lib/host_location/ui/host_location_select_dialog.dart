@@ -6,7 +6,7 @@ import 'package:geoflutterfire_plus/geoflutterfire_plus.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../scaffold_messenger_controller.dart';
+import '../../app_ui_feedback_controller.dart';
 
 /// [GoogleMap] 上にピンをたてて、[HostLocation.geo] を選択するページ。
 /// `Navigator.of(context).pop()` の引数で選択した [Geo] を返す。
@@ -69,7 +69,7 @@ class HostLocationSelectDialogState
                       position: LatLng(position.latitude, position.longitude),
                     );
                   });
-                  ref.read(appScaffoldMessengerControllerProvider).showSnackBar(
+                  ref.read(appUIFeedbackControllerProvider).showSnackBar(
                         '位置を選択しました。\n'
                         // ignore: lines_longer_than_80_chars
                         '緯度: ${position.latitude.toString().substring(0, 6)}, '

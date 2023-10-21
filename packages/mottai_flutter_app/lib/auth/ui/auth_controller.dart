@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_common/firebase_common.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../../scaffold_messenger_controller.dart';
+import '../../app_ui_feedback_controller.dart';
 import '../../exception.dart';
 import '../../loading/ui/loading.dart';
 import '../../user/host.dart';
@@ -18,8 +18,7 @@ final authControllerProvider = Provider.autoDispose<AuthController>(
     userModeStateController: ref.watch(userModeStateProvider.notifier),
     overlayLoadingStateController:
         ref.watch(overlayLoadingStateProvider.notifier),
-    appScaffoldMessengerController:
-        ref.watch(appScaffoldMessengerControllerProvider),
+    appUIFeedbackController: ref.watch(appUIFeedbackControllerProvider),
   ),
 );
 
@@ -30,13 +29,13 @@ class AuthController {
     required FcmTokenService fcmTokenService,
     required StateController<UserMode> userModeStateController,
     required StateController<bool> overlayLoadingStateController,
-    required AppScaffoldMessengerController appScaffoldMessengerController,
+    required AppUIFeedbackController appUIFeedbackController,
   })  : _authService = authService,
         _hostService = hostService,
         _fcmTokenService = fcmTokenService,
         _userModeStateController = userModeStateController,
         _overlayLoadingStateController = overlayLoadingStateController,
-        _appScaffoldMessengerController = appScaffoldMessengerController;
+        _appUIFeedbackController = appUIFeedbackController;
 
   final AuthService _authService;
 
@@ -48,7 +47,7 @@ class AuthController {
 
   final StateController<bool> _overlayLoadingStateController;
 
-  final AppScaffoldMessengerController _appScaffoldMessengerController;
+  final AppUIFeedbackController _appUIFeedbackController;
 
   /// 選択した [SignInMethod] でサインインする。
   /// サインイン後、必要性を確認して [UserMode] を `UserMode.Host` にする。
@@ -59,14 +58,14 @@ class AuthController {
       final userCredential = await _signIn(signInMethod);
       await _maybeSetUserModeToHost(userCredential);
       await _setFcmToken(userCredential);
-      _appScaffoldMessengerController.showSnackBar('サインインしました');
+      _appUIFeedbackController.showSnackBar('サインインしました');
     } on AppException catch (e) {
-      _appScaffoldMessengerController.showSnackBarByException(e);
+      _appUIFeedbackController.showSnackBarByException(e);
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-disabled') {
-        _appScaffoldMessengerController.showSnackBar('このアカウントは退会済みのため無効です。');
+        _appUIFeedbackController.showSnackBar('このアカウントは退会済みのため無効です。');
       } else {
-        _appScaffoldMessengerController.showSnackBarByFirebaseException(e);
+        _appUIFeedbackController.showSnackBarByFirebaseException(e);
       }
     } finally {
       _overlayLoadingStateController.update((state) => false);
@@ -87,7 +86,7 @@ class AuthController {
       );
       await _maybeSetUserModeToHost(userCredential);
     } on AppException catch (e) {
-      _appScaffoldMessengerController.showSnackBarByException(e);
+      _appUIFeedbackController.showSnackBarByException(e);
     }
   }
 
@@ -146,9 +145,9 @@ class AuthController {
         userId: userId,
       );
     } on FirebaseException catch (e) {
-      _appScaffoldMessengerController.showSnackBarByFirebaseException(e);
+      _appUIFeedbackController.showSnackBarByFirebaseException(e);
     } on AppException catch (e) {
-      _appScaffoldMessengerController.showSnackBarByException(e);
+      _appUIFeedbackController.showSnackBarByException(e);
     }
   }
 
@@ -168,7 +167,7 @@ class AuthController {
       // 単一の認証方法のみが有効化されている場合、
       // 本メソッドを呼び出す際に指定している SignInMethod がその単一の認証方法となるため、
       // 解除不可であることを SnackBar で表示する。
-      _appScaffoldMessengerController.showSnackBar('唯一の認証のため解除できません。');
+      _appUIFeedbackController.showSnackBar('唯一の認証のため解除できません。');
       return;
     }
     try {
@@ -177,7 +176,7 @@ class AuthController {
         userId: userId,
       );
     } on FirebaseException catch (e) {
-      _appScaffoldMessengerController.showSnackBarByFirebaseException(e);
+      _appUIFeedbackController.showSnackBarByFirebaseException(e);
     }
   }
 

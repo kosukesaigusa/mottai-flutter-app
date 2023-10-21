@@ -20,7 +20,6 @@ class GenericImage extends StatelessWidget {
   const GenericImage.circle({
     required this.imageUrl,
     this.onTap,
-    this.showDetailOnTap = true,
     this.size,
     this.loadingWidget,
     super.key,
@@ -34,7 +33,6 @@ class GenericImage extends StatelessWidget {
   const GenericImage.square({
     required this.imageUrl,
     this.onTap,
-    this.showDetailOnTap = true,
     this.size,
     this.borderRadius,
     this.loadingWidget,
@@ -48,7 +46,6 @@ class GenericImage extends StatelessWidget {
   const GenericImage.rectangle({
     required this.imageUrl,
     this.onTap,
-    this.showDetailOnTap = true,
     this.aspectRatio = 16 / 9,
     this.maxHeight = double.infinity,
     this.maxWidth = double.infinity,
@@ -66,10 +63,6 @@ class GenericImage extends StatelessWidget {
 
   /// 画像ウィジェットをタップした際のコールバック関数。
   final VoidCallback? onTap;
-
-  /// 画像ウィジェットをタップした際に画像の詳細画面を表示するかどうか。
-  /// [onTap] が指定されているときは、[onTap] が優先される。
-  final bool showDetailOnTap;
 
   /// 円形・正方形で指定する画像のサイズ（直径、一辺の長さ）。
   final double? size;
@@ -114,17 +107,15 @@ class GenericImage extends StatelessWidget {
         if (onTap != null) {
           return onTap!();
         }
-        if (showDetailOnTap) {
-          return Navigator.push<void>(
-            context,
-            MaterialPageRoute<void>(
-              builder: (context) => _ImageDetailView(
-                tag: tag,
-                imageUrl: imageUrl,
-              ),
+        return Navigator.push<void>(
+          context,
+          MaterialPageRoute<void>(
+            builder: (context) => _ImageDetailView(
+              tag: tag,
+              imageUrl: imageUrl,
             ),
-          );
-        }
+          ),
+        );
       },
       child: Hero(
         tag: tag,

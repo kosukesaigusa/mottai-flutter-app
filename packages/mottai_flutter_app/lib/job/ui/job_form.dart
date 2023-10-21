@@ -107,7 +107,6 @@ class JobFormState extends ConsumerState<JobForm> {
           else if ((widget._job?.imageUrl ?? '').isNotEmpty)
             GenericImage.rectangle(
               onTap: firebaseStorageController.pickImageFromGallery,
-              showDetailOnTap: false,
               imageUrl: pickedImageFile?.path ?? widget._job!.imageUrl,
               maxHeight: _imageHeight,
             )
